@@ -1,0 +1,69 @@
+.nested-object {
+  .ant-form-item{
+    margin: 0;
+  }
+}
+
+.ant-form-item-control-input-content > div {
+  width: 100%;
+}
+
+.form-item-wrapper,
+.optional-field-toggle,
+.ant-form-item{
+  padding: var(--ant-padding-xs);
+  border: 1px solid #d9d9d9;
+  border-radius: var(--ant-border-radius-lg);
+  margin-bottom: var(--ant-padding-xxs);
+
+  &.ant-form-item {
+    margin: var(--ant-padding-xs) 0;
+    .ant-form-item-label,{
+      padding-bottom: 0 !important;
+    }
+  }
+}
+
+.ant-table-cell {
+  .form-item-wrapper,
+  .optional-field-toggle,
+  .ant-form-item{
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+}
+
+@mixin alternating-background($level: 1, $max-depth: 10) {
+  @if $level <= $max-depth {
+    @if $level % 2 == 1 {
+      background: var(--ant-blue-1);
+    } @else {
+      background: var(--ant-green-1);
+    }
+
+    .ant-form-item {
+      @include alternating-background($level + 1, $max-depth);
+    }
+  }
+}
+
+.ant-form-item {
+  @include alternating-background($level: 1, $max-depth: 10);
+}
+
+.merged-ant-form-item .ant-form-item {
+  padding: 0;
+  border: none;
+  margin-bottom: 0;
+  background: transparent!important;
+
+  &.ant-form-item {
+    margin: 0;
+    .ant-form-item-label,{
+      padding-bottom: 0 !important;
+    }
+  }
+}
+
+

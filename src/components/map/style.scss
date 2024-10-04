@@ -1,0 +1,47 @@
+.map-marker-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 5px;
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 1;
+}
+
+.map-wrapper {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.google-map-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.map-wrapper,
+.google-map-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.ant-popover-inner-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.map-wrapper{
+  width: 300px;
+  height: 300px;
+}

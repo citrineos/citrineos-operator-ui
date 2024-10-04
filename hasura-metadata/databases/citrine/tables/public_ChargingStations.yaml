@@ -1,0 +1,22 @@
+table:
+  name: ChargingStations
+  schema: public
+object_relationships:
+  - name: Location
+    using:
+      foreign_key_constraint_on: locationId
+array_relationships:
+  - name: StatusNotifications
+    using:
+      foreign_key_constraint_on:
+        column: stationId
+        table:
+          name: StatusNotifications
+          schema: public
+  - name: Transactions
+    using:
+      foreign_key_constraint_on:
+        column: stationId
+        table:
+          name: Transactions
+          schema: public
