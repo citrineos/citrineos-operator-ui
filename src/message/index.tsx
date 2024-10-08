@@ -1,7 +1,7 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../components/custom-actions';
-import { ChargingStations } from '../graphql/schema.types';
+import { Certificates, ChargingStations } from '../graphql/schema.types';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -32,8 +32,13 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { Certificate } from '../pages/certificates/Certificate';
+import { 
+   GetCertificateStatus,
+   GetCertificateStatusProps,
+} from './get-certificate-status';
 
-const actionMap: {
+const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
@@ -55,9 +60,15 @@ const actionMap: {
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
 };
+  
+const certificateActionMap: {
+  [label: string]: React.FC<any>;
+} = {
+  'Get Certificate Status': GetCertificateStatus as React.FC<GetCertificateStatusProps>,
+};
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
-  Object.entries(actionMap).map(
+  Object.entries(chargingStationActionMap).map(
     ([label, Component]) =>
       ({
         label,
@@ -65,4 +76,15 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
           <Component station={station} />
         ),
       }) as CustomAction<ChargingStations>,
+  );
+  
+ export const CUSTOM_CERTIFICATE_ACTIONS: CustomAction<Certificates>[] =
+  Object.entries(certificateActionMap).map(
+    ([label, Component]) =>
+      ({
+        label,
+        execOrRender: (certificate: Certificate) => (
+          <Component certificate={certificate} />
+        ),
+      }) as CustomAction<Certificates>,
   );

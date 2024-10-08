@@ -17,6 +17,7 @@ import {
 import { CERTIFICATES_COLUMNS } from './table-config';
 import { Certificates } from '../../graphql/schema.types';
 import { AiFillSafetyCertificate } from 'react-icons/ai';
+import { CUSTOM_CERTIFICATE_ACTIONS } from '../../message';
 
 export const CertificatesView: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ export const CertificatesView: React.FC = () => {
       editMutation={CERTIFICATES_EDIT_MUTATION}
       createMutation={CERTIFICATES_CREATE_MUTATION}
       deleteMutation={CERTIFICATES_DELETE_MUTATION}
+      customActions={CUSTOM_CERTIFICATE_ACTIONS}
     />
   );
 };
@@ -43,7 +45,11 @@ export const CertificatesList = (props: IDataModelListProps) => {
   return (
     <DataModelTable<Certificates, CertificatesListQuery>
       tableProps={tableProps}
-      columns={CERTIFICATES_COLUMNS(!props.hideActions, props.parentView)}
+      columns={CERTIFICATES_COLUMNS(
+        !props.hideActions,
+        props.parentView,
+        CUSTOM_CERTIFICATE_ACTIONS,
+      )}
       hideCreateButton={props.hideCreateButton}
     />
   );
