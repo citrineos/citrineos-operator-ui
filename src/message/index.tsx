@@ -32,11 +32,6 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
-import { Certificate } from '../pages/certificates/Certificate';
-import { 
-   GetCertificateStatus,
-   GetCertificateStatusProps,
-} from './get-certificate-status';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -60,12 +55,6 @@ const chargingStationActionMap: {
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
 };
-  
-const certificateActionMap: {
-  [label: string]: React.FC<any>;
-} = {
-  'Get Certificate Status': GetCertificateStatus as React.FC<GetCertificateStatusProps>,
-};
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
   Object.entries(chargingStationActionMap).map(
@@ -76,15 +65,4 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
           <Component station={station} />
         ),
       }) as CustomAction<ChargingStations>,
-  );
-  
- export const CUSTOM_CERTIFICATE_ACTIONS: CustomAction<Certificates>[] =
-  Object.entries(certificateActionMap).map(
-    ([label, Component]) =>
-      ({
-        label,
-        execOrRender: (certificate: Certificate) => (
-          <Component certificate={certificate} />
-        ),
-      }) as CustomAction<Certificates>,
   );

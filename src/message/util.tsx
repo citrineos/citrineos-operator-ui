@@ -22,12 +22,12 @@ export const triggerMessageAndHandleResponse = async <T,>(
     if (responseSuccessCheck(response)) {
       notification.success({
         message: 'Success',
-        description: 'The set variables request was successful.',
+        description: 'The request was successful.',
         placement: 'topRight',
       });
     } else {
       let msg =
-        'The set variables request did not receive a successful response.';
+        'The request did not receive a successful response.';
       if ((response as any).payload) {
         // todo incorrect response type?
         msg += `Response payload: ${(response as any).payload}`;
@@ -42,7 +42,7 @@ export const triggerMessageAndHandleResponse = async <T,>(
     notification.error({
       message: 'Request Failed',
       description:
-        'The set variables request failed with message: ' + error.message,
+        'The request failed with message: ' + error.message,
       placement: 'topRight',
     });
   }
