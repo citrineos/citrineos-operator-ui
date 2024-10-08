@@ -445,7 +445,7 @@ export const renderArrayField = (props: {
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlListQuery}
             gqlQueryVariables={gqlQueryVariables}
-            parentRecord={form.getFieldValue(fieldPath.keyPath)}
+            parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
             value={form.getFieldValue(fieldPath.keyPath)}
             onChange={(newValues: any[]) => {
@@ -621,7 +621,7 @@ const renderNestedObjectField = (props: {
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlListQuery}
             gqlQueryVariables={gqlQueryVariables}
-            parentRecord={form.getFieldValue(fieldPath.keyPath)}
+            parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
             value={form.getFieldValue(fieldPath.keyPath)}
             onChange={(newValues: any[]) => {
