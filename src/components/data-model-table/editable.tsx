@@ -134,7 +134,7 @@ export interface GenericDataTableProps {
   dtoClass: Constructable<any>;
   filters?: any;
   selectable?: SelectionType | null;
-  tableProps?: any;
+  useTableProps?: any;
   onSelectionChange?: (selectedRows: any[]) => void;
   editable?: boolean;
   customActions?: CustomAction<any>[];
@@ -148,7 +148,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     dtoClass,
     selectable = null,
     filters = null,
-    tableProps: passedTableProps = null,
+    useTableProps: useTableProps = null,
     onSelectionChange,
     editable: passedEditable,
     customActions,
@@ -538,21 +538,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     [setUnknowns],
   );
 
-  // Handle loading and error states
-  // if (queryResult?.isLoading) {
-  //   return <Spin />;
-  // }
-  //
-  // if (queryResult?.isError) {
-  //   return (
-  //     <Alert
-  //       message="Error loading data"
-  //       description={queryResult.error?.message}
-  //       type="error"
-  //     />
-  //   );
-  // }
-
   const columns: FieldSchema[] = useMemo(() => {
     const actionsColumn = {
       title: 'Actions',
@@ -595,6 +580,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       ...schema.map((field: FieldSchema) => ({
         title: field.label,
         dataIndex: primaryKeyFieldName,
+        sorter: field.sorter,
         editable: true,
         render: (value: any, record: any) => {
           const isCurrentlyEditing =
@@ -710,7 +696,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         columns={columns}
         editingRecord={editingRecord}
         dtoClass={dtoClass}
-        tableProps={passedTableProps}
+        useTableProps={useTableProps}
         filters={filters}
         dtoResourceType={dtoResourceType}
         dtoGqlListQuery={dtoGqlListQuery}

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
-import { useTable, useTableProps } from '@refinedev/antd';
+import { useTable } from '@refinedev/antd';
 import { plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
@@ -11,6 +11,7 @@ import { GenericDataTable, SelectionType } from './editable';
 import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSearchableKeys } from '../../util/decorators/Searcheable';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -40,6 +41,10 @@ export const AssociationSelection = <
     associatedIdFieldName,
     gqlQueryVariables,
   } = props;
+
+  const searchableKeys = useMemo(() => {
+    return getSearchableKeys(associatedRecordClass);
+  }, [associatedRecordClass]);
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -107,7 +112,7 @@ export const AssociationSelection = <
     meta.gqlVariables = gqlQueryVariables;
   }
 
-  const tableOptions: useTableProps<GetQuery, any, unknown, GetQuery> = {
+  const tableOptions: any = {
     resource: associatedRecordResourceType,
     sorters: {
       initial: [
@@ -121,9 +126,28 @@ export const AssociationSelection = <
     meta,
   };
 
-  const { tableProps, tableQuery: queryResult } = useTable<GetQuery>({
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: { search: string }) => {
+      const result = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
+
+  const useTableProps = useTable<GetQuery>({
     ...tableOptions,
   });
+
+  const { tableProps, tableQuery: queryResult } = useTableProps;
 
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
@@ -222,8 +246,8 @@ export const AssociationSelection = <
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
-              tableProps={{
-                ...tableProps,
+              useTableProps={{
+                ...useTableProps,
                 rowSelection: rowSelection,
               }}
             />
