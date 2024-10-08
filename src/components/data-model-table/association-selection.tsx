@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
-import { useTable } from '@refinedev/antd';
+import { useTable, useTableProps } from '@refinedev/antd';
 import { plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
@@ -42,10 +42,6 @@ export const AssociationSelection = <
     gqlQueryVariables,
   } = props;
 
-  const searchableKeys = useMemo(() => {
-    return getSearchableKeys(associatedRecordClass);
-  }, [associatedRecordClass]);
-
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
     {},
@@ -81,8 +77,12 @@ export const AssociationSelection = <
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
     setNew(
-      (parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-        (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER,
+      (!!parentRecord &&
+        ((parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+          (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
+        (!!value &&
+          ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+            (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
   }, [parentRecord, primaryKeyFieldName]);
 
@@ -112,7 +112,7 @@ export const AssociationSelection = <
     meta.gqlVariables = gqlQueryVariables;
   }
 
-  const tableOptions: any = {
+  const tableOptions: useTableProps<GetQuery, any, unknown, GetQuery> = {
     resource: associatedRecordResourceType,
     sorters: {
       initial: [
@@ -126,28 +126,9 @@ export const AssociationSelection = <
     meta,
   };
 
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = (values: { search: string }) => {
-      const result = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    };
-  }
-
-  const useTableProps = useTable<GetQuery>({
+  const { tableProps, tableQuery: queryResult } = useTable<GetQuery>({
     ...tableOptions,
   });
-
-  const { tableProps, tableQuery: queryResult } = useTableProps;
 
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
@@ -246,8 +227,8 @@ export const AssociationSelection = <
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
-              useTableProps={{
-                ...useTableProps,
+              tableProps={{
+                ...tableProps,
                 rowSelection: rowSelection,
               }}
             />

@@ -44,7 +44,6 @@ import { CUSTOM_FORM_RENDER } from '../../util/decorators/CustomFormRender';
 import { AssociationSelection } from '../data-model-table/association-selection';
 import { SelectionType } from '../data-model-table/editable';
 import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
-import { ColumnGroupType, ColumnType } from 'antd/lib/table';
 import { isSortable } from '../../util/decorators/Sortable';
 
 export enum ReflectType {
@@ -83,9 +82,7 @@ export interface FieldSelectOption {
   value: string;
 }
 
-export interface FieldSchema<Model = any>
-  extends ColumnGroupType<Model>,
-    ColumnType<Model> {
+export interface FieldSchema {
   label: string;
   name: string;
   type: FieldType;
@@ -129,6 +126,7 @@ export interface GenericProps {
 export interface GenericFormProps extends GenericProps {
   ref?: React.Ref<FormInstance>;
   initialValues?: any;
+  onValuesChange?: (values: any) => void;
   gqlQueryVariablesMap?: any;
 }
 
@@ -220,7 +218,7 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.customRender,
       customRender: customFormRender,
       isRequired: requiredFields.includes(key),
-    } as unknown as FieldSchema;
+    };
   }
 
   const sorter = isSortable(instance.constructor, key);
@@ -529,7 +527,7 @@ export const renderArrayField = (props: {
                             name: String(field.name),
                             type: FieldType.input,
                             isRequired: true,
-                          } as FieldSchema,
+                          },
                           preFieldPath: fieldPath.clearNamePath(),
                           disabled: disabled,
                           visibleOptionalFields: visibleOptionalFields,
