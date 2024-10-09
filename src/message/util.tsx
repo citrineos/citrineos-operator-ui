@@ -3,10 +3,10 @@ import { TriggerMessageResponse } from './trigger-message';
 import { Constructable } from '../util/Constructable';
 import { notification } from 'antd';
 
-export const generateRandomLong = () => {
-  const maxInt = Number.MAX_SAFE_INTEGER; // 2^53 - 1
+export const generateRandomSignedInt = () => {
+  const maxInt = 2147483647; // 2^31 - 1
   const minInt = 0;
-  return Math.floor(Math.random() * (maxInt - minInt + 1) + minInt);
+  return Math.trunc(Math.random() * (maxInt - minInt + 1) + minInt);
 };
 
 export const showSucces = () => {
