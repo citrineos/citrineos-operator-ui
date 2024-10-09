@@ -11,6 +11,7 @@ import { GenericDataTable, SelectionType } from './editable';
 import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSearchableKeys } from '../../util/decorators/Searcheable';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -76,8 +77,12 @@ export const AssociationSelection = <
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
     setNew(
-      (parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-        (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER,
+      (!!parentRecord &&
+        ((parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+          (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
+        (!!value &&
+          ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+            (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
   }, [parentRecord, primaryKeyFieldName]);
 

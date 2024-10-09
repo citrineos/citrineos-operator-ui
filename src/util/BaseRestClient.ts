@@ -33,6 +33,11 @@ export class BaseRestClient {
     this.initAxiosInstance();
   }
 
+  setDataBaseUrl() {
+    this._baseUrl = this._baseUrl.replace('ocpp', 'data');
+    this.initAxiosInstance();
+  }
+
   async optionsRaw<T>(
     url: string,
     config?: AxiosRequestConfig,
