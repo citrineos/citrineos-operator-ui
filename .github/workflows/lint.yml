@@ -3,7 +3,7 @@ name: Linter
 on:
     push:
         branches:
-            - feat/OperatorUIGithubActions
+            - feature/operator-ui-github-actions
     pull_request:
 
 concurrency:
