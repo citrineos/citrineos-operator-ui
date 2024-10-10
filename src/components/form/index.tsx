@@ -126,7 +126,6 @@ export interface GenericProps {
 export interface GenericFormProps extends GenericProps {
   ref?: React.Ref<FormInstance>;
   initialValues?: any;
-  onValuesChange?: (values: any) => void;
   gqlQueryVariablesMap?: any;
 }
 
@@ -205,6 +204,8 @@ export const getSchemaForInstanceAndKey = (
   key: string,
   requiredFields: string[],
 ): FieldSchema => {
+  const sorter = isSortable(instance.constructor, key);
+
   const customFormRender = Reflect.getMetadata(
     CUSTOM_FORM_RENDER,
     instance,
@@ -218,10 +219,9 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.customRender,
       customRender: customFormRender,
       isRequired: requiredFields.includes(key),
+      sorter,
     };
   }
-
-  const sorter = isSortable(instance.constructor, key);
 
   const metadata = Reflect.getMetadata('design:type', instance, key);
   let type, fieldType;
@@ -457,7 +457,7 @@ export const renderArrayField = (props: {
             value={form.getFieldValue(fieldPath.namePath)}
             onChange={(newValues: any[]) => {
               form.setFieldsValue({
-                [schema.name]: newValues,
+                [fieldPath.namePath as any]: newValues,
               });
             }}
           />
@@ -527,6 +527,7 @@ export const renderArrayField = (props: {
                             name: String(field.name),
                             type: FieldType.input,
                             isRequired: true,
+                            sorter: schema.sorter,
                           },
                           preFieldPath: fieldPath.clearNamePath(),
                           disabled: disabled,
