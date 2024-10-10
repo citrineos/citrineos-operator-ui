@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { notification, Spin } from 'antd';
+import { Form, notification, Spin } from 'antd';
 import { GET_EVSES_FOR_STATION } from './queries';
 import { useCustom } from '@refinedev/core';
 import { BaseRestClient } from '../../util/BaseRestClient';
@@ -9,7 +9,7 @@ import { validateSync } from 'class-validator';
 import { FieldType, GenericForm } from '../../components/form';
 import { RequestStartTransactionRequest } from './model';
 import { Evse } from '../../pages/evses/Evse';
-import {ChargingStation} from "../../pages/charging-stations/ChargingStation";
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -17,6 +17,7 @@ export interface RemoteStartProps {
 
 export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
   const formRef = useRef();
+  const [formProps] = Form.useForm();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
@@ -130,6 +131,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
     <GenericForm
       ref={formRef as any}
       dtoClass={RequestStartTransactionRequest}
+      formProps={formProps}
       onFinish={onFinish}
       onValuesChange={onValuesChange}
       overrides={overrides}
