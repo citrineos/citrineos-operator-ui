@@ -1,7 +1,7 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../components/custom-actions';
-import { Certificates, ChargingStations } from '../graphql/schema.types';
+import { ChargingStations } from '../graphql/schema.types';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -20,10 +20,10 @@ import {
   InstallCertificate,
   InstallCertificateProps,
 } from './install-certificate';
-import { 
+import {
   GetInstalledCertificateIds,
   GetInstalledCertificateIdsProps,
-} from "./get-installed-certificate-ids";
+} from './get-installed-certificate-ids';
 import {
   SetNetworkProfile,
   SetNetworkProfileProps,
@@ -57,12 +57,14 @@ const chargingStationActionMap: {
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
-  Object.entries(chargingStationActionMap).map(
-    ([label, Component]) =>
-      ({
-        label,
-        execOrRender: (station: ChargingStation) => (
-          <Component station={station} />
-        ),
-      }) as CustomAction<ChargingStations>,
-  );
+  Object.entries(chargingStationActionMap)
+    .map(
+      ([label, Component]) =>
+        ({
+          label,
+          execOrRender: (station: ChargingStation) => (
+            <Component station={station} />
+          ),
+        }) as CustomAction<ChargingStations>,
+    )
+    .sort((a, b) => a.label.localeCompare(b.label));
