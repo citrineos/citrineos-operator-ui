@@ -1,15 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Form, notification, Spin } from 'antd';
-import { GET_EVSES_FOR_STATION } from './queries';
-import { useCustom } from '@refinedev/core';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { FieldType, GenericForm } from '../../components/form';
-import { RequestStartTransactionRequest } from './model';
-import { Evse } from '../../pages/evses/Evse';
+import { GenericForm } from '../../components/form';
+import {
+  RequestStartTransactionRequest,
+  RequestStartTransactionRequestProps,
+} from './model';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { NEW_IDENTIFIER } from '../../util/consts';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -17,54 +19,13 @@ export interface RemoteStartProps {
 
 export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
   const formRef = useRef();
-  const [formProps] = Form.useForm();
+  const [form] = Form.useForm();
+  const formProps = {
+    form,
+  };
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
-  const [overrides, setOverrides] = useState<any>({});
-
-  const {
-    data: evsesResponse,
-    isLoading: isLoadingEvses,
-    isError: isErrorLoadingEvses,
-  } = useCustom<any>({
-    url: 'http://localhost:8090/v1/graphql',
-    method: 'post',
-    config: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-    meta: {
-      operation: 'GetEvses',
-      gqlQuery: GET_EVSES_FOR_STATION,
-      variables: {
-        stationId: station.id,
-      },
-    },
-  });
-
-  useEffect(() => {
-    setOverrides((prev: any) => {
-      const options = (evsesResponse?.data?.Evses || []).map((evse: Evse) => ({
-        label: evse.id,
-        value: evse.id,
-      }));
-
-      return {
-        ...prev,
-        evseId: {
-          label: 'EVSE ID',
-          name: 'evseId',
-          type: FieldType.select,
-          isRequired: false,
-          selectMode: undefined,
-          selectValues: undefined,
-          options: options,
-        },
-      };
-    });
-  }, [evsesResponse]);
 
   const isRequestValid = (request: RequestStartTransactionRequest) => {
     const errors = validateSync(request);
@@ -124,8 +85,13 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
     }
   };
 
-  if (isLoadingEvses || loading) return <Spin />;
-  if (isErrorLoadingEvses) return <p>Error loading EVSEs</p>;
+  if (loading) return <Spin />;
+
+  const requestStartTransactionRequest = new RequestStartTransactionRequest();
+  const evse = new Evse();
+  evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;
+  requestStartTransactionRequest[RequestStartTransactionRequestProps.evseId] =
+    evse;
 
   return (
     <GenericForm
@@ -133,9 +99,15 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       dtoClass={RequestStartTransactionRequest}
       formProps={formProps}
       onFinish={onFinish}
+      initialValues={requestStartTransactionRequest}
+      parentRecord={requestStartTransactionRequest}
       onValuesChange={onValuesChange}
-      overrides={overrides}
       submitDisabled={!valid}
+      gqlQueryVariablesMap={{
+        [RequestStartTransactionRequestProps.evseId]: {
+          stationId: station.id,
+        },
+      }}
     />
   );
 };

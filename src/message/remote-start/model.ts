@@ -5,6 +5,7 @@ import {
   IsDefined,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
@@ -25,6 +26,9 @@ import { Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
 import { TransformDate } from '../../util/TransformDate';
 import { Dayjs } from 'dayjs';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 
 export class IdTokenType {
   @IsString()
@@ -133,16 +137,29 @@ export class ChargingProfileType {
   chargingSchedule!: ChargingScheduleType[];
 }
 
+export enum RequestStartTransactionRequestProps {
+  evseId = 'evseId',
+  customData = 'customData',
+  groupIdToken = 'groupIdToken',
+  chargingProfile = 'chargingProfile',
+}
+
 export class RequestStartTransactionRequest {
   @IsDefined()
   @ValidateNested()
   @Type(() => IdTokenType)
   idToken!: IdTokenType;
 
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  evseId?: number | null = null;
+  @GqlAssociation({
+    parentIdFieldName: RequestStartTransactionRequestProps.evseId,
+    associatedIdFieldName: EvseProps.databaseId,
+    gqlQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: RequestStartTransactionRequestProps.evseId,
+  })
+  @Type(() => Evse)
+  @IsNotEmpty()
+  evseId!: Evse | null;
 
   @IsOptional()
   @ValidateNested()
