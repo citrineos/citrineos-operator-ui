@@ -103,7 +103,7 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
       mapInstance.panTo({ lat, lng });
 
       // Zoom in on the marker
-      let newZoom = Math.min(currentZoom + 3, 10); // Zoom in by 3 levels, with a max of 20
+      const newZoom = Math.min(currentZoom + 3, 10); // Zoom in by 3 levels, with a max of 20
       mapInstance.setZoom(newZoom);
       setCurrentZoom(newZoom);
 

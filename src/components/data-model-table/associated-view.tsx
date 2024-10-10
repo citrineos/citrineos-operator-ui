@@ -32,18 +32,11 @@ export const AssociatedView = <
   );
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as Object, //eslint-disable-line
   );
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociatedView cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
+
   const useFormProps = useForm<any, any, any>({
-    resource: associatedRecordResourceType,
+    resource: associatedRecordResourceType ?? null,
     id: (parentRecord as any)[parentIdFieldName],
     queryOptions: {
       enabled:
@@ -54,13 +47,23 @@ export const AssociatedView = <
       gqlQuery,
     },
   } as any);
+
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociatedView cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+
   const { queryResult } = useFormProps;
 
   let val;
   if (queryResult?.data?.data) {
     const label = Reflect.getMetadata(
       LABEL_FIELD,
-      associatedRecordClassInstance as Object,
+      associatedRecordClassInstance as Object, //eslint-disable-line
     );
     if (label && queryResult.data.data[label]) {
       val = queryResult.data.data[label];
