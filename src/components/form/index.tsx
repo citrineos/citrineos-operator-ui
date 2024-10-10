@@ -457,7 +457,7 @@ export const renderArrayField = (props: {
             value={form.getFieldValue(fieldPath.namePath)}
             onChange={(newValues: any[]) => {
               form.setFieldsValue({
-                [schema.name]: newValues,
+                [fieldPath.namePath as any]: newValues,
               });
             }}
           />

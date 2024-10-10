@@ -11,7 +11,6 @@ import { GenericDataTable, SelectionType } from './editable';
 import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
-import { getSearchableKeys } from '../../util/decorators/Searcheable';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -126,7 +125,14 @@ export const AssociationSelection = <
     meta,
   };
 
-  const { tableProps, tableQuery: queryResult } = useTable<GetQuery>({
+  const {
+    tableProps,
+    tableQuery: queryResult,
+    searchFormProps,
+    setSorter,
+    setCurrent,
+    setPageSize,
+  } = useTable<GetQuery>({
     ...tableOptions,
   });
 
@@ -162,7 +168,7 @@ export const AssociationSelection = <
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
       setSelectedRows(selectedRows);
 
-      if (onChange && newSelectedRowKeys.length > 0) {
+      if (onChange) {
         onChange(selectedRows);
       }
     },
@@ -227,8 +233,12 @@ export const AssociationSelection = <
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
-              tableProps={{
-                ...tableProps,
+              useTableProps={{
+                tableProps,
+                searchFormProps,
+                setSorter,
+                setCurrent,
+                setPageSize,
                 rowSelection: rowSelection,
               }}
             />

@@ -16,11 +16,10 @@ import isEqual from 'lodash.isequal';
 import type { TableRowSelection } from 'antd/lib/table/interface';
 import { SorterResult } from 'antd/lib/table/interface';
 import { Constructable } from '../../util/Constructable';
-import { NEW_IDENTIFIER } from '../../util/consts';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
-import { getSearchableKeys } from '../../util/decorators/Searcheable';  
+import { getSearchableKeys } from '../../util/decorators/Searcheable';
 
 export interface TableWrapperProps<Model> extends TableProps<Model> {
   dtoClass: Constructable<Model>;
@@ -106,6 +105,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     if (filters) {
       obj['filters'] = filters;
     }
+    console.log('tableOptions', obj);
     return obj;
   }, [filters]);
 
@@ -160,18 +160,12 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
   }, [tableProps.dataSource, primaryKeyFieldName]);
 
   const rowSelection = useMemo(() => {
-    console.log('rowSelection');
     if (!selectable) return undefined;
 
     const handleRowChange = (
       selectedRowKeys: React.Key[],
       selectedRows: any[],
     ) => {
-      console.log(
-        `GenericDataTable: selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows,
-      );
       // Notify parent of selection change
       if (onSelectionChange) {
         onSelectionChange(selectedRows);
@@ -195,9 +189,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
 
   const removeNewRow = () => {
     setDataWithKeys((prev: any) => {
-      return prev.filter(
-        (item: any) => item[primaryKeyFieldName] !== NEW_IDENTIFIER,
-      );
+      return prev.filter((item: any) => item[primaryKeyFieldName] !== 'new');
     });
   };
 
@@ -219,7 +211,6 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     const subscription = searchSubject
       .pipe(debounceTime(250))
       .subscribe((searchValue) => {
-        console.log('Search triggered with term:', searchValue, form);
         searchFormProps.onFinish();
         form.submit();
       });
@@ -251,8 +242,8 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
         ref={ref as any}
         {...tableProps}
         rowSelection={
-          (tableProps && tableProps.rowSelection
-            ? tableProps.rowSelection
+          (passedUseTableProps && passedUseTableProps.rowSelection
+            ? passedUseTableProps.rowSelection
             : rowSelection) as TableRowSelection<Model> | undefined
         }
         dataSource={dataWithKeys}
