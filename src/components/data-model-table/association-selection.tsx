@@ -129,7 +129,7 @@ export const AssociationSelection = <
   const searchableKeys = getSearchableKeys(associatedRecordClass);
 
   if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = (values: any) => {
+    tableOptions['onSearch'] = ((values: any) => {
       const result = [];
       if (!values || !values.search || values.search.length === 0) {
         return [];
@@ -142,7 +142,7 @@ export const AssociationSelection = <
         });
       }
       return result;
-    };
+    }) as any;
   }
 
   const {
