@@ -60,7 +60,7 @@ const renderViewContent = (
   record: any, // todo type
   editable = false,
 ) => {
-  let value = record[field.name];
+  const value = record[field.name];
   const fieldType = field.type;
   const fieldOptions = field.options;
   let parentIdFieldName, associatedIdFieldName, gqlQuery, gqlListQuery;
@@ -73,11 +73,12 @@ const renderViewContent = (
   switch (fieldType) {
     case FieldType.boolean:
       return <StatusIcon value={value} />;
-    case FieldType.select:
+    case FieldType.select: {
       const selectedOption = fieldOptions?.find(
         (option: any) => option.value === value,
       );
       return <GenericTag stringValue={selectedOption?.label || value} />;
+    }
     case FieldType.datetime:
       return <TimestampDisplay isoTimestamp={value} />;
     case FieldType.nestedObject:
@@ -90,7 +91,7 @@ const renderViewContent = (
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlQuery}
             gqlListQuery={gqlListQuery}
-            // editable={editable} todo do we want to have associated detail view show in editable state?
+          // editable={editable} todo do we want to have associated detail view show in editable state?
           />
         </>
       );
@@ -158,16 +159,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 
   const getDataProvider = useDataProvider();
   const dataProvider: DataProvider = getDataProvider();
-  if (!dataProvider) {
-    return (
-      <Alert
-        message="Error: GenericDataTable cannot find DataProvider"
-        type="error"
-      />
-    );
-  }
 
   if (!passedEditable) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { mode } = useContext(ColorModeContext);
 
     const isDarkMode = mode === 'dark';
@@ -179,9 +173,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClass]);
 
   const dtoResourceType = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       CLASS_RESOURCE_TYPE,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -195,9 +189,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClassInstance]);
 
   const dtoGqlListQuery = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       CLASS_GQL_LIST_QUERY,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -211,9 +205,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClassInstance]);
 
   const dtoGqlGetQuery = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       CLASS_GQL_GET_QUERY,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -227,9 +221,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClassInstance]);
 
   const dtoGqlCreateMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       CLASS_GQL_CREATE_MUTATION,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -243,9 +237,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClassInstance]);
 
   const dtoGqlEditMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       CLASS_GQL_EDIT_MUTATION,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -259,9 +253,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClassInstance]);
 
   const dtoGqlDeleteMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       CLASS_GQL_DELETE_MUTATION,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -275,9 +269,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClassInstance]);
 
   const primaryKeyFieldName = useMemo(() => {
-    let result = Reflect.getMetadata(
+    const result = Reflect.getMetadata(
       PRIMARY_KEY_FIELD_NAME,
-      dtoClassInstance as Object,
+      dtoClassInstance as Object, //eslint-disable-line
     );
     if (!result) {
       return (
@@ -410,6 +404,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       }
     });
 
+    // eslint-disable-next-line no-prototype-builtins
     if (valuesClass.hasOwnProperty('createdAt') && !valuesClass.createdAt) {
       valuesClass.createdAt = new Date().toISOString();
     }
@@ -420,6 +415,8 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       editingRecord[primaryKeyFieldName] === NEW_IDENTIFIER
     ) {
       // Handle create operation
+      if (dataProvider == null || dataProvider == undefined) return;
+
       try {
         const response = await (dataProvider as any).create({
           resource: dtoResourceType,
@@ -462,7 +459,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         );
 
         console.log(`Saving values for id: ${id}`, valuesClass);
-        let meta: any = {
+        const meta: any = {
           gqlMutation: dtoGqlEditMutation,
         };
         if (associatedIdFieldName) {
@@ -563,8 +560,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         const isCurrentlyEditing =
           editingRecord &&
           record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
-        let actions;
-        actions = !isCurrentlyEditing
+        const actions = !isCurrentlyEditing
           ? editable
             ? [ColumnAction.EDIT, ColumnAction.DELETE]
             : [ColumnAction.SHOW, ColumnAction.DELETE]
@@ -575,8 +571,8 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             dtoClass={dtoClass}
             onEdit={
               editable &&
-              !isCurrentlyEditing &&
-              record[primaryKeyFieldName] !== NEW_IDENTIFIER
+                !isCurrentlyEditing &&
+                record[primaryKeyFieldName] !== NEW_IDENTIFIER
                 ? onEdit
                 : undefined
             }
@@ -686,6 +682,15 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       })),
     ];
   }, [schema, editingRecord, visibleOptionalFields]) as FieldSchema[];
+
+  if (!dataProvider) {
+    return (
+      <Alert
+        message="Error: GenericDataTable cannot find DataProvider"
+        type="error"
+      />
+    );
+  }
 
   return (
     <Form

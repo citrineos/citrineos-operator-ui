@@ -48,42 +48,28 @@ export const AssociationSelection = <
 
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as Object, //eslint-disable-line
   );
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as Object, //eslint-disable-line
   );
-
-  if (!primaryKeyFieldName) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
+    if (primaryKeyFieldName == null || primaryKeyFieldName == undefined) return;
+
     setNew(
       (parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-        (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER,
+      (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER,
     );
   }, [parentRecord, primaryKeyFieldName]);
 
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
+    if (primaryKeyFieldName == null || primaryKeyFieldName == undefined) return;
     let newVal = '';
     if (Array.isArray(value)) {
       newVal = value
@@ -132,7 +118,7 @@ export const AssociationSelection = <
 
   useEffect(() => {
     setSelectedRowsKeys(
-      selectedRows.map((item: any) => (item as any)[primaryKeyFieldName]),
+      selectedRows.map((item: any) => (item as any)[primaryKeyFieldName ?? 0]),
     );
   }, [selectedRows]);
 
@@ -166,7 +152,7 @@ export const AssociationSelection = <
 
   const rowSelection = useMemo(() => {
     const selectedRowKeys = selectedRows.map(
-      (item: any) => item[primaryKeyFieldName],
+      (item: any) => item[primaryKeyFieldName ?? 0],
     );
     return {
       selectedRowKeys: selectedRowKeys,
@@ -186,13 +172,31 @@ export const AssociationSelection = <
       }
       setTagValue(
         selectedRows
-          .map((item: any) => item[primaryKeyFieldName] || item.id)
+          .map((item: any) => item[primaryKeyFieldName ?? 0] || item.id)
           .join(', '),
       );
       closeDrawer();
     },
-    [selectedRows, primaryKeyFieldName],
+    [selectedRows, primaryKeyFieldName ?? 0],
   );
+
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+
+  if (!primaryKeyFieldName) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
 
   if (queryResult?.isLoading) {
     return <Spin />;

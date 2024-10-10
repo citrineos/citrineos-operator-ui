@@ -68,7 +68,7 @@ export const ActionsColumnEnhanced = ({
 
   const dtoResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    dtoClassInstance as Object,
+    dtoClassInstance as Object, //eslint-disable-line
   );
   if (!dtoResourceType) {
     return (
@@ -80,7 +80,7 @@ export const ActionsColumnEnhanced = ({
   }
   const primaryKeyFieldName = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
-    dtoClassInstance as Object,
+    dtoClassInstance as Object, //eslint-disable-line
   );
   if (!primaryKeyFieldName) {
     return (
@@ -93,7 +93,7 @@ export const ActionsColumnEnhanced = ({
 
   const dtoGqlDeleteMutation = Reflect.getMetadata(
     CLASS_GQL_DELETE_MUTATION,
-    dtoClassInstance as Object,
+    dtoClassInstance as Object, //eslint-disable-line
   );
   if (!dtoGqlDeleteMutation) {
     return (

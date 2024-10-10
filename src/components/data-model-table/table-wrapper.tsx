@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { FieldSchema } from '../form';
 import { SelectionType } from './editable';
 import React, {
@@ -147,6 +148,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
   };
 
   const refreshTable = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     queryResult && queryResult.refetch();
   };
 

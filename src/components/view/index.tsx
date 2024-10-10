@@ -99,9 +99,9 @@ export const GenericParameterizedView = (
   const gqlMutation =
     state === GenericViewState.CREATE ? createMutation : editMutation;
   const gqlDeleteMutation = deleteMutation;
-  if (useFormProps) {
-  }
-  let obj = {
+  // if (useFormProps) {
+  // }
+  const obj = {
     id,
     queryOptions: {
       enabled: state !== GenericViewState.CREATE,
@@ -141,7 +141,7 @@ export const GenericParameterizedView = (
   };
 
   const getValuesFromInput = (input: any) => {
-    for (let property of Object.keys(input)) {
+    for (const property of Object.keys(input)) {
       if (input[property] && input[property].$isDayjsObject) {
         input[property] = dayjs(input[property]).toISOString();
       }

@@ -750,7 +750,7 @@ export const renderField = (props: RenderFieldProps) => {
   }
 
   if (schema.type === FieldType.unknown) {
-    let unknown = unknowns.findFirst(fieldPath);
+    const unknown = unknowns.findFirst(fieldPath);
     if (isNullOrUndefined(unknown)) {
       return modifyUnknowns('registerFirst', fieldPath);
     }
@@ -1069,6 +1069,7 @@ export const GenericForm: ForwardRefExoticComponent<GenericFormProps> =
       method: K,
       ...args: Parameters<Unknowns[K]>
     ) =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setUnknowns((prev) => prev[method](...args));
 

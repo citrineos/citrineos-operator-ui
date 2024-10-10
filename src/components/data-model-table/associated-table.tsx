@@ -32,7 +32,7 @@ export const AssociatedTable = <
   );
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as Object, //eslint-disable-line
   );
   if (!associatedRecordResourceType) {
     return (
