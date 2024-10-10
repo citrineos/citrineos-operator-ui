@@ -11,6 +11,7 @@ import { GenericDataTable, SelectionType } from './editable';
 import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSearchableKeys } from '../../util/decorators/Searcheable';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -124,6 +125,25 @@ export const AssociationSelection = <
     filters: [] as any,
     meta,
   };
+
+  const searchableKeys = getSearchableKeys(associatedRecordClass);
+
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any) => {
+      const result = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
 
   const {
     tableProps,
