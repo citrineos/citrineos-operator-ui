@@ -14,7 +14,6 @@ import {
   InstallCertificateUseEnumType,
 } from '@citrineos/base';
 import { showError, showSucces } from '../util';
-import { ChangeAvailabilityResponse } from '../change-availability';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
 import {
@@ -120,7 +119,7 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
       client.setDataBaseUrl();
       const response = await client.put(
         `/certificates/rootCertificate`,
-        ChangeAvailabilityResponse,
+        InstallCertificateResponse,
         {},
         rootCertificateRequest,
       );
