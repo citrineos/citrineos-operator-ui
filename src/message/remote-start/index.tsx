@@ -12,6 +12,7 @@ import {
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -89,9 +90,13 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
 
   const requestStartTransactionRequest = new RequestStartTransactionRequest();
   const evse = new Evse();
+  const idToken = new IdToken();
   evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;
-  requestStartTransactionRequest[RequestStartTransactionRequestProps.evseId] =
+  idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
+  requestStartTransactionRequest[RequestStartTransactionRequestProps.evse] =
     evse;
+  requestStartTransactionRequest[RequestStartTransactionRequestProps.idToken] =
+    idToken;
 
   return (
     <GenericForm
@@ -104,7 +109,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       onValuesChange={onValuesChange}
       submitDisabled={!valid}
       gqlQueryVariablesMap={{
-        [RequestStartTransactionRequestProps.evseId]: {
+        [RequestStartTransactionRequestProps.evse]: {
           stationId: station.id,
         },
       }}

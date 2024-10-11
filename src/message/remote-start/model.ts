@@ -2,7 +2,6 @@ import {
   ArrayMaxSize,
   ArrayMinSize,
   ArrayNotEmpty,
-  IsDefined,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -29,6 +28,8 @@ import { Dayjs } from 'dayjs';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
+import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
+import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens/queries';
 
 export class IdTokenType {
   @IsString()
@@ -138,28 +139,34 @@ export class ChargingProfileType {
 }
 
 export enum RequestStartTransactionRequestProps {
-  evseId = 'evseId',
+  idToken = 'idToken',
+  evse = 'evse',
   customData = 'customData',
   groupIdToken = 'groupIdToken',
   chargingProfile = 'chargingProfile',
 }
 
 export class RequestStartTransactionRequest {
-  @IsDefined()
-  @ValidateNested()
-  @Type(() => IdTokenType)
-  idToken!: IdTokenType;
+  @GqlAssociation({
+    parentIdFieldName: RequestStartTransactionRequestProps.idToken,
+    associatedIdFieldName: IdTokenProps.id,
+    gqlQuery: ID_TOKENS_LIST_QUERY,
+    gqlListQuery: ID_TOKENS_LIST_QUERY,
+  })
+  @Type(() => IdToken)
+  @IsNotEmpty()
+  idToken!: IdToken | null;
 
   @GqlAssociation({
-    parentIdFieldName: RequestStartTransactionRequestProps.evseId,
+    parentIdFieldName: RequestStartTransactionRequestProps.evse,
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSE_LIST_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: RequestStartTransactionRequestProps.evseId,
+    gqlUseQueryVariablesKey: RequestStartTransactionRequestProps.evse,
   })
   @Type(() => Evse)
   @IsNotEmpty()
-  evseId!: Evse | null;
+  evse!: Evse | null;
 
   @IsOptional()
   @ValidateNested()
