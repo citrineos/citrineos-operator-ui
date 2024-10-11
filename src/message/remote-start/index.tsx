@@ -13,6 +13,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
+import { generateRandomSignedInt } from '../util';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -89,6 +90,9 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
   if (loading) return <Spin />;
 
   const requestStartTransactionRequest = new RequestStartTransactionRequest();
+  requestStartTransactionRequest[
+    RequestStartTransactionRequestProps.requestStartId
+  ] = generateRandomSignedInt();
   const evse = new Evse();
   const idToken = new IdToken();
   evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;
