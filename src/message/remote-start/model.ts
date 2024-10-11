@@ -139,7 +139,7 @@ export class ChargingProfileType {
 }
 
 export enum RequestStartTransactionRequestProps {
-  requestStartId = 'requestStartId',
+  remoteStartId = 'remoteStartId',
   idToken = 'idToken',
   evse = 'evse',
   customData = 'customData',
@@ -151,7 +151,7 @@ export class RequestStartTransactionRequest {
   @IsInt()
   @IsPositive()
   @IsNotEmpty()
-  requestStartId!: number;
+  remoteStartId!: number;
 
   @GqlAssociation({
     parentIdFieldName: RequestStartTransactionRequestProps.idToken,

@@ -91,7 +91,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
 
   const requestStartTransactionRequest = new RequestStartTransactionRequest();
   requestStartTransactionRequest[
-    RequestStartTransactionRequestProps.requestStartId
+    RequestStartTransactionRequestProps.remoteStartId
   ] = generateRandomSignedInt();
   const evse = new Evse();
   const idToken = new IdToken();
