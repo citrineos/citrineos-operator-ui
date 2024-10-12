@@ -1,6 +1,9 @@
 name: Build
 
 on:
+  push:
+    branches:
+      - feature/operator-ui-github-actions
   pull_request:
 
 concurrency:
