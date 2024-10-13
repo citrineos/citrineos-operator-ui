@@ -14,7 +14,7 @@ import {
 import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
 import { FieldPath } from '../../components/form/state/fieldpath';
 import { plainToInstance, Type } from 'class-transformer';
-import { generateRandomLong, triggerMessageAndHandleResponse } from '../util';
+import { generateRandomSignedInt, triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 
@@ -73,7 +73,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
 
   const [parentRecord, setParentRecord] = useState(
     new GetBaseReportRequest({
-      [GetBaseReportRequestProps.requestId]: generateRandomLong(),
+      [GetBaseReportRequestProps.requestId]: generateRandomSignedInt(),
     }),
   );
 

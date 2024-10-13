@@ -98,3 +98,27 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
     padding: 0 !important;
   }
 }
+
+.table-wrapper {
+  .search-form {
+    .ant-input {
+      background: transparent;
+      border: 0;
+    }
+
+    .ant-row {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .ant-form-item {
+      padding: 0 20px 0 0;
+    }
+
+    .search-icon{
+      transform: translateX(-20px);
+    }
+  }
+}
+

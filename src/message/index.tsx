@@ -1,7 +1,7 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../components/custom-actions';
-import { ChargingStations } from '../graphql/schema.types';
+import { Certificates, ChargingStations } from '../graphql/schema.types';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -33,7 +33,7 @@ import {
   CertificateSignedProps,
 } from './certificate-signed';
 
-const actionMap: {
+const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
@@ -57,7 +57,7 @@ const actionMap: {
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
-  Object.entries(actionMap).map(
+  Object.entries(chargingStationActionMap).map(
     ([label, Component]) =>
       ({
         label,

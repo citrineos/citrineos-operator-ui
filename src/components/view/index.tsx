@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Create,
   DeleteButton,
@@ -114,9 +114,11 @@ export const GenericParameterizedView = (
   if (resourceType) {
     obj.resource = resourceType;
   }
+  const [parentRecord, setParentRecord] = useState<any>(
+    plainToInstance(dtoClass, {}),
+  );
+
   const { formProps, saveButtonProps, queryResult, formLoading, form } =
-    // useFormProps
-    //   ? useFormProps
     useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
   let WrapperComponent;
   switch (state) {
@@ -136,6 +138,7 @@ export const GenericParameterizedView = (
       const instance = plainToInstance(dtoClass, queryResult.data.data, {
         excludeExtraneousValues: false,
       });
+      setParentRecord(instance);
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };
@@ -200,6 +203,7 @@ export const GenericParameterizedView = (
         ref={formRef as any}
         formProps={formProps}
         dtoClass={dtoClass}
+        parentRecord={parentRecord}
         overrides={overrides}
         onFinish={onFinish}
         disabled={state === GenericViewState.SHOW}
