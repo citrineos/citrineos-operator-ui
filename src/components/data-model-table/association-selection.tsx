@@ -12,6 +12,7 @@ import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { get } from 'http';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -42,6 +43,15 @@ export const AssociationSelection = <
     gqlQueryVariables,
   } = props;
 
+  const lastSegment = document.location.pathname
+    .replace(/\//g, '')
+    .replace(/-/g, '_');
+  const storageKey = (
+    lastSegment
+      ? `${lastSegment}_${associatedRecordClass.name}`
+      : associatedRecordClass.name
+  ).toLowerCase();
+
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
     {},
@@ -49,7 +59,7 @@ export const AssociationSelection = <
 
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
   if (!associatedRecordResourceType) {
     return (
@@ -62,7 +72,7 @@ export const AssociationSelection = <
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
 
   if (!primaryKeyFieldName) {
@@ -89,19 +99,8 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    let newVal = '';
-    if (Array.isArray(value)) {
-      newVal = value
-        .map((v: any) => (v as any)[primaryKeyFieldName])
-        .join(', ');
-    } else {
-      newVal = value
-        ? JSON.stringify((value as any)[associatedIdFieldName])
-        : '';
-    }
-    setTagValue(
-      isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
-    );
+    const selectedRowsID = getUniqueIds();
+    setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
   const meta: any = {
@@ -186,7 +185,11 @@ export const AssociationSelection = <
 
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
-      setSelectedRows(selectedRows);
+      appendToSessionStorage(storageKey, selectedRows);
+      const storedItems = sessionStorage.getItem(storageKey);
+      if (storedItems) {
+        setSelectedRows(JSON.parse(storedItems));
+      }
 
       if (onChange) {
         onChange(selectedRows);
@@ -194,6 +197,40 @@ export const AssociationSelection = <
     },
     [onChange],
   );
+
+  const appendToSessionStorage = (key: string, newItem: any) => {
+    const existingItems = sessionStorage.getItem(key) || '[]';
+    const itemsArray = existingItems ? JSON.parse(existingItems) : [];
+
+    // Check if the item already exists in the index
+    const index = getUniqueIds();
+    if (index.includes(newItem[0].id)) {
+      return;
+    }
+
+    itemsArray.push(newItem);
+    sessionStorage.setItem(key, JSON.stringify(itemsArray));
+  };
+
+  const getUniqueIds = () => {
+    const ids: any[] = [];
+    const data = JSON.parse(sessionStorage.getItem(storageKey) || '[]');
+
+    // Iterate over the data and collect all IDs
+    data.forEach((item: any) => {
+      if (Array.isArray(item)) {
+        item.forEach((subItem) => {
+          if (subItem.id) {
+            ids.push(subItem.id);
+          }
+        });
+      } else if (item.id) {
+        ids.push(item.id);
+      }
+    });
+
+    return ids.join(',');
+  };
 
   const rowSelection = useMemo(() => {
     const selectedRowKeys = selectedRows.map(
@@ -215,11 +252,9 @@ export const AssociationSelection = <
       if (onChange) {
         onChange(selectedRows);
       }
-      setTagValue(
-        selectedRows
-          .map((item: any) => item[primaryKeyFieldName] || item.id)
-          .join(', '),
-      );
+
+      setTagValue(getUniqueIds());
+
       closeDrawer();
     },
     [selectedRows, primaryKeyFieldName],
@@ -250,6 +285,10 @@ export const AssociationSelection = <
         }
         expandedContent={({ closeDrawer }) => (
           <>
+            <p>
+              Selected Items:
+              {getUniqueIds()}
+            </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
