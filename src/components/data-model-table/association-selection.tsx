@@ -149,7 +149,7 @@ export const AssociationSelection = <
     tableProps,
     tableQuery: queryResult,
     searchFormProps,
-    setSorter,
+    setSorters,
     setCurrent,
     setPageSize,
   } = useTable<GetQuery>({
@@ -256,7 +256,7 @@ export const AssociationSelection = <
               useTableProps={{
                 tableProps,
                 searchFormProps,
-                setSorter,
+                setSorters,
                 setCurrent,
                 setPageSize,
                 rowSelection: rowSelection,
