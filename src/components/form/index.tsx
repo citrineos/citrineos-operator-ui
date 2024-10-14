@@ -31,7 +31,7 @@ import {
 } from '../../util/decorators/GqlAssociation';
 import { HIDDEN } from '../../util/decorators/Hidden';
 
-import { getProperty, omitProperties, setProperty } from '../../util/objects';
+import { getProperty, omitProperties } from '../../util/objects';
 import { Flags } from './state/flags';
 import {
   SupportedUnknownType,
@@ -44,7 +44,7 @@ import { CUSTOM_FORM_RENDER } from '../../util/decorators/CustomFormRender';
 import { AssociationSelection } from '../data-model-table/association-selection';
 import { SelectionType } from '../data-model-table/editable';
 import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
-import { ColumnGroupType, ColumnType } from 'antd/lib/table';
+import { isSortable } from '../../util/decorators/Sortable';
 
 export enum ReflectType {
   array,
@@ -82,9 +82,7 @@ export interface FieldSelectOption {
   value: string;
 }
 
-export interface FieldSchema<Model = any>
-  extends ColumnGroupType<Model>,
-    ColumnType<Model> {
+export interface FieldSchema {
   label: string;
   name: string;
   type: FieldType;
@@ -96,6 +94,7 @@ export interface FieldSchema<Model = any>
   dtoClass?: Constructable<any>;
   customConstructor?: () => any;
   gqlAssociationProps?: GqlAssociationProps;
+  sorter: boolean;
 }
 
 export interface DynamicFieldSchema extends FieldSchema {
@@ -127,6 +126,7 @@ export interface GenericProps {
 export interface GenericFormProps extends GenericProps {
   ref?: React.Ref<FormInstance>;
   initialValues?: any;
+  onValuesChange?: (values: any) => void;
   gqlQueryVariablesMap?: any;
 }
 
@@ -218,8 +218,10 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.customRender,
       customRender: customFormRender,
       isRequired: requiredFields.includes(key),
-    } as unknown as FieldSchema;
+    };
   }
+
+  const sorter = isSortable(instance.constructor, key);
 
   const metadata = Reflect.getMetadata('design:type', instance, key);
   let type, fieldType;
@@ -269,6 +271,7 @@ export const getSchemaForInstanceAndKey = (
       dtoClass: classTransformerType,
       customConstructor,
       gqlAssociationProps,
+      sorter,
     } as unknown as FieldSchema;
   }
 
@@ -295,6 +298,7 @@ export const getSchemaForInstanceAndKey = (
       dtoClass: classTransformerType,
       customConstructor,
       gqlAssociationProps,
+      sorter,
     } as unknown as FieldSchema;
   }
 
@@ -304,6 +308,7 @@ export const getSchemaForInstanceAndKey = (
       name: key,
       type: FieldType.unknownProperty,
       isRequired: requiredFields.includes(key),
+      sorter,
     } as unknown as FieldSchema;
   }
 
@@ -313,6 +318,7 @@ export const getSchemaForInstanceAndKey = (
       name: key,
       type: FieldType.unknownProperties,
       isRequired: requiredFields.includes(key),
+      sorter,
     } as unknown as FieldSchema;
   }
 
@@ -324,6 +330,7 @@ export const getSchemaForInstanceAndKey = (
     selectMode: type === ReflectType.array ? SelectMode.multiple : undefined,
     selectValues: type === ReflectType.array ? instance[key] : undefined,
     options: options,
+    sorter,
   } as unknown as FieldSchema;
 };
 
@@ -445,11 +452,13 @@ export const renderArrayField = (props: {
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlListQuery}
             gqlQueryVariables={gqlQueryVariables}
-            parentRecord={form.getFieldValue(fieldPath.keyPath)}
+            parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
-            value={form.getFieldValue(fieldPath.keyPath)}
+            value={form.getFieldValue(fieldPath.namePath)}
             onChange={(newValues: any[]) => {
-              console.log('newValues', newValues);
+              form.setFieldsValue({
+                [schema.name]: newValues,
+              });
             }}
           />
         </Form.Item>
@@ -518,7 +527,7 @@ export const renderArrayField = (props: {
                             name: String(field.name),
                             type: FieldType.input,
                             isRequired: true,
-                          } as FieldSchema,
+                          },
                           preFieldPath: fieldPath.clearNamePath(),
                           disabled: disabled,
                           visibleOptionalFields: visibleOptionalFields,
@@ -621,13 +630,13 @@ const renderNestedObjectField = (props: {
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlListQuery}
             gqlQueryVariables={gqlQueryVariables}
-            parentRecord={form.getFieldValue(fieldPath.keyPath)}
+            parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
-            value={form.getFieldValue(fieldPath.keyPath)}
+            value={form.getFieldValue(fieldPath.namePath)}
             onChange={(newValues: any[]) => {
-              const currentValues = form.getFieldsValue(true) || {};
-              setProperty(currentValues, fieldPath.keyPath, newValues[0]);
-              form.setFieldsValue(currentValues);
+              form.setFieldsValue({
+                [fieldPath.namePath as any]: newValues[0],
+              });
             }}
           />
         </Form.Item>
