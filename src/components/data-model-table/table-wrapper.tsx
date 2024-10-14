@@ -106,7 +106,6 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     if (filters) {
       obj['filters'] = filters;
     }
-    console.log('tableOptions', obj);
     return obj;
   }, [filters]);
 
@@ -114,7 +113,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     tableProps: defaultTableProps,
     tableQuery: defaultQueryResult,
     searchFormProps: defaultSearchFormProps,
-    setSorter: defaultSetSorter,
+    setSorters: defaultSetSorters,
     setCurrent: defaultSetCurrent,
     setPageSize: defaultSetPageSize,
   } = useTable(tableOptions as any);
@@ -130,8 +129,8 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
       ? passedUseTableProps.searchFormProps
       : defaultSearchFormProps
   ) as any;
-  const setSorter = (
-    passedUseTableProps ? passedUseTableProps.setSorter : defaultSetSorter
+  const setSorters = (
+    passedUseTableProps ? passedUseTableProps.setSorters : defaultSetSorters
   ) as any;
   const setCurrent = (
     passedUseTableProps ? passedUseTableProps.setCurrent : defaultSetCurrent
@@ -272,7 +271,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
 
           const sort = sorter as SorterResult<any>;
           if (sort.field && sort.order) {
-            setSorter([
+            setSorters([
               {
                 field: sort.field as string,
                 order: sort.order === 'ascend' ? 'asc' : 'desc',
@@ -280,7 +279,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
             ]);
           } else {
             // Clear sorting if no valid sort is applied
-            setSorter([]);
+            setSorters([]);
           }
         }}
         className="editable-table"
