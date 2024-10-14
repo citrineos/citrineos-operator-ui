@@ -12,7 +12,8 @@ import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
-import { get } from 'http';
+import { useDispatch, useSelector } from 'react-redux';
+import { addModelsToStorage, selectModelsByKey, getAllUniqueIDs } from '../../redux/counterSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -51,6 +52,9 @@ export const AssociationSelection = <
       ? `${lastSegment}_${associatedRecordClass.name}`
       : associatedRecordClass.name
   ).toLowerCase();
+  const dispatch = useDispatch();
+  const models = useSelector(selectModelsByKey(storageKey));
+  const uniqueIds = useSelector(getAllUniqueIDs(storageKey)) || '';
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -99,7 +103,7 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    const selectedRowsID = getUniqueIds();
+    const selectedRowsID = uniqueIds;
     setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
@@ -185,52 +189,18 @@ export const AssociationSelection = <
 
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
-      appendToSessionStorage(storageKey, selectedRows);
-      const storedItems = sessionStorage.getItem(storageKey);
-      if (storedItems) {
-        setSelectedRows(JSON.parse(storedItems));
+      dispatch(addModelsToStorage({ storageKey, selectedRows: selectedRows as any }));
+
+      if (models !== undefined) {
+        setSelectedRows(JSON.parse(models));
       }
 
       if (onChange) {
         onChange(selectedRows);
       }
     },
-    [onChange],
+    [onChange, models],
   );
-
-  const appendToSessionStorage = (key: string, newItem: any) => {
-    const existingItems = sessionStorage.getItem(key) || '[]';
-    const itemsArray = existingItems ? JSON.parse(existingItems) : [];
-
-    // Check if the item already exists in the index
-    const index = getUniqueIds();
-    if (index.includes(newItem[0].id)) {
-      return;
-    }
-
-    itemsArray.push(newItem);
-    sessionStorage.setItem(key, JSON.stringify(itemsArray));
-  };
-
-  const getUniqueIds = () => {
-    const ids: any[] = [];
-    const data = JSON.parse(sessionStorage.getItem(storageKey) || '[]');
-
-    // Iterate over the data and collect all IDs
-    data.forEach((item: any) => {
-      if (Array.isArray(item)) {
-        item.forEach((subItem) => {
-          if (subItem.id) {
-            ids.push(subItem.id);
-          }
-        });
-      } else if (item.id) {
-        ids.push(item.id);
-      }
-    });
-
-    return ids.join(',');
-  };
 
   const rowSelection = useMemo(() => {
     const selectedRowKeys = selectedRows.map(
@@ -253,7 +223,7 @@ export const AssociationSelection = <
         onChange(selectedRows);
       }
 
-      setTagValue(getUniqueIds());
+      setTagValue(uniqueIds);
 
       closeDrawer();
     },
@@ -286,8 +256,8 @@ export const AssociationSelection = <
         expandedContent={({ closeDrawer }) => (
           <>
             <p>
-              Selected Items:
-              {getUniqueIds()}
+              Selected ID(s):
+              {uniqueIds}
             </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
