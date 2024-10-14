@@ -148,8 +148,15 @@ export enum RequestStartTransactionRequestProps {
 }
 
 export class RequestStartTransactionRequest {
+  @GqlAssociation({
+    parentIdFieldName: RequestStartTransactionRequestProps.evse,
+    associatedIdFieldName: EvseProps.databaseId,
+    gqlQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: RequestStartTransactionRequestProps.evse,
+  })
   @IsInt()
-  @IsPositive()
+  @Min(0)
   @IsNotEmpty()
   remoteStartId!: number;
 

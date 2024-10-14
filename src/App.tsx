@@ -61,6 +61,10 @@ import {
   routes as ChargingStationsRoutes,
 } from './pages/charging-stations';
 import {
+  resources as chargingStationSequencesResources,
+  routes as ChargingStationSequencesRoutes,
+} from './pages/charging-station-sequences';
+import {
   resources as locationsResources,
   routes as LocationsRoutes,
 } from './pages/locations';
@@ -209,6 +213,7 @@ const resources = [
   },
   ...bootsResources,
   ...chargingStationsResources,
+  ...chargingStationSequencesResources,
   ...locationsResources,
   ...statusNotificationsResources,
   ...tariffsResources,
@@ -313,6 +318,10 @@ function App() {
                     <Route
                       path="/charging-stations/*"
                       element={<ChargingStationsRoutes />}
+                    />
+                    <Route
+                      path="/charging-station-sequences/*"
+                      element={<ChargingStationSequencesRoutes />}
                     />
                     <Route path="/locations/*" element={<LocationsRoutes />} />
                     <Route

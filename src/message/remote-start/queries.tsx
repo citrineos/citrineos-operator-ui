@@ -13,3 +13,13 @@ export const GET_EVSES_FOR_STATION = gql`
     }
   }
 `;
+
+export const GET_REMOTE_START_REQUEST_ID_FOR_STATION = gql`
+  query GetRemoteStartRequestId($stationId: String!) {
+    ChargingStationSequences(
+      where: { stationId: { _eq: $stationId }, type: { _eq: "remoteStartId" } }
+    ) {
+      value
+    }
+  }
+`;
