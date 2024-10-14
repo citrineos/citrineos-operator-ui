@@ -242,7 +242,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
 
   return (
     <GenericForm
-      ref={formRef}
+      ref={formRef as any}
       formProps={formProps}
       dtoClass={GetVariablesRequest}
       onFinish={handleSubmit}
