@@ -20,6 +20,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { NEW_IDENTIFIER } from '../../util/consts';
 
 export interface TableWrapperProps<Model> extends TableProps<Model> {
   dtoClass: Constructable<Model>;
@@ -189,7 +190,9 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
 
   const removeNewRow = () => {
     setDataWithKeys((prev: any) => {
-      return prev.filter((item: any) => item[primaryKeyFieldName] !== 'new');
+      return prev.filter(
+        (item: any) => item[primaryKeyFieldName] !== NEW_IDENTIFIER,
+      );
     });
   };
 
