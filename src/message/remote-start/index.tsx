@@ -1,19 +1,16 @@
-import React, { useRef, useState } from 'react';
-import { Form, notification, Spin } from 'antd';
-import { BaseRestClient } from '../../util/BaseRestClient';
-import { MessageConfirmation } from '../MessageConfirmation';
-import { plainToInstance } from 'class-transformer';
-import { validateSync } from 'class-validator';
-import { GenericForm } from '../../components/form';
-import {
-  RequestStartTransactionRequest,
-  RequestStartTransactionRequestProps,
-} from './model';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
-import { NEW_IDENTIFIER } from '../../util/consts';
-import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
-import { generateRandomSignedInt } from '../util';
+import React, {useRef, useState} from 'react';
+import {Form, notification, Spin} from 'antd';
+import {BaseRestClient} from '../../util/BaseRestClient';
+import {MessageConfirmation} from '../MessageConfirmation';
+import {plainToInstance} from 'class-transformer';
+import {validateSync} from 'class-validator';
+import {GenericForm} from '../../components/form';
+import {RequestStartTransactionRequest, RequestStartTransactionRequestProps,} from './model';
+import {ChargingStation} from '../../pages/charging-stations/ChargingStation';
+import {Evse, EvseProps} from '../../pages/evses/Evse';
+import {NEW_IDENTIFIER} from '../../util/consts';
+import {IdToken, IdTokenProps} from '../../pages/id-tokens/IdToken';
+import {generateRandomSignedInt} from '../util';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -46,7 +43,19 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       excludeExtraneousValues: false,
     });
     if (isRequestValid(request)) {
-      requestStartTransaction(request);
+      (request as any).evseId =
+        request[RequestStartTransactionRequestProps.evse][EvseProps.id];
+      delete request[RequestStartTransactionRequestProps.evse];
+      request[RequestStartTransactionRequestProps.idToken] = {
+        idToken:
+          request[RequestStartTransactionRequestProps.idToken][
+            IdTokenProps.idToken
+          ],
+        type: request[RequestStartTransactionRequestProps.idToken][
+          IdTokenProps.type
+        ],
+      } as any;
+      requestStartTransaction(request).then();
     }
   };
 
