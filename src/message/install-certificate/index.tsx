@@ -14,7 +14,6 @@ import {
   InstallCertificateUseEnumType,
 } from '@citrineos/base';
 import { showError, showSucces } from '../util';
-import { ChangeAvailabilityResponse } from '../change-availability';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
 import {
@@ -64,9 +63,9 @@ export class RootCertificateRequest {
   @IsNotEmpty()
   stationId!: string;
 
-  @IsEnum(InstallCertificateStatusEnumType)
+  @IsEnum(InstallCertificateUseEnumType)
   @IsNotEmpty()
-  certificateType!: InstallCertificateStatusEnumType;
+  certificateType!: InstallCertificateUseEnumType;
 
   @IsString()
   @IsNotEmpty()
@@ -95,7 +94,7 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
 
   const installCertificateData = new InstallCertificateData();
   const installCertificate = new Certificate();
-  installCertificate[CertificateProps.id] = NEW_IDENTIFIER as number;
+  installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
   installCertificateData[InstallCertificateDataProps.certificate] =
     installCertificate;
 
@@ -108,19 +107,19 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
       plainValues,
     );
     const certificate: Certificate =
-      data[InstallCertificateDataProps.certificate];
+      data[InstallCertificateDataProps.certificate]!;
     const rootCertificateRequest = new RootCertificateRequest();
     rootCertificateRequest.stationId = station.id;
     rootCertificateRequest.certificateType = data.certificateType;
     rootCertificateRequest.tenantId = '1';
-    rootCertificateRequest.fileId = certificate.privateKeyFileId;
-    debugger;
+    rootCertificateRequest.fileId = certificate.privateKeyFileId!;
+
     try {
       const client = new BaseRestClient();
       client.setDataBaseUrl();
       const response = await client.put(
         `/certificates/rootCertificate`,
-        ChangeAvailabilityResponse,
+        InstallCertificateResponse,
         {},
         rootCertificateRequest,
       );

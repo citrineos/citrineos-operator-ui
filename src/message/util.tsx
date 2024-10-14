@@ -1,5 +1,4 @@
 import { BaseRestClient } from '../util/BaseRestClient';
-import { TriggerMessageResponse } from './trigger-message';
 import { Constructable } from '../util/Constructable';
 import { notification } from 'antd';
 
@@ -33,7 +32,7 @@ export const triggerMessageAndHandleResponse = async <T,>(
 ) => {
   try {
     const client = new BaseRestClient();
-    const response = await client.post(url, TriggerMessageResponse, {}, data);
+    const response = await client.post(url, responseClass, {}, data);
 
     // todo reuse handle response!
     if (responseSuccessCheck(response)) {

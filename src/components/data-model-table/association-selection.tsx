@@ -126,7 +126,33 @@ export const AssociationSelection = <
     meta,
   };
 
-  const { tableProps, tableQuery: queryResult } = useTable<GetQuery>({
+  const searchableKeys = getSearchableKeys(associatedRecordClass);
+
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any) => {
+      const result = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
+
+  const {
+    tableProps,
+    tableQuery: queryResult,
+    searchFormProps,
+    setSorters,
+    setCurrent,
+    setPageSize,
+  } = useTable<GetQuery>({
     ...tableOptions,
   });
 
@@ -162,7 +188,7 @@ export const AssociationSelection = <
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
       setSelectedRows(selectedRows);
 
-      if (onChange && newSelectedRowKeys.length > 0) {
+      if (onChange) {
         onChange(selectedRows);
       }
     },
@@ -227,8 +253,12 @@ export const AssociationSelection = <
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
-              tableProps={{
-                ...tableProps,
+              useTableProps={{
+                tableProps,
+                searchFormProps,
+                setSorters,
+                setCurrent,
+                setPageSize,
                 rowSelection: rowSelection,
               }}
             />

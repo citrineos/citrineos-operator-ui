@@ -6,10 +6,7 @@ import { SelectionType } from '../../components/data-model-table/editable';
 import { plainToInstance, Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
-import {
-  ChangeAvailabilityStatusEnumType,
-  OperationalStatusEnumType,
-} from '@citrineos/base';
+import { OperationalStatusEnumType } from '@citrineos/base';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
 import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
@@ -46,7 +43,7 @@ export class ChangeAvailabilityRequest {
 
   constructor() {
     Object.assign(this, {
-      [ChangeAvailabilityRequestProps.evse]: 'new',
+      [ChangeAvailabilityRequestProps.evse]: NEW_IDENTIFIER,
       [ChangeAvailabilityRequestProps.operationalStatus]: '',
     });
   }
@@ -79,16 +76,14 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
         id: evse[EvseProps.id],
         // customData: todo,
         connectorId: evse[EvseProps.connectorId],
-      }
+      };
     }
 
     await triggerMessageAndHandleResponse(
       `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
       MessageConfirmation,
       data,
-      (response: MessageConfirmation) =>
-        response &&
-        response.success
+      (response: MessageConfirmation) => response && response.success,
     );
   };
 
@@ -124,10 +119,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       initialValues={parentRecord}
       onValuesChange={handleFormChange}
     >
-      <Form.Item
-        label='EVSE'
-        name={ChangeAvailabilityRequestProps.evse}
-      >
+      <Form.Item label="EVSE" name={ChangeAvailabilityRequestProps.evse}>
         <AssociationSelection
           selectable={SelectionType.SINGLE}
           parentIdFieldName={ChangeAvailabilityRequestProps.evse}

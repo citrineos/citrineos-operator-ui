@@ -16,11 +16,11 @@ import isEqual from 'lodash.isequal';
 import type { TableRowSelection } from 'antd/lib/table/interface';
 import { SorterResult } from 'antd/lib/table/interface';
 import { Constructable } from '../../util/Constructable';
-import { NEW_IDENTIFIER } from '../../util/consts';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
-import { getSearchableKeys } from '../../util/decorators/Searcheable';  
+import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { NEW_IDENTIFIER } from '../../util/consts';
 
 export interface TableWrapperProps<Model> extends TableProps<Model> {
   dtoClass: Constructable<Model>;
@@ -113,7 +113,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     tableProps: defaultTableProps,
     tableQuery: defaultQueryResult,
     searchFormProps: defaultSearchFormProps,
-    setSorter: defaultSetSorter,
+    setSorters: defaultSetSorters,
     setCurrent: defaultSetCurrent,
     setPageSize: defaultSetPageSize,
   } = useTable(tableOptions as any);
@@ -129,8 +129,8 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
       ? passedUseTableProps.searchFormProps
       : defaultSearchFormProps
   ) as any;
-  const setSorter = (
-    passedUseTableProps ? passedUseTableProps.setSorter : defaultSetSorter
+  const setSorters = (
+    passedUseTableProps ? passedUseTableProps.setSorters : defaultSetSorters
   ) as any;
   const setCurrent = (
     passedUseTableProps ? passedUseTableProps.setCurrent : defaultSetCurrent
@@ -160,18 +160,12 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
   }, [tableProps.dataSource, primaryKeyFieldName]);
 
   const rowSelection = useMemo(() => {
-    console.log('rowSelection');
     if (!selectable) return undefined;
 
     const handleRowChange = (
       selectedRowKeys: React.Key[],
       selectedRows: any[],
     ) => {
-      console.log(
-        `GenericDataTable: selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows,
-      );
       // Notify parent of selection change
       if (onSelectionChange) {
         onSelectionChange(selectedRows);
@@ -219,7 +213,6 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     const subscription = searchSubject
       .pipe(debounceTime(250))
       .subscribe((searchValue) => {
-        console.log('Search triggered with term:', searchValue, form);
         searchFormProps.onFinish();
         form.submit();
       });
@@ -251,8 +244,8 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
         ref={ref as any}
         {...tableProps}
         rowSelection={
-          (tableProps && tableProps.rowSelection
-            ? tableProps.rowSelection
+          (passedUseTableProps && passedUseTableProps.rowSelection
+            ? passedUseTableProps.rowSelection
             : rowSelection) as TableRowSelection<Model> | undefined
         }
         dataSource={dataWithKeys}
@@ -278,7 +271,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
 
           const sort = sorter as SorterResult<any>;
           if (sort.field && sort.order) {
-            setSorter([
+            setSorters([
               {
                 field: sort.field as string,
                 order: sort.order === 'ascend' ? 'asc' : 'desc',
@@ -286,7 +279,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
             ]);
           } else {
             // Clear sorting if no valid sort is applied
-            setSorter([]);
+            setSorters([]);
           }
         }}
         className="editable-table"
