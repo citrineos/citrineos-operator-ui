@@ -45,7 +45,6 @@ export const selectModelsByKey = (storageKey: string) =>
     (models: any) => models[storageKey],
 );
 
-// Selector to get all unique ids across all models
 export const getAllUniqueIDs = (storageKey: string) =>createSelector(
     (state: RootState) => state.counter.models,
     (models: any) =>
