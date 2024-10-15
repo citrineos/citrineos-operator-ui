@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
@@ -194,9 +194,9 @@ export const AssociationSelection = <
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
       dispatch(
-        addModelsToStorage({ storageKey, selectedRows: selectedRows as any }),
+        addModelsToStorage({ storageKey, selectedRows: JSON.stringify(instanceToPlain(selectedRows)) }),
       );
-
+      
       if (models !== undefined) {
         setSelectedRows(JSON.parse(models));
       }

@@ -1,5 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
+import { instanceToPlain } from 'class-transformer';
 
 interface Model {
   id: string;
@@ -7,7 +8,7 @@ interface Model {
 }
 
 interface SelectionState {
-  models: Record<string, string>;
+  models: { [key: string]: any };
 }
 
 const initialState: SelectionState = {
@@ -20,21 +21,24 @@ const selectionSlice = createSlice({
   reducers: {
     addModelsToStorage: (
       state,
-      action: PayloadAction<{ storageKey: string; selectedRows: Model[] }>,
+      action: PayloadAction<{ storageKey: string; selectedRows: string }>,
     ) => {
       const { storageKey, selectedRows } = action.payload;
-
       const existingModelsString = state.models[storageKey];
       const existingModels: Model[] = existingModelsString
         ? JSON.parse(existingModelsString)
-        : [];
+        : JSON.parse(selectedRows);
 
-      selectedRows.forEach((row) => {
+      const selectedRowsArray: Model[] = JSON.parse(selectedRows);
+      selectedRowsArray.forEach((row) => {
         if (!existingModels.some((model) => model.id === row.id)) {
           existingModels.push(row);
         }
       });
-      state.models[storageKey] = JSON.stringify(existingModels);
+
+      state.models[storageKey] = JSON.stringify(
+        instanceToPlain(existingModels),
+      );
     },
   },
 });
