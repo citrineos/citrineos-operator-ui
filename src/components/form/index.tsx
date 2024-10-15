@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  ForwardRefExoticComponent,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import {
   Button,
   Col,
@@ -771,86 +766,88 @@ export const tryRenderOptionalButton = (
     </Button>
   );
 
-export const GenericForm: ForwardRefExoticComponent<GenericFormProps> =
-  forwardRef(function GenericForm(props: GenericFormProps, ref) {
-    const {
-      formProps,
-      dtoClass,
-      overrides,
-      onFinish,
-      onValuesChange,
-      disabled = false,
-      initialValues = undefined,
-      submitDisabled = false,
-      parentRecord,
-      gqlQueryVariablesMap,
-    } = props;
+export const GenericForm = forwardRef(function GenericForm(
+  props: GenericFormProps,
+  ref,
+) {
+  const {
+    formProps,
+    dtoClass,
+    overrides,
+    onFinish,
+    onValuesChange,
+    disabled = false,
+    initialValues = undefined,
+    submitDisabled = false,
+    parentRecord,
+    gqlQueryVariablesMap,
+  } = props;
 
-    const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
-      Flags.empty(),
+  const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
+    Flags.empty(),
+  );
+  const enableOptionalField = (path: FieldPath) =>
+    setVisibleOptionalFields((prev) => prev.enable(path.key));
+  const toggleOptionalField = (path: FieldPath) =>
+    setVisibleOptionalFields((prev) => prev.toggle(path.key));
+
+  const [unknowns, setUnknowns] = useState<Unknowns>(Unknowns.empty());
+  const modifyUnknowns = <K extends UnknownsActions>(
+    method: K,
+    ...args: Parameters<Unknowns[K]>
+  ) => {
+    // @ts-expect-error spread error
+    return setUnknowns((prev) => prev[method](...args));
+  };
+
+  const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
+    ...field,
+    ...(overrides && overrides[field.name as FieldSchemaKeys]
+      ? overrides[field.name as FieldSchemaKeys]
+      : {}),
+  }));
+
+  const setFieldsValues = (values: any) => {
+    schema.forEach((fs) =>
+      recreateState(values, fs, enableOptionalField, modifyUnknowns),
     );
-    const enableOptionalField = (path: FieldPath) =>
-      setVisibleOptionalFields((prev) => prev.enable(path.key));
-    const toggleOptionalField = (path: FieldPath) =>
-      setVisibleOptionalFields((prev) => prev.toggle(path.key));
+    formProps.form.setFieldsValue(values);
+  };
 
-    const [unknowns, setUnknowns] = useState<Unknowns>(Unknowns.empty());
-    const modifyUnknowns = <K extends UnknownsActions>(
-      method: K,
-      ...args: Parameters<Unknowns[K]>
-    ) => {
-      // @ts-expect-error spread error
-      return setUnknowns((prev) => prev[method](...args));
-    };
+  useImperativeHandle(ref, (() => ({
+    setFieldsValues,
+  })) as any);
 
-    const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
-      ...field,
-      ...(overrides && overrides[field.name as FieldSchemaKeys]
-        ? overrides[field.name as FieldSchemaKeys]
-        : {}),
-    }));
-
-    const setFieldsValues = (values: any) => {
-      schema.forEach((fs) =>
-        recreateState(values, fs, enableOptionalField, modifyUnknowns),
-      );
-      formProps.form.setFieldsValue(values);
-    };
-
-    useImperativeHandle(ref, (() => ({
-      setFieldsValues,
-    })) as any);
-
-    return (
-      <Form
-        {...formProps}
-        layout="vertical"
-        onFinish={onFinish}
-        onValuesChange={onValuesChange}
-        disabled={disabled}
-        initialValues={initialValues}
-      >
-        {schema.map((field) => {
-          return renderField({
-            schema: field,
-            preFieldPath: FieldPath.empty(),
-            disabled: disabled,
-            visibleOptionalFields: visibleOptionalFields,
-            hideLabels: false,
-            enableOptionalField: enableOptionalField,
-            toggleOptionalField: toggleOptionalField,
-            unknowns: unknowns,
-            modifyUnknowns: modifyUnknowns,
-            form: formProps.form,
-            parentRecord,
-            gqlQueryVariablesMap,
-          });
-        })}
-        <Form.Item>
-          <Button disabled={submitDisabled} type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    );
-  });
+  return (
+    <Form
+      {...formProps}
+      layout="vertical"
+      onFinish={onFinish}
+      onValuesChange={onValuesChange}
+      disabled={disabled}
+      initialValues={initialValues}
+    >
+      {schema.map((field) => {
+        return renderField({
+          schema: field,
+          preFieldPath: FieldPath.empty(),
+          disabled: disabled,
+          visibleOptionalFields: visibleOptionalFields,
+          hideLabels: false,
+          enableOptionalField: enableOptionalField,
+          toggleOptionalField: toggleOptionalField,
+          unknowns: unknowns,
+          modifyUnknowns: modifyUnknowns,
+          form: formProps.form,
+          parentRecord,
+          gqlQueryVariablesMap,
+        });
+      })}
+      <Form.Item>
+        <Button disabled={submitDisabled} type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+});

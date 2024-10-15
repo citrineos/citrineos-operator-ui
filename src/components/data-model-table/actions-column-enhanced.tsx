@@ -29,11 +29,11 @@ export interface IActionsColumnEnhancedProps {
   onDeleteSuccess?: () => void;
 }
 
-export interface CancelButtonProps<T> {
-  onCancel?: MouseEventHandler<T>;
+export interface CancelButtonProps {
+  onCancel?: MouseEventHandler<HTMLElement>;
 }
 
-export const CancelButton = <T,>({ onCancel }: CancelButtonProps<T>) => {
+export const CancelButton = ({ onCancel }: CancelButtonProps) => {
   return (
     <AnimatePresence>
       {onCancel && (
