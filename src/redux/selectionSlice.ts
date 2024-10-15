@@ -15,7 +15,7 @@ const initialState: SelectionState = {
 };
 
 const selectionSlice = createSlice({
-  name: 'counter',
+  name: 'selections',
   initialState,
   reducers: {
     addModelsToStorage: (
@@ -45,13 +45,13 @@ export const selectModelsByKey = (storageKey: string) =>
     (models: any) => models[storageKey],
   );
 
-export const getAllUniqueIDs = (storageKey: string) =>
+export const getAllUniqueNames = (storageKey: string) =>
   createSelector(
     (state: RootState) => state.counter.models,
     (models: any) => {
       if (models[storageKey] !== undefined) {
         return (JSON.parse(models[storageKey]) as Model[])
-          .map((model) => model.id)
+          .map((model) => model.name)
           .join(', ');
       }
     },

@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addModelsToStorage,
   selectModelsByKey,
-  getAllUniqueIDs,
+  getAllUniqueNames,
 } from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
@@ -58,7 +58,7 @@ export const AssociationSelection = <
   ).toLowerCase();
   const dispatch = useDispatch();
   const models = useSelector(selectModelsByKey(storageKey));
-  const uniqueIds = useSelector(getAllUniqueIDs(storageKey)) || '';
+  const uniqueNames = useSelector(getAllUniqueNames(storageKey)) || '';
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -107,7 +107,7 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    const selectedRowsID = uniqueIds;
+    const selectedRowsID = uniqueNames;
     setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
@@ -229,7 +229,7 @@ export const AssociationSelection = <
         onChange(selectedRows);
       }
 
-      setTagValue(uniqueIds);
+      setTagValue(uniqueNames);
 
       closeDrawer();
     },
@@ -262,8 +262,8 @@ export const AssociationSelection = <
         expandedContent={({ closeDrawer }) => (
           <>
             <p>
-              Selected ID(s):
-              {uniqueIds}
+              Selected {associatedRecordClass.name}(s):
+              {uniqueNames}
             </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
