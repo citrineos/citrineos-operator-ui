@@ -37,7 +37,7 @@ export const ChargingStationsView: React.FC = () => {
 };
 
 export const ChargingStationsList = (props: IDataModelListProps) => {
-  const { tableProps } = useTable<ChargingStationsListQuery>({
+  const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
     resource: ResourceType.CHARGING_STATIONS,
     sorters: DEFAULT_SORTERS,
     filters: props.filters,

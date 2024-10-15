@@ -2,8 +2,6 @@ import { FieldSchema } from '../form';
 import { SelectionType } from './editable';
 import React, {
   forwardRef,
-  ForwardRefExoticComponent,
-  ForwardRefRenderFunction,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -42,10 +40,9 @@ export interface TableWrapperRef<Model> {
   refreshTable: () => void;
 }
 
-export const TableWrapper = forwardRef((<Model extends { key: any }>(
-  props: TableWrapperProps<Model>,
-  ref: React.Ref<TableWrapperRef<Model>>,
-): ForwardRefExoticComponent<TableWrapperProps<Model>> => {
+export const TableWrapper = forwardRef(function TableWrapper<
+  Model extends { key: any },
+>(props: TableWrapperProps<Model>, ref: React.Ref<TableWrapperRef<Model>>) {
   const {
     selectable,
     onSelectionChange,
@@ -195,9 +192,7 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     });
   };
 
-  const refreshTable = () => {
-    queryResult && queryResult.refetch();
-  };
+  const refreshTable = () => queryResult && queryResult.refetch();
 
   useImperativeHandle(ref, () => ({
     addRecordToTable,
@@ -205,14 +200,14 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
     refreshTable,
   }));
 
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [_searchTerm, setSearchTerm] = useState<string>('');
   const [searchSubject] = useState(() => new Subject<string>());
 
   useEffect(() => {
     const { form } = searchFormProps;
     const subscription = searchSubject
       .pipe(debounceTime(250))
-      .subscribe((searchValue) => {
+      .subscribe((_searchValue) => {
         searchFormProps.onFinish();
         form.submit();
       });
@@ -286,7 +281,4 @@ export const TableWrapper = forwardRef((<Model extends { key: any }>(
       />
     </Col>
   ) as any;
-}) as unknown as ForwardRefRenderFunction<
-  TableWrapperRef<{ key: any }>,
-  TableWrapperProps<{ key: any }>
->);
+});

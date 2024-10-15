@@ -64,9 +64,9 @@ export const AssociationSelection = <
       (!!parentRecord &&
         ((parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
           (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
-      (!!value &&
-        ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-          (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
+        (!!value &&
+          ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+            (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
   }, [parentRecord, primaryKeyFieldName]);
 
@@ -112,7 +112,6 @@ export const AssociationSelection = <
 
   const searchableKeys = getSearchableKeys(associatedRecordClass);
 
-
   const {
     tableProps,
     tableQuery: queryResult,
@@ -127,6 +126,7 @@ export const AssociationSelection = <
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
 
   useEffect(() => {

@@ -99,9 +99,7 @@ export const GenericParameterizedView = (
   const gqlMutation =
     state === GenericViewState.CREATE ? createMutation : editMutation;
   const gqlDeleteMutation = deleteMutation;
-  if (useFormProps) {
-  }
-  let obj = {
+  const obj = {
     id,
     queryOptions: {
       enabled: state !== GenericViewState.CREATE,
@@ -118,8 +116,26 @@ export const GenericParameterizedView = (
     plainToInstance(dtoClass, {}),
   );
 
-  const { formProps, saveButtonProps, queryResult, formLoading, form } =
-    useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
+  const {
+    formProps: defaultFormProps,
+    saveButtonProps: defaultSaveButtonProps,
+    queryResult: defaultQueryResult,
+    formLoading: defaultFormLoading,
+    form: defaultForm,
+  } = useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
+
+  const formProps = useFormProps ? useFormProps.formProps : defaultFormProps;
+  const _saveButtonProps = useFormProps
+    ? useFormProps.saveButtonProps
+    : defaultSaveButtonProps;
+  const queryResult = useFormProps
+    ? useFormProps.queryResult
+    : defaultQueryResult;
+  const formLoading = useFormProps
+    ? useFormProps.formLoading
+    : defaultFormLoading;
+  const _form = useFormProps ? useFormProps.form : defaultForm;
+
   let WrapperComponent;
   switch (state) {
     case GenericViewState.CREATE:
@@ -144,7 +160,7 @@ export const GenericParameterizedView = (
   };
 
   const getValuesFromInput = (input: any) => {
-    for (let property of Object.keys(input)) {
+    for (const property of Object.keys(input)) {
       if (input[property] && input[property].$isDayjsObject) {
         input[property] = dayjs(input[property]).toISOString();
       }

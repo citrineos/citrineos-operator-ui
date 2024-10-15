@@ -52,7 +52,9 @@ export const VARIABLE_MONITORINGS_GET_QUERY = gql`
 `;
 
 export const VARIABLE_MONITORINGS_CREATE_MUTATION = gql`
-  mutation VariableMonitoringsCreate($object: VariableMonitorings_insert_input!) {
+  mutation VariableMonitoringsCreate(
+    $object: VariableMonitorings_insert_input!
+  ) {
     insert_VariableMonitorings_one(object: $object) {
       databaseId
       id
@@ -88,8 +90,14 @@ export const VARIABLE_MONITORINGS_DELETE_MUTATION = gql`
 `;
 
 export const VARIABLE_MONITORINGS_EDIT_MUTATION = gql`
-  mutation VariableMonitoringsEdit($id: Int!, $object: VariableMonitorings_set_input!) {
-    update_VariableMonitorings_by_pk(pk_columns: { databaseId: $id }, _set: $object) {
+  mutation VariableMonitoringsEdit(
+    $id: Int!
+    $object: VariableMonitorings_set_input!
+  ) {
+    update_VariableMonitorings_by_pk(
+      pk_columns: { databaseId: $id }
+      _set: $object
+    ) {
       databaseId
       id
       stationId

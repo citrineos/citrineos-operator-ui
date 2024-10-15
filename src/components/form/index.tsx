@@ -370,7 +370,7 @@ export const renderFieldContent = (field: FieldSchema, disabled = false) => {
     case FieldType.select:
       return (
         <Select mode={field.selectMode as any} disabled={disabled}>
-          {field.options?.map((option, ix) => (
+          {field.options?.map((option, _ix) => (
             <Select.Option key={option.value} value={option.value}>
               {option.label}
             </Select.Option>
@@ -481,7 +481,7 @@ export const renderField = (props: RenderFieldProps) => {
   }
 
   if (schema.type === FieldType.unknown) {
-    let unknown = unknowns.findFirst(fieldPath);
+    const unknown = unknowns.findFirst(fieldPath);
     if (isNullOrUndefined(unknown)) {
       return modifyUnknowns('registerFirst', fieldPath);
     }
@@ -771,9 +771,8 @@ export const tryRenderOptionalButton = (
     </Button>
   );
 
-// todo does this need to be ForwardRefExoticComponent with useImperativeHandle?
 export const GenericForm: ForwardRefExoticComponent<GenericFormProps> =
-  forwardRef((props: GenericFormProps, ref) => {
+  forwardRef(function GenericForm(props: GenericFormProps, ref) {
     const {
       formProps,
       dtoClass,
@@ -799,9 +798,10 @@ export const GenericForm: ForwardRefExoticComponent<GenericFormProps> =
     const modifyUnknowns = <K extends UnknownsActions>(
       method: K,
       ...args: Parameters<Unknowns[K]>
-    ) =>
-      // @ts-ignore
-      setUnknowns((prev) => prev[method](...args));
+    ) => {
+      // @ts-expect-error spread error
+      return setUnknowns((prev) => prev[method](...args));
+    };
 
     const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
       ...field,
@@ -853,4 +853,4 @@ export const GenericForm: ForwardRefExoticComponent<GenericFormProps> =
         </Form.Item>
       </Form>
     );
-  }) as any;
+  });
