@@ -12,6 +12,7 @@ import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { CrudFilters } from '@refinedev/core';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -49,30 +50,13 @@ export const AssociationSelection = <
 
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
-
-  if (!primaryKeyFieldName) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
@@ -80,9 +64,9 @@ export const AssociationSelection = <
       (!!parentRecord &&
         ((parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
           (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
-        (!!value &&
-          ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-            (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
+      (!!value &&
+        ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+          (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
   }, [parentRecord, primaryKeyFieldName]);
 
@@ -128,22 +112,6 @@ export const AssociationSelection = <
 
   const searchableKeys = getSearchableKeys(associatedRecordClass);
 
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = ((values: any) => {
-      const result = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    }) as any;
-  }
 
   const {
     tableProps,
@@ -225,6 +193,39 @@ export const AssociationSelection = <
     [selectedRows, primaryKeyFieldName],
   );
 
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+  if (!primaryKeyFieldName) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any): CrudFilters => {
+      const result: CrudFilters = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
   if (queryResult?.isLoading) {
     return <Spin />;
   }
