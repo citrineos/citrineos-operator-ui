@@ -43,18 +43,19 @@ export const selectModelsByKey = (storageKey: string) =>
   createSelector(
     (state: RootState) => state.counter.models,
     (models: any) => models[storageKey],
-);
-
-export const getAllUniqueIDs = (storageKey: string) =>createSelector(
-    (state: RootState) => state.counter.models,
-    (models: any) =>
-    {
-      if (models[storageKey] !== undefined) {
-        return (JSON.parse(models[storageKey]) as Model[]).map(model => model.id).join(', ');
-      }
-    }
   );
 
-export const { addModelsToStorage } =
-  counterSlice.actions;
+export const getAllUniqueIDs = (storageKey: string) =>
+  createSelector(
+    (state: RootState) => state.counter.models,
+    (models: any) => {
+      if (models[storageKey] !== undefined) {
+        return (JSON.parse(models[storageKey]) as Model[])
+          .map((model) => model.id)
+          .join(', ');
+      }
+    },
+  );
+
+export const { addModelsToStorage } = counterSlice.actions;
 export default counterSlice.reducer;
