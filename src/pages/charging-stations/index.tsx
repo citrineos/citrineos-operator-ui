@@ -9,7 +9,7 @@ import {
 import { useTable } from '@refinedev/antd';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { ChargingStation } from './ChargingStation';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../components';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   CHARGING_STATIONS_CREATE_MUTATION,
@@ -18,8 +18,6 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { CHARGING_STATIONS_COLUMNS } from './table-config';
-import { ChargingStations } from '../../graphql/schema.types';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { FaChargingStation } from 'react-icons/fa';
 import { GenericDataTable } from '../../components/data-model-table/editable';
@@ -49,21 +47,10 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
   });
 
   return (
-    <>
-      <DataModelTable<ChargingStations, ChargingStationsListQuery>
-        tableProps={tableProps}
-        columns={CHARGING_STATIONS_COLUMNS(
-          !props.hideActions,
-          props.parentView,
-          CUSTOM_CHARGING_STATION_ACTIONS,
-        )}
-        hideCreateButton={props.hideCreateButton}
-      />
-      <GenericDataTable
-        dtoClass={ChargingStation}
-        customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-      />
-    </>
+    <GenericDataTable
+      dtoClass={ChargingStation}
+      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+    />
   );
 };
 

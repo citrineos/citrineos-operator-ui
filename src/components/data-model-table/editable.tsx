@@ -421,6 +421,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     ) {
       // Handle create operation
       try {
+        if (valuesClass[primaryKeyFieldName] === NEW_IDENTIFIER) {
+          delete valuesClass[primaryKeyFieldName];
+        }
         const response = await (dataProvider as any).create({
           resource: dtoResourceType,
           variables: {
@@ -690,6 +693,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         </Button>
       </div>
       <TableWrapper
+        ref={tableWrapperRef}
         selectable={selectable}
         onSelectionChange={onSelectionChange}
         primaryKeyFieldName={primaryKeyFieldName}

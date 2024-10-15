@@ -41,10 +41,10 @@ import {
 } from './state/unknowns';
 import { FieldPath } from './state/fieldpath';
 import { CUSTOM_FORM_RENDER } from '../../util/decorators/CustomFormRender';
-import { AssociationSelection } from '../data-model-table/association-selection';
-import { SelectionType } from '../data-model-table/editable';
 import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
 import { isSortable } from '../../util/decorators/Sortable';
+import { NestedObjectField } from './nested-object-field';
+import { ArrayField } from './array-field';
 
 export enum ReflectType {
   array,
@@ -400,289 +400,6 @@ export interface RenderFieldProps {
   gqlQueryVariablesMap?: any;
 }
 
-export const renderArrayField = (props: {
-  fieldPath: FieldPath;
-  schema: FieldSchema;
-  hideLabels: boolean;
-  disabled: boolean;
-  visibleOptionalFields: any;
-  enableOptionalField: any;
-  toggleOptionalField: any;
-  unknowns: any;
-  modifyUnknowns: any;
-  form: any;
-  parentRecord: any;
-  gqlQueryVariablesMap?: any;
-}) => {
-  const {
-    fieldPath,
-    schema,
-    hideLabels,
-    disabled,
-    visibleOptionalFields,
-    enableOptionalField,
-    toggleOptionalField,
-    unknowns,
-    modifyUnknowns,
-    form,
-    parentRecord,
-    gqlQueryVariablesMap,
-  } = props;
-  if (schema.gqlAssociationProps) {
-    const parentIdFieldName = schema.gqlAssociationProps.parentIdFieldName;
-    const associatedIdFieldName =
-      schema.gqlAssociationProps.associatedIdFieldName;
-    const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const gqlUseQueryVariablesKey =
-      schema.gqlAssociationProps.gqlUseQueryVariablesKey;
-    let gqlQueryVariables = undefined;
-    if (
-      gqlUseQueryVariablesKey &&
-      gqlQueryVariablesMap &&
-      gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-    ) {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-    }
-    return (
-      <div className="editable-cell">
-        <Form.Item name={fieldPath.namePath}>
-          <AssociationSelection
-            selectable={SelectionType.MULTIPLE}
-            parentIdFieldName={parentIdFieldName!}
-            associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlListQuery}
-            gqlQueryVariables={gqlQueryVariables}
-            parentRecord={parentRecord}
-            associatedRecordClass={schema.dtoClass!}
-            value={form.getFieldValue(fieldPath.namePath)}
-            onChange={(newValues: any[]) => {
-              form.setFieldsValue({
-                [fieldPath.namePath as any]: newValues,
-              });
-            }}
-          />
-        </Form.Item>
-      </div>
-    );
-  }
-
-  return (
-    <Form.Item
-      key={`${fieldPath.key}-list-wrapper`}
-      label={
-        hideLabels
-          ? undefined
-          : renderLabel(
-              schema,
-              fieldPath,
-              disabled,
-              visibleOptionalFields,
-              toggleOptionalField,
-            )
-      }
-      required={schema.isRequired}
-    >
-      <Form.List key={`${fieldPath.key}-list`} name={fieldPath.namePath}>
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map((field, fieldIdx) => (
-              <Form.Item
-                key={`${fieldPath.key}-${fieldIdx}`}
-                label={
-                  <div className="form-item-label">
-                    <span>{`#${fieldIdx + 1} ${schema.label}`}</span>
-                    <Button
-                      type="link"
-                      icon={<MinusOutlined />}
-                      onClick={() => remove(field.name)}
-                    />
-                  </div>
-                }
-              >
-                <div className="array-item">
-                  <div className="array-item-content">
-                    {schema.nestedFields
-                      ? schema.nestedFields.map(
-                          (nestedField) =>
-                            renderField({
-                              schema: nestedField,
-                              preFieldPath: fieldPath
-                                .clearNamePath()
-                                .with(field.name),
-                              disabled: disabled,
-                              visibleOptionalFields: visibleOptionalFields,
-                              hideLabels: hideLabels,
-                              enableOptionalField: enableOptionalField,
-                              toggleOptionalField: toggleOptionalField,
-                              unknowns: unknowns,
-                              modifyUnknowns: modifyUnknowns,
-                              form,
-                              parentRecord,
-                              gqlQueryVariablesMap,
-                            }) as any,
-                        )
-                      : (renderField({
-                          schema: {
-                            label: `#${fieldIdx + 1} ${schema.label}`,
-                            name: String(field.name),
-                            type: FieldType.input,
-                            isRequired: true,
-                            sorter: schema.sorter,
-                          },
-                          preFieldPath: fieldPath.clearNamePath(),
-                          disabled: disabled,
-                          visibleOptionalFields: visibleOptionalFields,
-                          hideLabels: hideLabels,
-                          enableOptionalField: enableOptionalField,
-                          toggleOptionalField: toggleOptionalField,
-                          unknowns: unknowns,
-                          modifyUnknowns: modifyUnknowns,
-                          form,
-                          parentRecord,
-                          gqlQueryVariablesMap,
-                        }) as any)}
-                  </div>
-                </div>
-              </Form.Item>
-            ))}
-            <Button
-              type="dashed"
-              onClick={() => {
-                if (schema.customConstructor) {
-                  add(schema.customConstructor());
-                } else {
-                  add();
-                }
-              }}
-              icon={<PlusOutlined />}
-              style={{ width: '100%' }}
-            >
-              Add {schema.label}
-            </Button>
-          </>
-        )}
-      </Form.List>
-    </Form.Item>
-  );
-};
-
-const renderNestedObjectField = (props: {
-  fieldPath: FieldPath;
-  schema: FieldSchema;
-  hideLabels: boolean;
-  disabled: boolean;
-  visibleOptionalFields: any;
-  enableOptionalField: any;
-  toggleOptionalField: any;
-  unknowns: any;
-  modifyUnknowns: any;
-  form: any;
-  parentRecord: any;
-  gqlQueryVariablesMap?: any;
-}) => {
-  const {
-    fieldPath,
-    schema,
-    hideLabels,
-    disabled,
-    visibleOptionalFields,
-    enableOptionalField,
-    toggleOptionalField,
-    unknowns,
-    modifyUnknowns,
-    form,
-    parentRecord,
-    gqlQueryVariablesMap,
-  } = props;
-
-  if (schema.gqlAssociationProps) {
-    const parentIdFieldName = schema.gqlAssociationProps.parentIdFieldName;
-    const associatedIdFieldName =
-      schema.gqlAssociationProps.associatedIdFieldName;
-    const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const gqlUseQueryVariablesKey =
-      schema.gqlAssociationProps.gqlUseQueryVariablesKey;
-    let gqlQueryVariables = undefined;
-    if (
-      gqlUseQueryVariablesKey &&
-      gqlQueryVariablesMap &&
-      gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-    ) {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-    }
-    return (
-      <div className="editable-cell">
-        <Form.Item
-          name={fieldPath.namePath}
-          label={
-            hideLabels
-              ? undefined
-              : renderLabel(
-                  schema,
-                  fieldPath,
-                  disabled,
-                  visibleOptionalFields,
-                  toggleOptionalField,
-                )
-          }
-        >
-          <AssociationSelection
-            parentIdFieldName={parentIdFieldName!}
-            associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlListQuery}
-            gqlQueryVariables={gqlQueryVariables}
-            parentRecord={parentRecord}
-            associatedRecordClass={schema.dtoClass!}
-            value={form.getFieldValue(fieldPath.namePath)}
-            onChange={(newValues: any[]) => {
-              form.setFieldsValue({
-                [fieldPath.namePath as any]: newValues[0],
-              });
-            }}
-          />
-        </Form.Item>
-      </div>
-    );
-  }
-
-  return (
-    <Form.Item
-      key={`${fieldPath.key}-nested-object`}
-      label={
-        hideLabels
-          ? undefined
-          : renderLabel(
-              schema,
-              fieldPath,
-              disabled,
-              visibleOptionalFields,
-              toggleOptionalField,
-            )
-      }
-    >
-      <div className="nested-object">
-        {schema.nestedFields?.map(
-          (nestedField) =>
-            renderField({
-              schema: nestedField,
-              preFieldPath: fieldPath,
-              disabled: disabled,
-              visibleOptionalFields: visibleOptionalFields,
-              hideLabels: hideLabels,
-              enableOptionalField: enableOptionalField,
-              toggleOptionalField: toggleOptionalField,
-              unknowns: unknowns,
-              modifyUnknowns: modifyUnknowns,
-              form,
-              parentRecord,
-              gqlQueryVariablesMap,
-            }) as any,
-        )}
-      </div>
-    </Form.Item>
-  );
-};
-
 export const renderField = (props: RenderFieldProps) => {
   const {
     schema,
@@ -726,37 +443,41 @@ export const renderField = (props: RenderFieldProps) => {
   }
 
   if (schema.type === FieldType.array) {
-    return renderArrayField({
-      fieldPath,
-      schema,
-      hideLabels,
-      disabled,
-      visibleOptionalFields,
-      enableOptionalField,
-      toggleOptionalField,
-      unknowns,
-      modifyUnknowns,
-      form,
-      parentRecord,
-      gqlQueryVariablesMap,
-    });
+    return (
+      <ArrayField
+        fieldPath={fieldPath}
+        schema={schema}
+        hideLabels={hideLabels}
+        disabled={disabled}
+        visibleOptionalFields={visibleOptionalFields}
+        enableOptionalField={enableOptionalField}
+        toggleOptionalField={toggleOptionalField}
+        unknowns={unknowns}
+        modifyUnknowns={modifyUnknowns}
+        form={form}
+        parentRecord={parentRecord}
+        gqlQueryVariablesMap={gqlQueryVariablesMap}
+      />
+    );
   }
 
   if (schema.type === FieldType.nestedObject) {
-    return renderNestedObjectField({
-      fieldPath,
-      schema,
-      hideLabels,
-      disabled,
-      visibleOptionalFields,
-      enableOptionalField,
-      toggleOptionalField,
-      unknowns,
-      modifyUnknowns,
-      form,
-      parentRecord,
-      gqlQueryVariablesMap,
-    });
+    return (
+      <NestedObjectField
+        fieldPath={fieldPath}
+        schema={schema}
+        hideLabels={hideLabels}
+        disabled={disabled}
+        visibleOptionalFields={visibleOptionalFields}
+        enableOptionalField={enableOptionalField}
+        toggleOptionalField={toggleOptionalField}
+        unknowns={unknowns}
+        modifyUnknowns={modifyUnknowns}
+        form={form}
+        parentRecord={parentRecord}
+        gqlQueryVariablesMap={gqlQueryVariablesMap}
+      />
+    );
   }
 
   if (schema.type === FieldType.unknown) {
