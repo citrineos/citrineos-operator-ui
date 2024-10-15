@@ -6,15 +6,15 @@ interface Model {
   [key: string]: any;
 }
 
-interface CounterState {
+interface SelectionState {
   models: Record<string, string>;
 }
 
-const initialState: CounterState = {
+const initialState: SelectionState = {
   models: {},
 };
 
-const counterSlice = createSlice({
+const selectionSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
@@ -57,5 +57,5 @@ export const getAllUniqueIDs = (storageKey: string) =>
     },
   );
 
-export const { addModelsToStorage } = counterSlice.actions;
-export default counterSlice.reducer;
+export const { addModelsToStorage } = selectionSlice.actions;
+export default selectionSlice.reducer;

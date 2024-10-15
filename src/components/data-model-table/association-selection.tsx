@@ -13,7 +13,11 @@ import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { useDispatch, useSelector } from 'react-redux';
-import { addModelsToStorage, selectModelsByKey, getAllUniqueIDs } from '../../redux/counterSlice';
+import {
+  addModelsToStorage,
+  selectModelsByKey,
+  getAllUniqueIDs,
+} from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -189,7 +193,9 @@ export const AssociationSelection = <
 
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
-      dispatch(addModelsToStorage({ storageKey, selectedRows: selectedRows as any }));
+      dispatch(
+        addModelsToStorage({ storageKey, selectedRows: selectedRows as any }),
+      );
 
       if (models !== undefined) {
         setSelectedRows(JSON.parse(models));
