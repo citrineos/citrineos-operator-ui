@@ -60,17 +60,17 @@ export const CustomerPayload = (plainValues: Record<string, any>) => {
     requestId: plainValues.requestId,
     report: report ?? false,
     clear: clear ?? false,
-    customData: customData ?? {},
-    customerCertificate: customerCertificate || {},
+    customData: customData,
+    customerCertificate: customerCertificate,
     idToken: idToken ? {
       idToken: idToken.idToken,
       type: idToken.type,
-      customData: idToken.customData ?? {},
+      customData: idToken.customData,
       additionalInfo: idToken.IdTokenAdditionalInfos?.map(
         ({ AdditionalInfo: info }: any) => ({
           additionalIdToken: info.additionalIdToken,
           type: info.type,
-          customData: info.customData ?? {},
+          customData: info.customData,
         })
       ) || [],
     } : null,
