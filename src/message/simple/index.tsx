@@ -1,37 +1,37 @@
-import { ChargingStation } from '../pages/charging-stations/ChargingStation';
-import { RemoteStop, RemoteStopProps } from './remote-stop';
-import { CustomAction } from '../components/custom-actions';
-import { ChargingStations } from '../graphql/schema.types';
-import { SetVariables, SetVariablesProps } from './set-variables';
-import { TriggerMessage, TriggerMessageProps } from './trigger-message';
-import { GetBaseReport, GetBaseReportProps } from './get-base-report';
-import { ClearCache, ClearCacheProps } from './clear-cache';
+import React from 'react';
+import { RemoteStop, RemoteStopProps } from '../remote-stop';
+import { SetVariables, SetVariablesProps } from '../set-variables';
+import { TriggerMessage, TriggerMessageProps } from '../trigger-message';
+import { GetBaseReport, GetBaseReportProps } from '../get-base-report';
+import { ClearCache, ClearCacheProps } from '../clear-cache';
 import {
   ChangeAvailability,
   ChangeAvailabilityProps,
-} from './change-availability';
-import { GetLog, GetLogProps } from './get-log';
-import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
-import React from 'react';
-import { GetVariables, GetVariablesProps } from './get-variables';
-import { ResetChargingStation, ResetChargingStationProps } from './reset';
-import { RemoteStart, RemoteStartProps } from './remote-start';
+} from '../change-availability';
+import { GetLog, GetLogProps } from '../get-log';
+import { UnlockConnector, UnlockConnectorProps } from '../unlock-connector';
+import { ResetChargingStation, ResetChargingStationProps } from '../reset';
+import { RemoteStart, RemoteStartProps } from '../remote-start';
+import { GetVariables, GetVariablesProps } from '../get-variables';
 import {
   InstallCertificate,
   InstallCertificateProps,
-} from './install-certificate';
+} from '../install-certificate';
 import {
   GetInstalledCertificateIds,
   GetInstalledCertificateIdsProps,
-} from './get-installed-certificate-ids';
+} from '../get-installed-certificate-ids';
 import {
   SetNetworkProfile,
   SetNetworkProfileProps,
-} from './set-network-profile';
+} from '../set-network-profile';
 import {
   CertificateSigned,
   CertificateSignedProps,
-} from './certificate-signed';
+} from '../certificate-signed';
+import { CustomAction } from '../../components/custom-actions';
+import { ChargingStations } from '../../graphql/schema.types';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -62,7 +62,7 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
       ([label, Component]) =>
         ({
           label,
-          execOrRender: (station: ChargingStation, _setLoading) => (
+          execOrRender: (station: ChargingStation) => (
             <Component station={station} />
           ),
         }) as CustomAction<ChargingStations>,

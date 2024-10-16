@@ -8,7 +8,7 @@ import {
 } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { ChargingStationsListQuery } from '../../graphql/types';
-import { ChargingStation } from './ChargingStation';
+import { ChargingStation, ChargingStationProps } from './ChargingStation';
 import { IDataModelListProps } from '../../components';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
@@ -50,6 +50,14 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
     <GenericDataTable
       dtoClass={ChargingStation}
       customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+      gqlQueryVariablesMap={{
+        [ChargingStationProps.evses]: (station: ChargingStation) => ({
+          stationId: station.id,
+        }),
+        [ChargingStationProps.transactions]: (station: ChargingStation) => ({
+          stationId: station.id,
+        }),
+      }}
     />
   );
 };

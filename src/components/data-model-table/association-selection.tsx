@@ -13,6 +13,7 @@ import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
+import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -55,6 +56,11 @@ export const AssociationSelection = <
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
+    associatedRecordClassInstance as object,
+  );
+
+  const customActions: string = Reflect.getMetadata(
+    CLASS_CUSTOM_ACTIONS,
     associatedRecordClassInstance as object,
   );
 
@@ -262,6 +268,7 @@ export const AssociationSelection = <
                 setPageSize,
                 rowSelection: rowSelection,
               }}
+              customActions={customActions || undefined}
             />
             <Button
               type="primary"

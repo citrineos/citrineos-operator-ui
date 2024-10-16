@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, notification, Select, Spin } from 'antd';
-import { GET_EVSES_FOR_STATION } from './queries';
 import { useCustom } from '@refinedev/core';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ResetEnumType, ResetRequest } from '@citrineos/base';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { GET_EVSES_FOR_STATION } from '../queries';
 
 const GRAPHQL_ENDPOINT_URL = import.meta.env.VITE_API_URL;
 
@@ -33,7 +33,7 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
       },
     },
     meta: {
-      operation: 'GetEvses',
+      operation: 'GetEvsesForStation',
       gqlQuery: GET_EVSES_FOR_STATION,
       variables: {
         stationId: station.id,

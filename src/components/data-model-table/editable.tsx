@@ -52,6 +52,7 @@ import {
 import { TableWrapper, TableWrapperRef } from './table-wrapper';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
+import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 
 const renderViewContent = (
   field: FieldSchema,
@@ -129,14 +130,16 @@ export enum SelectionType {
 
 export interface GenericDataTableProps {
   // todo make generic / typed
-  gqlDeleteMutation?: any;
   dtoClass: Constructable<any>;
-  filters?: any;
   selectable?: SelectionType | null;
+  filters?: any;
   useTableProps?: any;
   onSelectionChange?: (selectedRows: any[]) => void;
   editable?: boolean;
   customActions?: CustomAction<any>[];
+  gqlQueryVariablesMap?:
+    | { [key: string]: object }
+    | { [key: string]: (record: any) => object };
 }
 
 // todo add generic types
@@ -151,6 +154,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     onSelectionChange,
     editable: passedEditable,
     customActions,
+    gqlQueryVariablesMap = null,
   } = props;
 
   let editable = false;
@@ -168,30 +172,30 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     return plainToInstance(dtoClass, {});
   }, [dtoClass]);
 
-  const dtoResourceType = useMemo(() => {
-    return Reflect.getMetadata(CLASS_RESOURCE_TYPE, dtoClassInstance as object);
-  }, [dtoClassInstance]);
+  const dtoResourceType = Reflect.getMetadata(
+    CLASS_RESOURCE_TYPE,
+    dtoClassInstance as object,
+  );
 
-  const dtoGqlListQuery = useMemo(() => {
-    return Reflect.getMetadata(
-      CLASS_GQL_LIST_QUERY,
-      dtoClassInstance as object,
-    );
-  }, [dtoClassInstance]);
+  const dtoGqlListQuery = Reflect.getMetadata(
+    CLASS_GQL_LIST_QUERY,
+    dtoClassInstance as object,
+  );
 
-  const dtoGqlCreateMutation = useMemo(() => {
-    return Reflect.getMetadata(
-      CLASS_GQL_CREATE_MUTATION,
-      dtoClassInstance as object,
-    );
-  }, [dtoClassInstance]);
+  const dtoGqlCreateMutation = Reflect.getMetadata(
+    CLASS_GQL_CREATE_MUTATION,
+    dtoClassInstance as object,
+  );
 
-  const primaryKeyFieldName = useMemo(() => {
-    return Reflect.getMetadata(
-      PRIMARY_KEY_FIELD_NAME,
-      dtoClassInstance as object,
-    );
-  }, [dtoClassInstance]);
+  const primaryKeyFieldName = Reflect.getMetadata(
+    PRIMARY_KEY_FIELD_NAME,
+    dtoClassInstance as object,
+  );
+
+  const classCustomActions = Reflect.getMetadata(
+    CLASS_CUSTOM_ACTIONS,
+    dtoClassInstance as object,
+  );
 
   const tableWrapperRef = useRef<TableWrapperRef<any>>(null);
 
@@ -473,7 +477,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             onCancel={isCurrentlyEditing ? cancel : undefined}
             onDeleteSuccess={onDeleteSuccess}
             actions={actions}
-            customActions={customActions}
+            customActions={
+              customActions
+                ? customActions
+                : classCustomActions
+                  ? classCustomActions
+                  : undefined
+            }
           />
         );
       },
@@ -491,13 +501,30 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             editingRecord &&
             record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
           if (isCurrentlyEditing) {
-            if (field.type === FieldType.array) {
-              let parentIdFieldName, associatedIdFieldName, gqlListQuery;
-              if (field.gqlAssociationProps) {
-                parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
-                associatedIdFieldName =
-                  field.gqlAssociationProps.associatedIdFieldName;
-                gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+            if (field.type === FieldType.array && field.gqlAssociationProps) {
+              const parentIdFieldName =
+                field.gqlAssociationProps.parentIdFieldName;
+              const associatedIdFieldName =
+                field.gqlAssociationProps.associatedIdFieldName;
+              const gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+              const gqlUseQueryVariablesKey =
+                field.gqlAssociationProps.gqlUseQueryVariablesKey;
+              let gqlQueryVariables = undefined;
+              if (
+                gqlUseQueryVariablesKey &&
+                gqlQueryVariablesMap &&
+                !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
+              ) {
+                if (
+                  typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] ===
+                  'function'
+                ) {
+                  gqlQueryVariables =
+                    gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
+                } else {
+                  gqlQueryVariables =
+                    gqlQueryVariablesMap[gqlUseQueryVariablesKey];
+                }
               }
               return (
                 <div className="editable-cell">
@@ -508,6 +535,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                       associatedIdFieldName={associatedIdFieldName!}
                       gqlQuery={gqlListQuery}
                       parentRecord={record}
+                      gqlQueryVariables={gqlQueryVariables}
                       associatedRecordClass={field.dtoClass!}
                       value={form.getFieldValue(field.name)}
                       onChange={(newValues: any[]) => {
@@ -521,13 +549,33 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                 </div>
               );
             }
-            if (field.type === FieldType.nestedObject) {
-              let parentIdFieldName, associatedIdFieldName, gqlListQuery;
-              if (field.gqlAssociationProps) {
-                parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
-                associatedIdFieldName =
-                  field.gqlAssociationProps.associatedIdFieldName;
-                gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+            if (
+              field.type === FieldType.nestedObject &&
+              field.gqlAssociationProps
+            ) {
+              const parentIdFieldName =
+                field.gqlAssociationProps.parentIdFieldName;
+              const associatedIdFieldName =
+                field.gqlAssociationProps.associatedIdFieldName;
+              const gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+              const gqlUseQueryVariablesKey =
+                field.gqlAssociationProps.gqlUseQueryVariablesKey;
+              let gqlQueryVariables = undefined;
+              if (
+                gqlUseQueryVariablesKey &&
+                gqlQueryVariablesMap &&
+                !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
+              ) {
+                if (
+                  typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] ===
+                  'function'
+                ) {
+                  gqlQueryVariables =
+                    gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
+                } else {
+                  gqlQueryVariables =
+                    gqlQueryVariablesMap[gqlUseQueryVariablesKey];
+                }
               }
               return (
                 <div className="editable-cell">
@@ -539,6 +587,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                       parentRecord={record}
                       associatedRecordClass={field.dtoClass!}
                       value={form.getFieldValue(field.name)}
+                      gqlQueryVariables={gqlQueryVariables}
                       onChange={(newValues: any[]) => {
                         form.setFieldsValue({
                           [field.name]: newValues[0],
@@ -550,7 +599,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                 </div>
               );
             }
-
             return renderField({
               schema: field,
               preFieldPath: FieldPath.empty(),
