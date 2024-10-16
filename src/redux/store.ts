@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from './selectionSlice';
+import selectedChargingStationSlice from './selectedChargingStationSlice';
 
 const store = configureStore({
   reducer: {
     counter: counterReducer,
+    selectedChargingStationSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

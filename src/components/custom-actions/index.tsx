@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Button, Drawer, Dropdown, MenuProps, Spin } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 
 export interface CustomAction<T> {
   label: string;
   isVisible?: (arg: T) => boolean;
+  onCustomActionLoad?: (arg: T, dispatch: Dispatch) => void;
   execOrRender: (
     arg: T,
     setLoading: (loading: boolean) => void,
@@ -25,6 +28,7 @@ export const CustomActions = <T,>({
   const [drawerContent, setDrawerContent] = useState<React.ReactNode | null>(
     null,
   );
+  const dispatch = useDispatch();
 
   const handleMenuClick = (action: CustomAction<T>) => {
     const result = action.execOrRender(data, setLoading);
@@ -41,11 +45,16 @@ export const CustomActions = <T,>({
 
   const items: MenuProps['items'] = actions
     ?.filter((action) => (action.isVisible ? action.isVisible?.(data) : true))
-    .map((action, index) => ({
-      key: index.toString(),
-      label: action.label,
-      onClick: () => handleMenuClick(action),
-    }));
+    .map((action, index) => {
+      if (action.onCustomActionLoad) {
+        action.onCustomActionLoad?.(data, dispatch);
+      }
+      return {
+        key: index.toString(),
+        label: action.label,
+        onClick: () => handleMenuClick(action),
+      };
+    });
 
   if (!items || items.length === 0) {
     return <></>;

@@ -14,9 +14,10 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
-import { Evse } from '../../pages/evses/Evse';
+import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { FieldCustomActions } from '../../util/decorators/FieldCustomActions';
-import { ChargingStationProps } from '../../pages/charging-stations/ChargingStation';
+import { useSelector } from 'react-redux';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
@@ -29,13 +30,7 @@ export class TriggerMessageRequest {
     {
       label: 'Trigger Message',
       execOrRender: (evse: Evse) => {
-        console.log(evse);
-        return (
-          <TriggerMessage
-            station={{ [ChargingStationProps.id]: 'cp001' }}
-            evse={evse}
-          />
-        );
+        return <TriggerMessage evse={evse} />;
       },
     },
   ])
@@ -60,7 +55,7 @@ export class TriggerMessageRequest {
 }
 
 export interface TriggerMessageProps {
-  station: ChargingStation;
+  station?: ChargingStation;
   evse?: Evse;
 }
 
@@ -77,6 +72,17 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
   const formProps = {
     form,
   };
+
+  const selectedChargingStation =
+    useSelector(getSelectedChargingStation()) || {};
+
+  const stationId = selectedChargingStation
+    ? selectedChargingStation.id
+    : station
+      ? station.id
+      : undefined;
+
+  console.log('selected stationId', stationId);
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
@@ -110,7 +116,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
         : undefined,
     };
     await triggerMessageAndHandleResponse(
-      `/configuration/triggerMessage?identifier=${station.id}&tenantId=1`,
+      `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
       MessageConfirmation,
       data,
       (response: MessageConfirmation) => response && (response as any).success,
@@ -126,7 +132,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       initialValues={parentRecord}
       gqlQueryVariablesMap={{
         [TriggerMessageRequestProps.evse]: {
-          stationId: station.id,
+          stationId: stationId,
         },
       }}
     />

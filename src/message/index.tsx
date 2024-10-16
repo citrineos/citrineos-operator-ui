@@ -32,6 +32,8 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
+import { instanceToPlain } from 'class-transformer';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -62,9 +64,18 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
       ([label, Component]) =>
         ({
           label,
-          execOrRender: (station: ChargingStation, _setLoading) => (
-            <Component station={station} />
-          ),
+          onCustomActionLoad: (station: ChargingStation, dispatch) => {
+            dispatch(
+              setSelectedChargingStation({
+                selectedChargingStation: JSON.stringify(
+                  instanceToPlain(station),
+                ),
+              }),
+            );
+          },
+          execOrRender: (station: ChargingStation, _setLoading) => {
+            return <Component station={station} />;
+          },
         }) as CustomAction<ChargingStations>,
     )
     .sort((a, b) => a.label.localeCompare(b.label));
