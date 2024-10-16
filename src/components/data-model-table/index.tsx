@@ -30,7 +30,7 @@ export const DataModelTable = <T extends AnyObject, U extends BaseRecord>(
     <Table.Column
       key={index}
       {...column}
-      onCell={(record: any) => ({
+      onCell={(_record: any) => ({
         className: `column-${String(column.dataIndex)}`,
       })}
     />

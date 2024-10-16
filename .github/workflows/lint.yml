@@ -1,4 +1,4 @@
-name: Build
+name: Linter
 
 on:
   pull_request:
@@ -9,8 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build
+  linter:
+    name: Linter
     runs-on: ubuntu-22.04 # todo: to prevent needing to run npm i we can have our own image where everything is installed
     strategy:
       matrix:
@@ -19,5 +19,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Docker Build
-        run: docker compose -f docker-compose.yml build
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Lint
+        run: npm run lint

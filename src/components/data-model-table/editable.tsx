@@ -26,7 +26,6 @@ import { Constructable } from '../../util/Constructable';
 import { plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { CLASS_GQL_LIST_QUERY } from '../../util/decorators/ClassGqlListQuery';
-import { CLASS_GQL_DELETE_MUTATION } from '../../util/decorators/ClassGqlDeleteMutation';
 import { useForm } from '@refinedev/antd';
 import {
   DataProvider,
@@ -37,7 +36,6 @@ import {
 import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
 import { GetFields, GetVariables } from '@refinedev/hasura';
 import { CLASS_GQL_EDIT_MUTATION } from '../../util/decorators/ClassGqlEditMutation';
-import { CLASS_GQL_GET_QUERY } from '../../util/decorators/ClassGqlGetQuery';
 import { CLASS_GQL_CREATE_MUTATION } from '../../util/decorators/ClassGqlCreateMutation';
 import { ColorModeContext } from '../../contexts/color-mode';
 import { CustomAction } from '../custom-actions';
@@ -53,14 +51,14 @@ import {
 } from '../../util/decorators/GqlAssociation';
 import { TableWrapper, TableWrapperRef } from './table-wrapper';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { hasOwnProperty } from '../../message/util';
 
 const renderViewContent = (
   field: FieldSchema,
   _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
   record: any, // todo type
-  editable = false,
 ) => {
-  let value = record[field.name];
+  const value = record[field.name];
   const fieldType = field.type;
   const fieldOptions = field.options;
   let parentIdFieldName, associatedIdFieldName, gqlQuery, gqlListQuery;
@@ -73,11 +71,12 @@ const renderViewContent = (
   switch (fieldType) {
     case FieldType.boolean:
       return <StatusIcon value={value} />;
-    case FieldType.select:
+    case FieldType.select: {
       const selectedOption = fieldOptions?.find(
         (option: any) => option.value === value,
       );
       return <GenericTag stringValue={selectedOption?.label || value} />;
+    }
     case FieldType.datetime:
       return <TimestampDisplay isoTimestamp={value} />;
     case FieldType.nestedObject:
@@ -158,18 +157,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 
   const getDataProvider = useDataProvider();
   const dataProvider: DataProvider = getDataProvider();
-  if (!dataProvider) {
-    return (
-      <Alert
-        message="Error: GenericDataTable cannot find DataProvider"
-        type="error"
-      />
-    );
-  }
 
+  const { mode } = useContext(ColorModeContext);
   if (!passedEditable) {
-    const { mode } = useContext(ColorModeContext);
-
     const isDarkMode = mode === 'dark';
     editable = isDarkMode;
   }
@@ -179,115 +169,28 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   }, [dtoClass]);
 
   const dtoResourceType = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_RESOURCE_TYPE,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find ResourceType for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
+    return Reflect.getMetadata(CLASS_RESOURCE_TYPE, dtoClassInstance as object);
   }, [dtoClassInstance]);
 
   const dtoGqlListQuery = useMemo(() => {
-    let result = Reflect.getMetadata(
+    return Reflect.getMetadata(
       CLASS_GQL_LIST_QUERY,
-      dtoClassInstance as Object,
+      dtoClassInstance as object,
     );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlListQuery for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
-
-  const dtoGqlGetQuery = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_GET_QUERY,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlGetQuery for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
   }, [dtoClassInstance]);
 
   const dtoGqlCreateMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
+    return Reflect.getMetadata(
       CLASS_GQL_CREATE_MUTATION,
-      dtoClassInstance as Object,
+      dtoClassInstance as object,
     );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlCreateMutation for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
-
-  const dtoGqlEditMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_EDIT_MUTATION,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlEditMutation for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
-
-  const dtoGqlDeleteMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_DELETE_MUTATION,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlDeleteMutation for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
   }, [dtoClassInstance]);
 
   const primaryKeyFieldName = useMemo(() => {
-    let result = Reflect.getMetadata(
+    return Reflect.getMetadata(
       PRIMARY_KEY_FIELD_NAME,
-      dtoClassInstance as Object,
+      dtoClassInstance as object,
     );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find primaryKeyFieldName for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
   }, [dtoClassInstance]);
 
   const tableWrapperRef = useRef<TableWrapperRef<any>>(null);
@@ -398,7 +301,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     let associatedIdFieldName;
     // prepare data
     Object.keys(valuesClass).forEach((key) => {
-      const value = valuesClass[key];
       const classTransformerType = getClassTransformerType(valuesClass, key);
       const gqlAssociationProps: GqlAssociationProps = Reflect.getMetadata(
         GQL_ASSOCIATION,
@@ -410,7 +312,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       }
     });
 
-    if (valuesClass.hasOwnProperty('createdAt') && !valuesClass.createdAt) {
+    if (hasOwnProperty(valuesClass, 'createdAt') && !valuesClass.createdAt) {
       valuesClass.createdAt = new Date().toISOString();
     }
     valuesClass.updatedAt = new Date().toISOString();
@@ -465,7 +367,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         );
 
         console.log(`Saving values for id: ${id}`, valuesClass);
-        let meta: any = {
+        const meta: any = {
           gqlMutation: dtoGqlEditMutation,
         };
         if (associatedIdFieldName) {
@@ -551,8 +453,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         const isCurrentlyEditing =
           editingRecord &&
           record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
-        let actions;
-        actions = !isCurrentlyEditing
+        const actions = !isCurrentlyEditing
           ? editable
             ? [ColumnAction.EDIT, ColumnAction.DELETE]
             : [ColumnAction.SHOW, ColumnAction.DELETE]
@@ -675,6 +576,30 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       })),
     ];
   }, [schema, editingRecord, visibleOptionalFields]) as FieldSchema[];
+
+  const missingItems: string[] = [];
+  const itemsToCheck = [
+    { name: 'dtoResourceType', value: dtoResourceType },
+    { name: 'dtoGqlListQuery', value: dtoGqlListQuery },
+    { name: 'dtoGqlCreateMutation', value: dtoGqlCreateMutation },
+    { name: 'primaryKeyFieldName', value: primaryKeyFieldName },
+    { name: 'dataProvider', value: dataProvider },
+  ];
+
+  for (let i = 0; i < itemsToCheck.length; i++) {
+    if (!itemsToCheck[i].value) {
+      missingItems.push(itemsToCheck[i].name);
+    }
+  }
+
+  if (missingItems.length > 0) {
+    return (
+      <Alert
+        message={`Error: GenericDataTable cannot find ${missingItems.join(', ')}`}
+        type="error"
+      />
+    );
+  }
 
   return (
     <Form

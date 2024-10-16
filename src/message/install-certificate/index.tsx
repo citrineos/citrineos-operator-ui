@@ -98,7 +98,9 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   installCertificateData[InstallCertificateDataProps.certificate] =
     installCertificate;
 
-  const [parentRecord, setParentRecord] = useState<any>(installCertificateData);
+  const [_parentRecord, _setParentRecord] = useState<any>(
+    installCertificateData,
+  );
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
@@ -123,7 +125,7 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
         {},
         rootCertificateRequest,
       );
-      if (!!response) {
+      if (response) {
         showSucces();
       } else {
         let msg =

@@ -12,11 +12,12 @@ import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addModelsToStorage,
-  selectModelsByKey,
   getAllUniqueNames,
+  selectModelsByKey,
 } from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
@@ -69,28 +70,11 @@ export const AssociationSelection = <
     CLASS_RESOURCE_TYPE,
     associatedRecordClassInstance as object,
   );
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
     associatedRecordClassInstance as object,
   );
-
-  if (!primaryKeyFieldName) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
@@ -135,23 +119,6 @@ export const AssociationSelection = <
 
   const searchableKeys = getSearchableKeys(associatedRecordClass);
 
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = ((values: any) => {
-      const result = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    }) as any;
-  }
-
   const {
     tableProps,
     tableQuery: queryResult,
@@ -166,6 +133,7 @@ export const AssociationSelection = <
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
 
   useEffect(() => {
@@ -194,9 +162,12 @@ export const AssociationSelection = <
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
       dispatch(
-        addModelsToStorage({ storageKey, selectedRows: JSON.stringify(instanceToPlain(selectedRows)) }),
+        addModelsToStorage({
+          storageKey,
+          selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
+        }),
       );
-      
+
       if (models !== undefined) {
         setSelectedRows(JSON.parse(models));
       }
@@ -236,6 +207,39 @@ export const AssociationSelection = <
     [selectedRows, primaryKeyFieldName],
   );
 
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+  if (!primaryKeyFieldName) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any): CrudFilters => {
+      const result: CrudFilters = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
   if (queryResult?.isLoading) {
     return <Spin />;
   }
