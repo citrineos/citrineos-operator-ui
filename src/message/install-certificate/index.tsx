@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
 import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
@@ -27,6 +26,7 @@ import {
 } from '../../pages/certificates/queries';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum InstallCertificateDataProps {
   certificate = 'certificate',

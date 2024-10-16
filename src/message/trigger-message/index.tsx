@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React from 'react';
 import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
@@ -18,6 +17,8 @@ import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { FieldCustomActions } from '../../util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { CustomAction } from '../../components/custom-actions';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
@@ -25,15 +26,15 @@ enum TriggerMessageRequestProps {
   requestedMessage = 'requestedMessage',
 }
 
+export const TriggerMessageForEvseCustomAction: CustomAction<Evse> = {
+  label: 'Trigger Message',
+  execOrRender: (evse: Evse) => {
+    return <TriggerMessage evse={evse} />;
+  },
+};
+
 export class TriggerMessageRequest {
-  @FieldCustomActions([
-    {
-      label: 'Trigger Message',
-      execOrRender: (evse: Evse) => {
-        return <TriggerMessage evse={evse} />;
-      },
-    },
-  ])
+  @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
     associatedIdFieldName: 'databaseId',

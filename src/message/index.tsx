@@ -34,6 +34,7 @@ import {
 } from './certificate-signed';
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
+import { Dispatch } from 'redux';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -58,21 +59,24 @@ const chargingStationActionMap: {
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
 };
 
-export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
+export const setSelectedStationDispatch = (
+  arg: ChargingStation,
+  dispatch: Dispatch<any>,
+) => {
+  dispatch(
+    setSelectedChargingStation({
+      selectedChargingStation: JSON.stringify(instanceToPlain(arg)),
+    }),
+  );
+};
+
+export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
   Object.entries(chargingStationActionMap)
     .map(
       ([label, Component]) =>
         ({
           label,
-          onCustomActionLoad: (station: ChargingStation, dispatch) => {
-            dispatch(
-              setSelectedChargingStation({
-                selectedChargingStation: JSON.stringify(
-                  instanceToPlain(station),
-                ),
-              }),
-            );
-          },
+          onCustomActionLoad: setSelectedStationDispatch,
           execOrRender: (station: ChargingStation, _setLoading) => {
             return <Component station={station} />;
           },
