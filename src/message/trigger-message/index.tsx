@@ -1,40 +1,35 @@
 import { ChargingStation } from '../remote-stop/ChargingStation';
-import React, { useState } from 'react';
-import { Button, Form } from 'antd';
-import { AssociationSelection } from '../../components/data-model-table/association-selection';
-import { SelectionType } from '../../components/data-model-table/editable';
+import React from 'react';
+import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
-import {
-  MessageTriggerEnumType,
-  TriggerMessageStatusEnumType,
-} from '@citrineos/base';
-import { GET_EVSE_LIST_FOR_STATION } from '../queries';
-import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
-import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
-import { FieldPath } from '../../components/form/state/fieldpath';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { MessageTriggerEnumType } from '@citrineos/base';
+import { GenericForm } from '../../components/form';
+import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
-import { StatusInfoType } from '../model/StatusInfoType';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { MessageConfirmation } from '../MessageConfirmation';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
-  evseId = 'evseId',
+  evse = 'evse',
   requestedMessage = 'requestedMessage',
 }
 
 export class TriggerMessageRequest {
+  @GqlAssociation({
+    parentIdFieldName: TriggerMessageRequestProps.evse,
+    associatedIdFieldName: EvseProps.databaseId,
+    gqlQuery: GET_EVSES_FOR_STATION,
+    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: TriggerMessageRequestProps.evse,
+  })
   @Type(() => Evse)
-  @ValidateNested()
-  @IsOptional()
-  evseId?: Evse;
+  @IsNotEmpty()
+  evse!: Evse | null;
 
   @IsEnum(MessageTriggerEnumType)
   @IsNotEmpty()
@@ -43,27 +38,6 @@ export class TriggerMessageRequest {
   @Type(() => CustomDataType)
   @ValidateNested()
   customData?: CustomDataType;
-
-  constructor() {
-    Object.assign(this, {
-      [TriggerMessageRequestProps.evseId]: NEW_IDENTIFIER,
-      [TriggerMessageRequestProps.requestedMessage]: '',
-    });
-  }
-}
-
-export class TriggerMessageResponse {
-  @Type(() => CustomDataType)
-  @ValidateNested()
-  @IsOptional()
-  customData?: CustomDataType;
-
-  @IsEnum(TriggerMessageStatusEnumType)
-  status!: TriggerMessageStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  statusInfo?: StatusInfoType;
 }
 
 export interface TriggerMessageProps {
@@ -72,11 +46,19 @@ export interface TriggerMessageProps {
 
 export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
   const [form] = Form.useForm();
+  const formProps = {
+    form,
+  };
+
+  const triggerMessageRequest = new TriggerMessageRequest();
+  triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
+  triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
+    NEW_IDENTIFIER as unknown as number;
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(TriggerMessageRequest, plainValues);
-    const evse = classInstance[TriggerMessageRequestProps.evseId];
+    const evse = classInstance[TriggerMessageRequestProps.evse];
     const data = {
       requestedMessage:
         classInstance[TriggerMessageRequestProps.requestedMessage],
@@ -91,72 +73,24 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
     };
     await triggerMessageAndHandleResponse(
       `/configuration/triggerMessage?identifier=${station.id}&tenantId=1`,
-      TriggerMessageResponse,
+      MessageConfirmation,
       data,
-      (response: TriggerMessageResponse) =>
-        response && (response as any).success,
+      (response: MessageConfirmation) => response && (response as any).success,
     );
   };
 
-  const [parentRecord, setParentRecord] = useState(new TriggerMessageRequest());
-
-  const handleFormChange = (
-    _changedValues: any,
-    allValues: TriggerMessageRequest,
-  ) => {
-    setParentRecord(allValues);
-  };
-
-  const instance = plainToInstance(TriggerMessageRequest, {});
-  const fieldSchema = getSchemaForInstanceAndKey(
-    instance,
-    TriggerMessageRequestProps.requestedMessage,
-    [TriggerMessageRequestProps.requestedMessage],
-  );
-
-  const enumField = renderField({
-    schema: fieldSchema,
-    preFieldPath: FieldPath.empty(),
-    disabled: false,
-  });
-
   return (
-    <Form
-      form={form}
-      layout="vertical"
+    <GenericForm
+      formProps={formProps}
+      dtoClass={TriggerMessageRequest}
       onFinish={handleSubmit}
-      initialValues={parentRecord}
-      onValuesChange={handleFormChange}
-    >
-      <Form.Item
-        label={TriggerMessageRequestProps.evseId}
-        name={TriggerMessageRequestProps.evseId}
-      >
-        <AssociationSelection
-          selectable={SelectionType.SINGLE}
-          parentIdFieldName={TriggerMessageRequestProps.evseId}
-          associatedIdFieldName={EvseProps.databaseId}
-          gqlQuery={GET_EVSE_LIST_FOR_STATION}
-          gqlQueryVariables={{
-            [VariableAttributeProps.stationId]: station.id,
-          }}
-          parentRecord={parentRecord}
-          associatedRecordClass={Evse}
-          value={form.getFieldValue(TriggerMessageRequestProps.evseId)}
-          onChange={(newValue: any[]) => {
-            const currentData: TriggerMessageRequest =
-              form.getFieldValue(true) || {};
-            currentData[TriggerMessageRequestProps.evseId] = newValue[0];
-            form.setFieldsValue(currentData);
-          }}
-        />
-      </Form.Item>
-      {enumField}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Trigger Message
-        </Button>
-      </Form.Item>
-    </Form>
+      parentRecord={triggerMessageRequest}
+      initialValues={triggerMessageRequest}
+      gqlQueryVariablesMap={{
+        [TriggerMessageRequestProps.evse]: {
+          stationId: station.id,
+        },
+      }}
+    />
   );
 };
