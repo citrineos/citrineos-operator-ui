@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
@@ -13,6 +13,12 @@ import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addModelsToStorage,
+  getAllUniqueNames,
+  selectModelsByKey,
+} from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -42,6 +48,18 @@ export const AssociationSelection = <
     associatedIdFieldName,
     gqlQueryVariables,
   } = props;
+
+  const lastSegment = document.location.pathname
+    .replace(/\//g, '')
+    .replace(/-/g, '_');
+  const storageKey = (
+    lastSegment
+      ? `${lastSegment}_${associatedRecordClass.name}`
+      : associatedRecordClass.name
+  ).toLowerCase();
+  const dispatch = useDispatch();
+  const models = useSelector(selectModelsByKey(storageKey));
+  const uniqueNames = useSelector(getAllUniqueNames(storageKey)) || '';
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -73,19 +91,8 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    let newVal = '';
-    if (Array.isArray(value)) {
-      newVal = value
-        .map((v: any) => (v as any)[primaryKeyFieldName])
-        .join(', ');
-    } else {
-      newVal = value
-        ? JSON.stringify((value as any)[associatedIdFieldName])
-        : '';
-    }
-    setTagValue(
-      isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
-    );
+    const selectedRowsID = uniqueNames;
+    setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
   const meta: any = {
@@ -154,13 +161,22 @@ export const AssociationSelection = <
 
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
-      setSelectedRows(selectedRows);
+      dispatch(
+        addModelsToStorage({
+          storageKey,
+          selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
+        }),
+      );
+
+      if (models !== undefined) {
+        setSelectedRows(JSON.parse(models));
+      }
 
       if (onChange) {
         onChange(selectedRows);
       }
     },
-    [onChange],
+    [onChange, models],
   );
 
   const rowSelection = useMemo(() => {
@@ -183,11 +199,9 @@ export const AssociationSelection = <
       if (onChange) {
         onChange(selectedRows);
       }
-      setTagValue(
-        selectedRows
-          .map((item: any) => item[primaryKeyFieldName] || item.id)
-          .join(', '),
-      );
+
+      setTagValue(uniqueNames);
+
       closeDrawer();
     },
     [selectedRows, primaryKeyFieldName],
@@ -251,6 +265,10 @@ export const AssociationSelection = <
         }
         expandedContent={({ closeDrawer }) => (
           <>
+            <p>
+              Selected {associatedRecordClass.name}(s):
+              {uniqueNames}
+            </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
