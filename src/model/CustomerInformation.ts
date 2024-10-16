@@ -17,7 +17,7 @@ import {
 
 const ID_TOKEN_FIELD = 'idToken';
 
-export class GetCustomersRequest {
+export class CustomerInformationRequest {
   @IsInt()
   @IsPositive()
   @IsNotEmpty()

@@ -184,7 +184,7 @@ export const AssociationSelection = <
         setSelectedRows(JSON.parse(models));
       }
 
-      if (onChange) {
+      if (onChange && newSelectedRowKeys.length > 0) {
         onChange(selectedRows);
       }
     },

@@ -4,26 +4,26 @@ import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../util';
 import {
   GetCustomerProps,
-  GetCustomersRequest,
+  CustomerInformationRequest,
   CustomerPayload,
 } from '../../model/CustomerInformation';
 
-export const GetCustomers: React.FC<GetCustomerProps> = ({ station }) => {
+export const CustomerInformation: React.FC<GetCustomerProps> = ({ station }) => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = {
     form,
   };
 
-  const getCustomersRequest = new GetCustomersRequest();
+  const getCustomersRequest = new CustomerInformationRequest();
 
   const handleSubmit = async (plainValues: any) => {
     const payload = CustomerPayload(plainValues);
     await triggerMessageAndHandleResponse(
       `/reporting/customerInformation?identifier=${station.id}&tenantId=1`,
-      GetCustomersRequest,
+      CustomerInformationRequest,
       payload,
-      (response: GetCustomersRequest) => !!response,
+      (response: CustomerInformationRequest) => !!response,
     );
   };
 
@@ -31,7 +31,7 @@ export const GetCustomers: React.FC<GetCustomerProps> = ({ station }) => {
     <GenericForm
       ref={formRef as any}
       formProps={formProps}
-      dtoClass={GetCustomersRequest}
+      dtoClass={CustomerInformationRequest}
       onFinish={handleSubmit}
       initialValues={getCustomersRequest}
       parentRecord={getCustomersRequest}
