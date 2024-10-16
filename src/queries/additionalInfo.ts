@@ -126,3 +126,29 @@ export const ADDITIONAL_INFOS_RELATED_IDTOKENS_QUERY = gql`
     }
   }
 `;
+
+export const ADDITIONAL_INFOS_RELATED_IDTOKENS = gql`
+query FetchIdTokensWithGroupedAdditionalInfos($offset: Int!, $limit: Int!, $order_by: [IdTokens_order_by!], $where: IdTokens_bool_exp) {
+  IdTokens(offset: $offset, limit: $limit, order_by: $order_by, where: $where) {
+    id
+    idToken
+    type
+    createdAt
+    updatedAt
+    IdTokenAdditionalInfos {
+      AdditionalInfo {
+        id
+        additionalIdToken
+        type
+        createdAt
+        updatedAt
+      }
+    }
+  }
+  IdTokens_aggregate(where: $where) {
+    aggregate {
+      count
+    }
+  }
+}
+`;

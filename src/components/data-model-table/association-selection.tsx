@@ -18,7 +18,9 @@ import {
   addModelsToStorage,
   getAllUniqueNames,
   selectModelsByKey,
+  getSelectedKeyValue,
 } from '../../redux/selectionSlice';
+import { LABEL_FIELD } from '../../util/decorators/LabelField';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -59,7 +61,6 @@ export const AssociationSelection = <
   ).toLowerCase();
   const dispatch = useDispatch();
   const models = useSelector(selectModelsByKey(storageKey));
-  const uniqueNames = useSelector(getAllUniqueNames(storageKey)) || '';
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -70,6 +71,17 @@ export const AssociationSelection = <
     CLASS_RESOURCE_TYPE,
     associatedRecordClassInstance as object,
   );
+
+  const selectedIdentifiers = useSelector(getSelectedKeyValue(storageKey, associatedRecordClassInstance as object)) || '';
+
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
@@ -91,7 +103,7 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    const selectedRowsID = uniqueNames;
+    const selectedRowsID = selectedIdentifiers;
     setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
@@ -200,7 +212,7 @@ export const AssociationSelection = <
         onChange(selectedRows);
       }
 
-      setTagValue(uniqueNames);
+      setTagValue(selectedIdentifiers);
 
       closeDrawer();
     },
@@ -267,7 +279,7 @@ export const AssociationSelection = <
           <>
             <p>
               Selected {associatedRecordClass.name}(s):
-              {uniqueNames}
+              {selectedIdentifiers}
             </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
