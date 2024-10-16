@@ -14,6 +14,8 @@ import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
 import { generateRandomSignedInt } from '../util';
+import { DataProvider, useCustom, useDataProvider } from '@refinedev/core';
+import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -28,6 +30,28 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
+
+  const {
+    data: requestIdResponse,
+    isLoading: isLoadingRequestId,
+    // isError: isErrorLoadingRequestId,
+  } = useCustom<any>({
+    url: 'http://localhost:8090/v1/graphql',
+    method: 'post',
+    config: {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+    meta: {
+      operation: 'ChargingStationSequencesGet',
+      gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
+      variables: {
+        stationId: station.id,
+        type: 'remoteStartId',
+      },
+    },
+  });
 
   const isRequestValid = (request: RequestStartTransactionRequest) => {
     const errors = validateSync(request);
@@ -99,12 +123,12 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
     }
   };
 
-  if (loading) return <Spin />;
+  if (loading || isLoadingRequestId) return <Spin />;
 
   const requestStartTransactionRequest = new RequestStartTransactionRequest();
   requestStartTransactionRequest[
     RequestStartTransactionRequestProps.remoteStartId
-  ] = generateRandomSignedInt();
+  ] = requestIdResponse?.data.value ?? 0;
   const evse = new Evse();
   const idToken = new IdToken();
   evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;

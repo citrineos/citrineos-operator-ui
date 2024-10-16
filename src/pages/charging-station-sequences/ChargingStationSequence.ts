@@ -30,7 +30,7 @@ export class ChargingStationSequence extends BaseModel {
 
     @IsString()
     //  @IsEnum(ChargingStationSequenceType)
-    type!: ChargingStationSequenceType;
+    type!: string;
 
     @IsInt()
     value!: number;
