@@ -14,6 +14,7 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
+import { CustomAction } from '../custom-actions';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -23,6 +24,7 @@ export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   onChange?: (value: AssociatedModel[]) => void;
   selectable?: SelectionType | null;
   gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
 }
 
 export const AssociationSelection = <
@@ -42,6 +44,7 @@ export const AssociationSelection = <
     selectable = SelectionType.SINGLE,
     associatedIdFieldName,
     gqlQueryVariables,
+    customActions,
   } = props;
 
   const associatedRecordClassInstance = plainToInstance(
@@ -59,7 +62,7 @@ export const AssociationSelection = <
     associatedRecordClassInstance as object,
   );
 
-  const customActions: string = Reflect.getMetadata(
+  const classCustomActions: string = Reflect.getMetadata(
     CLASS_CUSTOM_ACTIONS,
     associatedRecordClassInstance as object,
   );
@@ -268,7 +271,7 @@ export const AssociationSelection = <
                 setPageSize,
                 rowSelection: rowSelection,
               }}
-              customActions={customActions || undefined}
+              customActions={customActions || classCustomActions || undefined}
             />
             <Button
               type="primary"

@@ -26,8 +26,6 @@ import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation
 import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../util/BaseModel';
-import { ClassCustomActions } from '../../util/decorators/ClassCustomActions';
-import React from 'react';
 
 export enum EvseProps {
   databaseId = 'databaseId',
@@ -44,15 +42,6 @@ export enum EvseProps {
 @ClassGqlEditMutation(EVSE_EDIT_WITH_VARIABLE_ATTRIBUTES_MUTATION)
 @ClassGqlDeleteMutation(EVSE_DELETE_MUTATION)
 @PrimaryKeyFieldName(EvseProps.databaseId)
-@ClassCustomActions([
-  {
-    label: 'Trigger Message',
-    execOrRender: (evse: Evse) => {
-      console.log(evse);
-      return <span>hello</span>;
-    },
-  },
-])
 export class Evse extends BaseModel {
   @IsNumber()
   databaseId!: number;

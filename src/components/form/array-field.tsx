@@ -70,6 +70,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
                 [fieldPath.keyPath as any]: newValues,
               });
             }}
+            customActions={schema.customActions}
           />
         </Form.Item>
       </div>

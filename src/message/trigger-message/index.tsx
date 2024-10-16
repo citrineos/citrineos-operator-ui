@@ -3,15 +3,20 @@ import React from 'react';
 import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { MessageTriggerEnumType } from '@citrineos/base';
 import { GenericForm } from '../../components/form';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
-import { triggerMessageAndHandleResponse } from '../util';
+import {
+  createClassWithoutProperty,
+  triggerMessageAndHandleResponse,
+} from '../util';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
+import { Evse } from '../../pages/evses/Evse';
+import { FieldCustomActions } from '../../util/decorators/FieldCustomActions';
+import { ChargingStationProps } from '../../pages/charging-stations/ChargingStation';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
@@ -20,9 +25,23 @@ enum TriggerMessageRequestProps {
 }
 
 export class TriggerMessageRequest {
+  @FieldCustomActions([
+    {
+      label: 'Trigger Message',
+      execOrRender: (evse: Evse) => {
+        console.log(evse);
+        return (
+          <TriggerMessage
+            station={{ [ChargingStationProps.id]: 'cp001' }}
+            evse={evse}
+          />
+        );
+      },
+    },
+  ])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
     gqlUseQueryVariablesKey: TriggerMessageRequestProps.evse,
@@ -42,9 +61,18 @@ export class TriggerMessageRequest {
 
 export interface TriggerMessageProps {
   station: ChargingStation;
+  evse?: Evse;
 }
 
-export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
+const TriggerMessageRequestWithoutEvse = createClassWithoutProperty(
+  TriggerMessageRequest,
+  TriggerMessageRequestProps.evse,
+);
+
+export const TriggerMessage: React.FC<TriggerMessageProps> = ({
+  station,
+  evse,
+}) => {
   const [form] = Form.useForm();
   const formProps = {
     form,
@@ -52,8 +80,18 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
+  triggerMessageRequest[TriggerMessageRequestProps.evse]['databaseId'] =
     NEW_IDENTIFIER as unknown as number;
+
+  const triggerMessageRequestWithoutEvse =
+    new TriggerMessageRequestWithoutEvse();
+
+  const dtoClass = evse
+    ? TriggerMessageRequestWithoutEvse
+    : TriggerMessageRequest;
+  const parentRecord = evse
+    ? triggerMessageRequestWithoutEvse
+    : triggerMessageRequest;
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
@@ -82,10 +120,10 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
   return (
     <GenericForm
       formProps={formProps}
-      dtoClass={TriggerMessageRequest}
+      dtoClass={dtoClass}
       onFinish={handleSubmit}
-      parentRecord={triggerMessageRequest}
-      initialValues={triggerMessageRequest}
+      parentRecord={parentRecord}
+      initialValues={parentRecord}
       gqlQueryVariablesMap={{
         [TriggerMessageRequestProps.evse]: {
           stationId: station.id,

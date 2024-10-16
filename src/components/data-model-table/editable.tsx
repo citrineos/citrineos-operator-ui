@@ -544,6 +544,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                         });
                         setHasChanges(true);
                       }}
+                      customActions={field.customActions}
                     />
                   </Form.Item>
                 </div>
@@ -594,6 +595,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                         });
                         setHasChanges(true);
                       }}
+                      customActions={field.customActions}
                     />
                   </Form.Item>
                 </div>
