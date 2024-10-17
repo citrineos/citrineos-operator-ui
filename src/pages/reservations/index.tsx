@@ -4,7 +4,7 @@ import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { ReservationsListQuery } from '../../graphql/types';
-import { Reservation } from '../../model/IdToken';
+import { Reservation } from './Reservation';
 import { DataModelTable, IDataModelListProps } from '../../components';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
