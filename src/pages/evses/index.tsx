@@ -24,7 +24,7 @@ export const EvseView: React.FC = () => {
   );
 };
 
-export const EvseList = (props: IDataModelListProps) => {
+export const EvseList = (_props: IDataModelListProps) => {
   return (
     <>
       <GenericDataTable dtoClass={Evse} />

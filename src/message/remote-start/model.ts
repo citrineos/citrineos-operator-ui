@@ -2,9 +2,9 @@ import {
   ArrayMaxSize,
   ArrayMinSize,
   ArrayNotEmpty,
-  IsDefined,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
@@ -25,6 +25,11 @@ import { Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
 import { TransformDate } from '../../util/TransformDate';
 import { Dayjs } from 'dayjs';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { GET_EVSE_LIST_FOR_STATION } from '../queries';
+import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
+import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens/queries';
 
 export class IdTokenType {
   @IsString()
@@ -133,16 +138,41 @@ export class ChargingProfileType {
   chargingSchedule!: ChargingScheduleType[];
 }
 
-export class RequestStartTransactionRequest {
-  @IsDefined()
-  @ValidateNested()
-  @Type(() => IdTokenType)
-  idToken!: IdTokenType;
+export enum RequestStartTransactionRequestProps {
+  remoteStartId = 'remoteStartId',
+  idToken = 'idToken',
+  evse = 'evse',
+  customData = 'customData',
+  groupIdToken = 'groupIdToken',
+  chargingProfile = 'chargingProfile',
+}
 
-  @IsOptional()
+export class RequestStartTransactionRequest {
   @IsInt()
-  @Min(1)
-  evseId?: number | null = null;
+  @IsPositive()
+  @IsNotEmpty()
+  remoteStartId!: number;
+
+  @GqlAssociation({
+    parentIdFieldName: RequestStartTransactionRequestProps.idToken,
+    associatedIdFieldName: IdTokenProps.id,
+    gqlQuery: ID_TOKENS_LIST_QUERY,
+    gqlListQuery: ID_TOKENS_LIST_QUERY,
+  })
+  @Type(() => IdToken)
+  @IsNotEmpty()
+  idToken!: IdToken | null;
+
+  @GqlAssociation({
+    parentIdFieldName: RequestStartTransactionRequestProps.evse,
+    associatedIdFieldName: EvseProps.databaseId,
+    gqlQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: RequestStartTransactionRequestProps.evse,
+  })
+  @Type(() => Evse)
+  @IsNotEmpty()
+  evse!: Evse | null;
 
   @IsOptional()
   @ValidateNested()

@@ -107,7 +107,10 @@ export const CHARGING_PROFILES_EDIT_MUTATION = gql`
     $id: Int!
     $object: ChargingProfiles_set_input!
   ) {
-    update_ChargingProfiles_by_pk(pk_columns: { databaseId: $id }, _set: $object) {
+    update_ChargingProfiles_by_pk(
+      pk_columns: { databaseId: $id }
+      _set: $object
+    ) {
       id
       databaseId
       stationId

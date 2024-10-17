@@ -12,11 +12,7 @@ export interface AssociatedTableProps<ParentModel, AssociatedModel>
   associatedRecordClass: Constructable<AssociatedModel>; // record class
 }
 
-export const AssociatedTable = <
-  ParentModel,
-  AssociatedModel,
-  GetQuery extends Record<any, any>,
->(
+export const AssociatedTable = <ParentModel, AssociatedModel>(
   props: AssociatedTableProps<ParentModel, AssociatedModel>,
 ) => {
   const {
@@ -32,7 +28,7 @@ export const AssociatedTable = <
   );
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
   if (!associatedRecordResourceType) {
     return (

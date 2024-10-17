@@ -14,16 +14,17 @@ import { GetLog, GetLogProps } from './get-log';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
 import React from 'react';
 import { GetVariables, GetVariablesProps } from './get-variables';
+import { CustomerInformation } from './customer-information';
 import { ResetChargingStation, ResetChargingStationProps } from './reset';
 import { RemoteStart, RemoteStartProps } from './remote-start';
 import {
   InstallCertificate,
   InstallCertificateProps,
 } from './install-certificate';
-import { 
+import {
   GetInstalledCertificateIds,
   GetInstalledCertificateIdsProps,
-} from "./get-installed-certificate-ids";
+} from './get-installed-certificate-ids';
 import {
   SetNetworkProfile,
   SetNetworkProfileProps,
@@ -32,8 +33,9 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { GetCustomerProps } from '../model/CustomerInformation';
 
-const actionMap: {
+const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
@@ -54,15 +56,18 @@ const actionMap: {
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
+  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
-  Object.entries(actionMap).map(
-    ([label, Component]) =>
-      ({
-        label,
-        execOrRender: (station: ChargingStation) => (
-          <Component station={station} />
-        ),
-      }) as CustomAction<ChargingStations>,
-  );
+  Object.entries(chargingStationActionMap)
+    .map(
+      ([label, Component]) =>
+        ({
+          label,
+          execOrRender: (station: ChargingStation) => (
+            <Component station={station} />
+          ),
+        }) as CustomAction<ChargingStations>,
+    )
+    .sort((a, b) => a.label.localeCompare(b.label));

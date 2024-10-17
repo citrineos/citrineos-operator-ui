@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
@@ -11,6 +11,13 @@ import { GenericDataTable, SelectionType } from './editable';
 import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { CrudFilters } from '@refinedev/core';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addModelsToStorage,
+  getSelectedKeyValue,
+} from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -41,6 +48,10 @@ export const AssociationSelection = <
     gqlQueryVariables,
   } = props;
 
+  const dispatch = useDispatch();
+  const storageKey =
+    `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
+
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
     {},
@@ -48,8 +59,14 @@ export const AssociationSelection = <
 
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
+
+  const selectedIdentifiers =
+    useSelector(
+      getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
+    ) || '';
+
   if (!associatedRecordResourceType) {
     return (
       <Alert
@@ -61,42 +78,26 @@ export const AssociationSelection = <
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
-
-  if (!primaryKeyFieldName) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
     setNew(
-      (parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-        (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER,
+      (!!parentRecord &&
+        ((parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+          (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
+        (!!value &&
+          ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+            (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
   }, [parentRecord, primaryKeyFieldName]);
 
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    let newVal = '';
-    if (Array.isArray(value)) {
-      newVal = value
-        .map((v: any) => (v as any)[primaryKeyFieldName])
-        .join(', ');
-    } else {
-      newVal = value
-        ? JSON.stringify((value as any)[associatedIdFieldName])
-        : '';
-    }
-    setTagValue(
-      isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
-    );
+    const selectedRowsID = selectedIdentifiers;
+    setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
   const meta: any = {
@@ -121,13 +122,24 @@ export const AssociationSelection = <
     meta,
   };
 
-  const { tableProps, tableQuery: queryResult } = useTable<GetQuery>({
+  const searchableKeys = getSearchableKeys(associatedRecordClass);
+
+  const {
+    tableProps,
+    tableQuery: queryResult,
+    searchFormProps,
+    setSorters,
+    setCurrent,
+    setPageSize,
+  } = useTable<GetQuery>({
     ...tableOptions,
   });
 
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
 
   useEffect(() => {
@@ -155,9 +167,16 @@ export const AssociationSelection = <
 
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
+      dispatch(
+        addModelsToStorage({
+          storageKey,
+          selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
+        }),
+      );
+
       setSelectedRows(selectedRows);
 
-      if (onChange && newSelectedRowKeys.length > 0) {
+      if (onChange) {
         onChange(selectedRows);
       }
     },
@@ -168,6 +187,7 @@ export const AssociationSelection = <
     const selectedRowKeys = selectedRows.map(
       (item: any) => item[primaryKeyFieldName],
     );
+
     return {
       selectedRowKeys: selectedRowKeys,
       onChange: handleRowChange,
@@ -184,16 +204,47 @@ export const AssociationSelection = <
       if (onChange) {
         onChange(selectedRows);
       }
-      setTagValue(
-        selectedRows
-          .map((item: any) => item[primaryKeyFieldName] || item.id)
-          .join(', '),
-      );
+
+      setTagValue(selectedIdentifiers);
+
       closeDrawer();
     },
     [selectedRows, primaryKeyFieldName],
   );
 
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+  if (!primaryKeyFieldName) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
+
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any): CrudFilters => {
+      const result: CrudFilters = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
   if (queryResult?.isLoading) {
     return <Spin />;
   }
@@ -219,11 +270,19 @@ export const AssociationSelection = <
         }
         expandedContent={({ closeDrawer }) => (
           <>
+            <p>
+              Selected {associatedRecordClass.name}(s):
+              {selectedIdentifiers}
+            </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
               selectable={selectable}
-              tableProps={{
-                ...tableProps,
+              useTableProps={{
+                tableProps,
+                searchFormProps,
+                setSorters,
+                setCurrent,
+                setPageSize,
                 rowSelection: rowSelection,
               }}
             />

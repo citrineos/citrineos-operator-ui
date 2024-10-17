@@ -60,7 +60,7 @@ export function IsGeoPoint(
     {
       name: IS_GEO_POINT,
       validator: {
-        validate: (value, args): boolean => isGeoPoint(value),
+        validate: (value, _args): boolean => isGeoPoint(value),
         defaultMessage: buildMessage(
           (eachPrefix) => eachPrefix + '$property must be a GeoPoint instance',
           validationOptions,

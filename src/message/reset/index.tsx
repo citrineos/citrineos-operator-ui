@@ -5,7 +5,7 @@ import { useCustom } from '@refinedev/core';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ResetEnumType, ResetRequest } from '@citrineos/base';
-import {ChargingStation} from "../../pages/charging-stations/ChargingStation";
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 const GRAPHQL_ENDPOINT_URL = import.meta.env.VITE_API_URL;
 
@@ -13,7 +13,9 @@ export interface ResetChargingStationProps {
   station: ChargingStation;
 }
 
-export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({ station }) => {
+export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
+  station,
+}) => {
   const [selectedResetType, setSelectedResetType] = useState<ResetEnumType>(
     ResetEnumType.Immediate,
   );

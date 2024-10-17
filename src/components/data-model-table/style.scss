@@ -13,7 +13,6 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
 }
 
 .editable-table {
-
   .ant-form-item-control-input {
     display: inline;
   }
@@ -23,20 +22,19 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
     width: 100%;
   }
 
-  .editable-row{
-
+  .editable-row {
     &.ant-table-row {
-      >.ant-table-cell-row-hover {
+      > .ant-table-cell-row-hover {
         transition: 300ms;
         background: var(--ant-white-0);
       }
-      &.editing-row >.ant-table-cell-row-hover {
+      &.editing-row > .ant-table-cell-row-hover {
         background: var(--ant-geekblue-1);
       }
     }
 
     .ant-btn-default {
-      &.save-button{
+      &.save-button {
         background: var(--ant-cyan-2);
       }
       &.delete-button {
@@ -46,20 +44,22 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
     }
   }
 
-  td, th {
+  td,
+  th {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   &.ant-table-wrapper {
-    .ant-table-cell-fix-left, .ant-table-cell-fix-right {
-        background: var(--ant-table-header-bg);
+    .ant-table-cell-fix-left,
+    .ant-table-cell-fix-right {
+      background: var(--ant-table-header-bg);
     }
 
     .ant-table-cell,
-    .ant-table-tbody>tr>td,
-    tfoot>tr>td {
+    .ant-table-tbody > tr > td,
+    tfoot > tr > td {
       padding: 0;
 
       &.actions-column {
@@ -67,9 +67,9 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
       }
     }
 
-    .ant-table-thead>tr>th,
-    .ant-table-tbody>tr>th,
-    tfoot>tr>th,{
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > th,
+    tfoot > tr > th {
       padding: $small-padding;
     }
 
@@ -80,13 +80,14 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
       }
     }
 
-    .ant-select-selector, .ant-input{
+    .ant-select-selector,
+    .ant-input {
       min-width: 140px;
     }
-
   }
 
-  .editable-cell, .ant-table-cell .ant-form-item {
+  .editable-cell,
+  .ant-table-cell .ant-form-item {
     padding: var(--ant-padding-xs) var(--ant-padding-xs);
   }
 
@@ -96,5 +97,28 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
 
   .ant-col:empty {
     padding: 0 !important;
+  }
+}
+
+.table-wrapper {
+  .search-form {
+    .ant-input {
+      background: transparent;
+      border: 0;
+    }
+
+    .ant-row {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .ant-form-item {
+      padding: 0 20px 0 0;
+    }
+
+    .search-icon {
+      transform: translateX(-20px);
+    }
   }
 }

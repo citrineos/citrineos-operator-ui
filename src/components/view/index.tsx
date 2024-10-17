@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Create,
   DeleteButton,
@@ -99,9 +99,7 @@ export const GenericParameterizedView = (
   const gqlMutation =
     state === GenericViewState.CREATE ? createMutation : editMutation;
   const gqlDeleteMutation = deleteMutation;
-  if (useFormProps) {
-  }
-  let obj = {
+  const obj = {
     id,
     queryOptions: {
       enabled: state !== GenericViewState.CREATE,
@@ -114,10 +112,30 @@ export const GenericParameterizedView = (
   if (resourceType) {
     obj.resource = resourceType;
   }
-  const { formProps, saveButtonProps, queryResult, formLoading, form } =
-    // useFormProps
-    //   ? useFormProps
-    useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
+  const [parentRecord, setParentRecord] = useState<any>(
+    plainToInstance(dtoClass, {}),
+  );
+
+  const {
+    formProps: defaultFormProps,
+    saveButtonProps: defaultSaveButtonProps,
+    queryResult: defaultQueryResult,
+    formLoading: defaultFormLoading,
+    form: defaultForm,
+  } = useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
+
+  const formProps = useFormProps ? useFormProps.formProps : defaultFormProps;
+  const _saveButtonProps = useFormProps
+    ? useFormProps.saveButtonProps
+    : defaultSaveButtonProps;
+  const queryResult = useFormProps
+    ? useFormProps.queryResult
+    : defaultQueryResult;
+  const formLoading = useFormProps
+    ? useFormProps.formLoading
+    : defaultFormLoading;
+  const _form = useFormProps ? useFormProps.form : defaultForm;
+
   let WrapperComponent;
   switch (state) {
     case GenericViewState.CREATE:
@@ -136,12 +154,13 @@ export const GenericParameterizedView = (
       const instance = plainToInstance(dtoClass, queryResult.data.data, {
         excludeExtraneousValues: false,
       });
+      setParentRecord(instance);
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };
 
   const getValuesFromInput = (input: any) => {
-    for (let property of Object.keys(input)) {
+    for (const property of Object.keys(input)) {
       if (input[property] && input[property].$isDayjsObject) {
         input[property] = dayjs(input[property]).toISOString();
       }
@@ -200,6 +219,7 @@ export const GenericParameterizedView = (
         ref={formRef as any}
         formProps={formProps}
         dtoClass={dtoClass}
+        parentRecord={parentRecord}
         overrides={overrides}
         onFinish={onFinish}
         disabled={state === GenericViewState.SHOW}

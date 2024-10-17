@@ -16,7 +16,6 @@ import { renderAssociatedTransactionId } from '../transactions';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { MeterValueList } from '../meter-values';
-import { MeterValues } from '../../graphql/schema.types';
 import { TransactionEvent } from './TransactionEvent';
 
 export const TRANSACTION_EVENT_COLUMNS = (

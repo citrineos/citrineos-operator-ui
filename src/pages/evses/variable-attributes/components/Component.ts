@@ -16,6 +16,8 @@ import { ClassGqlEditMutation } from '../../../../util/decorators/ClassGqlEditMu
 import { ClassGqlGetQuery } from '../../../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../../../util/BaseModel';
+import { Searchable } from '../../../../util/decorators/Searcheable';
+import { Sortable } from '../../../../util/decorators/Sortable';
 
 export enum ComponentProps {
   id = 'id',
@@ -34,14 +36,17 @@ export enum ComponentProps {
 @PrimaryKeyFieldName(ComponentProps.id)
 export class Component extends BaseModel {
   @IsNumber()
+  @Sortable()
   id!: number;
+
+  @IsString()
+  @Searchable()
+  @Sortable()
+  name!: string;
 
   @IsOptional()
   @IsString()
   instance?: string | null;
-
-  @IsString()
-  name!: string;
 
   @IsNumber()
   evseDatabaseId!: number;

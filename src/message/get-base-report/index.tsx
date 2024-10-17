@@ -14,7 +14,10 @@ import {
 import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
 import { FieldPath } from '../../components/form/state/fieldpath';
 import { plainToInstance, Type } from 'class-transformer';
-import { generateRandomLong, triggerMessageAndHandleResponse } from '../util';
+import {
+  generateRandomSignedInt,
+  triggerMessageAndHandleResponse,
+} from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 
@@ -73,7 +76,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
 
   const [parentRecord, setParentRecord] = useState(
     new GetBaseReportRequest({
-      [GetBaseReportRequestProps.requestId]: generateRandomLong(),
+      [GetBaseReportRequestProps.requestId]: generateRandomSignedInt(),
     }),
   );
 
@@ -81,13 +84,11 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(GetBaseReportRequest, plainValues);
     await triggerMessageAndHandleResponse(
-      `/configuration/triggerMessage?identifier=${station.id}&tenantId=1`,
+      `/reporting/getBaseReport?identifier=${station.id}&tenantId=1`,
       GetBaseReportResponse,
       classInstance,
       (response: GetBaseReportResponse) =>
-        response &&
-        response.status &&
-        response.status === GenericDeviceModelStatusEnumType.Accepted,
+        response && (response as any).success,
     );
   };
 

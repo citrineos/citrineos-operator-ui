@@ -94,9 +94,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
       TriggerMessageResponse,
       data,
       (response: TriggerMessageResponse) =>
-        response &&
-        response.status &&
-        response.status === TriggerMessageStatusEnumType.Accepted,
+        response && (response as any).success,
     );
   };
 

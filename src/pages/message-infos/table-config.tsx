@@ -151,7 +151,7 @@ export const MESSAGE_INFOS_COLUMNS = (
           return displayComponentId;
         }
 
-        const filter = DEFAULT_EXPANDED_DATA_FILTER(
+        const _filter = DEFAULT_EXPANDED_DATA_FILTER(
           'id',
           'eq',
           displayComponentId,
