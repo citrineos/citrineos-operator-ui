@@ -14,7 +14,10 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { addModelsToStorage, getSelectedKeyValue } from '../../redux/selectionSlice';
+import {
+  addModelsToStorage,
+  getSelectedKeyValue,
+} from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -45,15 +48,8 @@ export const AssociationSelection = <
     gqlQueryVariables,
   } = props;
 
-  const lastSegment = document.location.pathname
-    .replace(/\//g, '')
-    .replace(/-/g, '_');
-  const storageKey = (
-    lastSegment
-      ? `${lastSegment}_${associatedRecordClass.name}`
-      : associatedRecordClass.name
-  ).toLowerCase();
   const dispatch = useDispatch();
+  const storageKey = (`${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`).toLowerCase();
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
