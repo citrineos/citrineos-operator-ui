@@ -70,5 +70,5 @@ export const createClassWithoutProperty = <T,>(
   // Ensure the property is also excluded when serialized using class-transformer
   Expose({ toPlainOnly: true })(newClass.prototype, excludedKey as string);
 
-  return newClass as any;
+  return newClass as new () => Omit<T, typeof excludedKey>;
 };

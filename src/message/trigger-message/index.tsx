@@ -12,16 +12,22 @@ import {
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
+import {
+  GET_CHARGING_STATION_LIST_FOR_EVSE,
+  GET_EVSE_LIST_FOR_STATION,
+  GET_EVSES_FOR_STATION,
+} from '../queries';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { FieldCustomActions } from '../../util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { CustomAction } from '../../components/custom-actions';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { ChargingStationProps } from '../../pages/charging-stations/ChargingStationProps';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
+  chargingStation = 'chargingStation',
   evse = 'evse',
   requestedMessage = 'requestedMessage',
 }
@@ -34,10 +40,21 @@ export const TriggerMessageForEvseCustomAction: CustomAction<Evse> = {
 };
 
 export class TriggerMessageRequest {
+  @GqlAssociation({
+    parentIdFieldName: TriggerMessageRequestProps.chargingStation,
+    associatedIdFieldName: ChargingStationProps.id,
+    gqlQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
+    gqlListQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
+    gqlUseQueryVariablesKey: TriggerMessageRequestProps.chargingStation,
+  })
+  @Type(() => ChargingStation)
+  @IsNotEmpty()
+  chargingStation!: ChargingStation | null;
+
   @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
-    associatedIdFieldName: 'databaseId',
+    associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
     gqlUseQueryVariablesKey: TriggerMessageRequestProps.evse,
@@ -83,15 +100,26 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       ? station.id
       : undefined;
 
+  if (!stationId) {
+  }
+
   console.log('selected stationId', stationId);
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse]['databaseId'] =
+  triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
     NEW_IDENTIFIER as unknown as number;
 
   const triggerMessageRequestWithoutEvse =
-    new TriggerMessageRequestWithoutEvse();
+    new TriggerMessageRequestWithoutEvse() as Omit<
+      TriggerMessageRequest,
+      'evse'
+    >;
+  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation] =
+    new ChargingStation();
+  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation][
+    ChargingStationProps.id
+  ] = NEW_IDENTIFIER as unknown as number;
 
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
@@ -124,6 +152,17 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     );
   };
 
+  const qglQueryVariablesMap = {
+    [TriggerMessageRequestProps.evse]: {
+      stationId: stationId,
+    },
+    [TriggerMessageRequestProps.chargingStation]: {
+      [EvseProps.databaseId]: 1,
+    },
+  };
+
+  console.log('parent record', parentRecord);
+
   return (
     <GenericForm
       formProps={formProps}
@@ -131,11 +170,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       onFinish={handleSubmit}
       parentRecord={parentRecord}
       initialValues={parentRecord}
-      gqlQueryVariablesMap={{
-        [TriggerMessageRequestProps.evse]: {
-          stationId: stationId,
-        },
-      }}
+      gqlQueryVariablesMap={qglQueryVariablesMap}
     />
   );
 };

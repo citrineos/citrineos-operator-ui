@@ -30,25 +30,13 @@ import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from '../status-notifications/queries';
-import { Evse, EvseProps } from '../evses/Evse';
+import { Evse } from '../evses/Evse';
 import {
-  GET_EVSE_LIST_FOR_STATION,
-  GET_EVSES_FOR_STATION,
   GET_TRANSACTION_LIST_FOR_STATION,
   GET_TRANSACTIONS_FOR_STATION,
 } from '../../message/queries';
 import { Transaction, TransactionProps } from '../transactions/Transaction';
-import { FieldCustomActions } from '../../util/decorators/FieldCustomActions';
-import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
-
-export enum ChargingStationProps {
-  id = 'id',
-  isOnline = 'isOnline',
-  locationId = 'locationId',
-  statusNotifications = 'statusNotifications',
-  evses = 'evses',
-  transactions = 'transactions',
-}
+import { ChargingStationProps } from './ChargingStationProps';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -85,16 +73,16 @@ export class ChargingStation extends BaseModel {
   @Type(() => StatusNotification)
   statusNotifications?: StatusNotification[];
 
-  @FieldCustomActions([TriggerMessageForEvseCustomAction])
+  // @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @IsArray()
   @IsOptional()
-  @GqlAssociation({
+  /*  @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: EvseProps.id,
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
     gqlUseQueryVariablesKey: ChargingStationProps.evses,
-  })
+  })*/
   @Type(() => Evse)
   evses?: Evse[];
 
@@ -110,7 +98,7 @@ export class ChargingStation extends BaseModel {
   @Type(() => Transaction)
   transactions?: Transaction[];
 
-  constructor(data: ChargingStation) {
+  constructor(data?: ChargingStation) {
     super();
     if (data) {
       Object.assign(this, {

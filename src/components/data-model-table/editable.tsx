@@ -153,6 +153,12 @@ export interface GenericDataTableProps {
   editable?: boolean;
   customActions?: CustomAction<any>[];
   gqlQueryVariablesMap?: GqlQueryVariableMap;
+  fieldAnnotations?: {
+    [key: string]: {
+      customActions: CustomAction<any>[];
+      gqlAssociationProps: GqlAssociationProps;
+    };
+  };
 }
 
 // todo add generic types
@@ -168,6 +174,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     editable: passedEditable = true,
     customActions,
     gqlQueryVariablesMap = null,
+    fieldAnnotations,
   } = props;
 
   let editable = false;
@@ -319,11 +326,16 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     // prepare data
     Object.keys(valuesClass).forEach((key) => {
       const classTransformerType = getClassTransformerType(valuesClass, key);
-      const gqlAssociationProps: GqlAssociationProps = Reflect.getMetadata(
-        GQL_ASSOCIATION,
-        valuesClass,
-        key,
-      );
+      let gqlAssociationProps: GqlAssociationProps;
+      if (fieldAnnotations && fieldAnnotations[key]) {
+        gqlAssociationProps = fieldAnnotations[key].gqlAssociationProps;
+      } else {
+        gqlAssociationProps = Reflect.getMetadata(
+          GQL_ASSOCIATION,
+          valuesClass,
+          key,
+        );
+      }
       if (gqlAssociationProps && classTransformerType) {
         associatedIdFieldName = key;
       }
@@ -514,14 +526,28 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             editingRecord &&
             record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
           if (isCurrentlyEditing) {
-            if (field.type === FieldType.array && field.gqlAssociationProps) {
-              const parentIdFieldName =
-                field.gqlAssociationProps.parentIdFieldName;
+            if (field.type === FieldType.array) {
+              let gqlAssociationProps;
+              if (
+                fieldAnnotations &&
+                fieldAnnotations[field.name]?.gqlAssociationProps
+              ) {
+                gqlAssociationProps =
+                  fieldAnnotations[field.name]?.gqlAssociationProps;
+              } else if (field.gqlAssociationProps) {
+                gqlAssociationProps = field.gqlAssociationProps;
+              }
+              if (!gqlAssociationProps) {
+                return (
+                  <Alert message="Missing gqlAssociationProps" type="error" />
+                );
+              }
+              const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
               const associatedIdFieldName =
-                field.gqlAssociationProps.associatedIdFieldName;
-              const gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+                gqlAssociationProps.associatedIdFieldName;
+              const gqlListQuery = gqlAssociationProps.gqlListQuery;
               const gqlUseQueryVariablesKey =
-                field.gqlAssociationProps.gqlUseQueryVariablesKey;
+                gqlAssociationProps.gqlUseQueryVariablesKey;
               let gqlQueryVariables = undefined;
               if (
                 gqlUseQueryVariablesKey &&
@@ -557,7 +583,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                         });
                         setHasChanges(true);
                       }}
-                      customActions={field.customActions}
+                      customActions={
+                        fieldAnnotations &&
+                        fieldAnnotations[field.name] &&
+                        fieldAnnotations[field.name].customActions
+                          ? fieldAnnotations![field.name].customActions
+                          : field.customActions
+                      }
                     />
                   </Form.Item>
                 </div>
@@ -567,13 +599,27 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               field.type === FieldType.nestedObject &&
               field.gqlAssociationProps
             ) {
-              const parentIdFieldName =
-                field.gqlAssociationProps.parentIdFieldName;
+              let gqlAssociationProps;
+              if (
+                fieldAnnotations &&
+                fieldAnnotations[field.name]?.gqlAssociationProps
+              ) {
+                gqlAssociationProps =
+                  fieldAnnotations[field.name]?.gqlAssociationProps;
+              } else if (field.gqlAssociationProps) {
+                gqlAssociationProps = field.gqlAssociationProps;
+              }
+              if (!gqlAssociationProps) {
+                return (
+                  <Alert message="Missing gqlAssociationProps" type="error" />
+                );
+              }
+              const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
               const associatedIdFieldName =
-                field.gqlAssociationProps.associatedIdFieldName;
-              const gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+                gqlAssociationProps.associatedIdFieldName;
+              const gqlListQuery = gqlAssociationProps.gqlListQuery;
               const gqlUseQueryVariablesKey =
-                field.gqlAssociationProps.gqlUseQueryVariablesKey;
+                gqlAssociationProps.gqlUseQueryVariablesKey;
               let gqlQueryVariables = undefined;
               if (
                 gqlUseQueryVariablesKey &&
@@ -608,7 +654,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                         });
                         setHasChanges(true);
                       }}
-                      customActions={field.customActions}
+                      customActions={
+                        fieldAnnotations &&
+                        fieldAnnotations[field.name] &&
+                        fieldAnnotations[field.name].customActions
+                          ? fieldAnnotations![field.name].customActions
+                          : field.customActions
+                      }
                     />
                   </Form.Item>
                 </div>

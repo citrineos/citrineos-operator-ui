@@ -103,3 +103,58 @@ export const GET_TRANSACTIONS_FOR_STATION = gql`
     }
   }
 `;
+
+export const GET_CHARGING_STATION_LIST_FOR_EVSE = gql`
+  query GetChargingStationListForEvse(
+    $databaseId: Int!
+    $where: VariableAttributes_bool_exp = {}
+    $order_by: [VariableAttributes_order_by!] = {}
+    $offset: Int
+    $limit: Int
+  ) {
+    # Step 1: Fetch station IDs from VariableAttributes
+    VariableAttributes(
+      where: { evseDatabaseId: { _eq: $databaseId }, _and: [$where] }
+      order_by: $order_by
+      offset: $offset
+      limit: $limit
+    ) {
+      stationId
+    }
+
+    # Step 2: Fetch ChargingStations by the list of station IDs from VariableAttributes
+    ChargingStations(
+      where: { id: { _in: [stationId] } } # stationId list from the above query
+    ) {
+      id
+      isOnline
+      locationId
+      createdAt
+      updatedAt
+    }
+
+    # Step 3: Get the aggregate count for VariableAttributes
+    VariableAttributes_aggregate(
+      where: { evseDatabaseId: { _eq: $databaseId }, _and: [$where] }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const GET_CHARGING_STATIONS_FOR_EVSE = gql`
+  query GetChargingStationsForEvse($databaseId: Int!) {
+    ChargingStations(
+      where: { VariableAttributes: { evseDatabaseId: { _eq: $databaseId } } }
+      distinct_on: id # Ensure unique charging stations by their ID
+    ) {
+      id
+      isOnline
+      locationId
+      createdAt
+      updatedAt
+    }
+  }
+`;

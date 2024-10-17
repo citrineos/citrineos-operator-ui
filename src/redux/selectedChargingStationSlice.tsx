@@ -28,7 +28,8 @@ export const getSelectedChargingStation = () =>
   createSelector(
     (state: RootState) =>
       state.selectedChargingStationSlice.selectedChargingStation,
-    (selectedChargingStation: any) => JSON.parse(selectedChargingStation),
+    (selectedChargingStation: any) =>
+      selectedChargingStation ? JSON.parse(selectedChargingStation) : undefined,
   );
 
 export const { setSelectedChargingStation } =
