@@ -17,6 +17,15 @@ import {
 
 const ID_TOKEN_FIELD = 'idToken';
 
+export enum GetCustomerInformationDataProps {
+  idToken = 'idToken',
+  customData = 'customData',
+  requestId = 'requestId',
+  report = 'report',
+  clear = 'clear',
+  customerIdentifier = 'customerIdentifier',
+}
+
 export class CustomerInformationRequest {
   @IsInt()
   @IsPositive()
