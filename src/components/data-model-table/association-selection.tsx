@@ -127,6 +127,22 @@ export const AssociationSelection = <
   };
 
   const searchableKeys = getSearchableKeys(associatedRecordClass);
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any): CrudFilters => {
+      const result: CrudFilters = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
 
   const {
     tableProps,
@@ -233,22 +249,6 @@ export const AssociationSelection = <
     );
   }
 
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = (values: any): CrudFilters => {
-      const result: CrudFilters = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    };
-  }
   if (queryResult?.isLoading) {
     return <Spin />;
   }

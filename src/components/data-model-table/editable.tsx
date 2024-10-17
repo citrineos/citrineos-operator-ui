@@ -58,16 +58,29 @@ const renderViewContent = (
   field: FieldSchema,
   _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
   record: any, // todo type
+  gqlQueryVariablesMap?: GqlQueryVariableMap | null,
 ) => {
   const value = record[field.name];
   const fieldType = field.type;
   const fieldOptions = field.options;
-  let parentIdFieldName, associatedIdFieldName, gqlQuery, gqlListQuery;
-  if (field.gqlAssociationProps) {
-    parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
-    associatedIdFieldName = field.gqlAssociationProps.associatedIdFieldName;
-    gqlQuery = field.gqlAssociationProps.gqlQuery;
-    gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+  const parentIdFieldName = field.gqlAssociationProps?.parentIdFieldName;
+  const associatedIdFieldName =
+    field.gqlAssociationProps?.associatedIdFieldName;
+  const gqlQuery = field.gqlAssociationProps?.gqlQuery;
+  const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
+  const gqlUseQueryVariablesKey =
+    field.gqlAssociationProps?.gqlUseQueryVariablesKey;
+  let gqlQueryVariables = undefined;
+  if (
+    gqlUseQueryVariablesKey &&
+    gqlQueryVariablesMap &&
+    !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
+  ) {
+    if (typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] === 'function') {
+      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
+    } else {
+      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
+    }
   }
   switch (fieldType) {
     case FieldType.boolean:
@@ -90,7 +103,6 @@ const renderViewContent = (
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlQuery}
             gqlListQuery={gqlListQuery}
-            // editable={editable} todo do we want to have associated detail view show in editable state?
           />
         </>
       );
@@ -103,11 +115,10 @@ const renderViewContent = (
         <ExpandableColumn
           expandedContent={
             <AssociatedTable
-              parentRecord={record}
               associatedRecordClass={field.dtoClass!}
-              parentIdFieldName={parentIdFieldName!}
-              associatedIdFieldName={associatedIdFieldName!}
-              gqlQuery={gqlQuery}
+              gqlQuery={gqlListQuery}
+              gqlQueryVariables={gqlQueryVariables}
+              customActions={field.customActions}
             />
           }
           viewTitle={`Associated Table: ${field.dtoClass?.name}`}
@@ -128,6 +139,10 @@ export enum SelectionType {
   MULTIPLE = 'multiple',
 }
 
+export type GqlQueryVariableMap =
+  | { [key: string]: object }
+  | { [key: string]: (record: any) => object };
+
 export interface GenericDataTableProps {
   // todo make generic / typed
   dtoClass: Constructable<any>;
@@ -137,9 +152,7 @@ export interface GenericDataTableProps {
   onSelectionChange?: (selectedRows: any[]) => void;
   editable?: boolean;
   customActions?: CustomAction<any>[];
-  gqlQueryVariablesMap?:
-    | { [key: string]: object }
-    | { [key: string]: (record: any) => object };
+  gqlQueryVariablesMap?: GqlQueryVariableMap;
 }
 
 // todo add generic types
@@ -152,7 +165,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     filters = null,
     useTableProps: useTableProps = null,
     onSelectionChange,
-    editable: passedEditable,
+    editable: passedEditable = true,
     customActions,
     gqlQueryVariablesMap = null,
   } = props;
@@ -163,9 +176,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   const dataProvider: DataProvider = getDataProvider();
 
   const { mode } = useContext(ColorModeContext);
-  if (!passedEditable) {
-    const isDarkMode = mode === 'dark';
-    editable = isDarkMode;
+  const isDarkMode = mode === 'dark';
+  if (isDarkMode) {
+    editable = passedEditable;
   }
 
   const dtoClassInstance = useMemo(() => {
@@ -619,7 +632,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
           }
           return (
             <div className="editable-cell">
-              {renderViewContent(field, value, record)}
+              {renderViewContent(field, value, record, gqlQueryVariablesMap)}
             </div>
           );
         },
