@@ -23,6 +23,7 @@ import {
 import { triggerMessageAndHandleResponse } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { MessageConfirmation } from '../MessageConfirmation';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
@@ -52,20 +53,6 @@ export class TriggerMessageRequest {
   }
 }
 
-export class TriggerMessageResponse {
-  @Type(() => CustomDataType)
-  @ValidateNested()
-  @IsOptional()
-  customData?: CustomDataType;
-
-  @IsEnum(TriggerMessageStatusEnumType)
-  status!: TriggerMessageStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  statusInfo?: StatusInfoType;
-}
-
 export interface TriggerMessageProps {
   station: ChargingStation;
 }
@@ -77,24 +64,25 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(TriggerMessageRequest, plainValues);
     const evse = classInstance[TriggerMessageRequestProps.evseId];
-    const data = {
+    const data: any = {
       requestedMessage:
         classInstance[TriggerMessageRequestProps.requestedMessage],
       customData: classInstance[TriggerMessageRequestProps.customData],
-      evse: evse
-        ? {
-            id: evse[EvseProps.databaseId],
-            // customData: todo,
-            connectorId: evse[EvseProps.connectorId],
-          }
-        : undefined,
     };
+
+    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+      data.evse = {
+        id: evse[EvseProps.id],
+        // customData: todo,
+        connectorId: evse[EvseProps.connectorId],
+      }
+    }
+
     await triggerMessageAndHandleResponse(
       `/configuration/triggerMessage?identifier=${station.id}&tenantId=1`,
-      TriggerMessageResponse,
+      MessageConfirmation,
       data,
-      (response: TriggerMessageResponse) =>
-        response && (response as any).success,
+      (response: MessageConfirmation) => response && response.success,
     );
   };
 
