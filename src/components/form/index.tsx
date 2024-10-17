@@ -40,6 +40,8 @@ import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConst
 import { isSortable } from '../../util/decorators/Sortable';
 import { NestedObjectField } from './nested-object-field';
 import { ArrayField } from './array-field';
+import { CustomAction } from '../custom-actions';
+import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
 
 export enum ReflectType {
   array,
@@ -89,6 +91,7 @@ export interface FieldSchema {
   dtoClass?: Constructable<any>;
   customConstructor?: () => any;
   gqlAssociationProps?: GqlAssociationProps;
+  customActions?: CustomAction<any>[];
   sorter: boolean;
 }
 
@@ -201,6 +204,12 @@ export const getSchemaForInstanceAndKey = (
 ): FieldSchema => {
   const sorter = isSortable(instance.constructor, key);
 
+  const customActions = Reflect.getMetadata(
+    FIELD_CUSTOM_ACTIONS,
+    instance,
+    key,
+  );
+
   const customFormRender = Reflect.getMetadata(
     CUSTOM_FORM_RENDER,
     instance,
@@ -215,6 +224,7 @@ export const getSchemaForInstanceAndKey = (
       customRender: customFormRender,
       isRequired: requiredFields.includes(key),
       sorter,
+      customActions,
     };
   }
 
@@ -267,6 +277,7 @@ export const getSchemaForInstanceAndKey = (
       customConstructor,
       gqlAssociationProps,
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -294,6 +305,7 @@ export const getSchemaForInstanceAndKey = (
       customConstructor,
       gqlAssociationProps,
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -304,6 +316,7 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.unknownProperty,
       isRequired: requiredFields.includes(key),
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -314,6 +327,7 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.unknownProperties,
       isRequired: requiredFields.includes(key),
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -326,6 +340,7 @@ export const getSchemaForInstanceAndKey = (
     selectValues: type === ReflectType.array ? instance[key] : undefined,
     options: options,
     sorter,
+    customActions,
   } as unknown as FieldSchema;
 };
 

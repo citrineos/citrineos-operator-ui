@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
 import { Button, Form, Upload, UploadFile } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
@@ -12,6 +11,7 @@ import { StatusInfoType } from '../model/StatusInfoType';
 import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
 import { FieldPath } from '../../components/form/state/fieldpath';
 import { UploadOutlined } from '@ant-design/icons';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum CertificateSignedRequestProps {
   certificateType = 'certificateType',

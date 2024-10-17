@@ -12,6 +12,50 @@ export interface RemoteStopProps {
   station: ChargingStation;
 }
 
+export const requestStopTransaction = async (
+  stationId: string,
+  transactionId: string,
+  setLoading: (loading: boolean) => void,
+) => {
+  try {
+    setLoading(true);
+    const payload = { transactionId };
+    const client = new BaseRestClient();
+    const response = await client.post(
+      `/evdriver/requestStopTransaction?identifier=${stationId}&tenantId=1`,
+      MessageConfirmation,
+      {},
+      payload,
+    );
+
+    if (response && response.success) {
+      notification.success({
+        message: 'Success',
+        description: 'The stop transaction request was successful.',
+        placement: 'topRight',
+      });
+    } else {
+      notification.error({
+        message: 'Request Failed',
+        description:
+          'The stop transaction request did not receive a successful response. Response: ' +
+          JSON.stringify(response),
+        placement: 'topRight',
+      });
+    }
+  } catch (error: any) {
+    const msg = `Could not perform request stop transaction, got error: ${error.message}`;
+    console.error(msg, error);
+    notification.error({
+      message: 'Error',
+      description: msg,
+      placement: 'topRight',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 export const RemoteStop: React.FC<RemoteStopProps> = ({ station }) => {
   const [selectedTransaction, setSelectedTransaction] = useState<
     string | undefined
@@ -41,48 +85,9 @@ export const RemoteStop: React.FC<RemoteStopProps> = ({ station }) => {
     }
   }, [data]);
 
-  const requestStopTransaction = async (transactionId: string) => {
-    try {
-      setLoading(true);
-      const payload = { transactionId };
-      const client = new BaseRestClient();
-      const response = await client.post(
-        `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=1`,
-        MessageConfirmation,
-        {},
-        payload,
-      );
-
-      if (response && response.success) {
-        notification.success({
-          message: 'Success',
-          description: 'The stop transaction request was successful.',
-          placement: 'topRight',
-        });
-      } else {
-        notification.error({
-          message: 'Request Failed',
-          description:
-            'The stop transaction request did not receive a successful response.',
-          placement: 'topRight',
-        });
-      }
-    } catch (error: any) {
-      const msg = `Could not perform request stop transaction, got error: ${error.message}`;
-      console.error(msg, error);
-      notification.error({
-        message: 'Error',
-        description: msg,
-        placement: 'topRight',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedTransaction) {
-      requestStopTransaction(selectedTransaction);
+      await requestStopTransaction(station.id, selectedTransaction, setLoading);
     }
   };
 
