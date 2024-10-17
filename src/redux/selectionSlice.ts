@@ -1,13 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { instanceToPlain } from 'class-transformer';
-import { LABEL_FIELD } from '../util/decorators/LabelField';
-import { PRIMARY_KEY_FIELD_NAME } from '../util/decorators/PrimaryKeyFieldName';
-
-interface Model {
-  id: string;
-  [key: string]: any;
-}
 
 interface SelectionState {
   models: { [key: string]: any };
@@ -17,56 +10,25 @@ const initialState: SelectionState = {
   models: {},
 };
 
-const selectionSlice = createSlice({
-  name: 'selections',
+const selectedAssociatedItems = createSlice({
+  name: 'selectedAssociatedItems',
   initialState,
   reducers: {
-    addModelsToStorage: (
+    setSelectedAssociatedItems: (
       state,
-      action: PayloadAction<{ storageKey: string; selectedRows: string }>,
+      action: PayloadAction<{ storageKey: string; selectedRows: any }>,
     ) => {
       const { storageKey, selectedRows } = action.payload;
-      const existingModelsString = state.models[storageKey];
-      const existingModels: Model[] = existingModelsString
-        ? JSON.parse(existingModelsString)
-        : JSON.parse(selectedRows);
-
-      const selectedRowsArray: Model[] = JSON.parse(selectedRows);
-      selectedRowsArray.forEach((row) => {
-        if (!existingModels.some((model) => model.id === row.id)) {
-          existingModels.push(row);
-        }
-      });
-
-      state.models[storageKey] = JSON.stringify(
-        instanceToPlain(existingModels),
-      );
+      state.models[storageKey] = instanceToPlain(selectedRows);
     },
   },
 });
 
-export const getSelectedKeyValue = (
-  storageKey: string,
-  associatedRecordClassInstance: object,
-) =>
+export const getSelectedAssociatedItems = (storageKey: string) =>
   createSelector(
     (state: RootState) => state.selectedAssociatedItems.models,
-    (models: any) => {
-      const label = Reflect.getMetadata(
-        LABEL_FIELD,
-        associatedRecordClassInstance,
-      );
-      const primaryKeyFieldName: string = Reflect.getMetadata(
-        PRIMARY_KEY_FIELD_NAME,
-        associatedRecordClassInstance,
-      );
-      const labelKey = label || primaryKeyFieldName;
-      if (models[storageKey] !== undefined) {
-        const parsedModels = JSON.parse(models[storageKey]) as Model[];
-        return parsedModels.map((model) => model[labelKey]).join(', ');
-      }
-    },
+    (models) => (models[storageKey] ? JSON.parse(models[storageKey]) : []),
   );
 
-export const { addModelsToStorage } = selectionSlice.actions;
-export default selectionSlice.reducer;
+export const { setSelectedAssociatedItems } = selectedAssociatedItems.actions;
+export default selectedAssociatedItems.reducer;

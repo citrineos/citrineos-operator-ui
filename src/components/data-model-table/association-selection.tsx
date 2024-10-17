@@ -15,9 +15,10 @@ import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  addModelsToStorage,
-  getSelectedKeyValue,
+  setSelectedAssociatedItems,
+  getSelectedAssociatedItems,
 } from '../../redux/selectionSlice';
+import { LABEL_FIELD } from '../../util/decorators/LabelField';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -62,11 +63,6 @@ export const AssociationSelection = <
     associatedRecordClassInstance as object,
   );
 
-  const selectedIdentifiers =
-    useSelector(
-      getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
-    ) || '';
-
   if (!associatedRecordResourceType) {
     return (
       <Alert
@@ -76,10 +72,31 @@ export const AssociationSelection = <
     );
   }
 
+  const label = Reflect.getMetadata(
+    LABEL_FIELD,
+    associatedRecordClassInstance as object,
+  );
+
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
     associatedRecordClassInstance as object,
   );
+
+  const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
+  const selectedIdentifiers = useMemo(() => {
+    if (selectedItems.length === 0) {
+      return '';
+    }
+
+    const labelKey = label || primaryKeyFieldName;
+    return selectedItems
+      .map(
+        (item: any) =>
+          plainToInstance(associatedRecordClass, item) as AssociatedModel,
+      )
+      .map((item: any) => item[labelKey])
+      .join(', ');
+  }, [selectedItems, label, primaryKeyFieldName, associatedRecordClass]);
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
@@ -96,8 +113,19 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    const selectedRowsID = selectedIdentifiers;
-    setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
+    let newVal = '';
+    if (Array.isArray(value)) {
+      newVal = value
+        .map((v: any) => (v as any)[primaryKeyFieldName])
+        .join(', ');
+    } else {
+      newVal = value
+        ? JSON.stringify((value as any)[associatedIdFieldName])
+        : '';
+    }
+    setTagValue(
+      isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
+    );
   }, [isNew, value]);
 
   const meta: any = {
@@ -168,7 +196,7 @@ export const AssociationSelection = <
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
       dispatch(
-        addModelsToStorage({
+        setSelectedAssociatedItems({
           storageKey,
           selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
         }),
@@ -271,8 +299,7 @@ export const AssociationSelection = <
         expandedContent={({ closeDrawer }) => (
           <>
             <p>
-              Selected {associatedRecordClass.name}(s):
-              {selectedIdentifiers}
+              Selected {associatedRecordClass.name}(s) :{selectedIdentifiers}
             </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
