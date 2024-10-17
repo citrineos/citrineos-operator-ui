@@ -8,7 +8,9 @@ import {
   CustomerPayload,
 } from '../../model/CustomerInformation';
 
-export const CustomerInformation: React.FC<GetCustomerProps> = ({ station }) => {
+export const CustomerInformation: React.FC<GetCustomerProps> = ({
+  station,
+}) => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = {

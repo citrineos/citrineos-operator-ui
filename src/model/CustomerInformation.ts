@@ -54,7 +54,14 @@ export interface GetCustomerProps {
 }
 
 export const CustomerPayload = (plainValues: Record<string, any>) => {
-  const { idToken, report, clear, customData, customerCertificate, customerIdentifier } = plainValues;
+  const {
+    idToken,
+    report,
+    clear,
+    customData,
+    customerCertificate,
+    customerIdentifier,
+  } = plainValues;
 
   return {
     requestId: plainValues.requestId,
@@ -62,18 +69,21 @@ export const CustomerPayload = (plainValues: Record<string, any>) => {
     clear: clear ?? false,
     customData: customData,
     customerCertificate: customerCertificate,
-    idToken: idToken ? {
-      idToken: idToken.idToken,
-      type: idToken.type,
-      customData: idToken.customData,
-      additionalInfo: idToken.IdTokenAdditionalInfos?.map(
-        ({ AdditionalInfo: info }: any) => ({
-          additionalIdToken: info.additionalIdToken,
-          type: info.type,
-          customData: info.customData,
-        })
-      ) || [],
-    } : null,
+    idToken: idToken
+      ? {
+          idToken: idToken.idToken,
+          type: idToken.type,
+          customData: idToken.customData,
+          additionalInfo:
+            idToken.IdTokenAdditionalInfos?.map(
+              ({ AdditionalInfo: info }: any) => ({
+                additionalIdToken: info.additionalIdToken,
+                type: info.type,
+                customData: info.customData,
+              }),
+            ) || [],
+        }
+      : null,
     customerIdentifier,
   };
 };

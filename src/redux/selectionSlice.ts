@@ -45,7 +45,10 @@ const selectionSlice = createSlice({
   },
 });
 
-export const getSelectedKeyValue = (storageKey: string, associatedRecordClassInstance: object) =>
+export const getSelectedKeyValue = (
+  storageKey: string,
+  associatedRecordClassInstance: object,
+) =>
   createSelector(
     (state: RootState) => state.selectedAssociatedItems.models,
     (models: any) => {

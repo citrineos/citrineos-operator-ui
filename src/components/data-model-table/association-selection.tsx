@@ -49,7 +49,8 @@ export const AssociationSelection = <
   } = props;
 
   const dispatch = useDispatch();
-  const storageKey = (`${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`).toLowerCase();
+  const storageKey =
+    `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
