@@ -7,10 +7,10 @@ import { Dispatch } from 'redux';
 export interface CustomAction<T> {
   label: string;
   isVisible?: (arg: T) => boolean;
-  onCustomActionLoad?: (arg: T, dispatch: Dispatch) => void;
   execOrRender: (
     arg: T,
     setLoading: (loading: boolean) => void,
+    dispatch: Dispatch,
   ) => void | React.ReactNode; // This function can either perform an action or return a view
 }
 
@@ -31,7 +31,7 @@ export const CustomActions = <T,>({
   const dispatch = useDispatch();
 
   const handleMenuClick = (action: CustomAction<T>) => {
-    const result = action.execOrRender(data, setLoading);
+    const result = action.execOrRender(data, setLoading, dispatch);
     if (React.isValidElement(result)) {
       setDrawerContent(result);
       setVisible(true); // Open the drawer with the returned content
@@ -46,9 +46,6 @@ export const CustomActions = <T,>({
   const items: MenuProps['items'] = actions
     ?.filter((action) => (action.isVisible ? action.isVisible?.(data) : true))
     .map((action, index) => {
-      if (action.onCustomActionLoad) {
-        action.onCustomActionLoad?.(data, dispatch);
-      }
       return {
         key: index.toString(),
         label: action.label,
