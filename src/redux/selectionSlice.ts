@@ -1,6 +1,8 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { instanceToPlain } from 'class-transformer';
+import { LABEL_FIELD } from '../util/decorators/LabelField';
+import { PRIMARY_KEY_FIELD_NAME } from '../util/decorators/PrimaryKeyFieldName';
 
 interface Model {
   id: string;
@@ -43,20 +45,25 @@ const selectionSlice = createSlice({
   },
 });
 
-export const selectModelsByKey = (storageKey: string) =>
+export const getSelectedKeyValue = (
+  storageKey: string,
+  associatedRecordClassInstance: object,
+) =>
   createSelector(
-    (state: RootState) => state.counter.models,
-    (models: any) => models[storageKey],
-  );
-
-export const getAllUniqueNames = (storageKey: string) =>
-  createSelector(
-    (state: RootState) => state.counter.models,
+    (state: RootState) => state.selectedAssociatedItems.models,
     (models: any) => {
+      const label = Reflect.getMetadata(
+        LABEL_FIELD,
+        associatedRecordClassInstance,
+      );
+      const primaryKeyFieldName: string = Reflect.getMetadata(
+        PRIMARY_KEY_FIELD_NAME,
+        associatedRecordClassInstance,
+      );
+      const labelKey = label || primaryKeyFieldName;
       if (models[storageKey] !== undefined) {
-        return (JSON.parse(models[storageKey]) as Model[])
-          .map((model) => model.name)
-          .join(', ');
+        const parsedModels = JSON.parse(models[storageKey]) as Model[];
+        return parsedModels.map((model) => model[labelKey]).join(', ');
       }
     },
   );

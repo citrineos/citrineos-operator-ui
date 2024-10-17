@@ -4,7 +4,7 @@ import selectedChargingStationSlice from './selectedChargingStationSlice';
 
 const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    selectedAssociatedItems: counterReducer,
     selectedChargingStationSlice,
   },
   middleware: (getDefaultMiddleware) =>

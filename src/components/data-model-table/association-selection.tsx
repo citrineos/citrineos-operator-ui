@@ -18,8 +18,7 @@ import { CustomAction } from '../custom-actions';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addModelsToStorage,
-  getAllUniqueNames,
-  selectModelsByKey,
+  getSelectedKeyValue,
 } from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
@@ -53,17 +52,9 @@ export const AssociationSelection = <
     customActions,
   } = props;
 
-  const lastSegment = document.location.pathname
-    .replace(/\//g, '')
-    .replace(/-/g, '_');
-  const storageKey = (
-    lastSegment
-      ? `${lastSegment}_${associatedRecordClass.name}`
-      : associatedRecordClass.name
-  ).toLowerCase();
   const dispatch = useDispatch();
-  const models = useSelector(selectModelsByKey(storageKey));
-  const uniqueNames = useSelector(getAllUniqueNames(storageKey)) || '';
+  const storageKey =
+    `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -74,6 +65,20 @@ export const AssociationSelection = <
     CLASS_RESOURCE_TYPE,
     associatedRecordClassInstance as object,
   );
+
+  const selectedIdentifiers =
+    useSelector(
+      getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
+    ) || '';
+
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
+  }
 
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
@@ -100,7 +105,7 @@ export const AssociationSelection = <
   const [tagValue, setTagValue] = useState<string>('');
 
   useEffect(() => {
-    const selectedRowsID = uniqueNames;
+    const selectedRowsID = selectedIdentifiers;
     setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
   }, [isNew, value]);
 
@@ -158,6 +163,7 @@ export const AssociationSelection = <
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
 
@@ -193,21 +199,20 @@ export const AssociationSelection = <
         }),
       );
 
-      if (models !== undefined) {
-        setSelectedRows(JSON.parse(models));
-      }
+      setSelectedRows(selectedRows);
 
       if (onChange) {
         onChange(selectedRows);
       }
     },
-    [onChange, models],
+    [onChange],
   );
 
   const rowSelection = useMemo(() => {
     const selectedRowKeys = selectedRows.map(
       (item: any) => item[primaryKeyFieldName],
     );
+
     return {
       selectedRowKeys: selectedRowKeys,
       onChange: handleRowChange,
@@ -225,7 +230,7 @@ export const AssociationSelection = <
         onChange(selectedRows);
       }
 
-      setTagValue(uniqueNames);
+      setTagValue(selectedIdentifiers);
 
       closeDrawer();
     },
@@ -276,7 +281,7 @@ export const AssociationSelection = <
           <>
             <p>
               Selected {associatedRecordClass.name}(s):
-              {uniqueNames}
+              {selectedIdentifiers}
             </p>
             <GenericDataTable
               dtoClass={associatedRecordClass}
