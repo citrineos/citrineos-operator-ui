@@ -3,7 +3,7 @@ import counterReducer from './selectionSlice';
 
 const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    selectedAssociatedItems: counterReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

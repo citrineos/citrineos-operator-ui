@@ -45,15 +45,9 @@ const selectionSlice = createSlice({
   },
 });
 
-export const selectModelsByKey = (storageKey: string) =>
-  createSelector(
-    (state: RootState) => state.counter.models,
-    (models: any) => models[storageKey],
-  );
-
 export const getSelectedKeyValue = (storageKey: string, associatedRecordClassInstance: object) =>
   createSelector(
-    (state: RootState) => state.counter.models,
+    (state: RootState) => state.selectedAssociatedItems.models,
     (models: any) => {
       const label = Reflect.getMetadata(
         LABEL_FIELD,

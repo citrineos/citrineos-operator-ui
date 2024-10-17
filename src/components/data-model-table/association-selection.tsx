@@ -14,13 +14,7 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  addModelsToStorage,
-  getAllUniqueNames,
-  selectModelsByKey,
-  getSelectedKeyValue,
-} from '../../redux/selectionSlice';
-import { LABEL_FIELD } from '../../util/decorators/LabelField';
+import { addModelsToStorage, getSelectedKeyValue } from '../../redux/selectionSlice';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -60,7 +54,6 @@ export const AssociationSelection = <
       : associatedRecordClass.name
   ).toLowerCase();
   const dispatch = useDispatch();
-  const models = useSelector(selectModelsByKey(storageKey));
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -72,7 +65,10 @@ export const AssociationSelection = <
     associatedRecordClassInstance as object,
   );
 
-  const selectedIdentifiers = useSelector(getSelectedKeyValue(storageKey, associatedRecordClassInstance as object)) || '';
+  const selectedIdentifiers =
+    useSelector(
+      getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
+    ) || '';
 
   if (!associatedRecordResourceType) {
     return (
@@ -145,6 +141,7 @@ export const AssociationSelection = <
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
 
@@ -180,21 +177,20 @@ export const AssociationSelection = <
         }),
       );
 
-      if (models !== undefined) {
-        setSelectedRows(JSON.parse(models));
-      }
+      setSelectedRows(selectedRows);
 
-      if (onChange && newSelectedRowKeys.length > 0) {
+      if (onChange) {
         onChange(selectedRows);
       }
     },
-    [onChange, models],
+    [onChange],
   );
 
   const rowSelection = useMemo(() => {
     const selectedRowKeys = selectedRows.map(
       (item: any) => item[primaryKeyFieldName],
     );
+
     return {
       selectedRowKeys: selectedRowKeys,
       onChange: handleRowChange,
