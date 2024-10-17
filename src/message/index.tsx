@@ -14,6 +14,7 @@ import { GetLog, GetLogProps } from './get-log';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
 import React from 'react';
 import { GetVariables, GetVariablesProps } from './get-variables';
+import { CustomerInformation } from './customer-information';
 import { ResetChargingStation, ResetChargingStationProps } from './reset';
 import { RemoteStart, RemoteStartProps } from './remote-start';
 import {
@@ -32,6 +33,7 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { GetCustomerProps } from '../model/CustomerInformation';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -54,6 +56,7 @@ const chargingStationActionMap: {
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
+  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =

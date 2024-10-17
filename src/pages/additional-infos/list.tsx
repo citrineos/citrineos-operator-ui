@@ -1,7 +1,7 @@
 import { useTable } from '@refinedev/antd';
 
 import type { AdditionalInfosListQuery } from '../../graphql/types';
-import { ADDITIONAL_INFOS_LIST_QUERY } from './queries';
+import { ADDITIONAL_INFOS_LIST_QUERY } from '../../queries/additionalInfo';
 import { AdditionalInfos } from '../../graphql/schema.types';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import { DataModelTable, IDataModelListProps } from '../../components';
