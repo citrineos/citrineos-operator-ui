@@ -8,7 +8,6 @@ import { CustomDataType } from '../../model/CustomData';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import {
   MessageTriggerEnumType,
-  TriggerMessageStatusEnumType,
 } from '@citrineos/base';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
@@ -21,7 +20,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
-import { StatusInfoType } from '../model/StatusInfoType';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
 
