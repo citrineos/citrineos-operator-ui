@@ -6,9 +6,7 @@ import { SelectionType } from '../../components/data-model-table/editable';
 import { plainToInstance, Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
-import {
-  MessageTriggerEnumType,
-} from '@citrineos/base';
+import { MessageTriggerEnumType } from '@citrineos/base';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
 import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
@@ -73,7 +71,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
         id: evse[EvseProps.id],
         // customData: todo,
         connectorId: evse[EvseProps.connectorId],
-      }
+      };
     }
 
     await triggerMessageAndHandleResponse(
