@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './selectionSlice';
+import selectedAssociatedItems from './selectionSlice';
 
 const store = configureStore({
   reducer: {
-    selectedAssociatedItems: counterReducer,
+    selectedAssociatedItems,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

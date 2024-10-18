@@ -37,6 +37,10 @@ export const COMPONENT_GET_QUERY = gql`
       evseDatabaseId
       createdAt
       updatedAt
+      Evse {
+        id
+        connectorId
+      }
     }
   }
 `;
