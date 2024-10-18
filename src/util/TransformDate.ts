@@ -1,7 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import moment from 'moment';
 import dayjs from 'dayjs';
-import {IsDateOrDayjs} from "./IsDateOrDayjs";
+import { IsDateOrDayjs } from './IsDateOrDayjs';
 
 export const IS_DATE = 'isDate';
 

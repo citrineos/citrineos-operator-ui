@@ -9,7 +9,7 @@ import type {
   AdditionalInfosEditMutationVariables,
 } from '../../graphql/types';
 import type { GetFields, GetVariables } from '@refinedev/hasura';
-import { ADDITIONAL_INFOS_EDIT_MUTATION } from './queries';
+import { ADDITIONAL_INFOS_EDIT_MUTATION } from '../../queries/additionalInfo';
 import {
   AdditionalInfos_Set_Input,
   Exact,

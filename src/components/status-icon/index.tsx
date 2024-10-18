@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
-import {red, green} from '@ant-design/colors'
+import { red, green } from '@ant-design/colors';
 
 interface StatusIconProps {
   value?: boolean | null;

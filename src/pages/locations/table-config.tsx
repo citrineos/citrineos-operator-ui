@@ -13,7 +13,7 @@ import { AimOutlined } from '@ant-design/icons';
 
 export const LOCATIONS_COLUMNS = (
   withActions: boolean,
-  parentView?: ResourceType,
+  _parentView?: ResourceType,
 ): TableColumnsType<Locations> => {
   const baseColumns: TableColumnsType<Locations> = [
     {

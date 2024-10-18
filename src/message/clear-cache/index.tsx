@@ -58,13 +58,10 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(ClearCacheRequest, plainValues);
     await triggerMessageAndHandleResponse(
-      `/configuration/clearCache?identifier=${station.id}&tenantId=1`,
+      `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
       ClearCacheResponse,
       classInstance,
-      (response: ClearCacheResponse) =>
-        response &&
-        response.status &&
-        response.status === ClearCacheStatusEnumType.Accepted,
+      (response: ClearCacheResponse) => response && (response as any).success,
     );
   };
 

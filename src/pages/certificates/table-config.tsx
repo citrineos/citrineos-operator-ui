@@ -9,10 +9,12 @@ import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
+import { CustomAction } from '../../components/custom-actions';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,
   parentView?: ResourceType,
+  customActions?: CustomAction<Certificates>[],
 ): TableColumnsType<Certificates> => {
   const baseColumns: TableColumnsType<Certificates> = [
     {
@@ -121,6 +123,7 @@ export const CERTIFICATES_COLUMNS = (
         <ActionsColumn
           record={record}
           gqlDeleteMutation={CERTIFICATES_DELETE_MUTATION}
+          customActions={customActions}
         />
       ),
     });

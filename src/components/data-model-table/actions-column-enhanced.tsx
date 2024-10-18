@@ -29,11 +29,11 @@ export interface IActionsColumnEnhancedProps {
   onDeleteSuccess?: () => void;
 }
 
-export interface CancelButtonProps<T> {
-  onCancel?: MouseEventHandler<any>;
+export interface CancelButtonProps {
+  onCancel?: MouseEventHandler<HTMLElement>;
 }
 
-export const CancelButton = <T,>({ onCancel }: CancelButtonProps<T>) => {
+export const CancelButton = ({ onCancel }: CancelButtonProps) => {
   return (
     <AnimatePresence>
       {onCancel && (
@@ -68,7 +68,7 @@ export const ActionsColumnEnhanced = ({
 
   const dtoResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    dtoClassInstance as Object,
+    dtoClassInstance as object,
   );
   if (!dtoResourceType) {
     return (
@@ -80,7 +80,7 @@ export const ActionsColumnEnhanced = ({
   }
   const primaryKeyFieldName = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
-    dtoClassInstance as Object,
+    dtoClassInstance as object,
   );
   if (!primaryKeyFieldName) {
     return (
@@ -93,7 +93,7 @@ export const ActionsColumnEnhanced = ({
 
   const dtoGqlDeleteMutation = Reflect.getMetadata(
     CLASS_GQL_DELETE_MUTATION,
-    dtoClassInstance as Object,
+    dtoClassInstance as object,
   );
   if (!dtoGqlDeleteMutation) {
     return (

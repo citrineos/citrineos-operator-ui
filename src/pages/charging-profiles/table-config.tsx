@@ -101,7 +101,7 @@ export const CHARGING_PROFILES_COLUMNS = (
           return transactionDatabaseId;
         }
 
-        const filter = DEFAULT_EXPANDED_DATA_FILTER(
+        const _filter = DEFAULT_EXPANDED_DATA_FILTER(
           'id',
           'eq',
           transactionDatabaseId,

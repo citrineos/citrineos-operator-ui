@@ -6,7 +6,7 @@
   background-color: white;
   padding: 5px;
   border-radius: 3px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 
@@ -22,7 +22,9 @@
   position: relative;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -41,7 +43,7 @@ html, body, #root {
   flex: 1 1 auto;
 }
 
-.map-wrapper{
+.map-wrapper {
   width: 300px;
   height: 300px;
 }

@@ -6,7 +6,7 @@ import { Typography } from 'antd';
 
 import type { GetFields } from '@refinedev/hasura';
 import type { AdditionalInfosShowQuery } from '../../graphql/types';
-import { ADDITIONAL_INFOS_SHOW_QUERY } from './queries';
+import { ADDITIONAL_INFOS_SHOW_QUERY } from '../../queries/additionalInfo';
 
 const { Title } = Typography;
 
