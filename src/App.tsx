@@ -155,6 +155,11 @@ const hasuraOptions: HasuraDataProviderOptions = {
   },
 };
 
+const hasuraDataProvider = dataProvider(client, hasuraOptions)
+hasuraDataProvider.getApiUrl = () => {
+  return API_URL;
+}
+
 const resources = [
   {
     name: ResourceType.ADDITIONAL_INFOS,
@@ -237,7 +242,7 @@ function App() {
           <AntdApp>
             <ConfigProvider theme={theme}>
               <Refine
-                dataProvider={dataProvider(client, hasuraOptions)}
+                dataProvider={hasuraDataProvider}
                 liveProvider={liveProvider(webSocketClient)}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}

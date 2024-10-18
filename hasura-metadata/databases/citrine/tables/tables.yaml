@@ -10,6 +10,7 @@
 - "!include public_ChargingSchedules.yaml"
 - "!include public_ChargingStationSecurityInfos.yaml"
 - "!include public_ChargingStations.yaml"
+- "!include public_ChargingStationSequences.yaml"
 - "!include public_ClientCredentialsRoles.yaml"
 - "!include public_ClientInformations.yaml"
 - "!include public_ClientVersions.yaml"

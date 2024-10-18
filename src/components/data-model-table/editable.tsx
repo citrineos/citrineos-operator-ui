@@ -161,7 +161,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   if (!dataProvider) {
     return (
       <Alert
-        message="Error: GenericDataTable cannot find DataProvider"
+        message="Error: GenericDataTable cannot find "
         type="error"
       />
     );

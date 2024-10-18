@@ -2,12 +2,6 @@ import { BaseRestClient } from '../util/BaseRestClient';
 import { Constructable } from '../util/Constructable';
 import { notification } from 'antd';
 
-export const generateRandomSignedInt = () => {
-  const maxInt = 2147483647; // 2^31 - 1
-  const minInt = 0;
-  return Math.trunc(Math.random() * (maxInt - minInt + 1) + minInt);
-};
-
 export const showSucces = () => {
   notification.success({
     message: 'Success',

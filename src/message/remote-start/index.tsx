@@ -13,8 +13,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
-import { generateRandomSignedInt } from '../util';
-import { DataProvider, useCustom, useDataProvider } from '@refinedev/core';
+import { useApiUrl, useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 
 export interface RemoteStartProps {
@@ -31,12 +30,13 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
 
+  const apiUrl = useApiUrl();
   const {
     data: requestIdResponse,
     isLoading: isLoadingRequestId,
     // isError: isErrorLoadingRequestId,
   } = useCustom<any>({
-    url: 'http://localhost:8090/v1/graphql',
+    url: `${apiUrl}`,
     method: 'post',
     config: {
       headers: {
@@ -128,7 +128,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
   const requestStartTransactionRequest = new RequestStartTransactionRequest();
   requestStartTransactionRequest[
     RequestStartTransactionRequestProps.remoteStartId
-  ] = requestIdResponse?.data.value ?? 0;
+  ] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   const evse = new Evse();
   const idToken = new IdToken();
   evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;

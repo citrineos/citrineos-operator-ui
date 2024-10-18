@@ -45,7 +45,7 @@ const chargingStationActionMap: {
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
   'Get Log': GetLog as React.FC<GetLogProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
-  Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
+  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
