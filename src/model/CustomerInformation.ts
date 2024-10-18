@@ -17,13 +17,8 @@ import {
 
 const ID_TOKEN_FIELD = 'idToken';
 
-export enum GetCustomerInformationDataProps {
-  idToken = 'idToken',
-  customData = 'customData',
-  requestId = 'requestId',
-  report = 'report',
-  clear = 'clear',
-  customerIdentifier = 'customerIdentifier',
+export interface GetCustomerProps {
+  station: ChargingStation;
 }
 
 export class CustomerInformationRequest {
@@ -58,8 +53,13 @@ export class CustomerInformationRequest {
   customerIdentifier!: string;
 }
 
-export interface GetCustomerProps {
-  station: ChargingStation;
+export enum GetCustomerInformationDataProps {
+  idToken = 'idToken',
+  customData = 'customData',
+  requestId = 'requestId',
+  report = 'report',
+  clear = 'clear',
+  customerIdentifier = 'customerIdentifier',
 }
 
 export const CustomerPayload = (plainValues: Record<string, any>) => {
