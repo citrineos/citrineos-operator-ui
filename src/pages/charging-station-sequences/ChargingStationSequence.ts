@@ -1,4 +1,4 @@
-import { IsString, IsInt } from "class-validator";
+import { IsString, IsInt, IsEnum } from "class-validator";
 import { BaseModel } from "../../util/BaseModel";
 import { ResourceType } from "../../resource-type";
 import { ClassGqlCreateMutation } from "../../util/decorators/ClassGqlCreateMutation";
@@ -8,8 +8,7 @@ import { ClassGqlGetQuery } from "../../util/decorators/ClassGqlGetQuery";
 import { ClassGqlListQuery } from "../../util/decorators/ClassGqlListQuery";
 import { ClassResourceType } from "../../util/decorators/ClassResourceType";
 import { CHARGING_STATION_SEQUENCES_LIST_QUERY, CHARGING_STATION_SEQUENCES_GET_QUERY, CHARGING_STATION_SEQUENCES_CREATE_MUTATION, CHARGING_STATION_SEQUENCES_EDIT_MUTATION, CHARGING_STATION_SEQUENCES_DELETE_MUTATION } from "./queries";
-
-type ChargingStationSequenceType = 'remoteStartId' | 'getDisplayMessages' | 'getChargingProfiles' | 'getMonitoringReport';
+import { ChargingStationSequenceType } from "@citrineos/base"
 
 export enum ChargingStationSequenceProps {
     stationId = 'stationId',
@@ -24,12 +23,12 @@ export enum ChargingStationSequenceProps {
 @ClassGqlEditMutation(CHARGING_STATION_SEQUENCES_EDIT_MUTATION)
 @ClassGqlDeleteMutation(CHARGING_STATION_SEQUENCES_DELETE_MUTATION)
 export class ChargingStationSequence extends BaseModel {
-    // Compound primary key using stationId and type
+    // Unique index on stationId + type
+
     @IsString()
     stationId!: string;
 
-    @IsString()
-    //  @IsEnum(ChargingStationSequenceType)
+    @IsEnum(ChargingStationSequenceType)
     type!: string;
 
     @IsInt()
