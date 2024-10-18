@@ -35,3 +35,15 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
     }
   }
 `;
+
+export const GET_EVSES_FOR_STATION = gql`
+  query GetEvseListForStation($stationId: String!) {
+    Evses(where: { VariableAttributes: { stationId: { _eq: $stationId } } }) {
+      databaseId
+      id
+      connectorId
+      createdAt
+      updatedAt
+    }
+  }
+`;
