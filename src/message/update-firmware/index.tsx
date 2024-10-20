@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Form, notification, Spin } from 'antd';
+import { Form, notification, Spin, UploadFile } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
@@ -23,7 +23,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
-  
+
   const apiUrl = useApiUrl();
   const {
     data: requestIdResponse,
@@ -53,30 +53,75 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   };
 
   const onValuesChange = (_changedValues: any, allValues: any) => {
+    const signingCertificate = allValues.firmware.signingCertificate;
+    delete allValues.firmware.signingCertificate;
+
     const request = plainToInstance(UpdateFirmwareRequest, allValues, {
       excludeExtraneousValues: false,
     });
+
+    request.firmware.signingCertificate = signingCertificate;
     setValid(isRequestValid(request));
   };
 
-  const onFinish = async (values: object) => {
+  const readFileContent = (file: File | null): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        return resolve('');
+      }
+
+      const fileReader = new FileReader();
+      fileReader.onload = (event) => {
+        const text = event.target?.result as string;
+        resolve(text);
+      };
+      fileReader.onerror = (error) => reject(error);
+
+      fileReader.readAsText(file);
+    });
+  };
+
+  const onFinish = async (values: any) => {
+    const signingCertificate = values.firmware.signingCertificate;
+    delete values.firmware.signingCertificate;
+
     const request = plainToInstance(UpdateFirmwareRequest, values, {
       excludeExtraneousValues: false,
     });
+
+    request.firmware.signingCertificate = signingCertificate;
     if (isRequestValid(request)) {
-      await UpdateFirmware(request);
+      await updateFirmware(request);
     }
   };
 
-  const UpdateFirmware = async (request: UpdateFirmwareRequest) => {
+  const updateFirmware = async (request: UpdateFirmwareRequest) => {
     try {
       setLoading(true);
+
+      const signingCertificateFile = request.firmware.signingCertificate;
+      let signingCertificate = undefined;
+      if (signingCertificateFile) {
+        try {
+          signingCertificate = await readFileContent(signingCertificateFile);
+        } catch (error: any) {
+          const msg = `Could not read signing certificate file contents, got error: ${error.message}`;
+          console.error(msg, error);
+        }
+      }
+
       const client = new BaseRestClient();
       const response = await client.post(
-        `/reporting/UpdateFirmware?identifier=${station.id}&tenantId=1`,
+        `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
         MessageConfirmation,
         {},
-        request,
+        {
+          ...request,
+          firmware: {
+            ...request.firmware,
+            signingCertificate,
+          },
+        },
       );
 
       if (response && response.success) {
@@ -106,7 +151,8 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   if (loading || isLoadingRequestId) return <Spin />;
 
   const updateFirmwareRequest = new UpdateFirmwareRequest();
-  updateFirmwareRequest[UpdateFirmwareRequestProps.requestId] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+  updateFirmwareRequest[UpdateFirmwareRequestProps.requestId] =
+    requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   updateFirmwareRequest[UpdateFirmwareRequestProps.firmware] = {
     location: `${DIRECTUS_URL}/files`,
   } as any; // Type assertion if necessary

@@ -37,25 +37,25 @@ import {
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
-  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
-  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
-  'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
-  'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
-  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
+  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
+  'Get Installed Certificate IDs':
+    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Get Log': GetLog as React.FC<GetLogProps>,
-  'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
-  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
-  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
     InstallCertificate as React.FC<InstallCertificateProps>,
-  'Get Installed Certificate IDs':
-    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
-  'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
-  'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
+  'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
+  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
+  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
+  'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
+  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
+  'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
+  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
+  'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
