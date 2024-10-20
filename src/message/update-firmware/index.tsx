@@ -1,0 +1,126 @@
+import React, { useRef, useState } from 'react';
+import { Form, notification, Spin } from 'antd';
+import { GenericForm } from '../../components/form';
+import { plainToInstance } from 'class-transformer';
+import { useApiUrl, useCustom } from '@refinedev/core';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { UpdateFirmwareRequest, UpdateFirmwareRequestProps } from './model';
+import { validateSync } from 'class-validator';
+import { MessageConfirmation } from '../MessageConfirmation';
+import { BaseRestClient } from '../../util/BaseRestClient';
+import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+
+const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
+
+export interface UpdateFirmwareProps {
+  station: ChargingStation;
+}
+
+export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
+  const formRef = useRef();
+  const [form] = Form.useForm();
+  const formProps = { form };
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [valid, setValid] = useState<boolean>(false);
+  
+  const apiUrl = useApiUrl();
+  const {
+    data: requestIdResponse,
+    isLoading: isLoadingRequestId,
+    // isError: isErrorLoadingRequestId,
+  } = useCustom<any>({
+    url: `${apiUrl}`,
+    method: 'post',
+    config: {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+    meta: {
+      operation: 'ChargingStationSequencesGet',
+      gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
+      variables: {
+        stationId: station.id,
+        type: 'updateFirmware',
+      },
+    },
+  });
+
+  const isRequestValid = (request: UpdateFirmwareRequest) => {
+    const errors = validateSync(request);
+    return errors.length === 0;
+  };
+
+  const onValuesChange = (_changedValues: any, allValues: any) => {
+    const request = plainToInstance(UpdateFirmwareRequest, allValues, {
+      excludeExtraneousValues: false,
+    });
+    setValid(isRequestValid(request));
+  };
+
+  const onFinish = async (values: object) => {
+    const request = plainToInstance(UpdateFirmwareRequest, values, {
+      excludeExtraneousValues: false,
+    });
+    if (isRequestValid(request)) {
+      await UpdateFirmware(request);
+    }
+  };
+
+  const UpdateFirmware = async (request: UpdateFirmwareRequest) => {
+    try {
+      setLoading(true);
+      const client = new BaseRestClient();
+      const response = await client.post(
+        `/reporting/UpdateFirmware?identifier=${station.id}&tenantId=1`,
+        MessageConfirmation,
+        {},
+        request,
+      );
+
+      if (response && response.success) {
+        notification.success({
+          message: 'Success',
+          description: 'The update firmware request was successful.',
+        });
+      } else {
+        notification.error({
+          message: 'Request Failed',
+          description:
+            'The update firmware request did not receive a successful response.',
+        });
+      }
+    } catch (error: any) {
+      const msg = `Could not perform update firmware, got error: ${error.message}`;
+      console.error(msg, error);
+      notification.error({
+        message: 'Error',
+        description: msg,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading || isLoadingRequestId) return <Spin />;
+
+  const updateFirmwareRequest = new UpdateFirmwareRequest();
+  updateFirmwareRequest[UpdateFirmwareRequestProps.requestId] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+  updateFirmwareRequest[UpdateFirmwareRequestProps.firmware] = {
+    location: `${DIRECTUS_URL}/files`,
+  } as any; // Type assertion if necessary
+
+  return (
+    <GenericForm
+      ref={formRef as any}
+      dtoClass={UpdateFirmwareRequest}
+      formProps={formProps}
+      onFinish={onFinish}
+      initialValues={updateFirmwareRequest}
+      parentRecord={updateFirmwareRequest}
+      onValuesChange={onValuesChange}
+      submitDisabled={!valid}
+    />
+  );
+};

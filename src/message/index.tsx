@@ -11,6 +11,7 @@ import {
   ChangeAvailabilityProps,
 } from './change-availability';
 import { GetLog, GetLogProps } from './get-log';
+import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
 import React from 'react';
 import { GetVariables, GetVariablesProps } from './get-variables';
@@ -44,6 +45,7 @@ const chargingStationActionMap: {
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
   'Get Log': GetLog as React.FC<GetLogProps>,
+  'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
   'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
