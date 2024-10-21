@@ -43,3 +43,20 @@ export const triggerMessageAndHandleResponse = async <T,>(
     showError('The request failed with message: ' + error.message);
   }
 };
+
+export const readFileContent = (file: File | null): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      return resolve('');
+    }
+
+    const fileReader = new FileReader();
+    fileReader.onload = (event) => {
+      const text = event.target?.result as string;
+      resolve(text);
+    };
+    fileReader.onerror = (error) => reject(error);
+
+    fileReader.readAsText(file);
+  });
+};
