@@ -132,23 +132,25 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(TriggerMessageRequest, plainValues);
     const evse = classInstance[TriggerMessageRequestProps.evse];
-    const data = {
+    const data: any = {
       requestedMessage:
         classInstance[TriggerMessageRequestProps.requestedMessage],
       customData: classInstance[TriggerMessageRequestProps.customData],
-      evse: evse
-        ? {
-            id: evse[EvseProps.databaseId],
-            // customData: todo,
-            connectorId: evse[EvseProps.connectorId],
-          }
-        : undefined,
     };
+
+    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+      data.evse = {
+        id: evse[EvseProps.id],
+        // customData: todo,
+        connectorId: evse[EvseProps.connectorId],
+      };
+    }
+
     await triggerMessageAndHandleResponse(
       `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
       MessageConfirmation,
       data,
-      (response: MessageConfirmation) => response && (response as any).success,
+      (response: MessageConfirmation) => response && response.success,
     );
   };
 
