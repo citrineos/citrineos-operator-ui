@@ -1,132 +1,83 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, notification, Select, Spin } from 'antd';
-import { useCustom } from '@refinedev/core';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import React from 'react';
+import { Form } from 'antd';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { ResetEnumType, ResetRequest } from '@citrineos/base';
+import { ResetEnumType } from '@citrineos/base';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { GET_EVSES_FOR_STATION } from '../queries';
+import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
+import { GenericForm } from '../../components/form';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { Type } from 'class-transformer';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { triggerMessageAndHandleResponse } from '../util';
+import { NEW_IDENTIFIER } from '../../util/consts';
 
-const GRAPHQL_ENDPOINT_URL = import.meta.env.VITE_API_URL;
+enum ResetDataProps {
+  evse = 'evse',
+  type = 'type',
+  evseId = 'evseId',
+}
 
 export interface ResetChargingStationProps {
   station: ChargingStation;
 }
 
+class ResetData {
+  @GqlAssociation({
+    parentIdFieldName: ResetDataProps.evse,
+    associatedIdFieldName: EvseProps.databaseId,
+    gqlQuery: GET_EVSES_FOR_STATION,
+    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: ResetDataProps.evse,
+  })
+  @Type(() => Evse)
+  @IsNotEmpty()
+  evse!: Evse | null;
+
+  @IsEnum(ResetEnumType)
+  type!: ResetEnumType;
+
+  // @Type(() => CustomDataType)
+  // @IsOptional()
+  // customData?: CustomDataType | null;
+}
+
 export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
   station,
 }) => {
-  const [selectedResetType, setSelectedResetType] = useState<ResetEnumType>(
-    ResetEnumType.Immediate,
-  );
-  const [selectedEvseId, setSelectedEvseId] = useState<number | undefined>(
-    undefined,
-  );
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const { data, isLoading, isError } = useCustom<any>({
-    url: GRAPHQL_ENDPOINT_URL,
-    method: 'post',
-    config: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-    meta: {
-      operation: 'GetEvsesForStation',
-      gqlQuery: GET_EVSES_FOR_STATION,
-      variables: {
-        stationId: station.id,
-      },
-    },
-  });
-
-  useEffect(() => {
-    if (data?.data?.Evses?.length === 1) {
-      setSelectedEvseId(data.data.Evses[0].id);
-    }
-  }, [data]);
-
-  const requestReset = async (request: ResetRequest) => {
-    try {
-      setLoading(true);
-      const client = new BaseRestClient();
-      const response = await client.post(
-        `/configuration/reset?identifier=${station.id}&tenantId=1`, // TODO: update when multi-tenancy is implemented
-        MessageConfirmation,
-        {},
-        request,
-      );
-
-      if (response && response.success) {
-        notification.success({
-          message: 'Success',
-          description: 'The reset request was successful.',
-        });
-      } else {
-        notification.error({
-          message: 'Request Failed',
-          description:
-            'The reset request did not receive a successful response.',
-        });
-      }
-    } catch (error: any) {
-      const msg = `Could not perform request reset, got error: ${error.message}`;
-      console.error(msg, error);
-      notification.error({
-        message: 'Error',
-        description: msg,
-      });
-    } finally {
-      setLoading(false);
-    }
+  const [form] = Form.useForm();
+  const formProps = {
+    form,
   };
 
-  const handleSubmit = () => {
-    if (selectedResetType) {
-      requestReset({ type: selectedResetType, evseId: selectedEvseId });
-    }
-  };
+  const resetData = new ResetData();
+  resetData[ResetDataProps.evse] = new Evse();
+  resetData[ResetDataProps.evse][EvseProps.databaseId] =
+    NEW_IDENTIFIER as unknown as number;
 
-  if (isLoading || loading) return <Spin />;
-  if (isError) return <p>Error loading EVSEs</p>;
+  const handleSubmit = async (request: ResetData) => {
+    const data = { type: request.type, evseId: request.evse?.id };
+
+    triggerMessageAndHandleResponse(
+      `/configuration/reset?identifier=${station.id}&tenantId=1`,
+      MessageConfirmation,
+      data,
+      (response: MessageConfirmation) => response?.success,
+    );
+  };
 
   return (
-    <Form layout="vertical" onFinish={handleSubmit}>
-      <Form.Item label="Type">
-        <Select
-          value={selectedResetType}
-          onChange={setSelectedResetType}
-          placeholder="Select reset type"
-        >
-          {Object.entries(ResetEnumType).map(([key, value]) => (
-            <Select.Option key={key} value={value}>
-              {value}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item
-        label="EVSEs"
-        extra="Selecting no EVSE will reset the whole charger."
-      >
-        <Select
-          value={selectedEvseId}
-          onChange={setSelectedEvseId}
-          placeholder="Select EVSE"
-        >
-          {data?.data?.Evses?.map((evse: any) => (
-            <Select.Option key={evse.id} value={evse.id}>
-              {evse.id}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit" disabled={!selectedResetType}>
-          Request Reset
-        </Button>
-      </Form.Item>
-    </Form>
+    <GenericForm
+      formProps={formProps}
+      dtoClass={ResetData}
+      onFinish={handleSubmit}
+      parentRecord={resetData}
+      initialValues={resetData}
+      gqlQueryVariablesMap={{
+        [ResetDataProps.evse]: {
+          stationId: station.id,
+        },
+      }}
+    />
   );
 };

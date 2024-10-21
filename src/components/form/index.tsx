@@ -365,7 +365,7 @@ export const extractSchema = (dtoClass: any): FieldSchema[] => {
         schema.push(getSchemaForInstanceAndKey(instance, key, requiredFields));
       }
     } catch (e: any) {
-      console.error('Error extracting schema:', e);
+      console.error('Error extracting key: %s', key, e);
     }
   });
   return schema;
@@ -817,7 +817,7 @@ export const GenericForm = forwardRef(function GenericForm(
 
   const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
     ...field,
-    ...(overrides && overrides[field.name as FieldSchemaKeys]
+    ...(overrides?.[field.name as FieldSchemaKeys]
       ? overrides[field.name as FieldSchemaKeys]
       : {}),
   }));
