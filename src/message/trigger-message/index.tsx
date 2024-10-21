@@ -100,9 +100,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       ? station.id
       : undefined;
 
-  if (!stationId) {
-  }
-
   console.log('selected stationId', stationId);
 
   const triggerMessageRequest = new TriggerMessageRequest();
@@ -119,7 +116,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     new ChargingStation();
   triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation][
     ChargingStationProps.id
-  ] = NEW_IDENTIFIER as unknown as number;
+  ] = NEW_IDENTIFIER;
 
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
