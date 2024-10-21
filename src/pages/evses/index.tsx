@@ -53,6 +53,7 @@ export const resources = [
     list: '/evses',
     create: '/evses/new',
     show: '/evses/:id',
+    edit: '/evses/:id/edit',
     meta: {
       canDelete: true,
     },

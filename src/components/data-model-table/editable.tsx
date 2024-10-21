@@ -669,9 +669,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             return renderField({
               schema: field,
               preFieldPath: FieldPath.empty(),
-              disabled:
-                record[primaryKeyFieldName] === NEW_IDENTIFIER &&
-                field.name === primaryKeyFieldName,
+              // disabled:
+              //   record[primaryKeyFieldName] === NEW_IDENTIFIER &&
+              //   field.name === primaryKeyFieldName,
               visibleOptionalFields: visibleOptionalFields,
               hideLabels: true,
               enableOptionalField: enableOptionalField,

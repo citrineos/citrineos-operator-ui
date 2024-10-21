@@ -35,6 +35,7 @@ import {
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
+import { DeleteCertificate } from './delete-certificate';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -53,6 +54,7 @@ const chargingStationActionMap: {
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
     InstallCertificate as React.FC<InstallCertificateProps>,
+  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
   'Get Installed Certificate IDs':
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
