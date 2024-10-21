@@ -63,24 +63,17 @@ const renderViewContent = (
   const value = record[field.name];
   const fieldType = field.type;
   const fieldOptions = field.options;
-  const parentIdFieldName = field.gqlAssociationProps?.parentIdFieldName;
-  const associatedIdFieldName =
-    field.gqlAssociationProps?.associatedIdFieldName;
-  const gqlQuery = field.gqlAssociationProps?.gqlQuery;
-  const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
-  const gqlUseQueryVariablesKey =
-    field.gqlAssociationProps?.gqlUseQueryVariablesKey;
-  let gqlQueryVariables = undefined;
-  if (
-    gqlUseQueryVariablesKey &&
-    gqlQueryVariablesMap &&
-    !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-  ) {
-    if (typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] === 'function') {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-    } else {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-    }
+  let parentIdFieldName, associatedIdFieldName, gqlQuery, gqlListQuery;
+
+  if (field.type === FieldType.customRender && field.customRender) {
+    return field.customRender(record);
+  }
+
+  if (field.gqlAssociationProps) {
+    parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
+    associatedIdFieldName = field.gqlAssociationProps.associatedIdFieldName;
+    gqlQuery = field.gqlAssociationProps.gqlQuery;
+    gqlListQuery = field.gqlAssociationProps.gqlListQuery;
   }
   switch (fieldType) {
     case FieldType.boolean:

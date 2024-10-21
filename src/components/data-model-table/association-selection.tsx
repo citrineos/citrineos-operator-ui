@@ -55,12 +55,6 @@ export const AssociationSelection = <
   } = props;
 
   const dispatch = useDispatch();
-  const storageKey = useMemo(
-    () =>
-      `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase(),
-    [parentRecord, associatedRecordClass],
-  );
-
   const associatedRecordClassInstance = useMemo(
     () => plainToInstance(associatedRecordClass, {}),
     [associatedRecordClass],
@@ -89,6 +83,13 @@ export const AssociationSelection = <
       ),
     [associatedRecordClassInstance],
   );
+
+  const storageKey = useMemo(() => {
+    if (Object.keys(associatedRecordClassInstance as object).length === 0)
+      return '';
+
+    return `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
+  }, [parentRecord, associatedRecordClass]);
 
   const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
 
