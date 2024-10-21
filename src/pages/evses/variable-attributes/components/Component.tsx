@@ -18,6 +18,8 @@ import { ClassGqlCreateMutation } from '../../../../util/decorators/ClassGqlCrea
 import { BaseModel } from '../../../../util/BaseModel';
 import { Searchable } from '../../../../util/decorators/Searcheable';
 import { Sortable } from '../../../../util/decorators/Sortable';
+import { Hidden } from '../../../../util/decorators/Hidden';
+import { CustomFormRender } from '../../../../util/decorators/CustomFormRender';
 
 export enum ComponentProps {
   id = 'id',
@@ -50,4 +52,20 @@ export class Component extends BaseModel {
 
   @IsNumber()
   evseDatabaseId!: number;
+
+  @CustomFormRender((record: Component) => {
+    return <span>{(record as any).Evse?.id}</span>;
+  })
+  @IsNumber()
+  @IsOptional()
+  @Hidden({ isEditable: false })
+  evseId?: number;
+
+  @CustomFormRender((record: Component) => {
+    return <span>{(record as any).Evse?.connectorId}</span>;
+  })
+  @IsNumber()
+  @IsOptional()
+  @Hidden({ isEditable: false })
+  connectorId?: number;
 }
