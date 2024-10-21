@@ -71,21 +71,12 @@ export const AssociationSelection = <
       getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
     ) || '';
 
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
-
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
     associatedRecordClassInstance as object,
   );
 
-  const classCustomActions: string = Reflect.getMetadata(
+  const classCustomActions: CustomAction<any>[] = Reflect.getMetadata(
     CLASS_CUSTOM_ACTIONS,
     associatedRecordClassInstance as object,
   );

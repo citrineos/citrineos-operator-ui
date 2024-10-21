@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ChargingStation } from './ChargingStation';
 import { Button, Form, notification, Select, Spin } from 'antd';
 import { GET_ACTIVE_TRANSACTIONS } from './queries';
 import { useCustom } from '@refinedev/core';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 const GRAPHQL_ENDPOINT_URL = import.meta.env.VITE_API_URL;
 

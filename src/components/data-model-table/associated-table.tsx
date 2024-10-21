@@ -53,7 +53,7 @@ export const AssociatedTable = <AssociatedModel,>(
 
   const {
     tableProps,
-    tableQuery: queryResult,
+    tableQuery: _queryResult,
     searchFormProps,
     setSorters,
     setCurrent,

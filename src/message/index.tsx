@@ -1,7 +1,6 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../components/custom-actions';
-import { ChargingStations } from '../graphql/schema.types';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -79,6 +78,6 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
             );
             return <Component station={station} />;
           },
-        }) as CustomAction<ChargingStations>,
+        }) as CustomAction<ChargingStation>,
     )
     .sort((a, b) => a.label.localeCompare(b.label));

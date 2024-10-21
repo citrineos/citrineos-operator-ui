@@ -16,7 +16,7 @@ const selectedChargingStationSlice = createSlice({
   reducers: {
     setSelectedChargingStation: (
       state,
-      action: PayloadAction<{ selectedChargingStation: ChargingStation }>,
+      action: PayloadAction<{ selectedChargingStation: string }>,
     ) => {
       (state as any).selectedChargingStation =
         action.payload.selectedChargingStation;
