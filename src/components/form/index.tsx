@@ -15,11 +15,17 @@ import {
   Row,
   Select,
   Switch,
+  Upload,
 } from 'antd';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import './style.scss';
-import { CloseOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
 import { defaultMetadataStorage } from '../../util/DefaultMetadataStorage';
 import { isDefined, isNullOrUndefined } from '../../util/assertion';
 import { IS_DATE } from '../../util/TransformDate';
@@ -45,6 +51,7 @@ import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConst
 import { isSortable } from '../../util/decorators/Sortable';
 import { NestedObjectField } from './nested-object-field';
 import { ArrayField } from './array-field';
+import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
 
 export enum ReflectType {
   array,
@@ -75,6 +82,7 @@ export enum FieldType {
   unknownProperty,
   unknownProperties,
   customRender,
+  file,
 }
 
 export interface FieldSelectOption {
@@ -95,6 +103,7 @@ export interface FieldSchema {
   customConstructor?: () => any;
   gqlAssociationProps?: GqlAssociationProps;
   sorter: boolean;
+  supportedFileFormats?: string[];
 }
 
 export interface DynamicFieldSchema extends FieldSchema {
@@ -251,6 +260,22 @@ export const getSchemaForInstanceAndKey = (
 
   if (fieldType === FieldType.nestedObject) {
     const classTransformerType = getClassTransformerType(instance, key);
+    if (classTransformerType === File) {
+      const supportedFileFormats: string[] = Reflect.getMetadata(
+        SUPPORTED_FILE_FORMATS,
+        instance,
+        key,
+      );
+      return {
+        label: label(instance, key),
+        name: key,
+        type: FieldType.file,
+        isRequired: requiredFields.includes(key),
+        dtoClass: classTransformerType,
+        sorter,
+        supportedFileFormats,
+      } as unknown as FieldSchema;
+    }
     const nestedInstance: any = plainToInstance(metadata, {});
     const nestedFields = extractSchema(nestedInstance.constructor);
     const gqlAssociationProps: GqlAssociationProps = Reflect.getMetadata(
@@ -439,6 +464,31 @@ export const renderField = (props: RenderFieldProps) => {
           (Optional) <PlusOutlined />
         </Button>
       </div>
+    );
+  }
+  if (schema.type === FieldType.file) {
+    return (
+      <Form.Item
+        label={schema.label}
+        name={fieldPath.namePath}
+        getValueFromEvent={(e) => {
+          // Return the first file from the fileList array
+          return e && e.fileList ? e.fileList[0]?.originFileObj : null;
+        }}
+      >
+        <Upload
+          name={'file'}
+          maxCount={1}
+          accept={
+            schema.supportedFileFormats
+              ? schema.supportedFileFormats.join(',')
+              : undefined
+          }
+          beforeUpload={() => false}
+        >
+          <Button icon={<UploadOutlined />}>Click to Upload</Button>
+        </Upload>
+      </Form.Item>
     );
   }
 

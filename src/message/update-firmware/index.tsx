@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Form, notification, Spin, UploadFile } from 'antd';
+import { Form, notification, Spin } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
