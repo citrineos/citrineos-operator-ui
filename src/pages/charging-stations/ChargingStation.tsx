@@ -30,14 +30,13 @@ import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from '../status-notifications/queries';
-
-export enum ChargingStationProps {
-  id = 'id',
-  isOnline = 'isOnline',
-  locationId = 'locationId',
-  statusNotifications = 'statusNotifications',
-  evses = 'evses',
-}
+import { Evse } from '../evses/Evse';
+import {
+  GET_TRANSACTION_LIST_FOR_STATION,
+  GET_TRANSACTIONS_FOR_STATION,
+} from '../../message/queries';
+import { Transaction, TransactionProps } from '../transactions/Transaction';
+import { ChargingStationProps } from './ChargingStationProps';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -74,7 +73,32 @@ export class ChargingStation extends BaseModel {
   @Type(() => StatusNotification)
   statusNotifications?: StatusNotification[];
 
-  constructor(data: ChargingStation) {
+  // @FieldCustomActions([TriggerMessageForEvseCustomAction])
+  @IsArray()
+  @IsOptional()
+  /*  @GqlAssociation({
+    parentIdFieldName: ChargingStationProps.id,
+    associatedIdFieldName: EvseProps.id,
+    gqlQuery: GET_EVSES_FOR_STATION,
+    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: ChargingStationProps.evses,
+  })*/
+  @Type(() => Evse)
+  evses?: Evse[];
+
+  @IsArray()
+  @IsOptional()
+  @GqlAssociation({
+    parentIdFieldName: ChargingStationProps.id,
+    associatedIdFieldName: TransactionProps.transactionId,
+    gqlQuery: GET_TRANSACTIONS_FOR_STATION,
+    gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
+    gqlUseQueryVariablesKey: ChargingStationProps.transactions,
+  })
+  @Type(() => Transaction)
+  transactions?: Transaction[];
+
+  constructor(data?: ChargingStation) {
     super();
     if (data) {
       Object.assign(this, {

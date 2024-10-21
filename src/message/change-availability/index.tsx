@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
 import { Button, Form } from 'antd';
 import { AssociationSelection } from '../../components/data-model-table/association-selection';
@@ -20,6 +19,7 @@ import {
 import { triggerMessageAndHandleResponse } from '../util';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum ChangeAvailabilityRequestProps {
   customData = 'customData',

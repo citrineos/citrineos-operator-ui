@@ -53,7 +53,6 @@ export const NestedObjectField: (
     ) {
       gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
     }
-
     return (
       <div className="editable-cell">
         <Form.Item
@@ -83,6 +82,7 @@ export const NestedObjectField: (
               setProperty(currentValues, fieldPath.keyPath, newValues[0]);
               form.setFieldsValue(currentValues);
             }}
+            customActions={schema.customActions}
           />
         </Form.Item>
       </div>

@@ -1,7 +1,6 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../components/custom-actions';
-import { ChargingStations } from '../graphql/schema.types';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -33,6 +32,8 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
+import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
 
 const chargingStationActionMap: {
@@ -59,15 +60,22 @@ const chargingStationActionMap: {
   'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
 };
 
-export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
+export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
   Object.entries(chargingStationActionMap)
     .map(
       ([label, Component]) =>
         ({
           label,
-          execOrRender: (station: ChargingStation) => (
-            <Component station={station} />
-          ),
-        }) as CustomAction<ChargingStations>,
+          execOrRender: (station: ChargingStation, _setLoading, dispatch) => {
+            dispatch(
+              setSelectedChargingStation({
+                selectedChargingStation: JSON.stringify(
+                  instanceToPlain(station),
+                ),
+              }),
+            );
+            return <Component station={station} />;
+          },
+        }) as CustomAction<ChargingStation>,
     )
     .sort((a, b) => a.label.localeCompare(b.label));
