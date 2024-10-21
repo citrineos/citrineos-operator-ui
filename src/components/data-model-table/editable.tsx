@@ -62,6 +62,11 @@ const renderViewContent = (
   const fieldType = field.type;
   const fieldOptions = field.options;
   let parentIdFieldName, associatedIdFieldName, gqlQuery, gqlListQuery;
+
+  if (field.type === FieldType.customRender && field.customRender) {
+    return field.customRender(record);
+  }
+
   if (field.gqlAssociationProps) {
     parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
     associatedIdFieldName = field.gqlAssociationProps.associatedIdFieldName;
