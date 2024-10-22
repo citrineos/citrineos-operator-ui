@@ -1,18 +1,14 @@
 import { useCustom } from '@refinedev/core';
 import { gql } from 'graphql-tag';
-import { Spin } from 'antd';
+import { Alert, Spin } from 'antd';
 import { Cell, Pie, PieChart } from 'recharts';
 import React, { useState } from 'react';
-import { ChartWrapper } from './index';
+import { ChartWrapper } from './chart-wrapper';
 
 export const OnlinePercentage = () => {
   const RADIAN = Math.PI / 180;
 
-  const {
-    data: responseData,
-    isLoading,
-    isError,
-  } = useCustom<any>({
+  const { data, isLoading, isError } = useCustom<any>({
     url: import.meta.env.VITE_API_URL,
     method: 'post',
     config: {
@@ -47,11 +43,20 @@ export const OnlinePercentage = () => {
     return <Spin />;
   }
 
-  const total = responseData?.data.total.aggregate.count;
-  const online = responseData?.data.online.aggregate.count;
+  if (isError) {
+    return (
+      <Alert
+        message={`Error: OnlinePercentage could not fetch data`}
+        type="error"
+      />
+    );
+  }
+
+  const total = data?.data.total.aggregate.count;
+  const online = data?.data.online.aggregate.count;
   const percentage = ((online / total) * 100).toFixed(2);
 
-  const data = [
+  const cells = [
     { name: '<20%', value: 20, color: 'var(--ant-red)' },
     { name: '20-40%', value: 20, color: 'var(--ant-orange)' },
     { name: '40-60%', value: 20, color: 'var(--ant-yellow)' },
@@ -114,7 +119,7 @@ export const OnlinePercentage = () => {
           dataKey="value"
           startAngle={180}
           endAngle={0}
-          data={data}
+          data={cells}
           cx={cx}
           cy={cy}
           innerRadius={iR}
@@ -123,7 +128,7 @@ export const OnlinePercentage = () => {
           stroke="none"
           paddingAngle={2}
         >
-          {data.map((entry, index) => (
+          {cells.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
         </Pie>
