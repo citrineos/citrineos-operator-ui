@@ -22,13 +22,13 @@ import { TRANSACTION_GET_QUERY, TRANSACTION_LIST_QUERY } from '../../pages/trans
 import { GET_ACTIVE_TRANSACTIONS } from '../remote-stop/queries';
 
 enum GetTransactionStatusRequestProps {
-    transaction = "transaction",
+    transaction = "transaction"
 }
 
 export class GetTransactionStatusRequest {
     @GqlAssociation({
-        parentIdFieldName: TransactionProps.transactionId,
-        associatedIdFieldName: TransactionProps.chargingState,
+        parentIdFieldName: GetTransactionStatusRequestProps.transaction,
+        associatedIdFieldName: TransactionProps.transactionId,
         gqlQuery: GET_ACTIVE_TRANSACTIONS,
         gqlListQuery: GET_ACTIVE_TRANSACTIONS,
         gqlUseQueryVariablesKey: GetTransactionStatusRequestProps.transaction
