@@ -11,7 +11,10 @@ import {
 } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
-import { generateRandomLong, triggerMessageAndHandleResponse } from '../util';
+import {
+  generateRandomSignedInt,
+  triggerMessageAndHandleResponse,
+} from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { TransformDate } from '../../util/TransformDate';
@@ -121,7 +124,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
   const formRef = useRef();
 
   const getLogRequest = new GetLogRequest();
-  getLogRequest[GetLogRequestProps.requestId] = generateRandomLong();
+  getLogRequest[GetLogRequestProps.requestId] = generateRandomSignedInt();
   getLogRequest[GetLogRequestProps.log] = new LogParametersType();
   getLogRequest[GetLogRequestProps.log][LogParametersTypeProps.remoteLocation] =
     `${DIRECTUS_URL}/files`;
@@ -133,10 +136,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
         `/reporting/getLog?identifier=${station.id}&tenantId=1`,
         GetLogResponse,
         classInstance,
-        (response: GetLogResponse) =>
-          response &&
-          response.status &&
-          response.status === LogStatusEnumType.Accepted,
+        (response: GetLogResponse) => response && (response as any).success,
       );
     },
     [formRef],

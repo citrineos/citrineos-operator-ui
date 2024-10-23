@@ -1,5 +1,5 @@
 import { AttributeEnumType, GetVariableStatusEnumType } from '@citrineos/base';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Form } from 'antd';
 import {
   ArrayMinSize,
@@ -186,6 +186,7 @@ export interface GetVariablesProps {
 }
 
 export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
+  const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = {
     form,
@@ -198,7 +199,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
 
   const handleSubmit = async (plainValues: any) => {
     const classInstance = plainToInstance(GetVariablesRequest, plainValues);
-    let getVariablesRequest = {
+    const getVariablesRequest = {
       [GetVariablesRequestProps.getVariableData]: classInstance[
         GetVariablesRequestProps.getVariableData
       ].map((item: GetVariablesData) => {
@@ -232,7 +233,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       // customData: null // todo
     };
     await triggerMessageAndHandleResponse(
-      `/ocpp/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
+      `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
       GetVariablesResponse,
       getVariablesRequest,
       (response: GetVariablesResponse) => !!response,
@@ -241,6 +242,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
 
   return (
     <GenericForm
+      ref={formRef as any}
       formProps={formProps}
       dtoClass={GetVariablesRequest}
       onFinish={handleSubmit}

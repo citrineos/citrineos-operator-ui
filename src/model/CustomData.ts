@@ -1,4 +1,4 @@
-import { IsDefined, IsString, MinLength } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 import { UnknownPropertiesType } from '../util/unknowns';
 
 export class CustomDataType {
@@ -8,5 +8,4 @@ export class CustomDataType {
 
   @UnknownPropertiesType
   unknownProperties!: unknown[];
-
 }

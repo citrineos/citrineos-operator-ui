@@ -1,45 +1,107 @@
 import { ChargingStateEnumType, ReasonEnumType } from '@citrineos/base';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
-import { BaseModel } from '../../util/BaseModel';
 import { ClassResourceType } from '../../util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { LabelField } from '../../util/decorators/LabelField';
+import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
 import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import {
+  TRANSACTION_CREATE_MUTATION,
+  TRANSACTION_DELETE_MUTATION,
+  TRANSACTION_EDIT_MUTATION,
+  TRANSACTION_GET_QUERY,
+  TRANSACTION_LIST_QUERY,
+} from './queries';
+import { Type } from 'class-transformer';
+import { FieldLabel } from '../../util/decorators/FieldLabel';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import {
+  TransactionEvent,
+  TransactionEventProps,
+} from '../transaction-events/TransactionEvent';
+import {
+  TRANSACTION_EVENT_GET_QUERY,
+  TRANSACTION_EVENT_LIST_QUERY,
+} from '../transaction-events/queries';
+import { TransformDate } from '../../util/TransformDate';
+import { ClassCustomActions } from '../../util/decorators/ClassCustomActions';
+import { requestStopTransaction } from '../../message/remote-stop';
 
 export enum TransactionProps {
-  transactionId = 'transactionId',
   stationId = 'stationId',
   evseDatabaseId = 'evseDatabaseId',
+  transactionId = 'transactionId',
   isActive = 'isActive',
   chargingState = 'chargingState',
   timeSpentCharging = 'timeSpentCharging',
   totalKwh = 'totalKwh',
   stoppedReason = 'stoppedReason',
-  remoteStartId = 'remoteStartId'
+  remoteStartId = 'remoteStartId',
+  // customData = 'customData',
 }
 
 @ClassResourceType(ResourceType.TRANSACTIONS)
-@LabelField(TransactionProps.transactionId)
+@ClassGqlListQuery(TRANSACTION_LIST_QUERY)
+@ClassGqlGetQuery(TRANSACTION_GET_QUERY)
+@ClassGqlCreateMutation(TRANSACTION_CREATE_MUTATION)
+@ClassGqlEditMutation(TRANSACTION_EDIT_MUTATION)
+@ClassGqlDeleteMutation(TRANSACTION_DELETE_MUTATION)
 @PrimaryKeyFieldName(TransactionProps.transactionId)
-export class Transaction extends BaseModel {
+@ClassCustomActions([
+  {
+    label: 'Remote Stop',
+    isVisible: (transaction) => transaction[TransactionProps.isActive],
+    execOrRender: (transaction: Transaction, setLoading) => {
+      requestStopTransaction(
+        transaction[TransactionProps.stationId],
+        transaction[TransactionProps.transactionId],
+        setLoading,
+      ).then(() => {
+        console.log('Successfully stopped transaction', transaction);
+      });
+    },
+  },
+])
+export class Transaction {
   @IsString()
+  @IsNotEmpty()
+  transactionId!: string;
+
+  @IsString()
+  @IsNotEmpty()
   stationId!: string;
 
   @IsInt()
   @IsOptional()
   evseDatabaseId?: number;
 
-  @IsString()
-  transactionId!: string;
-
   @IsBoolean()
+  @IsNotEmpty()
   isActive!: boolean;
+
+  @IsArray()
+  @Type(() => TransactionEvent)
+  @ValidateNested({ each: true })
+  @FieldLabel('Events')
+  @GqlAssociation({
+    parentIdFieldName: TransactionProps.transactionId,
+    associatedIdFieldName: TransactionEventProps.id,
+    gqlQuery: TRANSACTION_EVENT_GET_QUERY,
+    gqlListQuery: TRANSACTION_EVENT_LIST_QUERY,
+  })
+  TransactionEvent?: TransactionEvent[];
 
   @IsEnum(ChargingStateEnumType)
   @IsOptional()
@@ -63,4 +125,12 @@ export class Transaction extends BaseModel {
 
   // todo: handle custom data
   // customData?: CustomDataType | null;
+
+  @TransformDate()
+  @IsOptional()
+  updatedAt?: Date;
+
+  @TransformDate()
+  @IsOptional()
+  createdAt?: Date;
 }
