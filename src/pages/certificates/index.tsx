@@ -43,10 +43,7 @@ export const CertificatesList = (props: IDataModelListProps) => {
   return (
     <DataModelTable<Certificates, CertificatesListQuery>
       tableProps={tableProps}
-      columns={CERTIFICATES_COLUMNS(
-        !props.hideActions,
-        props.parentView,
-      )}
+      columns={CERTIFICATES_COLUMNS(!props.hideActions, props.parentView)}
       hideCreateButton={props.hideCreateButton}
     />
   );

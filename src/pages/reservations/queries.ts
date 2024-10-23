@@ -96,10 +96,7 @@ export const RESERVATIONS_DELETE_MUTATION = gql`
 `;
 
 export const RESERVATIONS_EDIT_MUTATION = gql`
-  mutation ReservationsEdit(
-    $id: Int!
-    $object: Reservations_set_input!
-  ) {
+  mutation ReservationsEdit($id: Int!, $object: Reservations_set_input!) {
     update_Reservations_by_pk(pk_columns: { databaseId: $id }, _set: $object) {
       databaseId
       id

@@ -1,5 +1,5 @@
 .nested-object {
-  .ant-form-item{
+  .ant-form-item {
     margin: 0;
   }
 }
@@ -10,7 +10,7 @@
 
 .form-item-wrapper,
 .optional-field-toggle,
-.ant-form-item{
+.ant-form-item {
   padding: var(--ant-padding-xs);
   border: 1px solid #d9d9d9;
   border-radius: var(--ant-border-radius-lg);
@@ -18,7 +18,7 @@
 
   &.ant-form-item {
     margin: var(--ant-padding-xs) 0;
-    .ant-form-item-label,{
+    .ant-form-item-label {
       padding-bottom: 0 !important;
     }
   }
@@ -27,7 +27,7 @@
 .ant-table-cell {
   .form-item-wrapper,
   .optional-field-toggle,
-  .ant-form-item{
+  .ant-form-item {
     margin: 0;
     padding: 0;
     background: transparent;
@@ -56,14 +56,12 @@
   padding: 0;
   border: none;
   margin-bottom: 0;
-  background: transparent!important;
+  background: transparent !important;
 
   &.ant-form-item {
     margin: 0;
-    .ant-form-item-label,{
+    .ant-form-item-label {
       padding-bottom: 0 !important;
     }
   }
 }
-
-

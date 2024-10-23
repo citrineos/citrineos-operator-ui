@@ -1,6 +1,7 @@
 import { BaseRestClient } from '../util/BaseRestClient';
 import { Constructable } from '../util/Constructable';
 import { notification } from 'antd';
+import { Expose } from 'class-transformer';
 
 export const showSucces = () => {
   notification.success({
@@ -42,4 +43,26 @@ export const triggerMessageAndHandleResponse = async <T,>(
   } catch (error: any) {
     showError('The request failed with message: ' + error.message);
   }
+};
+export const hasOwnProperty = (obj: any, key: string) => {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+};
+
+export const createClassWithoutProperty = <T,>(
+  cls: new () => T,
+  excludedKey: keyof T,
+): new () => Omit<T, typeof excludedKey> => {
+  // Create a new class that extends the original class
+  const newClass = class extends (cls as any) {
+    constructor() {
+      super();
+      // Remove the property from the instance itself
+      delete (this as any)[excludedKey];
+    }
+  };
+
+  // Ensure the property is also excluded when serialized using class-transformer
+  Expose({ toPlainOnly: true })(newClass.prototype, excludedKey as string);
+
+  return newClass as new () => Omit<T, typeof excludedKey>;
 };
