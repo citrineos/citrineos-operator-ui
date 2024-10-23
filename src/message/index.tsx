@@ -20,7 +20,7 @@ import {
   InstallCertificate,
   InstallCertificateProps,
 } from './install-certificate';
-import { 
+import {
   GetInstalledCertificateIds,
   GetInstalledCertificateIdsProps,
 } from "./get-installed-certificate-ids";
@@ -32,6 +32,7 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { GetTransactionStatus, GetTransactionStatusProps } from './get-transaction-status';
 
 const actionMap: {
   [label: string]: React.FC<any>;
@@ -54,6 +55,7 @@ const actionMap: {
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
+  'Get Transaction Status': GetTransactionStatus as React.FC<GetTransactionStatusProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
