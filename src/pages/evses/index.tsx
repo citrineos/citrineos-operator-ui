@@ -11,6 +11,7 @@ import {
 } from './queries';
 import { Evse } from './Evse';
 import { GenericDataTable } from '../../components/data-model-table/editable';
+import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 
 export const EvseView: React.FC = () => {
   return (
@@ -27,7 +28,10 @@ export const EvseView: React.FC = () => {
 export const EvseList = (_props: IDataModelListProps) => {
   return (
     <>
-      <GenericDataTable dtoClass={Evse} />
+      <GenericDataTable
+        dtoClass={Evse}
+        customActions={[TriggerMessageForEvseCustomAction]}
+      />
     </>
   );
 };

@@ -22,6 +22,13 @@ import { ExpandableColumn } from '../../components/data-model-table/expandable-c
 import { FaChargingStation } from 'react-icons/fa';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { CUSTOM_CHARGING_STATION_ACTIONS } from '../../message';
+import { ChargingStationProps } from './ChargingStationProps';
+import { EvseProps } from '../evses/Evse';
+import {
+  GET_EVSE_LIST_FOR_STATION,
+  GET_EVSES_FOR_STATION,
+} from '../../message/queries';
+import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 
 export const ChargingStationsView: React.FC = () => {
   return (
@@ -50,6 +57,26 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
     <GenericDataTable
       dtoClass={ChargingStation}
       customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+      gqlQueryVariablesMap={{
+        [ChargingStationProps.evses]: (station: ChargingStation) => ({
+          stationId: station.id,
+        }),
+        [ChargingStationProps.transactions]: (station: ChargingStation) => ({
+          stationId: station.id,
+        }),
+      }}
+      fieldAnnotations={{
+        [ChargingStationProps.evses]: {
+          gqlAssociationProps: {
+            parentIdFieldName: ChargingStationProps.id,
+            associatedIdFieldName: EvseProps.id,
+            gqlQuery: GET_EVSES_FOR_STATION,
+            gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+            gqlUseQueryVariablesKey: ChargingStationProps.evses,
+          },
+          customActions: [TriggerMessageForEvseCustomAction],
+        },
+      }}
     />
   );
 };

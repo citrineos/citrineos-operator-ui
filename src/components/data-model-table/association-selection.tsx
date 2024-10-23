@@ -13,6 +13,8 @@ import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
+import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
+import { CustomAction } from '../custom-actions';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addModelsToStorage,
@@ -27,6 +29,7 @@ export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   onChange?: (value: AssociatedModel[]) => void;
   selectable?: SelectionType | null;
   gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
 }
 
 export const AssociationSelection = <
@@ -46,6 +49,7 @@ export const AssociationSelection = <
     selectable = SelectionType.SINGLE,
     associatedIdFieldName,
     gqlQueryVariables,
+    customActions,
   } = props;
 
   const dispatch = useDispatch();
@@ -67,17 +71,13 @@ export const AssociationSelection = <
       getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
     ) || '';
 
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
-
   const primaryKeyFieldName: string = Reflect.getMetadata(
     PRIMARY_KEY_FIELD_NAME,
+    associatedRecordClassInstance as object,
+  );
+
+  const classCustomActions: CustomAction<any>[] = Reflect.getMetadata(
+    CLASS_CUSTOM_ACTIONS,
     associatedRecordClassInstance as object,
   );
 
@@ -123,6 +123,22 @@ export const AssociationSelection = <
   };
 
   const searchableKeys = getSearchableKeys(associatedRecordClass);
+  if (searchableKeys && searchableKeys.size > 0) {
+    tableOptions['onSearch'] = (values: any): CrudFilters => {
+      const result: CrudFilters = [];
+      if (!values || !values.search || values.search.length === 0) {
+        return [];
+      }
+      for (const searchableKey of searchableKeys) {
+        result.push({
+          field: searchableKey,
+          operator: 'contains',
+          value: values.search,
+        });
+      }
+      return result;
+    };
+  }
 
   const {
     tableProps,
@@ -229,22 +245,6 @@ export const AssociationSelection = <
     );
   }
 
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = (values: any): CrudFilters => {
-      const result: CrudFilters = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    };
-  }
   if (queryResult?.isLoading) {
     return <Spin />;
   }
@@ -285,6 +285,7 @@ export const AssociationSelection = <
                 setPageSize,
                 rowSelection: rowSelection,
               }}
+              customActions={customActions || classCustomActions || undefined}
             />
             <Button
               type="primary"
