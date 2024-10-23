@@ -44,6 +44,11 @@ body,
 }
 
 .map-wrapper {
-  width: 300px;
-  height: 300px;
+  width: 99%;
+  margin: 11px;
+  padding: 11px;
+  height: 'calc(100vh - 200px)';
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }

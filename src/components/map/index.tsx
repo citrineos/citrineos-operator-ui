@@ -12,6 +12,7 @@ export interface MarkerProps {
   onClick?: MouseEventHandler<any> | undefined;
   isSelected?: boolean;
   zoom?: number;
+  color?: string;
 }
 
 export interface MapProps {
@@ -26,6 +27,7 @@ const MapMarker: React.FC<MarkerProps> = ({
   onClick,
   isSelected,
   zoom = 10,
+  color = 'red',
 }) => {
   const markerIcon = isSelected ? '/selected.png' : '/online.png';
 
@@ -37,6 +39,7 @@ const MapMarker: React.FC<MarkerProps> = ({
     <div
       onClick={onClick}
       style={{
+        color,
         cursor: 'pointer',
         position: 'absolute',
         transform: `translate(-50%, -100%)`, // Adjust for anchor offset
@@ -136,6 +139,7 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
         onClick: () => {},
         isSelected: true,
         zoom,
+        color: 'red',
       },
     ];
   }
@@ -151,6 +155,7 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
       >
         {markers.map((marker) => (
           <MapMarker
+            color={marker.color}
             key={marker.identifier}
             lat={marker.lat}
             lng={marker.lng}
