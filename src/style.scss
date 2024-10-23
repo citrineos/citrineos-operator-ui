@@ -162,7 +162,11 @@ main {
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 300px;
+  height: 400px;
   background: var(--ant-color-primary-bg);
   margin: var(--ant-margin-xs);
+
+  text {
+    fill: var(--ant-color-text-base);
+  }
 }
