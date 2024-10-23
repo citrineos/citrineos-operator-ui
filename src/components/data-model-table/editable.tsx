@@ -669,9 +669,10 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             return renderField({
               schema: field,
               preFieldPath: FieldPath.empty(),
-              // disabled:
+              // disabled: // todo do we want to disable primary field when creating new item?
               //   record[primaryKeyFieldName] === NEW_IDENTIFIER &&
               //   field.name === primaryKeyFieldName,
+              disabled: false,
               visibleOptionalFields: visibleOptionalFields,
               hideLabels: true,
               enableOptionalField: enableOptionalField,
