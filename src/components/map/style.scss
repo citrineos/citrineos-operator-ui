@@ -52,3 +52,19 @@ body,
   align-items: center;
   justify-content: center;
 }
+
+.red {
+  fill: rgb(255, 0, 0); /* fallback color */
+  filter: invert(39%) sepia(100%) saturate(676%) hue-rotate(353deg)
+    brightness(95%) contrast(105%);
+}
+
+.green {
+  fill: green; /* fallback color */
+  filter: invert(20%) sepia(100%) saturate(500%) hue-rotate(120deg);
+}
+
+.purple {
+  fill: purple; /* fallback color */
+  filter: invert(20%) sepia(100%) saturate(500%) hue-rotate(270deg);
+}

@@ -29,7 +29,7 @@ const MapMarker: React.FC<MarkerProps> = ({
   zoom = 10,
   color = 'red',
 }) => {
-  const markerIcon = isSelected ? '/selected.png' : '/online.png';
+  const markerIcon = isSelected ? '/selected.png' : '/online.svg';
 
   // Adjust marker size based on zoom level - larger when zoomed in, smaller when zoomed out
   const baseSize = 30; // Base size for the marker
@@ -50,9 +50,11 @@ const MapMarker: React.FC<MarkerProps> = ({
         src={markerIcon}
         alt="marker"
         style={{
+          fill: color,
           width: `${markerSize}px`,
           height: `${(markerSize * 153) / 116}px`,
         }} // Maintain aspect ratio
+        className={color}
       />
       {content && <div className="map-marker-content">{content}</div>}
     </div>
