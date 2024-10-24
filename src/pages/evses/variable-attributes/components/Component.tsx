@@ -54,19 +54,19 @@ export class Component extends BaseModel {
   @IsNumber()
   evseDatabaseId!: number;
 
+  @IsNumber()
+  @IsOptional()
+  @Hidden({ isEditable: false })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.id}</span>;
   })
+  evseId?: number;
+
   @IsNumber()
   @IsOptional()
   @Hidden({ isEditable: false })
-  evseId?: number;
-
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.connectorId}</span>;
   })
-  @IsNumber()
-  @IsOptional()
-  @Hidden({ isEditable: false })
   connectorId?: number;
 }
