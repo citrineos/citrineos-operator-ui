@@ -60,6 +60,10 @@ import {
   routes as ChargingStationsRoutes,
 } from './pages/charging-stations';
 import {
+  resources as chargingStationSequencesResources,
+  routes as ChargingStationSequencesRoutes,
+} from './pages/charging-station-sequences';
+import {
   resources as locationsResources,
   routes as LocationsRoutes,
 } from './pages/locations';
@@ -127,6 +131,10 @@ import {
   resources as evsesResources,
   routes as EvsesRoutes,
 } from './pages/evses';
+import {
+  resources as installedCertificatesResources,
+  routes as InstalledCertificatesRoutes,
+} from './pages/installed-certificates';
 import { theme } from './theme';
 import { MainMenu } from './components/main-menu';
 
@@ -150,6 +158,11 @@ const hasuraOptions: HasuraDataProviderOptions = {
         return 'Int';
     }
   },
+};
+
+const hasuraDataProvider = dataProvider(client, hasuraOptions);
+hasuraDataProvider.getApiUrl = () => {
+  return API_URL;
 };
 
 const resources = [
@@ -210,6 +223,7 @@ const resources = [
   },
   ...bootsResources,
   ...chargingStationsResources,
+  ...chargingStationSequencesResources,
   ...locationsResources,
   ...statusNotificationsResources,
   ...tariffsResources,
@@ -223,6 +237,7 @@ const resources = [
   ...certificatesResources,
   ...reservationsResources,
   ...evsesResources,
+  ...installedCertificatesResources,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 function App() {
@@ -233,7 +248,7 @@ function App() {
           <AntdApp>
             <ConfigProvider theme={theme}>
               <Refine
-                dataProvider={dataProvider(client, hasuraOptions)}
+                dataProvider={hasuraDataProvider}
                 liveProvider={liveProvider(webSocketClient)}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
@@ -315,6 +330,10 @@ function App() {
                       path="/charging-stations/*"
                       element={<ChargingStationsRoutes />}
                     />
+                    <Route
+                      path="/charging-station-sequences/*"
+                      element={<ChargingStationSequencesRoutes />}
+                    />
                     <Route path="/locations/*" element={<LocationsRoutes />} />
                     <Route
                       path="/status-notifications/*"
@@ -352,6 +371,10 @@ function App() {
                     <Route
                       path="/certificates/*"
                       element={<CertificatesRoutes />}
+                    />
+                    <Route
+                      path="/installed-certificates/*"
+                      element={<InstalledCertificatesRoutes />}
                     />
                     <Route
                       path="/reservations/*"

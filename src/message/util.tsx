@@ -3,12 +3,6 @@ import { Constructable } from '../util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 
-export const generateRandomSignedInt = () => {
-  const maxInt = 2147483647; // 2^31 - 1
-  const minInt = 0;
-  return Math.trunc(Math.random() * (maxInt - minInt + 1) + minInt);
-};
-
 export const showSucces = () => {
   notification.success({
     message: 'Success',
@@ -50,6 +44,24 @@ export const triggerMessageAndHandleResponse = async <T,>(
     showError('The request failed with message: ' + error.message);
   }
 };
+
+export const readFileContent = (file: File | null): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      return resolve('');
+    }
+
+    const fileReader = new FileReader();
+    fileReader.onload = (event) => {
+      const text = event.target?.result as string;
+      resolve(text);
+    };
+    fileReader.onerror = (error) => reject(error);
+
+    fileReader.readAsText(file);
+  });
+};
+
 export const hasOwnProperty = (obj: any, key: string) => {
   return Object.prototype.hasOwnProperty.call(obj, key);
 };

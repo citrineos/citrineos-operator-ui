@@ -149,7 +149,7 @@ export enum RequestStartTransactionRequestProps {
 
 export class RequestStartTransactionRequest {
   @IsInt()
-  @IsPositive()
+  @Min(0)
   @IsNotEmpty()
   remoteStartId!: number;
 
