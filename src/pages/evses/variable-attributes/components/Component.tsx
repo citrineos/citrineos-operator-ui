@@ -56,7 +56,7 @@ export class Component extends BaseModel {
 
   @IsNumber()
   @IsOptional()
-  @Hidden({ isEditable: false })
+  @Hidden({ isEditableInTable: false })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.id}</span>;
   })
@@ -64,7 +64,7 @@ export class Component extends BaseModel {
 
   @IsNumber()
   @IsOptional()
-  @Hidden({ isEditable: false })
+  @Hidden({ isEditableInTable: false })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.connectorId}</span>;
   })

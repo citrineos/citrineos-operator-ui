@@ -1,9 +1,9 @@
 export const HIDDEN = 'hidden';
 
 export const Hidden = ({
-  isEditable = true,
-}: { isEditable?: boolean } = {}) => {
+  isEditableInTable = true,
+}: { isEditableInTable?: boolean } = {}) => {
   return (target: any, key: string) => {
-    Reflect.defineMetadata(HIDDEN, isEditable, target, key);
+    Reflect.defineMetadata(HIDDEN, isEditableInTable, target, key);
   };
 };
