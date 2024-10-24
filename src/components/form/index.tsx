@@ -357,16 +357,26 @@ export const extractSchema = (dtoClass: any): FieldSchema[] => {
 };
 
 export const renderFieldContent = (field: FieldSchema, disabled = false) => {
+  const dataTest = `field-${field.name}-input`;
+
   switch (field.type) {
     case FieldType.number:
-      return <InputNumber disabled={disabled} />;
+      return <InputNumber disabled={disabled} data-test={dataTest} />;
     case FieldType.boolean:
-      return <Switch disabled={disabled} />;
+      return <Switch disabled={disabled} data-test={dataTest} />;
     case FieldType.select:
       return (
-        <Select mode={field.selectMode as any} disabled={disabled}>
+        <Select
+          mode={field.selectMode as any}
+          disabled={disabled}
+          data-test={dataTest}
+        >
           {field.options?.map((option, _ix) => (
-            <Select.Option key={option.value} value={option.value}>
+            <Select.Option
+              key={option.value}
+              value={option.value}
+              data-test={`${dataTest}-option-${option.value}`}
+            >
               {option.label}
             </Select.Option>
           ))}
@@ -413,6 +423,10 @@ export const renderField = (props: RenderFieldProps) => {
 
   let fieldPath = preFieldPath.with(schema.name);
 
+  // Generate the data-test attribute value automatically
+  const dataTest = `field-${schema.name || schema.type || fieldPath.key}`;
+  const dataTestType = schema.type;
+  console.log('data test type: ', dataTestType);
   if (schema.type === FieldType.customRender && schema.customRender) {
     return schema.customRender();
   }
@@ -452,6 +466,7 @@ export const renderField = (props: RenderFieldProps) => {
         form={form}
         parentRecord={parentRecord}
         gqlQueryVariablesMap={gqlQueryVariablesMap}
+        data-test={dataTest} // Automatically generated data-test
       />
     );
   }
@@ -471,6 +486,7 @@ export const renderField = (props: RenderFieldProps) => {
         form={form}
         parentRecord={parentRecord}
         gqlQueryVariablesMap={gqlQueryVariablesMap}
+        data-test={dataTest} // Automatically generated data-test
       />
     );
   }
@@ -497,6 +513,7 @@ export const renderField = (props: RenderFieldProps) => {
         required={schema.isRequired}
         layout={'vertical'}
         className="merged-ant-form-item"
+        data-test={dataTest} // Automatically generated data-test
       >
         <Form.Item label={'Type'}>
           <Select
@@ -524,136 +541,6 @@ export const renderField = (props: RenderFieldProps) => {
     );
   }
 
-  if (schema.type === FieldType.unknownProperty) {
-    let unknown: UnknownEntry | undefined;
-    let updateUnknown: (value: Partial<UnknownEntry>) => void;
-
-    if (isDynamicFieldSchema(schema)) {
-      fieldPath = fieldPath.pop().popName();
-      unknown = unknowns.find(fieldPath, schema.position)!;
-      updateUnknown = (value: Partial<UnknownEntry>) =>
-        modifyUnknowns('update', fieldPath, schema.position, value);
-    } else {
-      fieldPath = fieldPath.popName();
-      unknown = unknowns.findFirst(fieldPath);
-      if (isNullOrUndefined(unknown)) {
-        return modifyUnknowns('registerFirst', fieldPath);
-      }
-      updateUnknown = (value: Partial<UnknownEntry>) =>
-        modifyUnknowns('updateFirst', fieldPath, value);
-    }
-
-    return (
-      <Form.Item required={schema.isRequired} className="merged-ant-form-item">
-        <Row gutter={32}>
-          <Col span={4}>
-            <Form.Item label={'Key'}>
-              <Input
-                value={unknown?.name}
-                onChange={(e) => updateUnknown({ name: e.target.value })}
-                placeholder="Enter text"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item label={'Type'} layout="horizontal">
-              <Select
-                value={unknown?.type}
-                onChange={(value: SupportedUnknownType) =>
-                  updateUnknown({ type: value })
-                }
-                options={[
-                  { value: 'string', label: 'String' },
-                  { value: 'number', label: 'Number' },
-                  { value: 'boolean', label: 'Boolean' },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-
-          {unknown && unknown.type && unknown.name && (
-            <Col span={16}>
-              <Form.Item
-                label={'Value'}
-                layout="horizontal"
-                name={[...fieldPath.namePath, unknown.name]}
-              >
-                {unknown.type === 'string' && (
-                  <Input placeholder="Enter text" />
-                )}
-                {unknown.type === 'number' && (
-                  <InputNumber placeholder="Enter number" />
-                )}
-                {unknown.type === 'boolean' && <Switch defaultValue={true} />}
-              </Form.Item>
-            </Col>
-          )}
-        </Row>
-      </Form.Item>
-    );
-  }
-
-  if (schema.type === FieldType.unknownProperties) {
-    return (
-      <Form.Item required={schema.isRequired}>
-        {!hideLabels &&
-          renderLabel(
-            schema,
-            fieldPath,
-            disabled,
-            visibleOptionalFields,
-            toggleOptionalField,
-          )}
-        <div>
-          {unknowns.findAll(fieldPath)?.map((_: any, arrayIndex: any) => (
-            <Row key={fieldPath.key + arrayIndex} align="middle">
-              <Col span={23}>
-                {
-                  renderField({
-                    schema: {
-                      label: `#${arrayIndex}`,
-                      name: arrayIndex,
-                      type: FieldType.unknownProperty,
-                      isRequired: true,
-                      position: arrayIndex,
-                    } as any,
-                    preFieldPath: fieldPath,
-                    disabled: disabled,
-                    visibleOptionalFields: hideLabels,
-                    hideLabels: visibleOptionalFields,
-                    enableOptionalField: enableOptionalField,
-                    toggleOptionalField: toggleOptionalField,
-                    unknowns: unknowns,
-                    modifyUnknowns: modifyUnknowns,
-                    form,
-                    parentRecord,
-                    gqlQueryVariablesMap,
-                  }) as any
-                }
-              </Col>
-              <Col span={1}>
-                <CloseOutlined
-                  style={{ marginLeft: '24px' }}
-                  onClick={() => {
-                    modifyUnknowns('remove', fieldPath, arrayIndex);
-                  }}
-                />
-              </Col>
-            </Row>
-          ))}
-        </div>
-        <Button
-          type="dashed"
-          onClick={() => modifyUnknowns('registerLast', fieldPath)}
-          icon={<PlusOutlined />}
-          style={{ width: '100%' }}
-        >
-          Add {schema.label}
-        </Button>
-      </Form.Item>
-    );
-  }
-
   return (
     <Form.Item
       key={`${fieldPath.key}-primitive`}
@@ -670,6 +557,7 @@ export const renderField = (props: RenderFieldProps) => {
       }
       name={fieldPath.namePath}
       required={schema.isRequired}
+      data-test={dataTest} // Automatically generated data-test
     >
       {renderFieldContent(schema, disabled)}
     </Form.Item>
@@ -782,7 +670,7 @@ export const GenericForm = forwardRef(function GenericForm(
     parentRecord,
     gqlQueryVariablesMap,
   } = props;
-
+  console.log('Generic form props: ', props);
   const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
     Flags.empty(),
   );
@@ -818,6 +706,7 @@ export const GenericForm = forwardRef(function GenericForm(
     setFieldsValues,
   })) as any);
 
+  console.log('generic form', schema);
   return (
     <Form
       {...formProps}
@@ -826,6 +715,7 @@ export const GenericForm = forwardRef(function GenericForm(
       onValuesChange={onValuesChange}
       disabled={disabled}
       initialValues={initialValues}
+      data-test="generic-form"
     >
       {schema.map((field) => {
         return renderField({
@@ -844,7 +734,12 @@ export const GenericForm = forwardRef(function GenericForm(
         });
       })}
       <Form.Item>
-        <Button disabled={submitDisabled} type="primary" htmlType="submit">
+        <Button
+          disabled={submitDisabled}
+          type="primary"
+          htmlType="submit"
+          data-test={`${dtoClass.name}-generic-form-submit`}
+        >
           Submit
         </Button>
       </Form.Item>
