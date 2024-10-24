@@ -699,16 +699,9 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       ...schema
         .map((field: FieldSchema) => {
           if (dtoClass && !!editingRecord) {
-            const instance = plainToInstance(
-              dtoClass,
-              {},
-              {
-                excludeExtraneousValues: false,
-              },
-            );
             const isEditableInTable = Reflect.getMetadata(
               HIDDEN.EditableInTable,
-              instance,
+              dtoClassInstance,
               field.name,
             );
             if (isEditableInTable === false) return null;
