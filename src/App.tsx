@@ -131,6 +131,10 @@ import {
   resources as evsesResources,
   routes as EvsesRoutes,
 } from './pages/evses';
+import {
+  resources as installedCertificatesResources,
+  routes as InstalledCertificatesRoutes,
+} from './pages/installed-certificates';
 import { theme } from './theme';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -232,6 +236,7 @@ const resources = [
   ...certificatesResources,
   ...reservationsResources,
   ...evsesResources,
+  ...installedCertificatesResources,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 function App() {
@@ -365,6 +370,10 @@ function App() {
                     <Route
                       path="/certificates/*"
                       element={<CertificatesRoutes />}
+                    />
+                    <Route
+                      path="/installed-certificates/*"
+                      element={<InstalledCertificatesRoutes />}
                     />
                     <Route
                       path="/reservations/*"
