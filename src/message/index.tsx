@@ -33,6 +33,10 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import {
+  GetTransactionStatus,
+  GetTransactionStatusProps,
+} from './get-transaction-status';
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
@@ -51,6 +55,8 @@ const chargingStationActionMap: {
   'Get Installed Certificate IDs':
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Get Log': GetLog as React.FC<GetLogProps>,
+  'Get Transaction Status':
+    GetTransactionStatus as React.FC<GetTransactionStatusProps>,
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
     InstallCertificate as React.FC<InstallCertificateProps>,
