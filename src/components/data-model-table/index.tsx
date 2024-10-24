@@ -19,6 +19,7 @@ export interface IDataModelListProps {
   hideCreateButton?: boolean;
   hideActions?: boolean;
   parentView?: ResourceType;
+  viewMode?: 'table' | 'map';
 }
 
 export const DataModelTable = <T extends AnyObject, U extends BaseRecord>(

@@ -23,6 +23,7 @@ export const LOCATIONS_LIST_QUERY = gql`
       coordinates
       ChargingStations {
         id
+        isOnline
       }
       createdAt
       updatedAt
