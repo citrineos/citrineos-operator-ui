@@ -47,7 +47,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
       },
     },
   });
-  
+
   const isRequestValid = (request: GetBaseReportRequest) => {
     const errors = validateSync(request);
     return errors.length === 0;
@@ -59,7 +59,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
     });
     setValid((_) => isRequestValid(request));
   };
-  
+
   const onFinish = (values: object) => {
     const request = plainToInstance(GetBaseReportRequest, values, {
       excludeExtraneousValues: false,
@@ -69,10 +69,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
     }
   };
 
-
-  const getBaseReport = async (
-    request: GetBaseReportRequest,
-  ) => {
+  const getBaseReport = async (request: GetBaseReportRequest) => {
     try {
       setLoading(true);
       const client = new BaseRestClient();
@@ -110,12 +107,10 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
   if (loading || isLoadingRequestId) return <Spin />;
 
   const getBaseReportRequest = new GetBaseReportRequest();
-  getBaseReportRequest[
-    GetBaseReportRequestProps.requestId
-  ] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
-  getBaseReportRequest[
-    GetBaseReportRequestProps.reportBase
-  ] = ReportBaseEnumType.FullInventory;
+  getBaseReportRequest[GetBaseReportRequestProps.requestId] =
+    requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+  getBaseReportRequest[GetBaseReportRequestProps.reportBase] =
+    ReportBaseEnumType.FullInventory;
 
   return (
     <GenericForm

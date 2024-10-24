@@ -17,11 +17,7 @@ export interface AssociatedViewProps<ParentModel, AssociatedModel>
   parentRecord: ParentModel; // record
   associatedRecordClass: Constructable<AssociatedModel>; // record class
 }
-export const AssociatedView = <
-  ParentModel,
-  AssociatedModel,
-  GetQuery extends Record<any, any>,
->(
+export const AssociatedView = <ParentModel, AssociatedModel>(
   props: AssociatedViewProps<ParentModel, AssociatedModel>,
 ) => {
   const { parentRecord, associatedRecordClass, parentIdFieldName, gqlQuery } =
@@ -32,16 +28,9 @@ export const AssociatedView = <
   );
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociatedView cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
+
   const useFormProps = useForm<any, any, any>({
     resource: associatedRecordResourceType,
     id: (parentRecord as any)[parentIdFieldName],
@@ -60,13 +49,21 @@ export const AssociatedView = <
   if (queryResult?.data?.data) {
     const label = Reflect.getMetadata(
       LABEL_FIELD,
-      associatedRecordClassInstance as Object,
+      associatedRecordClassInstance as object,
     );
     if (label && queryResult.data.data[label]) {
       val = queryResult.data.data[label];
     } else {
       val = (parentRecord as any)[parentIdFieldName]; // just use associated ID
     }
+  }
+  if (!associatedRecordResourceType) {
+    return (
+      <Alert
+        message="Error: AssociatedView cannot find ResourceType for associatedRecordClass"
+        type="error"
+      />
+    );
   }
   return (
     <ExpandableColumn

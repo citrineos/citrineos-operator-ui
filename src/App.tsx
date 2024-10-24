@@ -155,10 +155,10 @@ const hasuraOptions: HasuraDataProviderOptions = {
   },
 };
 
-const hasuraDataProvider = dataProvider(client, hasuraOptions)
+const hasuraDataProvider = dataProvider(client, hasuraOptions);
 hasuraDataProvider.getApiUrl = () => {
   return API_URL;
-}
+};
 
 const resources = [
   {

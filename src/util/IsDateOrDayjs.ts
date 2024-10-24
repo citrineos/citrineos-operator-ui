@@ -1,23 +1,29 @@
-import {buildMessage, ValidateBy, ValidationOptions} from "class-validator";
-import {Dayjs, isDayjs} from 'dayjs';
+import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
+import { Dayjs, isDayjs } from 'dayjs';
 
 export function isDate(value: unknown): value is Date {
-    return value instanceof Date && !isNaN(value.getTime());
+  return value instanceof Date && !isNaN(value.getTime());
 }
 
 export function isDateOrDayjs(value: unknown): value is Dayjs | Date {
-    return isDate(value) || isDayjs(value);
+  return isDate(value) || isDayjs(value);
 }
 
-export function IsDateOrDayjs(validationOptions?: ValidationOptions): PropertyDecorator {
-    return ValidateBy(
-        {
-            name: 'isDateOrDayjs',
-            validator: {
-                validate: (value, args): boolean => isDateOrDayjs(value),
-                defaultMessage: buildMessage(eachPrefix => eachPrefix + '$property must be a Date or Dayjs instance', validationOptions),
-            },
-        },
-        validationOptions
-    );
+export function IsDateOrDayjs(
+  validationOptions?: ValidationOptions,
+): PropertyDecorator {
+  return ValidateBy(
+    {
+      name: 'isDateOrDayjs',
+      validator: {
+        validate: (value, _args): boolean => isDateOrDayjs(value),
+        defaultMessage: buildMessage(
+          (eachPrefix) =>
+            eachPrefix + '$property must be a Date or Dayjs instance',
+          validationOptions,
+        ),
+      },
+    },
+    validationOptions,
+  );
 }

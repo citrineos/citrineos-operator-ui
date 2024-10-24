@@ -3,12 +3,12 @@ export const GQL_ASSOCIATION = 'gqlAssociation';
 export interface GqlAssociationProps {
   /**
    * Field in parent record that contains the id to be used for the association
-   */  
+   */
   parentIdFieldName: string;
   /**
    * Field in associated record that contains the id referencing the parent record
    */
-  associatedIdFieldName: string; 
+  associatedIdFieldName: string;
   /**
    * Query to perform to get the associated record
    */

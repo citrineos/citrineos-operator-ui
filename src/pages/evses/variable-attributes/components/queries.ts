@@ -19,6 +19,10 @@ export const COMPONENT_LIST_QUERY = gql`
       evseDatabaseId
       createdAt
       updatedAt
+      Evse {
+        connectorId
+        id
+      }
     }
     Components_aggregate(where: $where) {
       aggregate {

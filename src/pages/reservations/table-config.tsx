@@ -12,7 +12,7 @@ import { StatusIcon } from '../../components/status-icon';
 
 export const RESERVATIONS_COLUMNS = (
   withActions: boolean,
-  parentView?: ResourceType,
+  _parentView?: ResourceType,
 ): TableColumnsType<Reservations> => {
   const baseColumns: TableColumnsType<Reservations> = [
     {

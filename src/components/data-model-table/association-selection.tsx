@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
@@ -12,6 +13,14 @@ import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { CrudFilters } from '@refinedev/core';
+import { CustomAction } from '../custom-actions';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getSelectedAssociatedItems,
+  setSelectedAssociatedItems,
+} from '../../redux/selectionSlice';
+import { LABEL_FIELD } from '../../util/decorators/LabelField';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -21,6 +30,7 @@ export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   onChange?: (value: AssociatedModel[]) => void;
   selectable?: SelectionType | null;
   gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
 }
 
 export const AssociationSelection = <
@@ -42,37 +52,54 @@ export const AssociationSelection = <
     gqlQueryVariables,
   } = props;
 
-  const associatedRecordClassInstance = plainToInstance(
-    associatedRecordClass,
-    {},
+  const dispatch = useDispatch();
+  const associatedRecordClassInstance = useMemo(
+    () => plainToInstance(associatedRecordClass, {}),
+    [associatedRecordClass],
   );
 
-  const associatedRecordResourceType = Reflect.getMetadata(
-    CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
-  );
-  if (!associatedRecordResourceType) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
-
-  const primaryKeyFieldName: string = Reflect.getMetadata(
-    PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as Object,
+  const associatedRecordResourceType = useMemo(
+    () =>
+      Reflect.getMetadata(
+        CLASS_RESOURCE_TYPE,
+        associatedRecordClassInstance as object,
+      ),
+    [associatedRecordClassInstance],
   );
 
-  if (!primaryKeyFieldName) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
+  const label = useMemo(
+    () =>
+      Reflect.getMetadata(LABEL_FIELD, associatedRecordClassInstance as object),
+    [associatedRecordClassInstance],
+  );
+
+  const primaryKeyFieldName = useMemo(
+    () =>
+      Reflect.getMetadata(
+        PRIMARY_KEY_FIELD_NAME,
+        associatedRecordClassInstance as object,
+      ),
+    [associatedRecordClassInstance],
+  );
+
+  const storageKey = useMemo(() => {
+    if (Object.keys(associatedRecordClassInstance as object).length === 0)
+      return '';
+
+    return `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
+  }, [parentRecord, associatedRecordClass]);
+
+  const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
+
+  const selectedIdentifiers = useMemo(() => {
+    if (selectedItems.length === 0) return '';
+
+    const labelKey = label || primaryKeyFieldName;
+    return selectedItems
+      .map((item: any) => plainToInstance(associatedRecordClass, item))
+      .map((item: any) => item[labelKey])
+      .join(', ');
+  }, [selectedItems, label, primaryKeyFieldName, associatedRecordClass]);
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
@@ -84,152 +111,112 @@ export const AssociationSelection = <
           ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
             (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
-  }, [parentRecord, primaryKeyFieldName]);
+  }, [parentRecord, primaryKeyFieldName, parentIdFieldName, value]);
 
   const [tagValue, setTagValue] = useState<string>('');
-
   useEffect(() => {
-    let newVal = '';
-    if (Array.isArray(value)) {
-      newVal = value
-        .map((v: any) => (v as any)[primaryKeyFieldName])
-        .join(', ');
-    } else {
-      newVal = value
+    const newVal = Array.isArray(value)
+      ? value.map((v: any) => (v as any)[primaryKeyFieldName]).join(', ')
+      : value
         ? JSON.stringify((value as any)[associatedIdFieldName])
         : '';
-    }
     setTagValue(
       isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
     );
-  }, [isNew, value]);
+  }, [isNew, value, associatedIdFieldName, parentRecord, primaryKeyFieldName]);
 
-  const meta: any = {
-    gqlQuery,
-  };
+  const meta: any = useMemo(
+    () => ({ gqlQuery, gqlVariables: gqlQueryVariables }),
+    [gqlQuery, gqlQueryVariables],
+  );
 
-  if (gqlQueryVariables) {
-    meta.gqlVariables = gqlQueryVariables;
-  }
+  const tableOptions: useTableProps<GetQuery, any, unknown, GetQuery> = useMemo(
+    () => ({
+      resource: associatedRecordResourceType,
+      sorters: { initial: [{ field: 'updatedAt', order: 'desc' }] },
+      filters: [] as any,
+      meta,
+    }),
+    [associatedRecordResourceType, meta],
+  );
 
-  const tableOptions: useTableProps<GetQuery, any, unknown, GetQuery> = {
-    resource: associatedRecordResourceType,
-    sorters: {
-      initial: [
-        {
-          field: 'updatedAt',
-          order: 'desc',
-        },
-      ],
-    },
-    filters: [] as any,
-    meta,
-  };
-
-  const searchableKeys = getSearchableKeys(associatedRecordClass);
-
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = ((values: any) => {
-      const result = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    }) as any;
-  }
+  const searchableKeys = useMemo(
+    () => getSearchableKeys(associatedRecordClass),
+    [associatedRecordClass],
+  );
 
   const {
     tableProps,
     tableQuery: queryResult,
     searchFormProps,
-    setSorter,
+    setSorters,
     setCurrent,
     setPageSize,
-  } = useTable<GetQuery>({
-    ...tableOptions,
-  });
+  } = useTable<GetQuery>(tableOptions);
 
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
-  const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
-
-  useEffect(() => {
-    setSelectedRowsKeys(
-      selectedRows.map((item: any) => (item as any)[primaryKeyFieldName]),
-    );
-  }, [selectedRows]);
-
-  useEffect(() => {
-    const data = (tableProps?.dataSource || []).map(
-      (item: any) =>
-        plainToInstance(associatedRecordClass, item) as AssociatedModel,
-    );
-
-    // Calculate matching row keys after data is processed
-    const matchingRows = data.filter(
-      (item: any) =>
-        (item as any)[associatedIdFieldName] ===
-        (parentRecord as any)[parentIdFieldName],
-    );
-
-    // Update selected row keys
-    setSelectedRows(matchingRows);
-  }, [tableProps?.dataSource]);
 
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
+      dispatch(
+        setSelectedAssociatedItems({
+          storageKey,
+          selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
+        }),
+      );
       setSelectedRows(selectedRows);
-
-      if (onChange) {
-        onChange(selectedRows);
-      }
+      onChange?.(selectedRows);
     },
-    [onChange],
+    [dispatch, onChange, storageKey],
   );
 
-  const rowSelection = useMemo(() => {
-    const selectedRowKeys = selectedRows.map(
-      (item: any) => item[primaryKeyFieldName],
-    );
-    return {
-      selectedRowKeys: selectedRowKeys,
+  const rowSelection = useMemo(
+    () => ({
+      selectedRowKeys: selectedRows.map(
+        (item: any) => item[primaryKeyFieldName],
+      ),
       onChange: handleRowChange,
-      getCheckboxProps: (record: any) => ({
-        disabled: record.name === 'Disabled User',
-        name: record.name,
-      }),
       type: selectable === SelectionType.SINGLE ? 'radio' : 'checkbox',
-    };
-  }, [selectedRows, handleRowChange]);
+    }),
+    [selectedRows, handleRowChange, selectable],
+  );
 
   const handleSelectionSave = useCallback(
     (closeDrawer: () => void) => {
-      if (onChange) {
-        onChange(selectedRows);
-      }
-      setTagValue(
-        selectedRows
-          .map((item: any) => item[primaryKeyFieldName] || item.id)
-          .join(', '),
-      );
+      onChange?.(selectedRows);
+      setTagValue(selectedIdentifiers);
       closeDrawer();
     },
-    [selectedRows, primaryKeyFieldName],
+    [onChange, selectedRows, selectedIdentifiers],
   );
 
-  if (queryResult?.isLoading) {
-    return <Spin />;
+  if (!associatedRecordResourceType || !primaryKeyFieldName) {
+    return (
+      <Alert
+        message={`Error: AssociationSelection cannot find ${
+          !associatedRecordResourceType ? 'ResourceType' : 'primaryKeyFieldName'
+        } for associatedRecordClass`}
+        type="error"
+      />
+    );
   }
 
-  if (queryResult?.isError) {
+  tableOptions.onSearch = useCallback(
+    (values: any): CrudFilters => {
+      if (!values?.search?.length) return [];
+      return Array.from(searchableKeys).map((key) => ({
+        field: key,
+        operator: 'contains',
+        value: values.search,
+      }));
+    },
+    [searchableKeys],
+  );
+
+  if (queryResult?.isLoading) return <Spin />;
+  if (queryResult?.isError)
     return (
       <Alert
         message="Error loading data"
@@ -237,43 +224,41 @@ export const AssociationSelection = <
         type="error"
       />
     );
-  }
 
   return (
-    <>
-      <ExpandableColumn
-        useInitialContentAsButton={true}
-        initialContent={
-          <>
-            <GenericTag stringValue={tagValue} icon={<ExportOutlined />} />
-          </>
-        }
-        expandedContent={({ closeDrawer }) => (
-          <>
-            <GenericDataTable
-              dtoClass={associatedRecordClass}
-              selectable={selectable}
-              useTableProps={{
-                tableProps,
-                searchFormProps,
-                setSorter,
-                setCurrent,
-                setPageSize,
-                rowSelection: rowSelection,
-              }}
-            />
-            <Button
-              type="primary"
-              icon={<SaveOutlined />}
-              onClick={() => handleSelectionSave(closeDrawer)}
-              disabled={selectedRows.length === 0}
-            >
-              Save
-            </Button>
-          </>
-        )}
-        viewTitle={`Please select associated ${associatedRecordResourceType}`}
-      />
-    </>
+    <ExpandableColumn
+      useInitialContentAsButton
+      initialContent={
+        <GenericTag stringValue={tagValue} icon={<ExportOutlined />} />
+      }
+      expandedContent={({ closeDrawer }) => (
+        <>
+          <p>
+            Selected {associatedRecordClass.name}(s): {selectedIdentifiers}
+          </p>
+          <GenericDataTable
+            dtoClass={associatedRecordClass}
+            selectable={selectable}
+            useTableProps={{
+              tableProps,
+              searchFormProps,
+              setSorters,
+              setCurrent,
+              setPageSize,
+              rowSelection,
+            }}
+          />
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={() => handleSelectionSave(closeDrawer)}
+            disabled={selectedRows.length === 0}
+          >
+            Save
+          </Button>
+        </>
+      )}
+      viewTitle={`Please select associated ${associatedRecordResourceType}`}
+    />
   );
 };

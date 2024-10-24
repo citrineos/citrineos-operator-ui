@@ -25,6 +25,7 @@ import { TRANSACTION_COLUMNS } from './table-config';
 import { Transactions } from '../../graphql/schema.types';
 import { useCustom } from '@refinedev/core';
 import { TruncateDisplay } from '../../components/truncate-display';
+import { GenericDataTable } from '../../components/data-model-table/editable';
 
 export const TransactionView: React.FC = () => {
   return (
@@ -49,11 +50,14 @@ export const TransactionList = (props: IDataModelListProps) => {
   });
 
   return (
-    <DataModelTable<Transactions, TransactionListQuery>
-      tableProps={tableProps}
-      columns={TRANSACTION_COLUMNS(!props.hideActions, props.parentView)}
-      hideCreateButton={props.hideCreateButton}
-    />
+    <>
+      <DataModelTable<Transactions, TransactionListQuery>
+        tableProps={tableProps}
+        columns={TRANSACTION_COLUMNS(!props.hideActions, props.parentView)}
+        hideCreateButton={props.hideCreateButton}
+      />
+      <GenericDataTable dtoClass={Transaction} />
+    </>
   );
 };
 
