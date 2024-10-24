@@ -707,7 +707,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               },
             );
             const isEditableInTable = Reflect.getMetadata(
-              HIDDEN,
+              HIDDEN.EditableInTable,
               instance,
               field.name,
             );
