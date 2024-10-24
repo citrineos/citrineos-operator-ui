@@ -50,6 +50,7 @@ export class Component extends BaseModel {
   @IsString()
   instance?: string | null;
 
+  @Hidden()
   @IsNumber()
   evseDatabaseId!: number;
 
