@@ -24,7 +24,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
-  
+
   const apiUrl = useApiUrl();
   const {
     data: requestIdResponse,
@@ -107,7 +107,8 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
   if (loading || isLoadingRequestId) return <Spin />;
 
   const getLogRequest = new GetLogRequest();
-  getLogRequest[GetLogRequestProps.requestId] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+  getLogRequest[GetLogRequestProps.requestId] =
+    requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   getLogRequest[GetLogRequestProps.log] = {
     remoteLocation: `${DIRECTUS_URL}/files`,
   } as any; // Type assertion if necessary

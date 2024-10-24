@@ -14,12 +14,11 @@ import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
-import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 import { CustomAction } from '../custom-actions';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  setSelectedAssociatedItems,
   getSelectedAssociatedItems,
+  setSelectedAssociatedItems,
 } from '../../redux/selectionSlice';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
 
@@ -51,7 +50,6 @@ export const AssociationSelection = <
     selectable = SelectionType.SINGLE,
     associatedIdFieldName,
     gqlQueryVariables,
-    customActions,
   } = props;
 
   const dispatch = useDispatch();
