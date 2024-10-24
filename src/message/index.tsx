@@ -46,6 +46,7 @@ const chargingStationActionMap: {
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
   'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
   'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
   'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
   'Get Installed Certificate IDs':
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
@@ -55,15 +56,12 @@ const chargingStationActionMap: {
     InstallCertificate as React.FC<InstallCertificateProps>,
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
-  Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
+  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
   'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Set Variables': SetVariables as React.FC<SetVariablesProps>,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
-  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
-  'Get Installed Certificate IDs':
-    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
