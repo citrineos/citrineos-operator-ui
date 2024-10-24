@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
 import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
@@ -27,6 +26,7 @@ import {
 } from '../../pages/certificates/queries';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum InstallCertificateDataProps {
   certificate = 'certificate',
@@ -98,7 +98,9 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   installCertificateData[InstallCertificateDataProps.certificate] =
     installCertificate;
 
-  const [parentRecord, setParentRecord] = useState<any>(installCertificateData);
+  const [_parentRecord, _setParentRecord] = useState<any>(
+    installCertificateData,
+  );
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
@@ -112,27 +114,18 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
     rootCertificateRequest.stationId = station.id;
     rootCertificateRequest.certificateType = data.certificateType;
     rootCertificateRequest.tenantId = '1';
-    rootCertificateRequest.fileId = certificate.privateKeyFileId!;
+    rootCertificateRequest.fileId = certificate.certificateFileId!;
 
     try {
       const client = new BaseRestClient();
       client.setDataBaseUrl();
-      const response = await client.put(
+      await client.put(
         `/certificates/rootCertificate`,
         InstallCertificateResponse,
         {},
         rootCertificateRequest,
       );
-      if (!!response) {
-        showSucces();
-      } else {
-        let msg =
-          'The install certificate request did not receive a successful response.';
-        if ((response as any).payload) {
-          msg += `Response payload: ${(response as any).payload}`;
-        }
-        showError(msg);
-      }
+      showSucces();
     } catch (error: any) {
       showError(
         'The set variables request failed with message: ' + error.message,
@@ -141,12 +134,15 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   };
 
   return (
-    <GenericForm
-      formProps={formProps}
-      dtoClass={InstallCertificateData}
-      onFinish={handleSubmit}
-      parentRecord={installCertificateData}
-      initialValues={installCertificateData}
-    />
+    <>
+      <h4>Install Certificate</h4>
+      <GenericForm
+        formProps={formProps}
+        dtoClass={InstallCertificateData}
+        onFinish={handleSubmit}
+        parentRecord={installCertificateData}
+        initialValues={installCertificateData}
+      />
+    </>
   );
 };

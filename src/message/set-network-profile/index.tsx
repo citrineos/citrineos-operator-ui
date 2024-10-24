@@ -9,15 +9,15 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NetworkConnectionProfileType } from '../model/NetworkConnectionProfileType';
 
-enum SetNetworkProfileDataProps {}
+// enum SetNetworkProfileDataProps {}
 // customData = 'customData', // todo
 
-export class SetNetworkProfileData {
-  // todo
-  // @Type(() => CustomDataType)
-  // @ValidateNested()
-  // customData?: CustomDataType;
-}
+// export class SetNetworkProfileData {
+// todo
+// @Type(() => CustomDataType)
+// @ValidateNested()
+// customData?: CustomDataType;
+// }
 
 enum SetNetworkProfileRequestProps {
   // customData = 'customData', // todo

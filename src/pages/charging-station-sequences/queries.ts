@@ -11,7 +11,9 @@ export const CHARGING_STATION_SEQUENCES_GET_QUERY = gql`
 `;
 
 export const CHARGING_STATION_SEQUENCES_CREATE_MUTATION = gql`
-  mutation ChargingStationSequencesCreate($object: ChargingStationSequences_insert_input!) {
+  mutation ChargingStationSequencesCreate(
+    $object: ChargingStationSequences_insert_input!
+  ) {
     insert_ChargingStationSequences_one(object: $object) {
       value
     }
@@ -27,10 +29,15 @@ export const CHARGING_STATION_SEQUENCES_DELETE_MUTATION = gql`
 `;
 
 export const CHARGING_STATION_SEQUENCES_EDIT_MUTATION = gql`
-  mutation ChargingStationSequencesEdit($stationId: String!, $type: String!,
+  mutation ChargingStationSequencesEdit(
+    $stationId: String!
+    $type: String!
     $object: ChargingStationSequences_set_input!
   ) {
-    update_ChargingStationSequences_by_pk(pk_columns: { stationId: $stationId, type: $type }, _set: $object) {
+    update_ChargingStationSequences_by_pk(
+      pk_columns: { stationId: $stationId, type: $type }
+      _set: $object
+    ) {
       value
     }
   }
@@ -43,7 +50,12 @@ export const CHARGING_STATION_SEQUENCES_LIST_QUERY = gql`
     $order_by: [ChargingStationSequences_order_by!]
     $where: ChargingStationSequences_bool_exp
   ) {
-    ChargingStationSequences(offset: $offset, limit: $limit, order_by: $order_by, where: $where) {
+    ChargingStationSequences(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: $where
+    ) {
       value
     }
     ChargingStationSequences_aggregate(where: $where) {

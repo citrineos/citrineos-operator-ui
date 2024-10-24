@@ -199,7 +199,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
 
   const handleSubmit = async (plainValues: any) => {
     const classInstance = plainToInstance(GetVariablesRequest, plainValues);
-    let getVariablesRequest = {
+    const getVariablesRequest = {
       [GetVariablesRequestProps.getVariableData]: classInstance[
         GetVariablesRequestProps.getVariableData
       ].map((item: GetVariablesData) => {

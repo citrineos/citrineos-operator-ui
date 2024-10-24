@@ -1,5 +1,5 @@
 import { AiFillDatabase } from 'react-icons/ai';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { IDataModelListProps } from '../../components';
 import { GenericView } from '../../components/view';
 import { ResourceType } from '../../resource-type';
@@ -24,7 +24,7 @@ export const ChargingStationSequencesView: React.FC = () => {
   );
 };
 
-export const ChargingStationSequencesList = (props: IDataModelListProps) => {
+export const ChargingStationSequencesList = (_props: IDataModelListProps) => {
   return (
     <>
       <GenericDataTable dtoClass={ChargingStationSequence} />

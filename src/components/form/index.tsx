@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  ForwardRefExoticComponent,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import {
   Button,
   Col,
@@ -52,6 +47,8 @@ import { isSortable } from '../../util/decorators/Sortable';
 import { NestedObjectField } from './nested-object-field';
 import { ArrayField } from './array-field';
 import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
+import { CustomAction } from '../custom-actions';
+import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
 
 export enum ReflectType {
   array,
@@ -98,10 +95,11 @@ export interface FieldSchema {
   selectMode?: SelectMode;
   nestedFields?: FieldSchema[];
   isRequired?: boolean;
-  customRender?: () => any;
+  customRender?: (record?: any) => any;
   dtoClass?: Constructable<any>;
   customConstructor?: () => any;
   gqlAssociationProps?: GqlAssociationProps;
+  customActions?: CustomAction<any>[];
   sorter: boolean;
   supportedFileFormats?: string[];
 }
@@ -215,6 +213,12 @@ export const getSchemaForInstanceAndKey = (
 ): FieldSchema => {
   const sorter = isSortable(instance.constructor, key);
 
+  const customActions = Reflect.getMetadata(
+    FIELD_CUSTOM_ACTIONS,
+    instance,
+    key,
+  );
+
   const customFormRender = Reflect.getMetadata(
     CUSTOM_FORM_RENDER,
     instance,
@@ -229,6 +233,7 @@ export const getSchemaForInstanceAndKey = (
       customRender: customFormRender,
       isRequired: requiredFields.includes(key),
       sorter,
+      customActions,
     };
   }
 
@@ -297,6 +302,7 @@ export const getSchemaForInstanceAndKey = (
       customConstructor,
       gqlAssociationProps,
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -324,6 +330,7 @@ export const getSchemaForInstanceAndKey = (
       customConstructor,
       gqlAssociationProps,
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -334,6 +341,7 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.unknownProperty,
       isRequired: requiredFields.includes(key),
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -344,6 +352,7 @@ export const getSchemaForInstanceAndKey = (
       type: FieldType.unknownProperties,
       isRequired: requiredFields.includes(key),
       sorter,
+      customActions,
     } as unknown as FieldSchema;
   }
 
@@ -356,6 +365,7 @@ export const getSchemaForInstanceAndKey = (
     selectValues: type === ReflectType.array ? instance[key] : undefined,
     options: options,
     sorter,
+    customActions,
   } as unknown as FieldSchema;
 };
 
@@ -380,7 +390,7 @@ export const extractSchema = (dtoClass: any): FieldSchema[] => {
         schema.push(getSchemaForInstanceAndKey(instance, key, requiredFields));
       }
     } catch (e: any) {
-      console.error('Error extracting schema:', e);
+      console.error('Error extracting key: %s', key, e);
     }
   });
   return schema;
@@ -395,7 +405,7 @@ export const renderFieldContent = (field: FieldSchema, disabled = false) => {
     case FieldType.select:
       return (
         <Select mode={field.selectMode as any} disabled={disabled}>
-          {field.options?.map((option, ix) => (
+          {field.options?.map((option, _ix) => (
             <Select.Option key={option.value} value={option.value}>
               {option.label}
             </Select.Option>
@@ -442,9 +452,8 @@ export const renderField = (props: RenderFieldProps) => {
   } = props;
 
   let fieldPath = preFieldPath.with(schema.name);
-
   if (schema.type === FieldType.customRender && schema.customRender) {
-    return schema.customRender();
+    return schema.customRender(parentRecord);
   }
 
   if (
@@ -531,7 +540,7 @@ export const renderField = (props: RenderFieldProps) => {
   }
 
   if (schema.type === FieldType.unknown) {
-    let unknown = unknowns.findFirst(fieldPath);
+    const unknown = unknowns.findFirst(fieldPath);
     if (isNullOrUndefined(unknown)) {
       return modifyUnknowns('registerFirst', fieldPath);
     }
@@ -821,86 +830,88 @@ export const tryRenderOptionalButton = (
     </Button>
   );
 
-// todo does this need to be ForwardRefExoticComponent with useImperativeHandle?
-export const GenericForm: ForwardRefExoticComponent<GenericFormProps> =
-  forwardRef((props: GenericFormProps, ref) => {
-    const {
-      formProps,
-      dtoClass,
-      overrides,
-      onFinish,
-      onValuesChange,
-      disabled = false,
-      initialValues = undefined,
-      submitDisabled = false,
-      parentRecord,
-      gqlQueryVariablesMap,
-    } = props;
+export const GenericForm = forwardRef(function GenericForm(
+  props: GenericFormProps,
+  ref,
+) {
+  const {
+    formProps,
+    dtoClass,
+    overrides,
+    onFinish,
+    onValuesChange,
+    disabled = false,
+    initialValues = undefined,
+    submitDisabled = false,
+    parentRecord,
+    gqlQueryVariablesMap,
+  } = props;
 
-    const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
-      Flags.empty(),
+  const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
+    Flags.empty(),
+  );
+  const enableOptionalField = (path: FieldPath) =>
+    setVisibleOptionalFields((prev) => prev.enable(path.key));
+  const toggleOptionalField = (path: FieldPath) =>
+    setVisibleOptionalFields((prev) => prev.toggle(path.key));
+
+  const [unknowns, setUnknowns] = useState<Unknowns>(Unknowns.empty());
+  const modifyUnknowns = <K extends UnknownsActions>(
+    method: K,
+    ...args: Parameters<Unknowns[K]>
+  ) => {
+    // @ts-expect-error spread error
+    return setUnknowns((prev) => prev[method](...args));
+  };
+
+  const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
+    ...field,
+    ...(overrides?.[field.name as FieldSchemaKeys]
+      ? overrides[field.name as FieldSchemaKeys]
+      : {}),
+  }));
+
+  const setFieldsValues = (values: any) => {
+    schema.forEach((fs) =>
+      recreateState(values, fs, enableOptionalField, modifyUnknowns),
     );
-    const enableOptionalField = (path: FieldPath) =>
-      setVisibleOptionalFields((prev) => prev.enable(path.key));
-    const toggleOptionalField = (path: FieldPath) =>
-      setVisibleOptionalFields((prev) => prev.toggle(path.key));
+    formProps.form.setFieldsValue(values);
+  };
 
-    const [unknowns, setUnknowns] = useState<Unknowns>(Unknowns.empty());
-    const modifyUnknowns = <K extends UnknownsActions>(
-      method: K,
-      ...args: Parameters<Unknowns[K]>
-    ) =>
-      // @ts-ignore
-      setUnknowns((prev) => prev[method](...args));
+  useImperativeHandle(ref, (() => ({
+    setFieldsValues,
+  })) as any);
 
-    const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
-      ...field,
-      ...(overrides && overrides[field.name as FieldSchemaKeys]
-        ? overrides[field.name as FieldSchemaKeys]
-        : {}),
-    }));
-
-    const setFieldsValues = (values: any) => {
-      schema.forEach((fs) =>
-        recreateState(values, fs, enableOptionalField, modifyUnknowns),
-      );
-      formProps.form.setFieldsValue(values);
-    };
-
-    useImperativeHandle(ref, (() => ({
-      setFieldsValues,
-    })) as any);
-
-    return (
-      <Form
-        {...formProps}
-        layout="vertical"
-        onFinish={onFinish}
-        onValuesChange={onValuesChange}
-        disabled={disabled}
-        initialValues={initialValues}
-      >
-        {schema.map((field) => {
-          return renderField({
-            schema: field,
-            preFieldPath: FieldPath.empty(),
-            disabled: disabled,
-            visibleOptionalFields: visibleOptionalFields,
-            hideLabels: false,
-            enableOptionalField: enableOptionalField,
-            toggleOptionalField: toggleOptionalField,
-            unknowns: unknowns,
-            modifyUnknowns: modifyUnknowns,
-            form: formProps.form,
-            parentRecord,
-            gqlQueryVariablesMap,
-          });
-        })}
-        <Form.Item>
-          <Button disabled={submitDisabled} type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    );
-  }) as any;
+  return (
+    <Form
+      {...formProps}
+      layout="vertical"
+      onFinish={onFinish}
+      onValuesChange={onValuesChange}
+      disabled={disabled}
+      initialValues={initialValues}
+    >
+      {schema.map((field) => {
+        return renderField({
+          schema: field,
+          preFieldPath: FieldPath.empty(),
+          disabled: disabled,
+          visibleOptionalFields: visibleOptionalFields,
+          hideLabels: false,
+          enableOptionalField: enableOptionalField,
+          toggleOptionalField: toggleOptionalField,
+          unknowns: unknowns,
+          modifyUnknowns: modifyUnknowns,
+          form: formProps.form,
+          parentRecord,
+          gqlQueryVariablesMap,
+        });
+      })}
+      <Form.Item>
+        <Button disabled={submitDisabled} type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+});
