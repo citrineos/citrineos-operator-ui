@@ -36,6 +36,7 @@ import {
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
+import { DeleteCertificate } from './delete-certificate';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -44,6 +45,7 @@ const chargingStationActionMap: {
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
   'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
   'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
   'Get Installed Certificate IDs':
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
@@ -59,8 +61,9 @@ const chargingStationActionMap: {
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
-  'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
-  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
+  'Get Installed Certificate IDs':
+    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =

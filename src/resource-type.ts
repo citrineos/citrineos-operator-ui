@@ -22,5 +22,6 @@ export enum ResourceType {
   COMPONENTS = 'Components',
   VARIABLE_MONITORINGS = 'VariableMonitorings',
   CERTIFICATES = 'Certificates',
+  INSTALLED_CERTIFICATES = 'InstalledCertificates',
   RESERVATIONS = 'Reservations',
 }
