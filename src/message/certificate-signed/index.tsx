@@ -69,7 +69,6 @@ export const CertificateSigned: React.FC<CertificateSignedProps> = ({
   const certificateSignedRequest = new CertificateSignedRequest();
 
   const handleSubmit = async (values: Partial<CertificateSignedRequest>) => {
-    debugger;
     try {
       const fileContent = await readFileContent(values.certificate!);
 
