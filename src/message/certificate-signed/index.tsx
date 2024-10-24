@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useRef } from 'react';
 import { Form } from 'antd';
 import { Type } from 'class-transformer';
@@ -15,12 +14,13 @@ import {
 import { readFileContent, triggerMessageAndHandleResponse } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { SupportedFileFormats } from '../../util/decorators/SupportedFileFormats';
 
-enum CertificateSignedRequestProps {
-  certificateType = 'certificateType',
-  certificate = 'certificate',
-}
+// enum CertificateSignedRequestProps {
+//   certificateType = 'certificateType',
+//   certificate = 'certificate',
+// }
 
 class CertificateSignedRequest {
   // todo

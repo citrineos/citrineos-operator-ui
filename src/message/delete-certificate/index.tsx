@@ -145,26 +145,32 @@ export const DeleteCertificate: React.FC<DeleteCertificateProps> = ({
     );
     const installedCertificate: InstalledCertificate =
       data[DeleteCertificateDataProps.installedCertificate]!;
-    try {
-      const client = new BaseRestClient();
-      await client.post(
-        `/certificates/deleteCertificate?identifier=${installedCertificate.stationId}&tenantId=1`,
-        DeleteCertificateResponse,
-        {},
-        {
-          certificateHashData: {
-            hashAlgorithm: installedCertificate.hashAlgorithm,
-            issuerNameHash: installedCertificate.issuerNameHash,
-            issuerKeyHash: installedCertificate.issuerKeyHash,
-            serialNumber: installedCertificate.serialNumber,
+
+    if (station.id != installedCertificate.stationId) {
+      showError('This certificate does not belong to this station...');
+    } else {
+      try {
+        const client = new BaseRestClient();
+        await client.post(
+          `/certificates/deleteCertificate?identifier=${installedCertificate.stationId}&tenantId=1`,
+          DeleteCertificateResponse,
+          {},
+          {
+            certificateHashData: {
+              hashAlgorithm: installedCertificate.hashAlgorithm,
+              issuerNameHash: installedCertificate.issuerNameHash,
+              issuerKeyHash: installedCertificate.issuerKeyHash,
+              serialNumber: installedCertificate.serialNumber,
+            },
           },
-        },
-      );
-      showSucces();
-    } catch (error: any) {
-      showError(
-        'The set variables request failed with message: ' + error.message,
-      );
+        );
+        showSucces();
+      } catch (error: any) {
+        showError(
+          'The delete certificate request failed with message: ' +
+            error.message,
+        );
+      }
     }
   };
 
