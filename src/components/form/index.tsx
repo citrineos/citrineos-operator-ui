@@ -442,16 +442,26 @@ export const extractSchema = (
 };
 
 export const renderFieldContent = (field: FieldSchema, disabled = false) => {
+  const dataTest = `field-${field.name}-input`;
+
   switch (field.type) {
     case FieldType.number:
-      return <InputNumber disabled={disabled} />;
+      return <InputNumber disabled={disabled} data-test={dataTest} />;
     case FieldType.boolean:
-      return <Switch disabled={disabled} />;
+      return <Switch disabled={disabled} data-test={dataTest} />;
     case FieldType.select:
       return (
-        <Select mode={field.selectMode as any} disabled={disabled}>
+        <Select
+          mode={field.selectMode as any}
+          disabled={disabled}
+          data-test={dataTest}
+        >
           {field.options?.map((option, _ix) => (
-            <Select.Option key={option.value} value={option.value}>
+            <Select.Option
+              key={option.value}
+              value={option.value}
+              data-test={`${dataTest}-option-${option.value}`}
+            >
               {option.label}
             </Select.Option>
           ))}
@@ -512,6 +522,11 @@ export const renderField = (props: RenderFieldProps) => {
   }
 
   let fieldPath = preFieldPath.with(schema.name);
+
+  // Generate the data-test attribute value automatically
+  const dataTest = `field-${schema.name || schema.type || fieldPath.key}`;
+  const dataTestType = schema.type;
+  console.log('data test type: ', dataTestType);
   if (schema.type === FieldType.customRender && schema.customRender) {
     return schema.customRender(parentRecord);
   }
@@ -581,6 +596,7 @@ export const renderField = (props: RenderFieldProps) => {
         parentRecord={parentRecord}
         useSelector={useSelector}
         fieldAnnotations={fieldAnnotations}
+        data-test={dataTest}
       />
     );
   }
@@ -600,6 +616,7 @@ export const renderField = (props: RenderFieldProps) => {
         form={form}
         parentRecord={parentRecord}
         useSelector={useSelector}
+        data-test={dataTest}
       />
     );
   }
@@ -626,6 +643,7 @@ export const renderField = (props: RenderFieldProps) => {
         required={schema.isRequired}
         layout={'vertical'}
         className="merged-ant-form-item"
+        data-test={dataTest}
       >
         <Form.Item label={'Type'}>
           <Select
@@ -809,6 +827,7 @@ export const renderField = (props: RenderFieldProps) => {
       }
       name={fieldPath.namePath}
       required={schema.isRequired}
+      data-test={dataTest}
     >
       {renderFieldContent(schema, disabled)}
     </Form.Item>
@@ -966,6 +985,7 @@ export const GenericForm = forwardRef(function GenericForm(
       onFinish={onFinish}
       onValuesChange={onValuesChange}
       initialValues={initialValues}
+      data-test="generic-form"
     >
       {schema.map((field) => {
         return renderField({
@@ -985,7 +1005,12 @@ export const GenericForm = forwardRef(function GenericForm(
         });
       })}
       <Form.Item>
-        <Button disabled={submitDisabled} type="primary" htmlType="submit">
+        <Button
+          disabled={submitDisabled}
+          type="primary"
+          htmlType="submit"
+          data-test={`${dtoClass.name}-generic-form-submit`}
+        >
           Submit
         </Button>
       </Form.Item>

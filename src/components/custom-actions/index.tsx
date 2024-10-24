@@ -156,7 +156,8 @@ export const CustomActions = <T,>({
       ) : (
         <>
           <Dropdown menu={{ items }} trigger={['click']} placement="bottom">
-            <Button size="small" type={'default'} icon={<MoreOutlined />} />
+            <Button size="small" type={'default'} icon={<MoreOutlined />}
+                    data-test="custom-action-dropdown-button"/>
           </Dropdown>
         </>
       )}
