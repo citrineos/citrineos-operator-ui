@@ -1,6 +1,7 @@
 import React, { MouseEventHandler, useState } from 'react';
 import GoogleMapReact from 'google-map-react';
 import './style.scss';
+import { MarkerIcon } from './markert-icon';
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -29,8 +30,6 @@ const MapMarker: React.FC<MarkerProps> = ({
   zoom = 10,
   color = 'red',
 }) => {
-  const markerIcon = isSelected ? '/selected.png' : '/online.svg';
-
   // Adjust marker size based on zoom level - larger when zoomed in, smaller when zoomed out
   const baseSize = 30; // Base size for the marker
   const markerSize = baseSize * (zoom / 10); // Adjust size based on zoom
@@ -46,15 +45,12 @@ const MapMarker: React.FC<MarkerProps> = ({
         textAlign: 'center',
       }}
     >
-      <img
-        src={markerIcon}
-        alt="marker"
+      <MarkerIcon
         style={{
-          fill: color,
           width: `${markerSize}px`,
-          height: `${(markerSize * 153) / 116}px`,
-        }} // Maintain aspect ratio
-        className={color}
+          height: `${markerSize}px`,
+        }}
+        fillColor={isSelected ? 'purple' : color}
       />
       {content && <div className="map-marker-content">{content}</div>}
     </div>
@@ -86,9 +82,8 @@ const MapMarker: React.FC<MarkerProps> = ({
  * - Click Handling: When a marker is clicked, the map pans to center on the marker and zooms in by 3 levels
  *   (up to a maximum zoom level of 20). The selected marker's content (if provided) is displayed above the marker.
  * - Automatic Map Bounds: On initial load, the map automatically adjusts its bounds to include all markers within view.
- * - Responsive Marker Icons: Markers use two different icons based on their selection state:
- *   - selected.png for selected markers.
- *   - online.png for non-selected markers.
+ * - Responsive Marker Icons: Markers use two different icons colors based on their selection state, and MarkerIcon is
+ *   used to render the svg and apply appropriate fill color.
  *   These icons are expected to be located in the /public directory.
  * - Zoom Level Tracking: The component tracks the current zoom level and adjusts marker sizes accordingly.
  *   The zoom level updates dynamically as the user interacts with the map.

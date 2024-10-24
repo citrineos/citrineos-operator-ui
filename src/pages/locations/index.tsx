@@ -17,7 +17,7 @@ import {
 import { LOCATIONS_COLUMNS } from './table-config';
 import { GoogleMapContainer, MarkerProps } from '../../components/map';
 import { LocationMarker } from './location-marker';
-import { Button, Space } from 'antd';
+import { Button, Space, AutoComplete, Input } from 'antd';
 import { EnvironmentOutlined, TableOutlined } from '@ant-design/icons';
 import { Locations } from '../../graphql/schema.types';
 import { MdOutlineLocationOn } from 'react-icons/md';
@@ -50,7 +50,6 @@ export const LocationsList: React.FC<IDataModelListProps> = (props) => {
     props.viewMode ?? 'table',
   );
 
-  const defaultHeight = props.height ?? '92%';
   const isDisplayed = props.viewMode === undefined ? 'inline' : 'none';
   const toggleView = () => {
     setViewMode((prevMode) => (prevMode === 'table' ? 'map' : 'table'));
@@ -135,58 +134,39 @@ export const LocationsList: React.FC<IDataModelListProps> = (props) => {
         <div
           style={{
             width: '100%',
+            height: '100%',
             textAlign: 'center',
             alignItems: 'center',
-            height: defaultHeight,
-            justifyContent: 'center',
             marginBottom: '60px',
+            justifyContent: 'center',
           }}
         >
-          <div
+          <AutoComplete
             style={{
-              position: 'relative',
+              width: '98%',
             }}
+            options={filteredLocations.map((location) => ({
+              value: location.id,
+              label: `${location.name} - ${location.address}`,
+            }))}
+            allowClear
+            value={searchQuery}
+            onSearch={handleSearch}
+            onChange={setSearchQuery}
+            placeholder="Search locations..."
+            onSelect={(value) => (window.location.href = `/locations/${value}`)}
           >
-            <input
-              type="text"
-              placeholder="Search locations..."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
+            <Input
               style={{
+                width: '100%',
                 color: 'black',
-                width: '99%',
+                height: '50px',
                 padding: '10px',
-                borderRadius: '4px',
-                border: '1px solid #d9d9d9',
+                borderBlockColor: 'transparent',
+                backgroundColor: 'white',
               }}
             />
-            <ul
-              style={{
-                top: '44px',
-                width: '100%',
-                color: 'white',
-                zIndex: 10000000,
-                maxWidth: '600px',
-                listStyle: 'none',
-                textAlign: 'left',
-                paddingLeft: '20px',
-                position: 'absolute',
-                backgroundColor: 'black',
-              }}
-            >
-              {filteredLocations.map((location, index) => (
-                <li
-                  key={index}
-                  onClick={() =>
-                    (window.location.href = `/locations/${location.id}`)
-                  }
-                  style={{ cursor: 'pointer' }}
-                >
-                  {location.name} - {location.address}
-                </li>
-              ))}
-            </ul>
-          </div>
+          </AutoComplete>
           <GoogleMapContainer
             markers={markers}
             defaultCenter={{ lat: 36.7783, lng: -119.4179 }}

@@ -19,7 +19,6 @@ export interface IDataModelListProps {
   hideCreateButton?: boolean;
   hideActions?: boolean;
   parentView?: ResourceType;
-  height?: string;
   viewMode?: 'table' | 'map';
 }
 

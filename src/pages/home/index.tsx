@@ -9,7 +9,12 @@ export const Home = () => {
   return (
     <>
       <h2>Dashboard</h2>
-      <Row>
+      <Row
+        style={{
+          height: '20vh',
+          paddingBottom: '50px',
+        }}
+      >
         <HomeLocations />
       </Row>
       <Row
