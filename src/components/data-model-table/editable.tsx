@@ -54,6 +54,7 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 import { HIDDEN } from '../../util/decorators/Hidden';
+import { HIDDENINTABLE } from '../../util/decorators/HiddenInTable';
 
 const renderViewContent = (
   field: FieldSchema,
@@ -694,57 +695,48 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         ),
     } as any;
 
-    return [
-      actionsColumn,
-      ...schema
-        .map((field: FieldSchema) => {
-          if (dtoClass && !!editingRecord) {
-            const isEditableInTable = Reflect.getMetadata(
-              HIDDEN.EditableInTable,
-              dtoClassInstance,
-              field.name,
+    const columnsArray: any[] = [actionsColumn];
+    for (const field of schema) {
+      if (dtoClass && !!editingRecord) {
+        const isEditableInTable = Reflect.getMetadata(
+          HIDDENINTABLE,
+          dtoClassInstance,
+          field.name,
+        );
+        if (isEditableInTable) continue;
+      }
+      columnsArray.push({
+        title: field.label,
+        dataIndex: primaryKeyFieldName,
+        sorter: field.sorter,
+        editable: true,
+        render: (value: any, record: any) => {
+          const isCurrentlyEditing =
+            editingRecord &&
+            record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
+          if (isCurrentlyEditing) {
+            return renderEditableCell(
+              field,
+              record,
+              form,
+              gqlQueryVariablesMap,
+              setHasChanges,
+              visibleOptionalFields,
+              enableOptionalField,
+              toggleOptionalField,
+              unknowns,
+              modifyUnknowns,
             );
-            if (isEditableInTable === false) return null;
           }
-          return {
-            title: field.label,
-            dataIndex: primaryKeyFieldName,
-            sorter: field.sorter,
-            editable: true,
-            render: (value: any, record: any) => {
-              const isCurrentlyEditing =
-                editingRecord &&
-                record[primaryKeyFieldName] ===
-                  editingRecord[primaryKeyFieldName];
-              if (isCurrentlyEditing) {
-                return renderEditableCell(
-                  field,
-                  record,
-                  form,
-                  gqlQueryVariablesMap,
-                  setHasChanges,
-                  visibleOptionalFields,
-                  enableOptionalField,
-                  toggleOptionalField,
-                  unknowns,
-                  modifyUnknowns,
-                );
-              }
-              return (
-                <div className="editable-cell">
-                  {renderViewContent(
-                    field,
-                    value,
-                    record,
-                    gqlQueryVariablesMap,
-                  )}
-                </div>
-              );
-            },
-          };
-        })
-        .filter((obj) => !!obj),
-    ];
+          return (
+            <div className="editable-cell">
+              {renderViewContent(field, value, record, gqlQueryVariablesMap)}
+            </div>
+          );
+        },
+      });
+    }
+    return columnsArray;
   }, [schema, editingRecord, visibleOptionalFields]) as FieldSchema[];
 
   const missingItems: string[] = [];
