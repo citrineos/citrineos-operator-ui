@@ -4,20 +4,20 @@ import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { GetLogRequest, GetLogRequestProps } from './model';
+import { UpdateFirmwareRequest, UpdateFirmwareRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
-import { LogEnumType } from '@citrineos/base';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+import { readFileContent } from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
-export interface GetLogProps {
+export interface UpdateFirmwareProps {
   station: ChargingStation;
 }
 
-export const GetLog: React.FC<GetLogProps> = ({ station }) => {
+export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = { form };
@@ -43,57 +43,85 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       variables: {
         stationId: station.id,
-        type: 'getLog',
+        type: 'updateFirmware',
       },
     },
   });
 
-  const isRequestValid = (request: GetLogRequest) => {
+  const isRequestValid = (request: UpdateFirmwareRequest) => {
     const errors = validateSync(request);
     return errors.length === 0;
   };
 
   const onValuesChange = (_changedValues: any, allValues: any) => {
-    const request = plainToInstance(GetLogRequest, allValues, {
+    const signingCertificate = allValues.firmware.signingCertificate;
+    delete allValues.firmware.signingCertificate;
+
+    const request = plainToInstance(UpdateFirmwareRequest, allValues, {
       excludeExtraneousValues: false,
     });
+
+    request.firmware.signingCertificate = signingCertificate;
     setValid(isRequestValid(request));
   };
 
-  const onFinish = async (values: object) => {
-    const request = plainToInstance(GetLogRequest, values, {
+  const onFinish = async (values: any) => {
+    const signingCertificate = values.firmware.signingCertificate;
+    delete values.firmware.signingCertificate;
+
+    const request = plainToInstance(UpdateFirmwareRequest, values, {
       excludeExtraneousValues: false,
     });
+
+    request.firmware.signingCertificate = signingCertificate;
     if (isRequestValid(request)) {
-      await getLog(request);
+      await updateFirmware(request);
     }
   };
 
-  const getLog = async (request: GetLogRequest) => {
+  const updateFirmware = async (request: UpdateFirmwareRequest) => {
     try {
       setLoading(true);
+
+      const signingCertificateFile = request.firmware.signingCertificate;
+      let signingCertificate = undefined;
+      if (signingCertificateFile) {
+        try {
+          signingCertificate = await readFileContent(signingCertificateFile);
+        } catch (error: any) {
+          const msg = `Could not read signing certificate file contents, got error: ${error.message}`;
+          console.error(msg, error);
+        }
+      }
+
       const client = new BaseRestClient();
       const response = await client.post(
-        `/reporting/getLog?identifier=${station.id}&tenantId=1`,
+        `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
         MessageConfirmation,
         {},
-        request,
+        {
+          ...request,
+          firmware: {
+            ...request.firmware,
+            signingCertificate,
+          },
+        },
       );
 
       if (response && response.success) {
         notification.success({
           message: 'Success',
-          description: 'The get log request was successful.',
+          description: 'The update firmware request was successful.',
         });
       } else {
         notification.error({
           message: 'Request Failed',
           description:
-            'The get log request did not receive a successful response.',
+            'The update firmware request did not receive a successful response.',
         });
       }
     } catch (error: any) {
-      const msg = `Could not perform get log, got error: ${error.message}`;
+      const msg = `Could not perform update firmware, got error: ${error.message}`;
       console.error(msg, error);
       notification.error({
         message: 'Error',
@@ -106,22 +134,21 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
 
   if (loading || isLoadingRequestId) return <Spin />;
 
-  const getLogRequest = new GetLogRequest();
-  getLogRequest[GetLogRequestProps.requestId] =
+  const updateFirmwareRequest = new UpdateFirmwareRequest();
+  updateFirmwareRequest[UpdateFirmwareRequestProps.requestId] =
     requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
-  getLogRequest[GetLogRequestProps.log] = {
-    remoteLocation: `${DIRECTUS_URL}/files`,
+  updateFirmwareRequest[UpdateFirmwareRequestProps.firmware] = {
+    location: `${DIRECTUS_URL}/files`,
   } as any; // Type assertion if necessary
-  getLogRequest[GetLogRequestProps.logType] = LogEnumType.DiagnosticsLog;
 
   return (
     <GenericForm
       ref={formRef as any}
-      dtoClass={GetLogRequest}
+      dtoClass={UpdateFirmwareRequest}
       formProps={formProps}
       onFinish={onFinish}
-      initialValues={getLogRequest}
-      parentRecord={getLogRequest}
+      initialValues={updateFirmwareRequest}
+      parentRecord={updateFirmwareRequest}
       onValuesChange={onValuesChange}
       submitDisabled={!valid}
     />
