@@ -1,29 +1,28 @@
 import React from 'react';
 import { Form } from 'antd';
-import {
-    IsNotEmpty,
-    ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '../../util/consts';
-import { Transaction, TransactionProps } from '../../pages/transactions/Transaction';
+import {
+    Transaction,
+    TransactionProps
+} from '../../pages/transactions/Transaction';
 import { GET_ACTIVE_TRANSACTIONS } from '../remote-stop/queries';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '../queries';
 import { MessageConfirmation } from '../MessageConfirmation';
 
-enum GetTransactionStatusRequestProps {
-    transaction = "transaction"
-}
+enum GetTransactionStatusRequestProps { transaction = "transaction" }
 
 export class GetTransactionStatusRequest {
     // todo
     // @Type(() => CustomDataType)
     // @ValidateNested()
     // customData?: CustomDataType;
+
     @GqlAssociation({
         parentIdFieldName: GetTransactionStatusRequestProps.transaction,
         associatedIdFieldName: TransactionProps.transactionId,
@@ -31,6 +30,7 @@ export class GetTransactionStatusRequest {
         gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
         gqlUseQueryVariablesKey: GetTransactionStatusRequestProps.transaction
     })
+
     @Type(() => Transaction)
     @IsNotEmpty()
     transaction!: Transaction | null;
@@ -49,9 +49,7 @@ export class GetTransactionStatusResponse {
     getTransactionStatusResult!: GetTransactionStatusResultType;
 }
 
-export interface GetTransactionStatusProps {
-    station: ChargingStation;
-}
+export interface GetTransactionStatusProps { station: ChargingStation; }
 
 export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({ station }) => {
     const [form] = Form.useForm();
@@ -60,13 +58,21 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({ stat
     };
 
     const handleSubmit = async (plainValues: any) => {
-        const classInstance = plainToInstance(GetTransactionStatusRequest, plainValues);
+        const classInstance = plainToInstance(
+            GetTransactionStatusRequest, 
+            plainValues
+        );
 
         let data: any;
 
-        if (classInstance && classInstance[GetTransactionStatusRequestProps.transaction]) {
+        if (
+            classInstance &&
+            classInstance[GetTransactionStatusRequestProps.transaction]
+        ) {
             data = {
-                transactionId: classInstance[GetTransactionStatusRequestProps.transaction][TransactionProps.transactionId]
+                transactionId:
+                classInstance[GetTransactionStatusRequestProps.transaction]
+                [TransactionProps.transactionId]
             };
         }
 

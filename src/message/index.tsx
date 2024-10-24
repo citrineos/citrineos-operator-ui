@@ -32,7 +32,10 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
-import { GetTransactionStatus, GetTransactionStatusProps } from './get-transaction-status';
+import { 
+  GetTransactionStatus, 
+  GetTransactionStatusProps 
+} from './get-transaction-status';
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
