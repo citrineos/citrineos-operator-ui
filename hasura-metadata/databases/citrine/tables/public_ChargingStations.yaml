@@ -6,6 +6,20 @@ object_relationships:
     using:
       foreign_key_constraint_on: locationId
 array_relationships:
+  - name: ChargingStationSequences
+    using:
+      foreign_key_constraint_on:
+        column: stationId
+        table:
+          name: ChargingStationSequences
+          schema: public
+  - name: LatestStatusNotifications
+    using:
+      foreign_key_constraint_on:
+        column: stationId
+        table:
+          name: LatestStatusNotifications
+          schema: public
   - name: StatusNotifications
     using:
       foreign_key_constraint_on:
@@ -19,4 +33,11 @@ array_relationships:
         column: stationId
         table:
           name: Transactions
+          schema: public
+  - name: VariableAttributes
+    using:
+      foreign_key_constraint_on:
+        column: stationId
+        table:
+          name: VariableAttributes
           schema: public

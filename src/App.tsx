@@ -6,10 +6,10 @@ import './style.scss';
 import {
   ErrorComponent,
   ThemedLayoutV2,
-  ThemedSiderV2,
   useNotificationProvider,
 } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
+import { App as AntdApp, ConfigProvider } from 'antd';
 
 import dataProvider, {
   GraphQLClient,
@@ -44,7 +44,6 @@ import {
   IdTokensList,
   IdTokensShow,
 } from './pages/id-tokens';
-import { App as AntdApp, ConfigProvider } from 'antd';
 import {
   AuthorizationsCreate,
   AuthorizationsEdit,
@@ -107,6 +106,7 @@ import {
   resources as variableMonitoringsResources,
   routes as VariableMonitoringsRoutes,
 } from './pages/variable-monitorings';
+import { routes as HomeRoutes } from './pages/home';
 import {
   AuditOutlined,
   ContactsOutlined,
@@ -136,6 +136,7 @@ import {
   routes as InstalledCertificatesRoutes,
 } from './pages/installed-certificates';
 import { theme } from './theme';
+import { MainMenu } from './components/main-menu';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
@@ -275,14 +276,14 @@ function App() {
                     element={
                       <ThemedLayoutV2
                         Header={() => <Header sticky />}
-                        Sider={(props) => <ThemedSiderV2 {...props} fixed />}
+                        Sider={(props) => <MainMenu {...props} />}
                       >
                         <Outlet />
                       </ThemedLayoutV2>
                     }
                   >
+                    <Route index path="/home/*" element={<HomeRoutes />} />
                     <Route
-                      index
                       element={<NavigateToResource resource="Authorizations" />}
                     />
                     <Route path="/additional-infos">
