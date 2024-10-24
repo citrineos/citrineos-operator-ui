@@ -386,6 +386,7 @@ export const extractSchema = (dtoClass: any): FieldSchema[] => {
   Object.keys(instance as any).forEach((key) => {
     try {
       const hideInTable = Reflect.getMetadata(HIDDEN, instance as any, key);
+
       if (!hideInTable) {
         schema.push(getSchemaForInstanceAndKey(instance, key, requiredFields));
       }
