@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -9,10 +9,10 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Button, Form, Input, Upload } from 'antd';
+import { Form, Input } from 'antd';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { TransformDate } from '../../util/TransformDate';
-import { UploadOutlined } from '@ant-design/icons';
+import { SupportedFileFormats } from '../../util/decorators/SupportedFileFormats';
 
 export enum FirmwareTypeProps {
   location = 'location',
@@ -55,30 +55,8 @@ export class FirmwareType {
   installDateTime?: Date;
 
   @IsOptional()
-  @CustomFormRender(() => {
-    return (
-      <Form.Item
-        label={'Signing Certificate'}
-        name={[
-          UpdateFirmwareRequestProps.firmware,
-          FirmwareTypeProps.signingCertificate,
-        ]}
-        getValueFromEvent={(e) => {
-          // Return the first file from the fileList array
-          return e && e.fileList ? e.fileList[0]?.originFileObj : null;
-        }}
-      >
-        <Upload
-          name={'file'}
-          maxCount={1}
-          accept=".pem,.id"
-          beforeUpload={() => false}
-        >
-          <Button icon={<UploadOutlined />}>Click to Upload</Button>
-        </Upload>
-      </Form.Item>
-    );
-  })
+  @SupportedFileFormats(['.pem', '.id'])
+  @Type(() => File)
   signingCertificate?: File;
 
   @IsString()

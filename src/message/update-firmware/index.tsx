@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Form, notification, Spin, UploadFile } from 'antd';
+import { Form, notification, Spin } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
@@ -9,6 +9,7 @@ import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+import { readFileContent } from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -62,23 +63,6 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
 
     request.firmware.signingCertificate = signingCertificate;
     setValid(isRequestValid(request));
-  };
-
-  const readFileContent = (file: File | null): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        return resolve('');
-      }
-
-      const fileReader = new FileReader();
-      fileReader.onload = (event) => {
-        const text = event.target?.result as string;
-        resolve(text);
-      };
-      fileReader.onerror = (error) => reject(error);
-
-      fileReader.readAsText(file);
-    });
   };
 
   const onFinish = async (values: any) => {
