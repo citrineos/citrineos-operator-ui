@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
 import { Button, Form } from 'antd';
 import { AssociationSelection } from '../../components/data-model-table/association-selection';
@@ -6,10 +5,7 @@ import { SelectionType } from '../../components/data-model-table/editable';
 import { plainToInstance, Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
-import {
-  ChangeAvailabilityStatusEnumType,
-  OperationalStatusEnumType,
-} from '@citrineos/base';
+import { OperationalStatusEnumType } from '@citrineos/base';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
 import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
@@ -21,8 +17,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
-import { StatusInfoType } from '../model/StatusInfoType';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { MessageConfirmation } from '../MessageConfirmation';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum ChangeAvailabilityRequestProps {
   customData = 'customData',
@@ -52,20 +49,6 @@ export class ChangeAvailabilityRequest {
   }
 }
 
-export class ChangeAvailabilityResponse {
-  @Type(() => CustomDataType)
-  @ValidateNested()
-  @IsOptional()
-  customData?: CustomDataType;
-
-  @IsEnum(ChangeAvailabilityStatusEnumType)
-  status!: ChangeAvailabilityStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  statusInfo?: StatusInfoType;
-}
-
 export interface ChangeAvailabilityProps {
   station: ChargingStation;
 }
@@ -82,27 +65,26 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       plainValues,
     );
     const evse = classInstance[ChangeAvailabilityRequestProps.evse];
-    if (evse) {
-      const data = {
-        operationalStatus:
-          classInstance[ChangeAvailabilityRequestProps.operationalStatus],
-        customData: classInstance[ChangeAvailabilityRequestProps.customData],
-        evse: {
-          id: evse[EvseProps.databaseId],
-          // customData: todo,
-          connectorId: evse[EvseProps.connectorId],
-        },
+    const data: any = {
+      operationalStatus:
+        classInstance[ChangeAvailabilityRequestProps.operationalStatus],
+      customData: classInstance[ChangeAvailabilityRequestProps.customData],
+    };
+
+    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+      data[ChangeAvailabilityRequestProps.evse] = {
+        id: evse[EvseProps.id],
+        // customData: todo,
+        connectorId: evse[EvseProps.connectorId],
       };
-      await triggerMessageAndHandleResponse(
-        `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
-        ChangeAvailabilityResponse,
-        data,
-        (response: ChangeAvailabilityResponse) =>
-          response &&
-          response.status &&
-          response.status === ChangeAvailabilityStatusEnumType.Accepted,
-      );
     }
+
+    await triggerMessageAndHandleResponse(
+      `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
+      MessageConfirmation,
+      data,
+      (response: MessageConfirmation) => response && response.success,
+    );
   };
 
   const [parentRecord, setParentRecord] = useState(
@@ -137,10 +119,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       initialValues={parentRecord}
       onValuesChange={handleFormChange}
     >
-      <Form.Item
-        label={ChangeAvailabilityRequestProps.evse}
-        name={ChangeAvailabilityRequestProps.evse}
-      >
+      <Form.Item label="EVSE" name={ChangeAvailabilityRequestProps.evse}>
         <AssociationSelection
           selectable={SelectionType.SINGLE}
           parentIdFieldName={ChangeAvailabilityRequestProps.evse}

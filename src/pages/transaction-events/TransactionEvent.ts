@@ -8,6 +8,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsNumber,
   IsObject,
   IsOptional,
@@ -15,9 +16,25 @@ import {
 } from 'class-validator';
 import { TransformDate } from '../../util/TransformDate';
 import { BaseModel } from '../../util/BaseModel';
+import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { ResourceType } from '../../resource-type';
+import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import {
+  TRANSACTION_EVENT_CREATE_MUTATION,
+  TRANSACTION_EVENT_DELETE_MUTATION,
+  TRANSACTION_EVENT_EDIT_MUTATION,
+  TRANSACTION_EVENT_GET_QUERY,
+  TRANSACTION_EVENT_LIST_QUERY,
+} from './queries';
 
 export class TransactionType {
   @IsString()
+  @IsNotEmpty()
   transactionId!: string;
 
   @IsEnum(ChargingStateEnumType)
@@ -39,23 +56,53 @@ export class TransactionType {
   // customData?: CustomDataType | null; // todo handle custom data
 }
 
+export enum TransactionEventProps {
+  id = 'id',
+  stationId = 'stationId',
+  eventType = 'eventType',
+  timestamp = 'timestamp',
+  triggerReason = 'triggerReason',
+  seqNo = 'seqNo',
+  offline = 'offline',
+  numberOfPhasesUsed = 'numberOfPhasesUsed',
+  cableMaxCurrent = 'cableMaxCurrent',
+  reservationId = 'reservationId',
+  transactionDatabaseId = 'transactionDatabaseId',
+  transactionInfo = 'transactionInfo',
+  evseId = 'evseId',
+  idTokenId = 'idTokenId',
+}
+
+@ClassResourceType(ResourceType.TRANSACTION_EVENTS)
+@ClassGqlListQuery(TRANSACTION_EVENT_LIST_QUERY)
+@ClassGqlGetQuery(TRANSACTION_EVENT_GET_QUERY)
+@ClassGqlCreateMutation(TRANSACTION_EVENT_CREATE_MUTATION)
+@ClassGqlEditMutation(TRANSACTION_EVENT_EDIT_MUTATION)
+@ClassGqlDeleteMutation(TRANSACTION_EVENT_DELETE_MUTATION)
+@PrimaryKeyFieldName(TransactionEventProps.id)
 export class TransactionEvent extends BaseModel {
   @IsInt()
+  @IsNotEmpty()
   id!: number;
 
   @IsString()
+  @IsNotEmpty()
   stationId!: string;
 
   @IsString()
+  @IsNotEmpty()
   eventType!: TransactionEventEnumType;
 
   @TransformDate()
+  @IsNotEmpty()
   timestamp!: Date;
 
   @IsEnum(TriggerReasonEnumType)
+  @IsNotEmpty()
   triggerReason!: TriggerReasonEnumType;
 
   @IsInt()
+  @IsNotEmpty()
   seqNo!: number;
 
   @IsBoolean()
@@ -79,6 +126,7 @@ export class TransactionEvent extends BaseModel {
   transactionDatabaseId?: string;
 
   @IsObject()
+  @IsNotEmpty()
   transactionInfo!: TransactionType;
 
   @IsOptional()

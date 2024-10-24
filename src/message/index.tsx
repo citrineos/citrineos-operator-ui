@@ -1,7 +1,6 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../components/custom-actions';
-import { ChargingStations } from '../graphql/schema.types';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -11,19 +10,21 @@ import {
   ChangeAvailabilityProps,
 } from './change-availability';
 import { GetLog, GetLogProps } from './get-log';
+import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
 import React from 'react';
 import { GetVariables, GetVariablesProps } from './get-variables';
+import { CustomerInformation } from './customer-information';
 import { ResetChargingStation, ResetChargingStationProps } from './reset';
 import { RemoteStart, RemoteStartProps } from './remote-start';
 import {
   InstallCertificate,
   InstallCertificateProps,
 } from './install-certificate';
-import { 
+import {
   GetInstalledCertificateIds,
   GetInstalledCertificateIdsProps,
-} from "./get-installed-certificate-ids";
+} from './get-installed-certificate-ids';
 import {
   SetNetworkProfile,
   SetNetworkProfileProps,
@@ -32,37 +33,53 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
+import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
+import { instanceToPlain } from 'class-transformer';
+import { GetCustomerProps } from '../model/CustomerInformation';
+import { DeleteCertificate } from './delete-certificate';
 
-const actionMap: {
+const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
-  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
-  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
-  'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
-  'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
-  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
+  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
+  'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
+  'Get Installed Certificate IDs':
+    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Get Log': GetLog as React.FC<GetLogProps>,
-  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
-  Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
     InstallCertificate as React.FC<InstallCertificateProps>,
-  'Get Installed Certificate IDs':
-    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
-  'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
-  'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
+  'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
+  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
+  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
+  'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
+  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
+  'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
+  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
+  'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
 };
 
-export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStations>[] =
-  Object.entries(actionMap).map(
-    ([label, Component]) =>
-      ({
-        label,
-        execOrRender: (station: ChargingStation) => (
-          <Component station={station} />
-        ),
-      }) as CustomAction<ChargingStations>,
-  );
+export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
+  Object.entries(chargingStationActionMap)
+    .map(
+      ([label, Component]) =>
+        ({
+          label,
+          execOrRender: (station: ChargingStation, _setLoading, dispatch) => {
+            dispatch(
+              setSelectedChargingStation({
+                selectedChargingStation: JSON.stringify(
+                  instanceToPlain(station),
+                ),
+              }),
+            );
+            return <Component station={station} />;
+          },
+        }) as CustomAction<ChargingStation>,
+    )
+    .sort((a, b) => a.label.localeCompare(b.label));

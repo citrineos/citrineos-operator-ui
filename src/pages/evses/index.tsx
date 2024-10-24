@@ -11,6 +11,7 @@ import {
 } from './queries';
 import { Evse } from './Evse';
 import { GenericDataTable } from '../../components/data-model-table/editable';
+import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 
 export const EvseView: React.FC = () => {
   return (
@@ -24,10 +25,13 @@ export const EvseView: React.FC = () => {
   );
 };
 
-export const EvseList = (props: IDataModelListProps) => {
+export const EvseList = (_props: IDataModelListProps) => {
   return (
     <>
-      <GenericDataTable dtoClass={Evse} />
+      <GenericDataTable
+        dtoClass={Evse}
+        customActions={[TriggerMessageForEvseCustomAction]}
+      />
     </>
   );
 };
@@ -49,6 +53,7 @@ export const resources = [
     list: '/evses',
     create: '/evses/new',
     show: '/evses/:id',
+    edit: '/evses/:id/edit',
     meta: {
       canDelete: true,
     },

@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
 import { Button, Form } from 'antd';
 import { Type } from 'class-transformer';
@@ -12,6 +11,7 @@ import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum UnlockConnectorRequestProps {
   // customData = 'customData', // todo

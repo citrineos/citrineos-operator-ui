@@ -16,6 +16,10 @@ import { ClassGqlEditMutation } from '../../../../util/decorators/ClassGqlEditMu
 import { ClassGqlGetQuery } from '../../../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../../../util/BaseModel';
+import { Searchable } from '../../../../util/decorators/Searcheable';
+import { Sortable } from '../../../../util/decorators/Sortable';
+import { Hidden } from '../../../../util/decorators/Hidden';
+import { CustomFormRender } from '../../../../util/decorators/CustomFormRender';
 
 export enum ComponentProps {
   id = 'id',
@@ -34,15 +38,35 @@ export enum ComponentProps {
 @PrimaryKeyFieldName(ComponentProps.id)
 export class Component extends BaseModel {
   @IsNumber()
+  @Sortable()
   id!: number;
+
+  @IsString()
+  @Searchable()
+  @Sortable()
+  name!: string;
 
   @IsOptional()
   @IsString()
   instance?: string | null;
 
-  @IsString()
-  name!: string;
-
+  @Hidden()
   @IsNumber()
   evseDatabaseId!: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Hidden({ isEditable: false })
+  @CustomFormRender((record: Component) => {
+    return <span>{(record as any).Evse?.id}</span>;
+  })
+  evseId?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Hidden({ isEditable: false })
+  @CustomFormRender((record: Component) => {
+    return <span>{(record as any).Evse?.connectorId}</span>;
+  })
+  connectorId?: number;
 }

@@ -1,4 +1,3 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React from 'react';
 import { Button, Form, Input, notification } from 'antd';
 import { AssociationSelection } from '../../components/data-model-table/association-selection';
@@ -19,6 +18,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 enum SetVariablesDataProps {
   component = 'component',
