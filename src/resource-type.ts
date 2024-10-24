@@ -6,6 +6,7 @@ export enum ResourceType {
   BOOTS = 'Boots',
   SECURITY_EVENTS = 'SecurityEvents',
   CHARGING_STATIONS = 'ChargingStations',
+  CHARGING_STATION_SEQUENCES = 'ChargingStationSequences',
   LOCATIONS = 'Locations',
   STATUS_NOTIFICATIONS = 'StatusNotifications',
   TARIFFS = 'Tariffs',
