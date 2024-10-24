@@ -32,9 +32,9 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from './certificate-signed';
-import { 
-  GetTransactionStatus, 
-  GetTransactionStatusProps 
+import {
+  GetTransactionStatus,
+  GetTransactionStatusProps,
 } from './get-transaction-status';
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
@@ -61,7 +61,8 @@ const chargingStationActionMap: {
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
-  'Get Transaction Status': GetTransactionStatus as React.FC<GetTransactionStatusProps>,
+  'Get Transaction Status':
+    GetTransactionStatus as React.FC<GetTransactionStatusProps>,
   'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
 };
 
