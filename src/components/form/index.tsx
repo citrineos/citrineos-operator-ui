@@ -87,7 +87,7 @@ export interface FieldSchema {
   selectMode?: SelectMode;
   nestedFields?: FieldSchema[];
   isRequired?: boolean;
-  customRender?: () => any;
+  customRender?: (record?: any) => any;
   dtoClass?: Constructable<any>;
   customConstructor?: () => any;
   gqlAssociationProps?: GqlAssociationProps;
@@ -427,9 +427,8 @@ export const renderField = (props: RenderFieldProps) => {
   } = props;
 
   let fieldPath = preFieldPath.with(schema.name);
-
   if (schema.type === FieldType.customRender && schema.customRender) {
-    return schema.customRender();
+    return schema.customRender(parentRecord);
   }
 
   if (
