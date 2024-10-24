@@ -53,7 +53,6 @@ import { TableWrapper, TableWrapperRef } from './table-wrapper';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
-import { HIDDEN } from '../../util/decorators/Hidden';
 import { HIDDENINTABLE } from '../../util/decorators/HiddenInTable';
 
 const renderViewContent = (
