@@ -70,6 +70,7 @@ const renderViewContent = (
   const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
   const gqlUseQueryVariablesKey =
     field.gqlAssociationProps?.gqlUseQueryVariablesKey;
+
   let gqlQueryVariables = undefined;
   if (
     gqlUseQueryVariablesKey &&
@@ -81,6 +82,10 @@ const renderViewContent = (
     } else {
       gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
     }
+  }
+
+  if (field.type === FieldType.customRender && field.customRender) {
+    return field.customRender(record);
   }
   switch (fieldType) {
     case FieldType.boolean:
