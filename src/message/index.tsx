@@ -10,6 +10,7 @@ import {
   ChangeAvailabilityProps,
 } from './change-availability';
 import { GetLog, GetLogProps } from './get-log';
+import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
 import React from 'react';
 import { GetVariables, GetVariablesProps } from './get-variables';
@@ -39,31 +40,34 @@ import {
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
+import { DeleteCertificate } from './delete-certificate';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
-  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
-  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
-  'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
-  'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
-  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
+  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
+  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
+  'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
+  'Get Installed Certificate IDs':
+    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
   'Get Log': GetLog as React.FC<GetLogProps>,
-  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
-  Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
+  'Get Transaction Status':
+    GetTransactionStatus as React.FC<GetTransactionStatusProps>,
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
     InstallCertificate as React.FC<InstallCertificateProps>,
-  'Get Installed Certificate IDs':
-    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
-  'Set network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
-  'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
-  'Get Transaction Status':
-    GetTransactionStatus as React.FC<GetTransactionStatusProps>,
-  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
+  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
+  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
+  'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
+  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
+  'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
+  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
+  'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =

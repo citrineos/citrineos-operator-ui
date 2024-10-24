@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
@@ -13,13 +14,13 @@ import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
-import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 import { CustomAction } from '../custom-actions';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  addModelsToStorage,
-  getSelectedKeyValue,
+  getSelectedAssociatedItems,
+  setSelectedAssociatedItems,
 } from '../../redux/selectionSlice';
+import { LABEL_FIELD } from '../../util/decorators/LabelField';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -49,37 +50,56 @@ export const AssociationSelection = <
     selectable = SelectionType.SINGLE,
     associatedIdFieldName,
     gqlQueryVariables,
-    customActions,
   } = props;
 
   const dispatch = useDispatch();
-  const storageKey =
-    `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
-
-  const associatedRecordClassInstance = plainToInstance(
-    associatedRecordClass,
-    {},
+  const associatedRecordClassInstance = useMemo(
+    () => plainToInstance(associatedRecordClass, {}),
+    [associatedRecordClass],
   );
 
-  const associatedRecordResourceType = Reflect.getMetadata(
-    CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as object,
+  const associatedRecordResourceType = useMemo(
+    () =>
+      Reflect.getMetadata(
+        CLASS_RESOURCE_TYPE,
+        associatedRecordClassInstance as object,
+      ),
+    [associatedRecordClassInstance],
   );
 
-  const selectedIdentifiers =
-    useSelector(
-      getSelectedKeyValue(storageKey, associatedRecordClassInstance as object),
-    ) || '';
-
-  const primaryKeyFieldName: string = Reflect.getMetadata(
-    PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as object,
+  const label = useMemo(
+    () =>
+      Reflect.getMetadata(LABEL_FIELD, associatedRecordClassInstance as object),
+    [associatedRecordClassInstance],
   );
 
-  const classCustomActions: CustomAction<any>[] = Reflect.getMetadata(
-    CLASS_CUSTOM_ACTIONS,
-    associatedRecordClassInstance as object,
+  const primaryKeyFieldName = useMemo(
+    () =>
+      Reflect.getMetadata(
+        PRIMARY_KEY_FIELD_NAME,
+        associatedRecordClassInstance as object,
+      ),
+    [associatedRecordClassInstance],
   );
+
+  const storageKey = useMemo(() => {
+    if (Object.keys(associatedRecordClassInstance as object).length === 0)
+      return '';
+
+    return `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
+  }, [parentRecord, associatedRecordClass]);
+
+  const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
+
+  const selectedIdentifiers = useMemo(() => {
+    if (selectedItems.length === 0) return '';
+
+    const labelKey = label || primaryKeyFieldName;
+    return selectedItems
+      .map((item: any) => plainToInstance(associatedRecordClass, item))
+      .map((item: any) => item[labelKey])
+      .join(', ');
+  }, [selectedItems, label, primaryKeyFieldName, associatedRecordClass]);
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
@@ -91,54 +111,39 @@ export const AssociationSelection = <
           ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
             (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
     );
-  }, [parentRecord, primaryKeyFieldName]);
+  }, [parentRecord, primaryKeyFieldName, parentIdFieldName, value]);
 
   const [tagValue, setTagValue] = useState<string>('');
-
   useEffect(() => {
-    const selectedRowsID = selectedIdentifiers;
-    setTagValue(selectedRowsID === '' ? 'Select' : selectedRowsID);
-  }, [isNew, value]);
+    const newVal = Array.isArray(value)
+      ? value.map((v: any) => (v as any)[primaryKeyFieldName]).join(', ')
+      : value
+        ? JSON.stringify((value as any)[associatedIdFieldName])
+        : '';
+    setTagValue(
+      isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
+    );
+  }, [isNew, value, associatedIdFieldName, parentRecord, primaryKeyFieldName]);
 
-  const meta: any = {
-    gqlQuery,
-  };
+  const meta: any = useMemo(
+    () => ({ gqlQuery, gqlVariables: gqlQueryVariables }),
+    [gqlQuery, gqlQueryVariables],
+  );
 
-  if (gqlQueryVariables) {
-    meta.gqlVariables = gqlQueryVariables;
-  }
+  const tableOptions: useTableProps<GetQuery, any, unknown, GetQuery> = useMemo(
+    () => ({
+      resource: associatedRecordResourceType,
+      sorters: { initial: [{ field: 'updatedAt', order: 'desc' }] },
+      filters: [] as any,
+      meta,
+    }),
+    [associatedRecordResourceType, meta],
+  );
 
-  const tableOptions: useTableProps<GetQuery, any, unknown, GetQuery> = {
-    resource: associatedRecordResourceType,
-    sorters: {
-      initial: [
-        {
-          field: 'updatedAt',
-          order: 'desc',
-        },
-      ],
-    },
-    filters: [] as any,
-    meta,
-  };
-
-  const searchableKeys = getSearchableKeys(associatedRecordClass);
-  if (searchableKeys && searchableKeys.size > 0) {
-    tableOptions['onSearch'] = (values: any): CrudFilters => {
-      const result: CrudFilters = [];
-      if (!values || !values.search || values.search.length === 0) {
-        return [];
-      }
-      for (const searchableKey of searchableKeys) {
-        result.push({
-          field: searchableKey,
-          operator: 'contains',
-          value: values.search,
-        });
-      }
-      return result;
-    };
-  }
+  const searchableKeys = useMemo(
+    () => getSearchableKeys(associatedRecordClass),
+    [associatedRecordClass],
+  );
 
   const {
     tableProps,
@@ -147,109 +152,71 @@ export const AssociationSelection = <
     setSorters,
     setCurrent,
     setPageSize,
-  } = useTable<GetQuery>({
-    ...tableOptions,
-  });
+  } = useTable<GetQuery>(tableOptions);
 
   const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
     value ? [value] : [],
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedRowsKeys, setSelectedRowsKeys] = useState<string[]>([]);
-
-  useEffect(() => {
-    setSelectedRowsKeys(
-      selectedRows.map((item: any) => (item as any)[primaryKeyFieldName]),
-    );
-  }, [selectedRows]);
-
-  useEffect(() => {
-    const data = (tableProps?.dataSource || []).map(
-      (item: any) =>
-        plainToInstance(associatedRecordClass, item) as AssociatedModel,
-    );
-
-    // Calculate matching row keys after data is processed
-    const matchingRows = data.filter(
-      (item: any) =>
-        (item as any)[associatedIdFieldName] ===
-        (parentRecord as any)[parentIdFieldName],
-    );
-
-    // Update selected row keys
-    setSelectedRows(matchingRows);
-  }, [tableProps?.dataSource]);
-
   const handleRowChange = useCallback(
     (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
       dispatch(
-        addModelsToStorage({
+        setSelectedAssociatedItems({
           storageKey,
           selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
         }),
       );
-
       setSelectedRows(selectedRows);
-
-      if (onChange) {
-        onChange(selectedRows);
-      }
+      onChange?.(selectedRows);
     },
-    [onChange],
+    [dispatch, onChange, storageKey],
   );
 
-  const rowSelection = useMemo(() => {
-    const selectedRowKeys = selectedRows.map(
-      (item: any) => item[primaryKeyFieldName],
-    );
-
-    return {
-      selectedRowKeys: selectedRowKeys,
+  const rowSelection = useMemo(
+    () => ({
+      selectedRowKeys: selectedRows.map(
+        (item: any) => item[primaryKeyFieldName],
+      ),
       onChange: handleRowChange,
-      getCheckboxProps: (record: any) => ({
-        disabled: record.name === 'Disabled User',
-        name: record.name,
-      }),
       type: selectable === SelectionType.SINGLE ? 'radio' : 'checkbox',
-    };
-  }, [selectedRows, handleRowChange]);
+    }),
+    [selectedRows, handleRowChange, selectable],
+  );
 
   const handleSelectionSave = useCallback(
     (closeDrawer: () => void) => {
-      if (onChange) {
-        onChange(selectedRows);
-      }
-
+      onChange?.(selectedRows);
       setTagValue(selectedIdentifiers);
-
       closeDrawer();
     },
-    [selectedRows, primaryKeyFieldName],
+    [onChange, selectedRows, selectedIdentifiers],
   );
 
-  if (!associatedRecordResourceType) {
+  if (!associatedRecordResourceType || !primaryKeyFieldName) {
     return (
       <Alert
-        message="Error: AssociationSelection cannot find ResourceType for associatedRecordClass"
-        type="error"
-      />
-    );
-  }
-  if (!primaryKeyFieldName) {
-    return (
-      <Alert
-        message="Error: AssociationSelection cannot find primaryKeyFieldName for associatedRecordClass"
+        message={`Error: AssociationSelection cannot find ${
+          !associatedRecordResourceType ? 'ResourceType' : 'primaryKeyFieldName'
+        } for associatedRecordClass`}
         type="error"
       />
     );
   }
 
-  if (queryResult?.isLoading) {
-    return <Spin />;
-  }
+  tableOptions.onSearch = useCallback(
+    (values: any): CrudFilters => {
+      if (!values?.search?.length) return [];
+      return Array.from(searchableKeys).map((key) => ({
+        field: key,
+        operator: 'contains',
+        value: values.search,
+      }));
+    },
+    [searchableKeys],
+  );
 
-  if (queryResult?.isError) {
+  if (queryResult?.isLoading) return <Spin />;
+  if (queryResult?.isError)
     return (
       <Alert
         message="Error loading data"
@@ -257,48 +224,41 @@ export const AssociationSelection = <
         type="error"
       />
     );
-  }
 
   return (
-    <>
-      <ExpandableColumn
-        useInitialContentAsButton={true}
-        initialContent={
-          <>
-            <GenericTag stringValue={tagValue} icon={<ExportOutlined />} />
-          </>
-        }
-        expandedContent={({ closeDrawer }) => (
-          <>
-            <p>
-              Selected {associatedRecordClass.name}(s):
-              {selectedIdentifiers}
-            </p>
-            <GenericDataTable
-              dtoClass={associatedRecordClass}
-              selectable={selectable}
-              useTableProps={{
-                tableProps,
-                searchFormProps,
-                setSorters,
-                setCurrent,
-                setPageSize,
-                rowSelection: rowSelection,
-              }}
-              customActions={customActions || classCustomActions || undefined}
-            />
-            <Button
-              type="primary"
-              icon={<SaveOutlined />}
-              onClick={() => handleSelectionSave(closeDrawer)}
-              disabled={selectedRows.length === 0}
-            >
-              Save
-            </Button>
-          </>
-        )}
-        viewTitle={`Please select associated ${associatedRecordResourceType}`}
-      />
-    </>
+    <ExpandableColumn
+      useInitialContentAsButton
+      initialContent={
+        <GenericTag stringValue={tagValue} icon={<ExportOutlined />} />
+      }
+      expandedContent={({ closeDrawer }) => (
+        <>
+          <p>
+            Selected {associatedRecordClass.name}(s): {selectedIdentifiers}
+          </p>
+          <GenericDataTable
+            dtoClass={associatedRecordClass}
+            selectable={selectable}
+            useTableProps={{
+              tableProps,
+              searchFormProps,
+              setSorters,
+              setCurrent,
+              setPageSize,
+              rowSelection,
+            }}
+          />
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={() => handleSelectionSave(closeDrawer)}
+            disabled={selectedRows.length === 0}
+          >
+            Save
+          </Button>
+        </>
+      )}
+      viewTitle={`Please select associated ${associatedRecordResourceType}`}
+    />
   );
 };
