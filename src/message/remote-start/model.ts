@@ -44,7 +44,7 @@ export class ChargingSchedulePeriodType {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsInt()
   @IsPositive()
@@ -58,20 +58,20 @@ export class ChargingSchedulePeriodType {
   @Min(1)
   @Max(3)
   @IsOptional()
-  numberPhases?: number | null = null;
+  numberPhases?: number | null;
 
   @IsInt()
   @Min(1)
   @Max(3)
   @IsOptional()
-  phaseToUse?: number | null = null;
+  phaseToUse?: number | null;
 }
 
 export class ChargingScheduleType {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsInt()
   @IsPositive()
@@ -80,11 +80,11 @@ export class ChargingScheduleType {
   @Type(() => Date)
   @TransformDate()
   @IsOptional()
-  startSchedule?: Dayjs | null = null;
+  startSchedule?: Dayjs | null;
 
   @IsInt()
   @IsOptional()
-  duration?: number | null = null;
+  duration?: number | null;
 
   @IsEnum(ChargingRateUnitEnumType)
   chargingRateUnit!: ChargingRateUnitEnumType;
@@ -96,7 +96,7 @@ export class ChargingScheduleType {
 
   @IsNumber()
   @IsOptional()
-  minChargingRate?: number | null = null;
+  minChargingRate?: number | null;
 }
 
 export enum RemoteStartChargingProfilePurpose {
@@ -106,7 +106,7 @@ export enum RemoteStartChargingProfilePurpose {
 export class ChargingProfileType {
   @IsOptional()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsInt()
   stackLevel!: number;
@@ -119,17 +119,17 @@ export class ChargingProfileType {
 
   @IsOptional()
   @IsEnum(RecurrencyKindEnumType)
-  recurrencyKind?: RecurrencyKindEnumType | null = null;
+  recurrencyKind?: RecurrencyKindEnumType | null;
 
   @IsOptional()
   @Type(() => Date)
   @TransformDate()
-  validFrom?: Dayjs | null = null;
+  validFrom?: Dayjs | null;
 
   @IsOptional()
   @Type(() => Date)
   @TransformDate()
-  validTo?: Dayjs | null = null;
+  validTo?: Dayjs | null ;
 
   @ArrayMinSize(1)
   @ArrayMaxSize(3)
@@ -177,7 +177,7 @@ export class RequestStartTransactionRequest {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsOptional()
   @ValidateNested()

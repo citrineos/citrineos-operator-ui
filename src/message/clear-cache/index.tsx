@@ -26,7 +26,7 @@ export enum ClearCacheRequestProps {
 export class ClearCacheRequest {
   @Type(() => CustomDataType)
   @IsOptional()
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 }
 
 export class ClearCacheResponse {
