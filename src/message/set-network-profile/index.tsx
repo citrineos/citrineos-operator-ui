@@ -78,7 +78,7 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
       plainValues,
     );
     await triggerMessageAndHandleResponse(
-      `/ocpp/provisioning/setNetworkProfile?identifier=${station.id}&tenantId=1`,
+      `/configuration/setNetworkProfile?identifier=${station.id}&tenantId=1`,
       SetNetworkProfileResponse,
       classInstance,
       (response: SetNetworkProfileResponse) =>

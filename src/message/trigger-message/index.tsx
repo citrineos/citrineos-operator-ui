@@ -100,8 +100,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       ? station.id
       : undefined;
 
-  console.log('selected stationId', stationId);
-
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
   triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
@@ -135,7 +133,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: classInstance[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+    if (evse && evse[EvseProps.id]) {
       data.evse = {
         id: evse[EvseProps.id],
         // customData: todo,

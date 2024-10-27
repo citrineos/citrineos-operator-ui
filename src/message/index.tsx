@@ -63,7 +63,7 @@ const chargingStationActionMap: {
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
   'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
+  'Set Network Profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Set Variables': SetVariables as React.FC<SetVariablesProps>,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
