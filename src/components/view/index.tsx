@@ -3,6 +3,7 @@ import {
   Create,
   DeleteButton,
   Edit,
+  EditButton,
   ListButton,
   RefreshButton,
   Show,
@@ -192,6 +193,7 @@ export const GenericParameterizedView = (
       updatedAt: new Date().toISOString(),
     } as any);
   };
+  // accorddion, overflow-y
 
   return (
     <WrapperComponent
@@ -208,6 +210,13 @@ export const GenericParameterizedView = (
               />
             )}
             {!hideListButton && <ListButton resource={resourceType} />}
+            {state === GenericViewState.SHOW && (
+              <EditButton
+                onClick={() => {
+                  navigate('./edit');
+                }}
+              />
+            )}
             {state !== GenericViewState.CREATE && (
               <RefreshButton onClick={() => queryResult?.refetch()} />
             )}

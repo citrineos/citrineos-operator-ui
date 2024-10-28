@@ -67,17 +67,13 @@ export const CustomActions = <T,>({
     <>
       {showInline ? (
         <>
-          <Menu
-            mode="inline"
-            style={{ color: 'black', backgroundColor: '#141414' }}
-          >
+          <Menu mode="inline">
             {items.map((item: any) => {
               return (
                 <Menu.Item
                   key={item.key}
                   icon={<ThunderboltOutlined />}
                   onClick={item.onClick}
-                  style={{ color: 'white', backgroundColor: '#141414' }}
                 >
                   {item.label}
                 </Menu.Item>

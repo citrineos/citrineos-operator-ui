@@ -1,13 +1,13 @@
 import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   GenericParameterizedView,
   GenericView,
   GenericViewState,
 } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { Layout, Button } from 'antd';
+import { Layout, Button, Collapse } from 'antd';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { ChargingStation } from './ChargingStation';
 import { IDataModelListProps } from '../../components';
@@ -38,6 +38,7 @@ import { getSelectedChargingStation } from '../../redux/selectedChargingStationS
 import { RootState } from '../../redux/store';
 import { plainToInstance } from 'class-transformer';
 
+const { Panel } = Collapse;
 const { Sider, Content } = Layout;
 
 export const ChargingStationsView: React.FC = () => {
@@ -71,6 +72,15 @@ export const ChargingStationsView: React.FC = () => {
       : [selectedChargingStation],
   )[0];
 
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const storedColorMode = localStorage.getItem('colorMode');
+    if (storedColorMode === 'light' || storedColorMode === 'dark') {
+      setColorMode(storedColorMode);
+    }
+  }, []);
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout>
@@ -82,26 +92,30 @@ export const ChargingStationsView: React.FC = () => {
             createMutation={CHARGING_STATIONS_CREATE_MUTATION}
             deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
             customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+            // // gqlUseQueryVariablesKey={ChargingStationProps.id}
+            // gqlQueryVariablesMap={{
+            //   [ChargingStationProps.evses]: (station: ChargingStation) => ({
+            //     stationId: station.id,
+            //   }),
+            // }}
           />
         </Content>
         <Sider
           width={280}
           collapsible
           trigger={null}
+          theme={colorMode}
           onCollapse={toggle}
           collapsedWidth={60}
           collapsed={collapsed}
           defaultCollapsed={true}
-          style={{ background: '#141414' }}
         >
           <span
             style={{
-              color: 'white',
               display: 'flex',
               padding: '0 5px',
               marginBottom: '15px',
               alignItems: 'center',
-              backgroundColor: '#141414',
               justifyContent: 'space-between',
             }}
           >
@@ -121,11 +135,19 @@ export const ChargingStationsView: React.FC = () => {
             style={{ width: '100%', marginBottom: '15px' }}
           />
 
-          <CustomActions
-            data={station}
-            showInline={true}
-            actions={filteredActions}
-          />
+          <Collapse>
+            <Panel
+              key="1"
+              collapsible="header"
+              header={!collapsed && 'Custom Actions'}
+            >
+              <CustomActions
+                data={station}
+                showInline={true}
+                actions={filteredActions}
+              />
+            </Panel>
+          </Collapse>
         </Sider>
       </Layout>
     </Layout>

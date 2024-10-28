@@ -50,7 +50,7 @@ export const GET_EVSES_FOR_STATION = gql`
 
 export const GET_TRANSACTION_LIST_FOR_STATION = gql`
   query GetTransactionListForStation(
-    $stationId: String! = "cp004"
+    $stationId: String!
     $where: [Transactions_bool_exp!] = []
     $order_by: [Transactions_order_by!] = {}
     $offset: Int
