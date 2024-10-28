@@ -7,7 +7,7 @@ import {
   GenericViewState,
 } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { Layout, Menu, Button, Drawer } from 'antd';
+import { Layout, Button } from 'antd';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { ChargingStation } from './ChargingStation';
 import { IDataModelListProps } from '../../components';
@@ -30,28 +30,17 @@ import {
   GET_EVSES_FOR_STATION,
 } from '../../message/queries';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { AutoComplete } from 'antd';
+import { useSelector } from 'react-redux';
+import { CustomActions } from '../../components/custom-actions';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { RootState } from '../../redux/store';
+import { plainToInstance } from 'class-transformer';
 
 const { Sider, Content } = Layout;
-export const ChargingStationsView: React.FC = () => {
-  return (
-    <GenericView
-      dtoClass={ChargingStation}
-      gqlQuery={CHARGING_STATIONS_GET_QUERY}
-      editMutation={CHARGING_STATIONS_EDIT_MUTATION}
-      createMutation={CHARGING_STATIONS_CREATE_MUTATION}
-      deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
-      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-    />
-  );
-};
 
-export const ChargingStationsList = (props: IDataModelListProps) => {
+export const ChargingStationsView: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const [filteredActions, setFilteredActions] = useState(
@@ -71,44 +60,28 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
     setFilteredActions(filtered);
   };
 
-  const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
-    resource: ResourceType.CHARGING_STATIONS,
-    sorters: DEFAULT_SORTERS,
-    filters: props.filters,
-    metaData: {
-      gqlQuery: CHARGING_STATIONS_LIST_QUERY,
-    },
-  });
+  const selectedChargingStation = useSelector((state: RootState) =>
+    getSelectedChargingStation()(state),
+  );
+
+  const station: ChargingStation = plainToInstance(
+    ChargingStation,
+    Array.isArray(selectedChargingStation)
+      ? selectedChargingStation
+      : [selectedChargingStation],
+  )[0];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout>
         <Content>
-          <GenericDataTable
+          <GenericView
             dtoClass={ChargingStation}
+            gqlQuery={CHARGING_STATIONS_GET_QUERY}
+            editMutation={CHARGING_STATIONS_EDIT_MUTATION}
+            createMutation={CHARGING_STATIONS_CREATE_MUTATION}
+            deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
             customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-            gqlQueryVariablesMap={{
-              [ChargingStationProps.evses]: (station: ChargingStation) => ({
-                stationId: station.id,
-              }),
-              [ChargingStationProps.transactions]: (
-                station: ChargingStation,
-              ) => ({
-                stationId: station.id,
-              }),
-            }}
-            fieldAnnotations={{
-              [ChargingStationProps.evses]: {
-                gqlAssociationProps: {
-                  parentIdFieldName: ChargingStationProps.id,
-                  associatedIdFieldName: EvseProps.id,
-                  gqlQuery: GET_EVSES_FOR_STATION,
-                  gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-                  gqlUseQueryVariablesKey: ChargingStationProps.evses,
-                },
-                customActions: [TriggerMessageForEvseCustomAction],
-              },
-            }}
           />
         </Content>
         <Sider
@@ -119,7 +92,6 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
           collapsedWidth={60}
           collapsed={collapsed}
           defaultCollapsed={true}
-          // onClick={() => toggle(false)}
           style={{ background: '#141414' }}
         >
           <span
@@ -149,37 +121,52 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
             style={{ width: '100%', marginBottom: '15px' }}
           />
 
-          <Menu
-            mode="inline"
-            style={{ color: 'black', backgroundColor: '#141414' }}
-          >
-            {filteredActions.map((action, index) => (
-              <Menu.Item
-                key={index}
-                icon={<SettingOutlined />}
-                // onClick={() => action.execOrRender()}
-                style={{ color: 'white', backgroundColor: '#141414' }}
-              >
-                {action.label}
-              </Menu.Item>
-            ))}
-          </Menu>
+          <CustomActions
+            data={station}
+            showInline={true}
+            actions={filteredActions}
+          />
         </Sider>
       </Layout>
-      {/* <Button
-        type="primary"
-        onClick={toggle}
-        style={{
-          position: 'fixed',
-          right: collapsed ? 0 : 300,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          zIndex: 1000,
-        }}
-      >
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </Button> */}
     </Layout>
+  );
+};
+
+export const ChargingStationsList = (props: IDataModelListProps) => {
+  const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
+    resource: ResourceType.CHARGING_STATIONS,
+    sorters: DEFAULT_SORTERS,
+    filters: props.filters,
+    metaData: {
+      gqlQuery: CHARGING_STATIONS_LIST_QUERY,
+    },
+  });
+
+  return (
+    <GenericDataTable
+      dtoClass={ChargingStation}
+      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+      gqlQueryVariablesMap={{
+        [ChargingStationProps.evses]: (station: ChargingStation) => ({
+          stationId: station.id,
+        }),
+        [ChargingStationProps.transactions]: (station: ChargingStation) => ({
+          stationId: station.id,
+        }),
+      }}
+      fieldAnnotations={{
+        [ChargingStationProps.evses]: {
+          gqlAssociationProps: {
+            parentIdFieldName: ChargingStationProps.id,
+            associatedIdFieldName: EvseProps.id,
+            gqlQuery: GET_EVSES_FOR_STATION,
+            gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+            gqlUseQueryVariablesKey: ChargingStationProps.evses,
+          },
+          customActions: [TriggerMessageForEvseCustomAction],
+        },
+      }}
+    />
   );
 };
 

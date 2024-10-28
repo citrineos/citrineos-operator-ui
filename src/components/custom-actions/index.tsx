@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Drawer, Dropdown, MenuProps, Spin } from 'antd';
-import { MoreOutlined } from '@ant-design/icons';
+import { Button, Drawer, Dropdown, Menu, MenuProps, Spin } from 'antd';
+import { MoreOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -17,11 +17,13 @@ export interface CustomAction<T> {
 interface CustomActionsProps<T> {
   actions?: CustomAction<T>[];
   data: T; // The current row data that will be passed to the action
+  showInline?: boolean;
 }
 
 export const CustomActions = <T,>({
   actions,
   data,
+  showInline = false,
 }: CustomActionsProps<T>): React.ReactElement => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -63,9 +65,33 @@ export const CustomActions = <T,>({
 
   return (
     <>
-      <Dropdown menu={{ items }} trigger={['click']} placement="bottom">
-        <Button size="small" type={'default'} icon={<MoreOutlined />} />
-      </Dropdown>
+      {showInline ? (
+        <>
+          <Menu
+            mode="inline"
+            style={{ color: 'black', backgroundColor: '#141414' }}
+          >
+            {items.map((item: any) => {
+              return (
+                <Menu.Item
+                  key={item.key}
+                  icon={<ThunderboltOutlined />}
+                  onClick={item.onClick}
+                  style={{ color: 'white', backgroundColor: '#141414' }}
+                >
+                  {item.label}
+                </Menu.Item>
+              );
+            })}
+          </Menu>
+        </>
+      ) : (
+        <>
+          <Dropdown menu={{ items }} trigger={['click']} placement="bottom">
+            <Button size="small" type={'default'} icon={<MoreOutlined />} />
+          </Dropdown>
+        </>
+      )}
       <Drawer
         title="Details"
         open={visible}
