@@ -71,11 +71,11 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       customData: classInstance[ChangeAvailabilityRequestProps.customData],
     };
 
-    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+    if (evse && evse[EvseProps.id]) {
       data[ChangeAvailabilityRequestProps.evse] = {
         id: evse[EvseProps.id],
         // customData: todo,
-        connectorId: evse[EvseProps.connectorId],
+        connectorId: evse[EvseProps.connectorId] ?? undefined,
       };
     }
 
