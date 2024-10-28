@@ -82,6 +82,11 @@ const TriggerMessageRequestWithoutEvse = createClassWithoutProperty(
   TriggerMessageRequestProps.evse,
 );
 
+const TriggerMessageRequestWithoutStation = createClassWithoutProperty(
+  TriggerMessageRequest,
+  TriggerMessageRequestProps.chargingStation,
+);
+
 export const TriggerMessage: React.FC<TriggerMessageProps> = ({
   station,
   evse,
@@ -118,7 +123,9 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
-    : TriggerMessageRequest;
+    : stationId
+      ? TriggerMessageRequestWithoutStation
+      : TriggerMessageRequest;
   const parentRecord = evse
     ? triggerMessageRequestWithoutEvse
     : triggerMessageRequest;
