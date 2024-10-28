@@ -39,6 +39,7 @@ import {
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
+import { UpdateAuthPassword, UpdateAuthPasswordProps } from './update-auth-password';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -64,6 +65,7 @@ const chargingStationActionMap: {
   'Get Transaction Status':
     GetTransactionStatus as React.FC<GetTransactionStatusProps>,
   'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Update Auth Password': UpdateAuthPassword as React.FC<UpdateAuthPasswordProps>
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
