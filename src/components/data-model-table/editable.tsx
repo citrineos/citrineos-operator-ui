@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -37,7 +36,6 @@ import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldNam
 import { GetFields, GetVariables } from '@refinedev/hasura';
 import { CLASS_GQL_EDIT_MUTATION } from '../../util/decorators/ClassGqlEditMutation';
 import { CLASS_GQL_CREATE_MUTATION } from '../../util/decorators/ClassGqlCreateMutation';
-import { ColorModeContext } from '../../contexts/color-mode';
 import { CustomAction } from '../custom-actions';
 import { FieldPath } from '../form/state/fieldpath';
 import { AssociationSelection } from './association-selection';
@@ -177,22 +175,14 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     filters = null,
     useTableProps: useTableProps = null,
     onSelectionChange,
-    editable: passedEditable = true,
+    editable = true,
     customActions,
     gqlQueryVariablesMap = null,
     fieldAnnotations,
   } = props;
 
-  let editable = false;
-
   const getDataProvider = useDataProvider();
   const dataProvider: DataProvider = getDataProvider();
-
-  const { mode } = useContext(ColorModeContext);
-  const isDarkMode = mode === 'dark';
-  if (isDarkMode) {
-    editable = passedEditable;
-  }
 
   const dtoClassInstance = useMemo(() => {
     return plainToInstance(dtoClass, {});
@@ -495,7 +485,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
     const actions = !isCurrentlyEditing
       ? editable
-        ? [ColumnAction.EDIT, ColumnAction.DELETE]
+        ? [ColumnAction.EDIT, ColumnAction.DELETE, ColumnAction.SHOW]
         : [ColumnAction.SHOW, ColumnAction.DELETE]
       : [ColumnAction.SAVE, ColumnAction.CANCEL, ColumnAction.DELETE];
 

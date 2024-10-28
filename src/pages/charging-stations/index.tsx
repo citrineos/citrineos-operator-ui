@@ -1,12 +1,13 @@
 import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GenericParameterizedView,
   GenericView,
   GenericViewState,
 } from '../../components/view';
 import { useTable } from '@refinedev/antd';
+import { Layout, Menu, Button, Drawer } from 'antd';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { ChargingStation } from './ChargingStation';
 import { IDataModelListProps } from '../../components';
@@ -29,7 +30,14 @@ import {
   GET_EVSES_FOR_STATION,
 } from '../../message/queries';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import { AutoComplete } from 'antd';
 
+const { Sider, Content } = Layout;
 export const ChargingStationsView: React.FC = () => {
   return (
     <GenericView
@@ -44,6 +52,25 @@ export const ChargingStationsView: React.FC = () => {
 };
 
 export const ChargingStationsList = (props: IDataModelListProps) => {
+  const [collapsed, setCollapsed] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredActions, setFilteredActions] = useState(
+    CUSTOM_CHARGING_STATION_ACTIONS,
+  );
+
+  const toggle = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value);
+    const filtered = CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
+      action.label.toLowerCase().includes(value.toLowerCase()),
+    );
+
+    setFilteredActions(filtered);
+  };
+
   const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
     resource: ResourceType.CHARGING_STATIONS,
     sorters: DEFAULT_SORTERS,
@@ -54,30 +81,105 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
   });
 
   return (
-    <GenericDataTable
-      dtoClass={ChargingStation}
-      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-      gqlQueryVariablesMap={{
-        [ChargingStationProps.evses]: (station: ChargingStation) => ({
-          stationId: station.id,
-        }),
-        [ChargingStationProps.transactions]: (station: ChargingStation) => ({
-          stationId: station.id,
-        }),
-      }}
-      fieldAnnotations={{
-        [ChargingStationProps.evses]: {
-          gqlAssociationProps: {
-            parentIdFieldName: ChargingStationProps.id,
-            associatedIdFieldName: EvseProps.id,
-            gqlQuery: GET_EVSES_FOR_STATION,
-            gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-            gqlUseQueryVariablesKey: ChargingStationProps.evses,
-          },
-          customActions: [TriggerMessageForEvseCustomAction],
-        },
-      }}
-    />
+    <Layout style={{ minHeight: '100vh' }}>
+      <Layout>
+        <Content>
+          <GenericDataTable
+            dtoClass={ChargingStation}
+            customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+            gqlQueryVariablesMap={{
+              [ChargingStationProps.evses]: (station: ChargingStation) => ({
+                stationId: station.id,
+              }),
+              [ChargingStationProps.transactions]: (
+                station: ChargingStation,
+              ) => ({
+                stationId: station.id,
+              }),
+            }}
+            fieldAnnotations={{
+              [ChargingStationProps.evses]: {
+                gqlAssociationProps: {
+                  parentIdFieldName: ChargingStationProps.id,
+                  associatedIdFieldName: EvseProps.id,
+                  gqlQuery: GET_EVSES_FOR_STATION,
+                  gqlListQuery: GET_EVSE_LIST_FOR_STATION,
+                  gqlUseQueryVariablesKey: ChargingStationProps.evses,
+                },
+                customActions: [TriggerMessageForEvseCustomAction],
+              },
+            }}
+          />
+        </Content>
+        <Sider
+          width={280}
+          collapsible
+          trigger={null}
+          onCollapse={toggle}
+          collapsedWidth={60}
+          collapsed={collapsed}
+          defaultCollapsed={true}
+          // onClick={() => toggle(false)}
+          style={{ background: '#141414' }}
+        >
+          <span
+            style={{
+              color: 'white',
+              display: 'flex',
+              padding: '0 5px',
+              marginBottom: '15px',
+              alignItems: 'center',
+              backgroundColor: '#141414',
+              justifyContent: 'space-between',
+            }}
+          >
+            {!collapsed && <h1>Actions</h1>}
+            <Button type="text" onClick={toggle}>
+              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            </Button>
+          </span>
+
+          <AutoComplete
+            size="large"
+            allowClear={true}
+            value={searchValue}
+            onChange={handleSearch}
+            placeholder="Search actions"
+            onClear={() => handleSearch('')}
+            style={{ width: '100%', marginBottom: '15px' }}
+          />
+
+          <Menu
+            mode="inline"
+            style={{ color: 'black', backgroundColor: '#141414' }}
+          >
+            {filteredActions.map((action, index) => (
+              <Menu.Item
+                key={index}
+                icon={<SettingOutlined />}
+                // onClick={() => action.execOrRender()}
+                style={{ color: 'white', backgroundColor: '#141414' }}
+              >
+                {action.label}
+              </Menu.Item>
+            ))}
+          </Menu>
+        </Sider>
+      </Layout>
+      {/* <Button
+        type="primary"
+        onClick={toggle}
+        style={{
+          position: 'fixed',
+          right: collapsed ? 0 : 300,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 1000,
+        }}
+      >
+        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+      </Button> */}
+    </Layout>
   );
 };
 
