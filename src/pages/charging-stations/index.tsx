@@ -109,6 +109,7 @@ export const ChargingStationsView: React.FC = () => {
           collapsedWidth={60}
           collapsed={collapsed}
           defaultCollapsed={true}
+          style={{ overflow: 'auto', height: '100vh' }}
         >
           <span
             style={{
