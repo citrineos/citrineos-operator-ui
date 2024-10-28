@@ -18,6 +18,7 @@ import {
   UnknownsActions,
 } from '../../components/form/state/unknowns';
 import { StatusInfoType } from '../model/StatusInfoType';
+import { MessageConfirmation } from '../MessageConfirmation';
 
 export enum ClearCacheRequestProps {
   customData = 'customData',
@@ -59,9 +60,9 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
     const classInstance = plainToInstance(ClearCacheRequest, plainValues);
     await triggerMessageAndHandleResponse(
       `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
-      ClearCacheResponse,
-      classInstance,
-      (response: ClearCacheResponse) => response && (response as any).success,
+      MessageConfirmation,
+      {},
+      (response: MessageConfirmation) => response && (response as any).success,
     );
   };
 

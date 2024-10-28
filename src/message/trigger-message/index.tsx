@@ -158,8 +158,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     },
   };
 
-  console.log('parent record', parentRecord);
-
   return (
     <GenericForm
       formProps={formProps}

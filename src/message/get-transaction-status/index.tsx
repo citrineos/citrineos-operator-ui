@@ -68,11 +68,14 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({
       plainValues,
     );
 
-    let data: any;
+    let data: any = {};
 
     if (
       classInstance &&
-      classInstance[GetTransactionStatusRequestProps.transaction]
+      classInstance[GetTransactionStatusRequestProps.transaction] &&
+      classInstance[GetTransactionStatusRequestProps.transaction][
+        TransactionProps.transactionId
+      ] != NEW_IDENTIFIER
     ) {
       data = {
         transactionId:
