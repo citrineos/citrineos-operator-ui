@@ -1,137 +1,127 @@
-import {
-  GenericDeviceModelStatusEnumType,
-  ReportBaseEnumType,
-} from '@citrineos/base';
-import React, { useState } from 'react';
-import { Button, Form, InputNumber } from 'antd';
-import {
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
-import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
-import { FieldPath } from '../../components/form/state/fieldpath';
-import { plainToInstance, Type } from 'class-transformer';
-import {
-  generateRandomSignedInt,
-  triggerMessageAndHandleResponse,
-} from '../util';
+import React, { useRef, useState } from 'react';
+import { Form, notification, Spin } from 'antd';
+import { GenericForm } from '../../components/form';
+import { plainToInstance } from 'class-transformer';
+import { useApiUrl, useCustom } from '@refinedev/core';
+import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { StatusInfoType } from '../model/StatusInfoType';
-
-export enum GetBaseReportRequestProps {
-  requestId = 'requestId',
-  reportBase = 'reportBase',
-  customData = 'customData',
-}
-
-export class GetBaseReportRequest {
-  @IsInt()
-  @IsNotEmpty()
-  requestId!: number;
-
-  @IsEnum(ReportBaseEnumType)
-  reportBase!: ReportBaseEnumType;
-
-  // @Type(() => CustomDataType)
-  // @IsOptional()
-  // customData: CustomDataType | null = null;
-
-  constructor(data: Partial<GetBaseReportRequest>) {
-    if (data) {
-      Object.assign(this, {
-        [GetBaseReportRequestProps.reportBase]:
-          data[GetBaseReportRequestProps.reportBase],
-        [GetBaseReportRequestProps.requestId]:
-          data[GetBaseReportRequestProps.requestId],
-      });
-    }
-  }
-}
-
-export class GetBaseReportResponse {
-  // @Type(() => CustomDataType)
-  // @ValidateNested()
-  // @IsOptional()
-  // customData?: CustomDataType;
-
-  @IsEnum(GenericDeviceModelStatusEnumType)
-  @IsNotEmpty()
-  status!: GenericDeviceModelStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  @IsOptional()
-  statusInfo?: StatusInfoType;
-}
+import { GetBaseReportRequest, GetBaseReportRequestProps } from './model';
+import { validateSync } from 'class-validator';
+import { MessageConfirmation } from '../MessageConfirmation';
+import { BaseRestClient } from '../../util/BaseRestClient';
+import { ReportBaseEnumType } from '@citrineos/base';
 
 export interface GetBaseReportProps {
   station: ChargingStation;
 }
 
 export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
+  const formRef = useRef();
   const [form] = Form.useForm();
-
-  const [parentRecord, setParentRecord] = useState(
-    new GetBaseReportRequest({
-      [GetBaseReportRequestProps.requestId]: generateRandomSignedInt(),
-    }),
-  );
-
-  const handleSubmit = async () => {
-    const plainValues = await form.validateFields();
-    const classInstance = plainToInstance(GetBaseReportRequest, plainValues);
-    await triggerMessageAndHandleResponse(
-      `/reporting/getBaseReport?identifier=${station.id}&tenantId=1`,
-      GetBaseReportResponse,
-      classInstance,
-      (response: GetBaseReportResponse) =>
-        response && (response as any).success,
-    );
+  const formProps = {
+    form,
   };
 
-  const handleFormChange = (
-    _changedValues: any,
-    allValues: GetBaseReportRequest,
-  ) => {
-    setParentRecord(allValues);
-  };
+  const [loading, setLoading] = useState<boolean>(false);
+  const [valid, setValid] = useState<boolean>(true);
 
-  const instance = plainToInstance(GetBaseReportRequest, {});
-  const fieldSchema = getSchemaForInstanceAndKey(
-    instance,
-    GetBaseReportRequestProps.reportBase,
-    [GetBaseReportRequestProps.reportBase],
-  );
-
-  const enumField = renderField({
-    schema: fieldSchema,
-    preFieldPath: FieldPath.empty(),
-    disabled: false,
+  const apiUrl = useApiUrl();
+  const {
+    data: requestIdResponse,
+    isLoading: isLoadingRequestId,
+    // isError: isErrorLoadingRequestId,
+  } = useCustom<any>({
+    url: `${apiUrl}`,
+    method: 'post',
+    config: {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+    meta: {
+      operation: 'ChargingStationSequencesGet',
+      gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
+      variables: {
+        stationId: station.id,
+        type: 'getBaseReport',
+      },
+    },
   });
 
+  const isRequestValid = (request: GetBaseReportRequest) => {
+    const errors = validateSync(request);
+    return errors.length === 0;
+  };
+
+  const onValuesChange = (changedValues: any, allValues: any) => {
+    const request = plainToInstance(GetBaseReportRequest, allValues, {
+      excludeExtraneousValues: false,
+    });
+    setValid((_) => isRequestValid(request));
+  };
+
+  const onFinish = (values: object) => {
+    const request = plainToInstance(GetBaseReportRequest, values, {
+      excludeExtraneousValues: false,
+    });
+    if (isRequestValid(request)) {
+      getBaseReport(request).then();
+    }
+  };
+
+  const getBaseReport = async (request: GetBaseReportRequest) => {
+    try {
+      setLoading(true);
+      const client = new BaseRestClient();
+      const response = await client.post(
+        `/reporting/getBaseReport?identifier=${station.id}&tenantId=1`,
+        MessageConfirmation,
+        {},
+        request,
+      );
+
+      if (response && response.success) {
+        notification.success({
+          message: 'Success',
+          description: 'The get base report request was successful.',
+        });
+      } else {
+        notification.error({
+          message: 'Request Failed',
+          description:
+            'The get base report request did not receive a successful response.',
+        });
+      }
+    } catch (error: any) {
+      const msg = `Could not perform get base report, got error: ${error.message}`;
+      console.error(msg, error);
+      notification.error({
+        message: 'Error',
+        description: msg,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading || isLoadingRequestId) return <Spin />;
+
+  const getBaseReportRequest = new GetBaseReportRequest();
+  getBaseReportRequest[GetBaseReportRequestProps.requestId] =
+    requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+  getBaseReportRequest[GetBaseReportRequestProps.reportBase] =
+    ReportBaseEnumType.FullInventory;
+
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={handleSubmit}
-      initialValues={parentRecord}
-      onValuesChange={handleFormChange}
-    >
-      <Form.Item
-        label={GetBaseReportRequestProps.requestId}
-        name={GetBaseReportRequestProps.requestId}
-      >
-        <InputNumber />
-      </Form.Item>
-      {enumField}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Get Base Report
-        </Button>
-      </Form.Item>
-    </Form>
+    <GenericForm
+      ref={formRef as any}
+      dtoClass={GetBaseReportRequest}
+      formProps={formProps}
+      onFinish={onFinish}
+      initialValues={getBaseReportRequest}
+      parentRecord={getBaseReportRequest}
+      onValuesChange={onValuesChange}
+      submitDisabled={!valid}
+    />
   );
 };
