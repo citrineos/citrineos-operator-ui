@@ -175,7 +175,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     filters = null,
     useTableProps: useTableProps = null,
     onSelectionChange,
-    editable = true,
+    editable: passedEditable = true,
     customActions,
     gqlQueryVariablesMap = null,
     fieldAnnotations,
