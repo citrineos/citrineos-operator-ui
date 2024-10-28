@@ -79,12 +79,13 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       };
     }
 
-    await triggerMessageAndHandleResponse(
-      `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      data,
-      (response: MessageConfirmation) => response && response.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: data,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
+    });
   };
 
   const [parentRecord, setParentRecord] = useState(
