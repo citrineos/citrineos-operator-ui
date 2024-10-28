@@ -177,9 +177,7 @@ export const GenericParameterizedView = (
     const timestamp = new Date().toISOString();
     formProps.onFinish?.({
       ...values,
-      ...(state === GenericViewState.CREATE
-        ? { createdAt: timestamp}
-        : {}),
+      ...(state === GenericViewState.CREATE ? { createdAt: timestamp } : {}),
       updatedAt: timestamp,
     } as any);
   };

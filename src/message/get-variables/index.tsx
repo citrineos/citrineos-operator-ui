@@ -210,11 +210,13 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
           return {
             component: {
               name: component[ComponentProps.name],
-              evse: evse[EvseProps.databaseId] ? {
-                id: evse[EvseProps.databaseId],
-                connectorId: evse[EvseProps.connectorId],
-                // customData: null // todo
-              } : undefined,
+              evse: evse[EvseProps.databaseId]
+                ? {
+                    id: evse[EvseProps.databaseId],
+                    connectorId: evse[EvseProps.connectorId],
+                    // customData: null // todo
+                  }
+                : undefined,
               instance: item[GetVariablesDataProps.componentInstance],
               // customData: null // todo
             },

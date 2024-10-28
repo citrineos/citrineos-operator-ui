@@ -129,7 +129,7 @@ export class ChargingProfileType {
   @IsOptional()
   @Type(() => Date)
   @TransformDate()
-  validTo?: Dayjs | null ;
+  validTo?: Dayjs | null;
 
   @ArrayMinSize(1)
   @ArrayMaxSize(3)

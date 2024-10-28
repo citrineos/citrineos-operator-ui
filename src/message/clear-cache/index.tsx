@@ -56,8 +56,6 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
   const [parentRecord, setParentRecord] = useState(new ClearCacheRequest());
 
   const handleSubmit = async () => {
-    const plainValues = await form.validateFields();
-    const classInstance = plainToInstance(ClearCacheRequest, plainValues);
     await triggerMessageAndHandleResponse(
       `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
       MessageConfirmation,
