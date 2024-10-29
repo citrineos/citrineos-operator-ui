@@ -6,7 +6,6 @@ import { useTable } from '@refinedev/antd';
 import { MeterValueListQuery } from '../../graphql/types';
 import { MeterValue } from './MeterValue';
 import { DataModelTable, IDataModelListProps } from '../../components';
-import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   METER_VALUE_CREATE_MUTATION,
   METER_VALUE_DELETE_MUTATION,
@@ -32,7 +31,14 @@ export const MeterValueView: React.FC = () => {
 export const MeterValueList = (props: IDataModelListProps) => {
   const { tableProps } = useTable<MeterValueListQuery>({
     resource: ResourceType.METER_VALUES,
-    sorters: DEFAULT_SORTERS,
+    sorters: {
+      initial: [
+        {
+          field: 'timestamp',
+          order: 'desc',
+        },
+      ],
+    },
     filters: props.filters,
     metaData: {
       gqlQuery: METER_VALUE_LIST_QUERY,
