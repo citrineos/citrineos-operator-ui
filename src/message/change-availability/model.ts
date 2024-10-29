@@ -31,10 +31,11 @@ export class ChangeAvailabilityRequest {
   @IsNotEmpty()
   operationalStatus!: OperationalStatusEnumType;
 
-  @Type(() => CustomDataType)
-  @ValidateNested()
-  @IsOptional()
-  customData?: CustomDataType | null;
+  // todo
+  // @Type(() => CustomDataType)
+  // @ValidateNested()
+  // @IsOptional()
+  // customData?: CustomDataType | null;
 
   constructor() {
     Object.assign(this, {
