@@ -24,7 +24,9 @@ export const METER_VALUE_COLUMNS = (
       dataIndex: 'transactionDatabaseId',
       title: 'Transaction ID',
       sorter: true,
-      render: renderAssociatedTransactionId as any,
+      render: (_: any, record: any) => {
+        return renderAssociatedTransactionId(_, record);
+      },
     },
     {
       dataIndex: 'transactionEventId',

@@ -28,7 +28,7 @@ export const DataModelTable = <T extends AnyObject, U extends BaseRecord>(
 
   const mappedColumns = columns.map((column: ColumnType<T>, index: number) => (
     <Table.Column
-      key={index}
+      key={column.dataIndex as string}
       {...column}
       onCell={(_record: any) => ({
         className: `column-${String(column.dataIndex)}`,
