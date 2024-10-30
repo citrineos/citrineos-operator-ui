@@ -1,50 +1,20 @@
-import { ClearCacheStatusEnumType } from '@citrineos/base';
-import React, { useCallback, useState } from 'react';
-import { Button, Form } from 'antd';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
-import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
-import { FieldPath } from '../../components/form/state/fieldpath';
-import { plainToInstance, Type } from 'class-transformer';
+import React from 'react';
+import { Form } from 'antd';
+import { GenericForm } from '../../components/form';
+import { plainToInstance } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
-import { CustomDataType } from '../../model/CustomData';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import {
-  Unknowns,
-  UnknownsActions,
-} from '../../components/form/state/unknowns';
-import { StatusInfoType } from '../model/StatusInfoType';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { useSelector } from 'react-redux';
 
 export enum ClearCacheRequestProps {
   customData = 'customData',
 }
 
 export class ClearCacheRequest {
-  @Type(() => CustomDataType)
-  @IsOptional()
-  customData?: CustomDataType | null;
-}
-
-export class ClearCacheResponse {
+  // todo
   // @Type(() => CustomDataType)
-  // @ValidateNested()
   // @IsOptional()
-  // customData?: CustomDataType;
-
-  @IsEnum(ClearCacheStatusEnumType)
-  @IsNotEmpty()
-  status!: ClearCacheStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  @IsOptional()
-  statusInfo?: StatusInfoType;
+  // customData: CustomDataType | null = null;
 }
 
 export interface ClearCacheProps {
@@ -53,63 +23,30 @@ export interface ClearCacheProps {
 
 export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
   const [form] = Form.useForm();
+  const formProps = {
+    form,
+  };
 
-  const [parentRecord, setParentRecord] = useState(new ClearCacheRequest());
+  const clearCacheRequest = new ClearCacheRequest();
 
   const handleSubmit = async () => {
-    await triggerMessageAndHandleResponse({
-      url: `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
-      responseClass: MessageConfirmation,
-      data: {},
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response && response.success,
-    });
+    const plainValues = await form.validateFields();
+    const classInstance = plainToInstance(ClearCacheRequest, plainValues);
+    await triggerMessageAndHandleResponse(
+      `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
+      MessageConfirmation,
+      classInstance,
+      (response: MessageConfirmation) => response?.success,
+    );
   };
-
-  const handleFormChange = (
-    _changedValues: any,
-    allValues: ClearCacheRequest,
-  ) => {
-    setParentRecord(allValues);
-  };
-
-  const instance = plainToInstance(ClearCacheRequest, {});
-  const fieldSchema = getSchemaForInstanceAndKey(
-    instance,
-    ClearCacheRequestProps.customData,
-    [ClearCacheRequestProps.customData],
-  );
-
-  const [unknowns, setUnknowns] = useState<Unknowns>(Unknowns.empty());
-  const modifyUnknowns = useCallback(
-    <K extends UnknownsActions>(method: K, ...args: Parameters<Unknowns[K]>) =>
-      setUnknowns((prev: any) => prev[method](...args)),
-    [setUnknowns],
-  );
-
-  const customField = renderField({
-    schema: fieldSchema,
-    preFieldPath: FieldPath.empty(),
-    disabled: false,
-    unknowns,
-    modifyUnknowns,
-    useSelector,
-  });
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
+    <GenericForm
+      formProps={formProps}
+      dtoClass={ClearCacheRequest}
       onFinish={handleSubmit}
-      initialValues={parentRecord}
-      onValuesChange={handleFormChange}
-    >
-      {customField}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Clear Cache
-        </Button>
-      </Form.Item>
-    </Form>
-  );
+      parentRecord={clearCacheRequest}
+      initialValues={clearCacheRequest}
+    />
+  )
 };
