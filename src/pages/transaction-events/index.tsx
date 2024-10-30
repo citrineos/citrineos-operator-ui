@@ -8,7 +8,7 @@ import {
 } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { TransactionEventListQuery } from '../../graphql/types';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../components';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   TRANSACTION_EVENT_CREATE_MUTATION,
@@ -46,11 +46,6 @@ export const TransactionEventList = (props: IDataModelListProps) => {
   });
 
   return (
-    // <DataModelTable<TransactionEvent, TransactionEventListQuery>
-    //   tableProps={tableProps}
-    //   columns={TRANSACTION_EVENT_COLUMNS(!props.hideActions, props.parentView)}
-    //   hideCreateButton={props.hideCreateButton}
-    // />
     <GenericDataTable
       dtoClass={TransactionEvent}
       gqlQueryVariablesMap={{
