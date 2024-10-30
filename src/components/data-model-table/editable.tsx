@@ -54,7 +54,7 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 
-const renderViewContent = (
+export const renderViewContent = (
   field: FieldSchema,
   _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
   record: any, // todo type
