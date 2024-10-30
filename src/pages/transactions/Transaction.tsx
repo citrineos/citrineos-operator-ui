@@ -32,14 +32,20 @@ import {
   TransactionEventProps,
 } from '../transaction-events/TransactionEvent';
 import {
-  TRANSACTION_EVENT_GET_QUERY,
-  TRANSACTION_EVENT_LIST_QUERY,
+  GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
 } from '../transaction-events/queries';
 import { TransformDate } from '../../util/TransformDate';
 import { ClassCustomActions } from '../../util/decorators/ClassCustomActions';
 import { requestStopTransaction } from '../../message/remote-stop';
+import { CustomFormRender } from '../../util/decorators/CustomFormRender';
+import { ValueDisplay } from '../../components/value-display';
+import React from 'react';
+import { Hidden } from '../../util/decorators/Hidden';
+import { Searchable } from '../../util/decorators/Searcheable';
+import { Sortable } from '../../util/decorators/Sortable';
 
 export enum TransactionProps {
+  id = 'id',
   stationId = 'stationId',
   evseDatabaseId = 'evseDatabaseId',
   transactionId = 'transactionId',
@@ -49,6 +55,7 @@ export enum TransactionProps {
   totalKwh = 'totalKwh',
   stoppedReason = 'stoppedReason',
   remoteStartId = 'remoteStartId',
+  events = 'events',
   // customData = 'customData',
 }
 
@@ -58,7 +65,7 @@ export enum TransactionProps {
 @ClassGqlCreateMutation(TRANSACTION_CREATE_MUTATION)
 @ClassGqlEditMutation(TRANSACTION_EDIT_MUTATION)
 @ClassGqlDeleteMutation(TRANSACTION_DELETE_MUTATION)
-@PrimaryKeyFieldName(TransactionProps.transactionId)
+@PrimaryKeyFieldName(TransactionProps.id)
 @ClassCustomActions([
   {
     label: 'Remote Stop',
@@ -75,10 +82,16 @@ export enum TransactionProps {
   },
 ])
 export class Transaction {
+  @Hidden()
+  id!: number;
+
+  @Searchable()
+  @Sortable()
   @IsString()
   @IsNotEmpty()
   transactionId!: string;
 
+  @Searchable()
   @IsString()
   @IsNotEmpty()
   stationId!: string;
@@ -96,13 +109,15 @@ export class Transaction {
   @ValidateNested({ each: true })
   @FieldLabel('Events')
   @GqlAssociation({
-    parentIdFieldName: TransactionProps.transactionId,
-    associatedIdFieldName: TransactionEventProps.id,
-    gqlQuery: TRANSACTION_EVENT_GET_QUERY,
-    gqlListQuery: TRANSACTION_EVENT_LIST_QUERY,
+    parentIdFieldName: TransactionProps.id,
+    associatedIdFieldName: TransactionEventProps.transactionDatabaseId,
+    gqlQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
+    gqlListQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
+    gqlUseQueryVariablesKey: TransactionProps.events
   })
-  TransactionEvent?: TransactionEvent[];
+  events?: TransactionEvent[];
 
+  @Searchable()
   @IsEnum(ChargingStateEnumType)
   @IsOptional()
   chargingState?: ChargingStateEnumType | null;
@@ -113,8 +128,12 @@ export class Transaction {
 
   @IsInt()
   @IsOptional()
+  @CustomFormRender((record: Transaction) => (
+    <ValueDisplay value={record.totalKwh} suffix="kWh" />
+  ))
   totalKwh?: number | null;
 
+  @Searchable()
   @IsEnum(ReasonEnumType)
   @IsOptional()
   stoppedReason?: ReasonEnumType | null;
