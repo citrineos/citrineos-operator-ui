@@ -20,8 +20,12 @@ export class BaseRestClient {
   private axiosInstance!: AxiosInstance;
   private _baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
 
-  constructor() {
-    this.initAxiosInstance();
+  constructor(dataBaseUrl = false) {
+    if (dataBaseUrl) {
+      this.setDataBaseUrl();
+    } else {
+      this.initAxiosInstance();
+    }
   }
 
   get baseUrl(): string {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, notification, Select, Spin } from 'antd';
+import { Button, Form, Select, Spin } from 'antd';
 import { GET_ACTIVE_TRANSACTIONS } from './queries';
 import { useCustom } from '@refinedev/core';
-import { BaseRestClient } from '../../util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { triggerMessageAndHandleResponse } from '../util';
 
 const GRAPHQL_ENDPOINT_URL = import.meta.env.VITE_API_URL;
 
@@ -17,43 +17,14 @@ export const requestStopTransaction = async (
   transactionId: string,
   setLoading: (loading: boolean) => void,
 ) => {
-  try {
-    setLoading(true);
-    const payload = { transactionId };
-    const client = new BaseRestClient();
-    const response = await client.post(
-      `/evdriver/requestStopTransaction?identifier=${stationId}&tenantId=1`,
-      MessageConfirmation,
-      {},
-      payload,
-    );
-
-    if (response && response.success) {
-      notification.success({
-        message: 'Success',
-        description: 'The stop transaction request was successful.',
-        placement: 'topRight',
-      });
-    } else {
-      notification.error({
-        message: 'Request Failed',
-        description:
-          'The stop transaction request did not receive a successful response. Response: ' +
-          JSON.stringify(response),
-        placement: 'topRight',
-      });
-    }
-  } catch (error: any) {
-    const msg = `Could not perform request stop transaction, got error: ${error.message}`;
-    console.error(msg, error);
-    notification.error({
-      message: 'Error',
-      description: msg,
-      placement: 'topRight',
-    });
-  } finally {
-    setLoading(false);
-  }
+  await triggerMessageAndHandleResponse({
+    url: `/evdriver/requestStopTransaction?identifier=${stationId}&tenantId=1`,
+    responseClass: MessageConfirmation,
+    data: { transactionId },
+    responseSuccessCheck: (response: MessageConfirmation) =>
+      response && response.success,
+    setLoading,
+  });
 };
 
 export const RemoteStop: React.FC<RemoteStopProps> = ({ station }) => {
