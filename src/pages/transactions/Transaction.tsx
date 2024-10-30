@@ -38,6 +38,9 @@ import {
 import { TransformDate } from '../../util/TransformDate';
 import { ClassCustomActions } from '../../util/decorators/ClassCustomActions';
 import { requestStopTransaction } from '../../message/remote-stop';
+import { CustomFormRender } from '../../util/decorators/CustomFormRender';
+import { ValueDisplay } from '../../components/value-display';
+import React from 'react';
 
 export enum TransactionProps {
   stationId = 'stationId',
@@ -113,6 +116,9 @@ export class Transaction {
 
   @IsInt()
   @IsOptional()
+  @CustomFormRender((record: Transaction) => (
+    <ValueDisplay value={record.totalKwh} suffix="kWh" />
+  ))
   totalKwh?: number | null;
 
   @IsEnum(ReasonEnumType)
