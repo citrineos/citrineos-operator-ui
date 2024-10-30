@@ -85,12 +85,13 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({
       };
     }
 
-    await triggerMessageAndHandleResponse(
-      `/transactions/getTransactionStatus?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      data,
-      (response: MessageConfirmation) => response && response.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/transactions/getTransactionStatus?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: data,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
+    });
   };
 
   const getTransactionStatusRequest = new GetTransactionStatusRequest();

@@ -5,10 +5,7 @@ import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
 import { ClearCache, ClearCacheProps } from './clear-cache';
-import {
-  ChangeAvailability,
-  ChangeAvailabilityProps,
-} from './change-availability';
+import { ChangeAvailability } from './change-availability';
 import { GetLog, GetLogProps } from './get-log';
 import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
@@ -45,6 +42,7 @@ import {
   UpdateAuthPasswordProps,
 } from './update-auth-password';
 import { DeleteCertificate } from './delete-certificate';
+import { ChangeAvailabilityProps } from './change-availability/model';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;

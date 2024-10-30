@@ -40,7 +40,7 @@ export const TransactionList = () => {
         gqlQueryVariablesMap={{
           [TransactionProps.events]: (transaction: Transaction) => ({
             transactionDatabaseId: transaction.id,
-          })
+          }),
         }}
       />
     </>

@@ -1,4 +1,4 @@
-import { plainToInstance, Type } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { IsNotEmpty } from 'class-validator';
 import { GenericForm } from '../../components/form';

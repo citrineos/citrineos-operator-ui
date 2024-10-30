@@ -41,7 +41,9 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     const data: any = {
       operationalStatus:
         classInstance[ChangeAvailabilityRequestProps.operationalStatus],
-      customData: classInstance[ChangeAvailabilityRequestProps.customData],
+      customData: (classInstance as any)[
+        ChangeAvailabilityRequestProps.customData
+      ],
     };
 
     if (evse && evse[EvseProps.id]) {

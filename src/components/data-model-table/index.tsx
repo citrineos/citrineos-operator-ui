@@ -27,7 +27,7 @@ export const DataModelTable = <T extends AnyObject, U extends BaseRecord>(
 ) => {
   const { tableProps, columns, hideCreateButton } = props;
 
-  const mappedColumns = columns.map((column: ColumnType<T>, index: number) => (
+  const mappedColumns = columns.map((column: ColumnType<T>, _index: number) => (
     <Table.Column
       key={column.dataIndex as string}
       {...column}

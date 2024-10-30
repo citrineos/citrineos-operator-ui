@@ -120,12 +120,13 @@ export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
           }) as any,
       );
       const payload = { setVariableData: data };
-      await triggerMessageAndHandleResponse(
-        `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
-        MessageConfirmation,
-        payload,
-        (response: MessageConfirmation) => response && response.success,
-      );
+      await triggerMessageAndHandleResponse({
+        url: `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
+        responseClass: MessageConfirmation,
+        data: payload,
+        responseSuccessCheck: (response: MessageConfirmation) =>
+          response && response.success,
+      });
     }
   };
 
