@@ -6,7 +6,7 @@ import {
   GenericView,
   GenericViewState,
 } from '../../components/view';
-import { Transaction, TransactionProps } from './Transaction';
+import { Transaction } from './Transaction';
 import {
   TRANSACTION_CREATE_MUTATION,
   TRANSACTION_DELETE_MUTATION,
@@ -35,14 +35,7 @@ export const TransactionView: React.FC = () => {
 export const TransactionList = () => {
   return (
     <>
-      <GenericDataTable
-        dtoClass={Transaction}
-        gqlQueryVariablesMap={{
-          [TransactionProps.events]: (transaction: Transaction) => ({
-            transactionDatabaseId: transaction.id,
-          })
-        }}
-      />
+      <GenericDataTable dtoClass={Transaction} />
     </>
   );
 };

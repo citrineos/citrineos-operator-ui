@@ -18,6 +18,7 @@ import {
   UnknownsActions,
 } from '../../components/form/state/unknowns';
 import { StatusInfoType } from '../model/StatusInfoType';
+import { useSelector } from 'react-redux';
 
 export enum ClearCacheRequestProps {
   customData = 'customData',
@@ -92,6 +93,7 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
     disabled: false,
     unknowns,
     modifyUnknowns,
+    useSelector,
   });
 
   return (

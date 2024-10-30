@@ -92,10 +92,6 @@ import {
   routes as TransactionsRoutes,
 } from './pages/transactions';
 import {
-  resources as transactionEventsResources,
-  routes as TransactionEventsRoutes,
-} from './pages/transaction-events';
-import {
   resources as meterValuesResources,
   routes as MeterValuesRoutes,
 } from './pages/meter-values';
@@ -228,7 +224,6 @@ const resources = [
   ...tariffsResources,
   ...subscriptionsResources,
   ...transactionsResources,
-  ...transactionEventsResources,
   ...meterValuesResources,
   ...chargingProfilesResources,
   ...messageInfosResources,
@@ -346,10 +341,6 @@ function App() {
                     <Route
                       path="/transactions/*"
                       element={<TransactionsRoutes />}
-                    />
-                    <Route
-                      path="/transaction-events/*"
-                      element={<TransactionEventsRoutes />}
                     />
                     <Route
                       path="/meter-values/*"

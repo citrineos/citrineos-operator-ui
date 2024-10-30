@@ -146,7 +146,7 @@ export const GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY = gql`
       limit: $limit
       order_by: $order_by
       where: {
-        transactionDatabaseId: { _eq: $transactionDatabaseId },
+        transactionDatabaseId: { _eq: $transactionDatabaseId }
         _and: [$where]
       }
     ) {
@@ -167,9 +167,9 @@ export const GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY = gql`
       timestamp
       updatedAt
     }
-    TransactionEvents_aggregate(      
+    TransactionEvents_aggregate(
       where: {
-        transactionDatabaseId: { _eq: $transactionDatabaseId },
+        transactionDatabaseId: { _eq: $transactionDatabaseId }
         _and: [$where]
       }
     ) {

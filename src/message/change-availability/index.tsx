@@ -20,6 +20,7 @@ import { triggerMessageAndHandleResponse } from '../util';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { useSelector } from 'react-redux';
 
 enum ChangeAvailabilityRequestProps {
   customData = 'customData',
@@ -109,6 +110,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     schema: fieldSchema,
     preFieldPath: FieldPath.empty(),
     disabled: false,
+    useSelector,
   });
 
   return (

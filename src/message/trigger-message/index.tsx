@@ -45,7 +45,9 @@ export class TriggerMessageRequest {
     associatedIdFieldName: ChargingStationProps.id,
     gqlQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
     gqlListQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
-    gqlUseQueryVariablesKey: TriggerMessageRequestProps.chargingStation,
+    getGqlQueryVariables: (_: TriggerMessageRequest) => ({
+      [EvseProps.databaseId]: 1,
+    }),
   })
   @Type(() => ChargingStation)
   @IsNotEmpty()
@@ -57,7 +59,12 @@ export class TriggerMessageRequest {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: TriggerMessageRequestProps.evse,
+    getGqlQueryVariables: (_: TriggerMessageRequest, selector: any) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Evse)
   @IsNotEmpty()
@@ -151,17 +158,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     );
   };
 
-  const qglQueryVariablesMap = {
-    [TriggerMessageRequestProps.evse]: {
-      stationId: stationId,
-    },
-    [TriggerMessageRequestProps.chargingStation]: {
-      [EvseProps.databaseId]: 1,
-    },
-  };
-
-  console.log('parent record', parentRecord);
-
   return (
     <GenericForm
       formProps={formProps}
@@ -169,7 +165,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       onFinish={handleSubmit}
       parentRecord={parentRecord}
       initialValues={parentRecord}
-      gqlQueryVariablesMap={qglQueryVariablesMap}
     />
   );
 };
