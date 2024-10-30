@@ -43,6 +43,7 @@ import { ValueDisplay } from '../../components/value-display';
 import React from 'react';
 
 export enum TransactionProps {
+  id = 'id',
   stationId = 'stationId',
   evseDatabaseId = 'evseDatabaseId',
   transactionId = 'transactionId',
@@ -61,7 +62,7 @@ export enum TransactionProps {
 @ClassGqlCreateMutation(TRANSACTION_CREATE_MUTATION)
 @ClassGqlEditMutation(TRANSACTION_EDIT_MUTATION)
 @ClassGqlDeleteMutation(TRANSACTION_DELETE_MUTATION)
-@PrimaryKeyFieldName(TransactionProps.transactionId)
+@PrimaryKeyFieldName(TransactionProps.id)
 @ClassCustomActions([
   {
     label: 'Remote Stop',
