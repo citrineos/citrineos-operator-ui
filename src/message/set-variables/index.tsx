@@ -53,7 +53,6 @@ class SetVariablesData {
     associatedIdFieldName: ComponentProps.id,
     gqlQuery: COMPONENT_LIST_QUERY,
     gqlListQuery: COMPONENT_LIST_QUERY,
-    gqlUseQueryVariablesKey: SetVariablesDataProps.component,
   })
   @Type(() => Component)
   @IsNotEmpty()
@@ -64,7 +63,6 @@ class SetVariablesData {
     associatedIdFieldName: VariableProps.id,
     gqlQuery: VARIABLE_LIST_QUERY,
     gqlListQuery: VARIABLE_LIST_QUERY,
-    gqlUseQueryVariablesKey: SetVariablesDataProps.variable,
   })
   @Type(() => Variable)
   @IsNotEmpty()
@@ -120,12 +118,13 @@ export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
           }) as any,
       );
       const payload = { setVariableData: data };
-      await triggerMessageAndHandleResponse(
-        `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
-        MessageConfirmation,
-        payload,
-        (response: MessageConfirmation) => response && response.success,
-      );
+      await triggerMessageAndHandleResponse({
+        url: `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
+        responseClass: MessageConfirmation,
+        data: payload,
+        responseSuccessCheck: (response: MessageConfirmation) =>
+          response && response.success,
+      });
     }
   };
 
