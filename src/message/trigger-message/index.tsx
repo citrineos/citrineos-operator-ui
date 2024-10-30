@@ -82,6 +82,11 @@ const TriggerMessageRequestWithoutEvse = createClassWithoutProperty(
   TriggerMessageRequestProps.evse,
 );
 
+const TriggerMessageRequestWithoutStation = createClassWithoutProperty(
+  TriggerMessageRequest,
+  TriggerMessageRequestProps.chargingStation,
+);
+
 export const TriggerMessage: React.FC<TriggerMessageProps> = ({
   station,
   evse,
@@ -99,8 +104,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     : station
       ? station.id
       : undefined;
-
-  console.log('selected stationId', stationId);
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
@@ -120,7 +123,9 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
-    : TriggerMessageRequest;
+    : stationId
+      ? TriggerMessageRequestWithoutStation
+      : TriggerMessageRequest;
   const parentRecord = evse
     ? triggerMessageRequestWithoutEvse
     : triggerMessageRequest;
@@ -135,7 +140,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: classInstance[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+    if (evse && evse[EvseProps.id]) {
       data.evse = {
         id: evse[EvseProps.id],
         // customData: todo,
@@ -160,8 +165,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       [EvseProps.databaseId]: 1,
     },
   };
-
-  console.log('parent record', parentRecord);
 
   return (
     <GenericForm

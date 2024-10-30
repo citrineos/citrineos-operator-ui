@@ -36,7 +36,7 @@ export class CustomerInformationRequest {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @GqlAssociation({
     parentIdFieldName: ID_TOKEN_FIELD,

@@ -5,7 +5,11 @@ import { EvseProps } from '../../pages/evses/Evse';
 import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../util';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { ChangeAvailabilityProps, ChangeAvailabilityRequest, ChangeAvailabilityRequestProps } from './model';
+import {
+  ChangeAvailabilityProps,
+  ChangeAvailabilityRequest,
+  ChangeAvailabilityRequestProps,
+} from './model';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
@@ -40,11 +44,13 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       customData: classInstance[ChangeAvailabilityRequestProps.customData],
     };
 
-    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+    if (evse && evse[EvseProps.id]) {
       data[ChangeAvailabilityRequestProps.evse] = {
         id: evse[EvseProps.id],
         // customData: todo,
-        ...(evse[EvseProps.connectorId] ? {connectorId: evse[EvseProps.connectorId]} : {}),
+        ...(evse[EvseProps.connectorId]
+          ? { connectorId: evse[EvseProps.connectorId] }
+          : {}),
       };
     }
 
@@ -60,9 +66,8 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   const qglQueryVariablesMap = {
     [ChangeAvailabilityRequestProps.evse]: {
       stationId: stationId,
-    }
+    },
   };
-
 
   return (
     <GenericForm
