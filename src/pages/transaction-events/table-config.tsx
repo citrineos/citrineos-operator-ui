@@ -38,7 +38,7 @@ export const TRANSACTION_EVENT_COLUMNS = (
       dataIndex: 'transactionDatabaseId',
       title: 'Transaction ID',
       sorter: true,
-      render: renderAssociatedTransactionId as any,
+      render: (_: any, record: any) => renderAssociatedTransactionId(_, record),
     },
     {
       dataIndex: 'evseId', // todo enhance
