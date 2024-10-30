@@ -28,8 +28,8 @@ import { Dayjs } from 'dayjs';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
-import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
-import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens/queries';
+import { IdToken, IdTokenProps } from '../../pages/id-tokens-old/IdToken';
+import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens-old/queries';
 
 export class IdTokenType {
   @IsString()

@@ -37,13 +37,7 @@ import {
   IdTokenInfosEdit,
   IdTokenInfosList,
   IdTokenInfosShow,
-} from './pages/id-token-infos';
-import {
-  IdTokensCreate,
-  IdTokensEdit,
-  IdTokensList,
-  IdTokensShow,
-} from './pages/id-tokens';
+} from './pages/id-token-infos-old';
 import { App as AntdApp, ConfigProvider } from 'antd';
 import {
   AuthorizationsCreate,
@@ -52,6 +46,14 @@ import {
   AuthorizationsShow,
 } from './pages/authorizations';
 import { ResourceType } from './resource-type';
+import {
+  resources as IdTokenResources,
+  routes as IdTokenRoutes,
+} from './pages/id-tokens';
+import {
+  resources as IdTokenInfosResources,
+  routes as IdTokenInfosRoutes,
+} from './pages/id-tokens-infos';
 import {
   resources as bootsResources,
   routes as BootsRoutes,
@@ -110,7 +112,6 @@ import {
 import {
   AuditOutlined,
   ContactsOutlined,
-  ContainerOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import React from 'react';
@@ -177,28 +178,6 @@ const resources = [
     icon: <ExclamationCircleOutlined />,
   },
   {
-    name: ResourceType.ID_TOKENS,
-    list: '/id-tokens',
-    create: '/id-tokens/create',
-    edit: '/id-tokens/edit/:id',
-    show: '/id-tokens/show/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <ContainerOutlined />,
-  },
-  {
-    name: ResourceType.ID_TOKEN_INFOS,
-    list: '/id-token-infos',
-    create: '/id-token-infos/create',
-    edit: '/id-token-infos/edit/:id',
-    show: '/id-token-infos/show/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <AuditOutlined />,
-  },
-  {
     name: ResourceType.AUTHORIZATIONS,
     list: '/authorizations',
     create: '/authorizations/create',
@@ -220,6 +199,8 @@ const resources = [
     },
     icon: <MdOutlineSecurity />,
   },
+  ...IdTokenInfosResources,
+  ...IdTokenResources,
   ...bootsResources,
   ...chargingStationsResources,
   ...chargingStationSequencesResources,
@@ -300,18 +281,8 @@ function App() {
                         element={<AdditionalInfosShow />}
                       />
                     </Route>
-                    <Route path="/id-tokens">
-                      <Route index element={<IdTokensList />} />
-                      <Route path="create" element={<IdTokensCreate />} />
-                      <Route path="edit/:id" element={<IdTokensEdit />} />
-                      <Route path="show/:id" element={<IdTokensShow />} />
-                    </Route>
-                    <Route path="/id-token-infos">
-                      <Route index element={<IdTokenInfosList />} />
-                      <Route path="create" element={<IdTokenInfosCreate />} />
-                      <Route path="edit/:id" element={<IdTokenInfosEdit />} />
-                      <Route path="show/:id" element={<IdTokenInfosShow />} />
-                    </Route>
+                    <Route path="/id-tokens/*" element={<IdTokenRoutes />} />
+                    <Route path="/id-token-infos/*" element={<IdTokenInfosRoutes />} />
                     <Route path="/authorizations">
                       <Route index element={<AuthorizationsList />} />
                       <Route path="create" element={<AuthorizationsCreate />} />

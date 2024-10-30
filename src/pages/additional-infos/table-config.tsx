@@ -7,7 +7,7 @@ import { AdditionalInfos } from '../../graphql/schema.types';
 import { ResourceType } from '../../resource-type';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { IdTokensList } from '../id-tokens';
+import { IdTokensList } from '../id-tokens-old';
 
 export const ADDITIONAL_INFOS_COLUMNS = (
   withActions: boolean,

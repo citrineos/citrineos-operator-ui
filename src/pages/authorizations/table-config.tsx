@@ -4,8 +4,8 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { AUTHORIZATIONS_DELETE_MUTATION } from './queries';
 import { TagList } from '../../components/data-model-table/tag-list';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { IdTokensList } from '../id-tokens';
-import { IdTokenInfosList } from '../id-token-infos';
+import { IdTokensList } from '../id-tokens-old';
+import { IdTokenInfosList } from '../id-token-infos-old';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ResourceType } from '../../resource-type';
 

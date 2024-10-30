@@ -422,6 +422,12 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             ),
           };
         }
+        else {
+          (meta as any).variables = {
+            id: id,
+            object: valuesClass,
+          };
+        }
         await mutate({
           meta,
         } as any);
@@ -498,8 +504,8 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             dtoClass={dtoClass}
             onEdit={
               editable &&
-              !isCurrentlyEditing &&
-              record[primaryKeyFieldName] !== NEW_IDENTIFIER
+                !isCurrentlyEditing &&
+                record[primaryKeyFieldName] !== NEW_IDENTIFIER
                 ? onEdit
                 : undefined
             }
@@ -590,8 +596,8 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                       }}
                       customActions={
                         fieldAnnotations &&
-                        fieldAnnotations[field.name] &&
-                        fieldAnnotations[field.name].customActions
+                          fieldAnnotations[field.name] &&
+                          fieldAnnotations[field.name].customActions
                           ? fieldAnnotations![field.name].customActions
                           : field.customActions
                       }
@@ -661,8 +667,8 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
                       }}
                       customActions={
                         fieldAnnotations &&
-                        fieldAnnotations[field.name] &&
-                        fieldAnnotations[field.name].customActions
+                          fieldAnnotations[field.name] &&
+                          fieldAnnotations[field.name].customActions
                           ? fieldAnnotations![field.name].customActions
                           : field.customActions
                       }
