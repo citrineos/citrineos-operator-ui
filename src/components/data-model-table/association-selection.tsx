@@ -177,13 +177,15 @@ export const AssociationSelection = <
         if (
           !queryResult.data?.data.some(
             (item) =>
-              item[primaryKeyFieldName] === selection[primaryKeyFieldName],
+              item[primaryKeyFieldName] ===
+              (selection as any)[primaryKeyFieldName],
           ) &&
           !newSelections.some(
-            (item) =>
-              item[primaryKeyFieldName] === selection[primaryKeyFieldName],
+            (item: any) =>
+              item[primaryKeyFieldName] ===
+              (selection as any)[primaryKeyFieldName],
           ) &&
-          selection[primaryKeyFieldName] !== NEW_IDENTIFIER
+          (selection as any)[primaryKeyFieldName] !== NEW_IDENTIFIER
         ) {
           newSelections.push(selection);
         }

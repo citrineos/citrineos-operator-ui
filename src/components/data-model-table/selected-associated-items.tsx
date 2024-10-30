@@ -4,17 +4,31 @@ import { renderViewContent } from './editable';
 import { setSelectedAssociatedItems } from '../../redux/selectionSlice';
 import { instanceToPlain } from 'class-transformer';
 import { Table } from 'antd';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
-export const SelectedAssociatedItems = ({
-  selectedItems,
-  dtoClass,
-  associatedRecordResourceType,
-  dispatch,
-  setSelectedRows,
-  onChange,
-  storageKey,
-}) => {
-  if (!selectedItems || selectedItems.length === 0) return null;
+export interface SelectedAssociatedItems<Model> {
+  selectedItems: Model[];
+  dtoClass: Model;
+  associatedRecordResourceType: ResponseType;
+  dispatch: any;
+  setSelectedRows: any;
+  onChange: any;
+  storageKey: any;
+}
+
+export const SelectedAssociatedItems = <Model,>(
+  props: SelectedAssociatedItems<Model>,
+) => {
+  const {
+    selectedItems,
+    dtoClass,
+    associatedRecordResourceType,
+    dispatch,
+    setSelectedRows,
+    onChange,
+    storageKey,
+  } = props;
+
   const schema: FieldSchema[] = useMemo(
     () => extractSchema(dtoClass),
     [dtoClass],
@@ -55,7 +69,7 @@ export const SelectedAssociatedItems = ({
     [dispatch, onChange, storageKey],
   );
 
-  const rowSelection = useMemo(() => {
+  const rowSelection: TableRowSelection<Model> = useMemo(() => {
     return {
       selectedRowKeys: Array.from(
         { length: selectedItems.length },
@@ -74,6 +88,8 @@ export const SelectedAssociatedItems = ({
       };
     });
   }, [selectedItems]);
+
+  if (!selectedItems || selectedItems.length === 0) return null;
 
   return (
     <>
