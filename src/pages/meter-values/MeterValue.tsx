@@ -22,7 +22,6 @@ import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { SampledValuesListView } from './sampled-value';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { Sortable } from '../../util/decorators/Sortable';
-import { Searchable } from '../../util/decorators/Searcheable';
 
 export enum MeterValueProps {
   id = 'id',

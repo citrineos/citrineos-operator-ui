@@ -55,6 +55,7 @@ export enum TransactionProps {
   totalKwh = 'totalKwh',
   stoppedReason = 'stoppedReason',
   remoteStartId = 'remoteStartId',
+  events = 'events',
   // customData = 'customData',
 }
 
@@ -112,9 +113,9 @@ export class Transaction {
     associatedIdFieldName: TransactionEventProps.transactionDatabaseId,
     gqlQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
     gqlListQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
-    gqlUseQueryVariablesKey: TransactionEventProps.transactionDatabaseId
+    gqlUseQueryVariablesKey: TransactionProps.events
   })
-  TransactionEvent?: TransactionEvent[];
+  events?: TransactionEvent[];
 
   @Searchable()
   @IsEnum(ChargingStateEnumType)

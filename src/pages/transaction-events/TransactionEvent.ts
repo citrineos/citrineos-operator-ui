@@ -77,6 +77,7 @@ export enum TransactionEventProps {
   transactionInfo = 'transactionInfo',
   evseId = 'evseId',
   idTokenId = 'idTokenId',
+  meterValues = 'meterValues'
 }
 
 @ClassResourceType(ResourceType.TRANSACTION_EVENTS)
@@ -116,9 +117,9 @@ export class TransactionEvent extends BaseModel {
     associatedIdFieldName: MeterValueProps.transactionEventId,
     gqlQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
     gqlListQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
-    gqlUseQueryVariablesKey: MeterValueProps.transactionEventId
+    gqlUseQueryVariablesKey: TransactionEventProps.meterValues
   })
-  MeterValues?: MeterValue[];
+  meterValues?: MeterValue[];
 
   @TransformDate()
   @IsNotEmpty()

@@ -6,22 +6,16 @@ import {
   GenericView,
   GenericViewState,
 } from '../../components/view';
-import { useTable } from '@refinedev/antd';
-import { TransactionEventListQuery } from '../../graphql/types';
-import { IDataModelListProps } from '../../components';
-import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   TRANSACTION_EVENT_CREATE_MUTATION,
   TRANSACTION_EVENT_DELETE_MUTATION,
   TRANSACTION_EVENT_EDIT_MUTATION,
   TRANSACTION_EVENT_GET_QUERY,
-  TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
-import { TransactionEvent } from './TransactionEvent';
+import { TransactionEvent, TransactionEventProps } from './TransactionEvent';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MdOutlineEventRepeat } from 'react-icons/md';
 import { GenericDataTable } from '../../components/data-model-table/editable';
-import { MeterValueProps } from '../meter-values/MeterValue';
 
 export const TransactionEventView: React.FC = () => {
   return (
@@ -35,21 +29,12 @@ export const TransactionEventView: React.FC = () => {
   );
 };
 
-export const TransactionEventList = (props: IDataModelListProps) => {
-  const { tableProps } = useTable<TransactionEventListQuery>({
-    resource: ResourceType.TRANSACTION_EVENTS,
-    sorters: DEFAULT_SORTERS,
-    filters: props.filters,
-    metaData: {
-      gqlQuery: TRANSACTION_EVENT_LIST_QUERY,
-    },
-  });
-
+export const TransactionEventList = () => {
   return (
     <GenericDataTable
       dtoClass={TransactionEvent}
       gqlQueryVariablesMap={{
-        [MeterValueProps.transactionEventId]: (event: TransactionEvent) => ({
+        [TransactionEventProps.meterValues]: (event: TransactionEvent) => ({
           transactionEventId: event.id,
         }),
       }}
