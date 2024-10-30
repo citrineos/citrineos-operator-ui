@@ -157,3 +157,16 @@ main {
     transform 300ms ease,
     opacity 300ms ease;
 }
+
+.chart-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 400px;
+  background: var(--ant-color-primary-bg);
+  margin: var(--ant-margin-xs);
+
+  text {
+    fill: var(--ant-color-text-base);
+  }
+}

@@ -22,7 +22,7 @@ export enum LogParametersTypeProps {
 export class LogParametersType {
   // @Type(() => CustomDataType)
   // @IsOptional()
-  // customData: CustomDataType | null = null;
+  // customData?: CustomDataType | null;
 
   @IsNotEmpty()
   @IsUrl({ require_tld: false })
@@ -66,7 +66,7 @@ export enum GetLogRequestProps {
 export class GetLogRequest {
   // @Type(() => CustomDataType)
   // @IsOptional()
-  // customData: CustomDataType | null = null;
+  // customData?: CustomDataType | null;
 
   @Type(() => LogParametersType)
   @ValidateNested()

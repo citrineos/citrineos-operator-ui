@@ -10,9 +10,10 @@ import type {
 } from '../../graphql/types';
 import type { GetFields, GetVariables } from '@refinedev/hasura';
 import { AUTHORIZATIONS_CREATE_MUTATION } from './queries';
+import { Authorizations_Insert_Input, Exact } from '../../graphql/schema.types';
 
 export const AuthorizationsCreate = () => {
-  const { formProps, saveButtonProps } = useForm<
+  const { formProps, onFinish, saveButtonProps } = useForm<
     GetFields<AuthorizationsCreateMutation>,
     HttpError,
     GetVariables<AuthorizationsCreateMutationVariables>
@@ -22,9 +23,21 @@ export const AuthorizationsCreate = () => {
     },
   });
 
+  const onFinishAddTimestamp = (
+    values: GetVariables<
+      Exact<{
+        object: Authorizations_Insert_Input;
+      }>
+    >,
+  ) => {
+    values.createdAt = new Date();
+    values.updatedAt = values.createdAt;
+    return onFinish(values);
+  };
+
   return (
     <Create saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+      <Form {...formProps} onFinish={onFinishAddTimestamp} layout="vertical">
         <Form.Item label="Allowed Connector Types" name="allowedConnectorTypes">
           <Select mode="multiple">
             <Select.Option value="Type1">Type 1</Select.Option>

@@ -56,7 +56,6 @@ const GetVariablesDataCustomConstructor = () => {
   const evse = new Evse();
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  evse[EvseProps.databaseId] = NEW_IDENTIFIER as unknown as number;
   const getVariablesData = new GetVariablesData();
   getVariablesData[GetVariablesDataProps.component] = component;
   getVariablesData[GetVariablesDataProps.variable] = variable;
@@ -114,10 +113,11 @@ export class GetVariablesData {
     },
   })
   @Type(() => Evse)
-  @IsNotEmpty()
-  evse!: Evse | null;
+  @IsOptional()
+  evse?: Evse | null;
 
   @IsEnum(AttributeEnumType)
+  @IsOptional()
   attributeType?: AttributeEnumType | null;
 }
 
@@ -216,11 +216,13 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
           return {
             component: {
               name: component[ComponentProps.name],
-              evse: {
-                id: evse[EvseProps.databaseId],
-                connectorId: evse[EvseProps.connectorId],
-                // customData: null // todo
-              },
+              evse: evse[EvseProps.databaseId]
+                ? {
+                    id: evse[EvseProps.databaseId],
+                    connectorId: evse[EvseProps.connectorId],
+                    // customData: null // todo
+                  }
+                : undefined,
               instance: item[GetVariablesDataProps.componentInstance],
               // customData: null // todo
             },
@@ -238,12 +240,12 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       }),
       // customData: null // todo
     };
-    await triggerMessageAndHandleResponse(
-      `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
-      GetVariablesResponse,
-      getVariablesRequest,
-      (response: GetVariablesResponse) => !!response,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
+      responseClass: GetVariablesResponse,
+      data: getVariablesRequest,
+      responseSuccessCheck: (response: GetVariablesResponse) => !!response,
+    });
   };
 
   return (

@@ -65,15 +65,15 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
       connectorId:
         plainValues[UnlockConnectorRequestProps.evseId][EvseProps.connectorId],
     };
-    await triggerMessageAndHandleResponse(
-      `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
-      UnlockConnectorResponse,
-      data,
-      (response: UnlockConnectorResponse) =>
+    await triggerMessageAndHandleResponse({
+      url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
+      responseClass: UnlockConnectorResponse,
+      data: data,
+      responseSuccessCheck: (response: UnlockConnectorResponse) =>
         response &&
         response.status &&
         response.status === UnlockStatusEnumType.Unlocked,
-    );
+    });
   };
 
   const [parentRecord, setParentRecord] = useState(

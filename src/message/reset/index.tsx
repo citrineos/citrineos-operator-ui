@@ -64,12 +64,13 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
   const handleSubmit = async (request: ResetData) => {
     const data = { type: request.type, evseId: request.evse?.id };
 
-    triggerMessageAndHandleResponse(
-      `/configuration/reset?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      data,
-      (response: MessageConfirmation) => response?.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: data,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response?.success,
+    });
   };
 
   return (

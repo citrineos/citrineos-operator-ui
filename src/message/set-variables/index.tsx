@@ -1,7 +1,5 @@
 import React from 'react';
-import { Button, Form, Input, notification } from 'antd';
-import { AssociationSelection } from '../../components/data-model-table/association-selection';
-import { SelectionType } from '../../components/data-model-table/editable';
+import { Form } from 'antd';
 import {
   Variable,
   VariableProps,
@@ -13,36 +11,83 @@ import {
 } from '../../pages/evses/variable-attributes/components/Component';
 import { COMPONENT_LIST_QUERY } from '../../pages/evses/variable-attributes/components/queries';
 import { plainToInstance, Type } from 'class-transformer';
-import { IsString } from 'class-validator';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { NEW_IDENTIFIER } from '../../util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { AttributeEnumType } from '@citrineos/base';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { triggerMessageAndHandleResponse } from '../util';
+import { GenericForm } from '../../components/form';
+import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
+import { NEW_IDENTIFIER } from '../../util/consts';
 
 enum SetVariablesDataProps {
   component = 'component',
   variable = 'variable',
   value = 'value',
+  attributeType = 'attributeType',
 }
 
+const SetVariablesRequestCustomConstructor = () => {
+  const variable = new Variable();
+  const component = new Component();
+  variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
+  component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
+  const setVariablesData = new SetVariablesData();
+  setVariablesData[SetVariablesDataProps.component] = component;
+  setVariablesData[SetVariablesDataProps.variable] = variable;
+  return setVariablesData;
+};
+
+@ClassCustomConstructor(SetVariablesRequestCustomConstructor)
 class SetVariablesData {
+  @GqlAssociation({
+    parentIdFieldName: SetVariablesDataProps.component,
+    associatedIdFieldName: ComponentProps.id,
+    gqlQuery: COMPONENT_LIST_QUERY,
+    gqlListQuery: COMPONENT_LIST_QUERY,
+    gqlUseQueryVariablesKey: SetVariablesDataProps.component,
+  })
   @Type(() => Component)
+  @IsNotEmpty()
   component!: Component;
 
+  @GqlAssociation({
+    parentIdFieldName: SetVariablesDataProps.variable,
+    associatedIdFieldName: VariableProps.id,
+    gqlQuery: VARIABLE_LIST_QUERY,
+    gqlListQuery: VARIABLE_LIST_QUERY,
+    gqlUseQueryVariablesKey: SetVariablesDataProps.variable,
+  })
   @Type(() => Variable)
+  @IsNotEmpty()
   variable!: Variable;
 
   @IsString()
   value!: string;
 
-  constructor() {
-    Object.assign(this, {
-      [SetVariablesDataProps.component]: NEW_IDENTIFIER,
-      [SetVariablesDataProps.variable]: NEW_IDENTIFIER,
-      [SetVariablesDataProps.value]: '',
-    });
-  }
+  @IsEnum(AttributeEnumType)
+  attributeType!: AttributeEnumType;
+}
+
+enum SetVariablesRequestProps {
+  setVariableData = 'setVariableData',
+}
+
+class SetVariablesRequest {
+  @ArrayMinSize(1)
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SetVariablesData)
+  @IsNotEmpty()
+  setVariableData!: SetVariablesData[];
 }
 
 export interface SetVariablesProps {
@@ -51,167 +96,51 @@ export interface SetVariablesProps {
 
 export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
   const [form] = Form.useForm();
+  const formProps = {
+    form,
+  };
 
-  const handleSubmit = async () => {
-    const plainValues = await form.validateFields();
-    const plainList: any[] = plainValues[SET_VARIABLES_DATA];
-    const list: SetVariablesData[] = plainList.map((item: SetVariablesData) =>
-      plainToInstance(SetVariablesData, item),
-    );
-    const data = list.map(
-      (item: SetVariablesData) =>
-        ({
-          attributeValue: item.value,
-          component: {
-            name: item[SetVariablesDataProps.component][ComponentProps.name],
-          },
-          variable: {
-            name: item[SetVariablesDataProps.variable][VariableProps.name],
-          },
-        }) as any,
-    );
-    const payload = { setVariableData: data };
-    const client = new BaseRestClient();
-    const response = await client.post(
-      `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      {},
-      payload,
-    );
-
-    // todo reuse handle response!
-    if (response && response.success) {
-      notification.success({
-        message: 'Success',
-        description: 'The set variables request was successful.',
-        placement: 'topRight',
-      });
-    } else {
-      notification.error({
-        message: 'Request Failed',
-        description:
-          'The set variables request did not receive a successful response.',
-        placement: 'topRight',
-      });
+  const handleSubmit = async (plainValues: Partial<SetVariablesRequest>) => {
+    const plainList = plainValues[SetVariablesRequestProps.setVariableData];
+    if (plainList) {
+      const list: SetVariablesData[] = plainList.map((item: SetVariablesData) =>
+        plainToInstance(SetVariablesData, item),
+      );
+      const data = list.map(
+        (item: SetVariablesData) =>
+          ({
+            attributeValue: item.value,
+            component: {
+              name: item[SetVariablesDataProps.component][ComponentProps.name],
+            },
+            variable: {
+              name: item[SetVariablesDataProps.variable][VariableProps.name],
+            },
+            attributeType: item[SetVariablesDataProps.attributeType],
+          }) as any,
+      );
+      const payload = { setVariableData: data };
+      await triggerMessageAndHandleResponse(
+        `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
+        MessageConfirmation,
+        payload,
+        (response: MessageConfirmation) => response && response.success,
+      );
     }
   };
 
-  const SET_VARIABLES_DATA = 'setVariablesData';
+  const setVariablesRequest = new SetVariablesRequest();
+  setVariablesRequest[SetVariablesRequestProps.setVariableData] = [
+    SetVariablesRequestCustomConstructor(),
+  ];
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
+    <GenericForm
+      formProps={formProps}
+      dtoClass={SetVariablesRequest}
       onFinish={handleSubmit}
-      initialValues={{ [SET_VARIABLES_DATA]: [new SetVariablesData()] }}
-    >
-      <Form.List name={SET_VARIABLES_DATA}>
-        {(fields, { add, remove }) => {
-          return (
-            <>
-              {fields.map((field, index) => (
-                <>
-                  <Form.Item
-                    label={SetVariablesDataProps.component}
-                    name={[index, SetVariablesDataProps.component]}
-                  >
-                    <AssociationSelection
-                      selectable={SelectionType.SINGLE}
-                      parentIdFieldName={SetVariablesDataProps.component}
-                      associatedIdFieldName={ComponentProps.id}
-                      gqlQuery={COMPONENT_LIST_QUERY}
-                      parentRecord={form.getFieldValue([
-                        SET_VARIABLES_DATA,
-                        index,
-                      ])}
-                      associatedRecordClass={Component}
-                      value={form.getFieldValue([
-                        SET_VARIABLES_DATA,
-                        index,
-                        SetVariablesDataProps.component,
-                      ])}
-                      onChange={(newValue: any[]) => {
-                        const currentData: SetVariablesData[] =
-                          form.getFieldValue(SET_VARIABLES_DATA) || [];
-                        currentData[index][SetVariablesDataProps.component] =
-                          newValue[0];
-                        form.setFieldsValue({
-                          [SET_VARIABLES_DATA]: currentData,
-                        });
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label={SetVariablesDataProps.variable}
-                    name={[index, SetVariablesDataProps.variable]}
-                  >
-                    <AssociationSelection
-                      selectable={SelectionType.SINGLE}
-                      parentIdFieldName={SetVariablesDataProps.variable}
-                      associatedIdFieldName={VariableProps.id}
-                      gqlQuery={VARIABLE_LIST_QUERY}
-                      parentRecord={form.getFieldValue([
-                        SET_VARIABLES_DATA,
-                        index,
-                      ])}
-                      associatedRecordClass={Variable}
-                      value={form.getFieldValue([
-                        SET_VARIABLES_DATA,
-                        index,
-                        SetVariablesDataProps.variable,
-                      ])}
-                      onChange={(newValue: any[]) => {
-                        const currentData: SetVariablesData[] =
-                          form.getFieldValue(SET_VARIABLES_DATA) || [];
-                        currentData[index][SetVariablesDataProps.variable] =
-                          newValue[0];
-                        form.setFieldsValue({
-                          [SET_VARIABLES_DATA]: currentData,
-                        });
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Value"
-                    name={[index, SetVariablesDataProps.value]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  {fields.length > 1 && (
-                    <Button
-                      type="dashed"
-                      onClick={() => {
-                        remove(index);
-                      }}
-                      block
-                      icon={<MinusCircleOutlined />}
-                    >
-                      Remove Variable Set
-                    </Button>
-                  )}
-                </>
-              ))}
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => {
-                    add(new SetVariablesData());
-                  }}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Add Variable Set
-                </Button>
-              </Form.Item>
-            </>
-          );
-        }}
-      </Form.List>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Set Variables
-        </Button>
-      </Form.Item>
-    </Form>
+      parentRecord={setVariablesRequest}
+      initialValues={setVariablesRequest}
+    />
   );
 };

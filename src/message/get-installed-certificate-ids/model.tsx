@@ -31,5 +31,5 @@ export class GetInstalledCertificateIdsRequest {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 }
