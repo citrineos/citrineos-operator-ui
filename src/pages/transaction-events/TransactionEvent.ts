@@ -31,6 +31,7 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
+import { Hidden } from '../../util/decorators/Hidden';
 
 export class TransactionType {
   @IsString()
@@ -81,6 +82,7 @@ export enum TransactionEventProps {
 @ClassGqlDeleteMutation(TRANSACTION_EVENT_DELETE_MUTATION)
 @PrimaryKeyFieldName(TransactionEventProps.id)
 export class TransactionEvent extends BaseModel {
+  @Hidden()
   @IsInt()
   @IsNotEmpty()
   id!: number;
@@ -88,6 +90,14 @@ export class TransactionEvent extends BaseModel {
   @IsString()
   @IsNotEmpty()
   stationId!: string;
+
+  @IsOptional()
+  @IsInt()
+  evseId?: number | null;
+
+  @IsString()
+  @IsOptional()
+  transactionDatabaseId?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -121,17 +131,10 @@ export class TransactionEvent extends BaseModel {
   @IsOptional()
   reservationId?: number | null;
 
-  @IsString()
-  @IsOptional()
-  transactionDatabaseId?: string;
-
-  @IsObject()
-  @IsNotEmpty()
-  transactionInfo!: TransactionType;
-
-  @IsOptional()
-  @IsInt()
-  evseId?: number | null;
+  // todo
+  // @IsObject()
+  // @IsNotEmpty()
+  // transactionInfo!: TransactionType;
 
   @IsOptional()
   @IsInt()
