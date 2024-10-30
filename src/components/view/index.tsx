@@ -113,6 +113,7 @@ export const GenericParameterizedView = (
       gqlMutation,
     },
   } as any;
+
   if (resourceType) {
     obj.resource = resourceType;
   }
@@ -193,7 +194,6 @@ export const GenericParameterizedView = (
       updatedAt: new Date().toISOString(),
     } as any);
   };
-  // accorddion, overflow-y
 
   return (
     <WrapperComponent

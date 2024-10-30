@@ -86,15 +86,14 @@ export class ChargingStation extends BaseModel {
   @Type(() => Evse)
   evses?: Evse[];
 
-  @IsArray()
-  @IsOptional()
-  @GqlAssociation({
-    parentIdFieldName: ChargingStationProps.id,
-    associatedIdFieldName: TransactionProps.transactionId,
-    gqlQuery: GET_TRANSACTIONS_FOR_STATION,
-    gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: ChargingStationProps.transactions,
-  })
+  // @IsArray()
+  // @IsOptional()
+  // @GqlAssociation({
+  //   parentIdFieldName: ChargingStationProps.id,
+  //   associatedIdFieldName: TransactionProps.transactionId,
+  //   gqlQuery: GET_TRANSACTIONS_FOR_STATION,
+  //   gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
+  //   gqlUseQueryVariablesKey: ChargingStationProps.transactions,
   @Type(() => Transaction)
   transactions?: Transaction[];
 
