@@ -84,3 +84,41 @@ export const METER_VALUE_DELETE_MUTATION = gql`
     }
   }
 `;
+
+export const GET_METER_VALUES_FOR_TRANSACTION_EVENT = gql`
+  query MeterValueList(
+    $transactionEventId: Int!
+    $offset: Int!
+    $limit: Int!
+    $order_by: [MeterValues_order_by!]
+    $where: MeterValues_bool_exp! = []
+  ) {
+    MeterValues(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: {
+        transactionEventId: { _eq: $transactionEventId },
+        _and: [$where]
+      }
+    ) {
+      id
+      transactionDatabaseId
+      transactionEventId
+      sampledValue
+      timestamp
+      createdAt
+      updatedAt
+    }
+    MeterValues_aggregate(
+      where: {
+        transactionEventId: { _eq: $transactionEventId },
+        _and: [$where]
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;

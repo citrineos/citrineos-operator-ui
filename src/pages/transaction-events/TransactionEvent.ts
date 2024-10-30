@@ -5,14 +5,15 @@ import {
   TriggerReasonEnumType,
 } from '@citrineos/base';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { TransformDate } from '../../util/TransformDate';
 import { BaseModel } from '../../util/BaseModel';
@@ -32,6 +33,10 @@ import {
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
 import { Hidden } from '../../util/decorators/Hidden';
+import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
+import { Type } from 'class-transformer';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GET_METER_VALUES_FOR_TRANSACTION_EVENT } from '../meter-values/queries';
 
 export class TransactionType {
   @IsString()
@@ -102,6 +107,18 @@ export class TransactionEvent extends BaseModel {
   @IsString()
   @IsNotEmpty()
   eventType!: TransactionEventEnumType;
+
+  @IsArray()
+  @Type(() => MeterValue)
+  @ValidateNested({ each: true })
+  @GqlAssociation({
+    parentIdFieldName: TransactionEventProps.id,
+    associatedIdFieldName: MeterValueProps.transactionEventId,
+    gqlQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+    gqlListQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+    gqlUseQueryVariablesKey: MeterValueProps.transactionEventId
+  })
+  MeterValues?: MeterValue[];
 
   @TransformDate()
   @IsNotEmpty()

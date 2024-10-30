@@ -17,10 +17,11 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
-import { TRANSACTION_EVENT_COLUMNS } from './table-config';
 import { TransactionEvent } from './TransactionEvent';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MdOutlineEventRepeat } from 'react-icons/md';
+import { GenericDataTable } from '../../components/data-model-table/editable';
+import { MeterValueProps } from '../meter-values/MeterValue';
 
 export const TransactionEventView: React.FC = () => {
   return (
@@ -45,10 +46,18 @@ export const TransactionEventList = (props: IDataModelListProps) => {
   });
 
   return (
-    <DataModelTable<TransactionEvent, TransactionEventListQuery>
-      tableProps={tableProps}
-      columns={TRANSACTION_EVENT_COLUMNS(!props.hideActions, props.parentView)}
-      hideCreateButton={props.hideCreateButton}
+    // <DataModelTable<TransactionEvent, TransactionEventListQuery>
+    //   tableProps={tableProps}
+    //   columns={TRANSACTION_EVENT_COLUMNS(!props.hideActions, props.parentView)}
+    //   hideCreateButton={props.hideCreateButton}
+    // />
+    <GenericDataTable
+      dtoClass={TransactionEvent}
+      gqlQueryVariablesMap={{
+        [MeterValueProps.transactionEventId]: (event: TransactionEvent) => ({
+          transactionEventId: event.id,
+        }),
+      }}
     />
   );
 };

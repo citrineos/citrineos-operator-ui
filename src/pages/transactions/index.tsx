@@ -27,6 +27,7 @@ import { useCustom } from '@refinedev/core';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { TransactionEventProps } from '../transaction-events/TransactionEvent';
+import { MeterValueProps } from '../meter-values/MeterValue';
 
 export const TransactionView: React.FC = () => {
   return (
@@ -57,12 +58,14 @@ export const TransactionList = (props: IDataModelListProps) => {
         columns={TRANSACTION_COLUMNS(!props.hideActions, props.parentView)}
         hideCreateButton={props.hideCreateButton}
       />
-      <GenericDataTable dtoClass={Transaction}
-                        gqlQueryVariablesMap={{
-        [TransactionEventProps.transactionDatabaseId]: (transaction: Transaction) => ({
-          transactionDatabaseId: transaction.id,
-        })
-      }} />
+      <GenericDataTable
+        dtoClass={Transaction}
+        gqlQueryVariablesMap={{
+          [TransactionEventProps.transactionDatabaseId]: (transaction: Transaction) => ({
+            transactionDatabaseId: transaction.id,
+          })
+        }}
+      />
     </>
   );
 };
