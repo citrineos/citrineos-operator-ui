@@ -19,14 +19,28 @@ export const showError = (msg: string) => {
   });
 };
 
-export const triggerMessageAndHandleResponse = async <T,>(
-  url: string,
-  responseClass: Constructable<T>,
-  data: any,
-  responseSuccessCheck: (response: T) => boolean,
-) => {
+export interface TriggerMessageAndHandleResponseProps<T> {
+  url: string;
+  responseClass: Constructable<T>;
+  data: any;
+  responseSuccessCheck: (response: T) => boolean;
+  isDataUrl?: boolean;
+  setLoading?: (loading: boolean) => void;
+}
+
+export const triggerMessageAndHandleResponse = async <T,>({
+  url,
+  responseClass,
+  data,
+  responseSuccessCheck,
+  isDataUrl = false,
+  setLoading,
+}: TriggerMessageAndHandleResponseProps<T>) => {
   try {
-    const client = new BaseRestClient();
+    if (setLoading) {
+      setLoading(true);
+    }
+    const client = new BaseRestClient(isDataUrl);
     const response = await client.post(url, responseClass, {}, data);
 
     // todo reuse handle response!
@@ -42,6 +56,10 @@ export const triggerMessageAndHandleResponse = async <T,>(
     }
   } catch (error: any) {
     showError('The request failed with message: ' + error.message);
+  } finally {
+    if (setLoading) {
+      setLoading(false);
+    }
   }
 };
 

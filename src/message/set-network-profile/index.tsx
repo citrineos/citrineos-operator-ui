@@ -78,12 +78,13 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
       SetNetworkProfileRequest,
       plainValues,
     );
-    await triggerMessageAndHandleResponse(
-      `/configuration/setNetworkProfile?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      classInstance,
-      (response: MessageConfirmation) => response && response.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/setNetworkProfile?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: classInstance,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
+    });
   };
 
   return (

@@ -3,10 +3,10 @@ import { Form } from 'antd';
 import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../util';
 import {
-  GetCustomerProps,
   CustomerInformationRequest,
   CustomerPayload,
   GetCustomerInformationDataProps,
+  GetCustomerProps,
 } from '../../model/CustomerInformation';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
@@ -29,12 +29,13 @@ export const CustomerInformation: React.FC<GetCustomerProps> = ({
 
   const handleSubmit = async (plainValues: any) => {
     const payload = CustomerPayload(plainValues);
-    await triggerMessageAndHandleResponse(
-      `/reporting/customerInformation?identifier=${station.id}&tenantId=1`,
-      CustomerInformationRequest,
-      payload,
-      (response: CustomerInformationRequest) => !!response,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/reporting/customerInformation?identifier=${station.id}&tenantId=1`,
+      responseClass: CustomerInformationRequest,
+      data: payload,
+      responseSuccessCheck: (response: CustomerInformationRequest) =>
+        !!response,
+    });
   };
 
   return (
