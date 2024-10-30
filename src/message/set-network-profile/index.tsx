@@ -8,6 +8,7 @@ import { triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NetworkConnectionProfileType } from '../model/NetworkConnectionProfileType';
+import { MessageConfirmation } from '../MessageConfirmation';
 
 // enum SetNetworkProfileDataProps {}
 // customData = 'customData', // todo
@@ -77,13 +78,13 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
       SetNetworkProfileRequest,
       plainValues,
     );
-    await triggerMessageAndHandleResponse(
-      `/ocpp/provisioning/setNetworkProfile?identifier=${station.id}&tenantId=1`,
-      SetNetworkProfileResponse,
-      classInstance,
-      (response: SetNetworkProfileResponse) =>
-        !!response && !!response.status && response.status === 'Accepted',
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/setNetworkProfile?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: classInstance,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
+    });
   };
 
   return (

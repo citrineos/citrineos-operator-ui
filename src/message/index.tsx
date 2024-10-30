@@ -40,6 +40,10 @@ import {
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
+import {
+  UpdateAuthPassword,
+  UpdateAuthPasswordProps,
+} from './update-auth-password';
 import { DeleteCertificate } from './delete-certificate';
 
 const chargingStationActionMap: {
@@ -63,11 +67,13 @@ const chargingStationActionMap: {
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
   Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
+  'Set Network Profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Set Variables': SetVariables as React.FC<SetVariablesProps>,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
+  'Update Auth Password':
+    UpdateAuthPassword as React.FC<UpdateAuthPasswordProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
