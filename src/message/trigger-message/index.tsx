@@ -143,12 +143,13 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       };
     }
 
-    await triggerMessageAndHandleResponse(
-      `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
-      MessageConfirmation,
-      data,
-      (response: MessageConfirmation) => response && response.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: data,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
+    });
   };
 
   const qglQueryVariablesMap = {

@@ -77,15 +77,15 @@ export const CertificateSigned: React.FC<CertificateSignedProps> = ({
         certificateChain: fileContent,
       };
 
-      await triggerMessageAndHandleResponse(
-        `/certificates/certificateSigned?identifier=${station.id}&tenantId=1`,
-        CertificateSignedResponse,
-        payload,
-        (response: CertificateSignedResponse) =>
+      await triggerMessageAndHandleResponse({
+        url: `/certificates/certificateSigned?identifier=${station.id}&tenantId=1`,
+        responseClass: CertificateSignedResponse,
+        data: payload,
+        responseSuccessCheck: (response: CertificateSignedResponse) =>
           response &&
           response.status &&
           response.status === CertificateSignedStatusEnumType.Accepted,
-      );
+      });
     } catch (error) {
       console.error('Error during submission:', error);
     }

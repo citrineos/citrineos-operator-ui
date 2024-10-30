@@ -77,13 +77,13 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
       SetNetworkProfileRequest,
       plainValues,
     );
-    await triggerMessageAndHandleResponse(
-      `/ocpp/provisioning/setNetworkProfile?identifier=${station.id}&tenantId=1`,
-      SetNetworkProfileResponse,
-      classInstance,
-      (response: SetNetworkProfileResponse) =>
+    await triggerMessageAndHandleResponse({
+      url: `/ocpp/provisioning/setNetworkProfile?identifier=${station.id}&tenantId=1`,
+      responseClass: SetNetworkProfileResponse,
+      data: classInstance,
+      responseSuccessCheck: (response: SetNetworkProfileResponse) =>
         !!response && !!response.status && response.status === 'Accepted',
-    );
+    });
   };
 
   return (

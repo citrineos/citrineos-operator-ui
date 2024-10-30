@@ -232,12 +232,12 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       }),
       // customData: null // todo
     };
-    await triggerMessageAndHandleResponse(
-      `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
-      GetVariablesResponse,
-      getVariablesRequest,
-      (response: GetVariablesResponse) => !!response,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
+      responseClass: GetVariablesResponse,
+      data: getVariablesRequest,
+      responseSuccessCheck: (response: GetVariablesResponse) => !!response,
+    });
   };
 
   return (
