@@ -117,8 +117,7 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
     rootCertificateRequest.fileId = certificate.certificateFileId!;
 
     try {
-      const client = new BaseRestClient();
-      client.setDataBaseUrl();
+      const client = new BaseRestClient(true);
       await client.put(
         `/certificates/rootCertificate`,
         InstallCertificateResponse,
