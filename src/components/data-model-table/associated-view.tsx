@@ -89,14 +89,18 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
         </>
       }
       expandedContent={
-        <GenericParameterizedView
-          resourceType={associatedRecordResourceType}
-          id={id}
-          state={GenericViewState.SHOW}
-          dtoClass={associatedRecordClass}
-          gqlQuery={gqlQuery}
-          useFormProps={useFormProps}
-        />
+        id ? (
+          <GenericParameterizedView
+            resourceType={associatedRecordResourceType}
+            id={id}
+            state={GenericViewState.SHOW}
+            dtoClass={associatedRecordClass}
+            gqlQuery={gqlQuery}
+            useFormProps={useFormProps}
+          />
+        ) : (
+          ''
+        )
       }
       viewTitle={`Associated ${associatedRecordResourceType}`}
     />
