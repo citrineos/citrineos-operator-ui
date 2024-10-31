@@ -26,30 +26,20 @@ import routerBindings, {
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { Header } from './components';
 import { ColorModeContextProvider } from './contexts/color-mode';
-import {
-  AdditionalInfosCreate,
-  AdditionalInfosEdit,
-  AdditionalInfosList,
-  AdditionalInfosShow,
-} from './pages/additional-infos';
-import {
-  IdTokenInfosCreate,
-  IdTokenInfosEdit,
-  IdTokenInfosList,
-  IdTokenInfosShow,
-} from './pages/id-token-infos-old';
 import { App as AntdApp, ConfigProvider } from 'antd';
-import {
-  AuthorizationsCreate,
-  AuthorizationsEdit,
-  AuthorizationsList,
-  AuthorizationsShow,
-} from './pages/authorizations';
 import { ResourceType } from './resource-type';
 import {
   resources as IdTokenResources,
   routes as IdTokenRoutes,
 } from './pages/id-tokens';
+import {
+  resources as AuthorizationsResources,
+  routes as AuthorizationsRoutes,
+} from './pages/authorizations';
+import {
+  resources as AdditionalInfosResources,
+  routes as AdditionalInfosRoutes,
+} from './pages/additional-infos';
 import {
   resources as IdTokenInfosResources,
   routes as IdTokenInfosRoutes,
@@ -109,11 +99,6 @@ import {
   resources as variableMonitoringsResources,
   routes as VariableMonitoringsRoutes,
 } from './pages/variable-monitorings';
-import {
-  AuditOutlined,
-  ContactsOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
 import React from 'react';
 import { MdOutlineSecurity } from 'react-icons/md';
 import {
@@ -167,28 +152,6 @@ hasuraDataProvider.getApiUrl = () => {
 
 const resources = [
   {
-    name: ResourceType.ADDITIONAL_INFOS,
-    list: '/additional-infos',
-    create: '/additional-infos/create',
-    edit: '/additional-infos/edit/:id',
-    show: '/additional-infos/show/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <ExclamationCircleOutlined />,
-  },
-  {
-    name: ResourceType.AUTHORIZATIONS,
-    list: '/authorizations',
-    create: '/authorizations/create',
-    edit: '/authorizations/edit/:id',
-    show: '/authorizations/show/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <ContactsOutlined />,
-  },
-  {
     name: ResourceType.SECURITY_EVENTS,
     list: '/security-events',
     create: '/security-events/create',
@@ -199,6 +162,8 @@ const resources = [
     },
     icon: <MdOutlineSecurity />,
   },
+  ...AdditionalInfosResources,
+  ...AuthorizationsResources,
   ...IdTokenInfosResources,
   ...IdTokenResources,
   ...bootsResources,
@@ -266,29 +231,10 @@ function App() {
                       index
                       element={<NavigateToResource resource="Authorizations" />}
                     />
-                    <Route path="/additional-infos">
-                      <Route index element={<AdditionalInfosList />} />
-                      <Route
-                        path="create"
-                        element={<AdditionalInfosCreate />}
-                      />
-                      <Route
-                        path="edit/:id"
-                        element={<AdditionalInfosEdit />}
-                      />
-                      <Route
-                        path="show/:id"
-                        element={<AdditionalInfosShow />}
-                      />
-                    </Route>
+                    <Route path="/additional-infos/*" element={<AdditionalInfosRoutes />} />
                     <Route path="/id-tokens/*" element={<IdTokenRoutes />} />
                     <Route path="/id-token-infos/*" element={<IdTokenInfosRoutes />} />
-                    <Route path="/authorizations">
-                      <Route index element={<AuthorizationsList />} />
-                      <Route path="create" element={<AuthorizationsCreate />} />
-                      <Route path="edit/:id" element={<AuthorizationsEdit />} />
-                      <Route path="show/:id" element={<AuthorizationsShow />} />
-                    </Route>
+                    <Route path="/authorizations/*" element={<AuthorizationsRoutes />} />
                     <Route path="/security-events">
                       <Route index element={<SecurityEventsList />} />
                       <Route path="create" element={<SecurityEventsCreate />} />
