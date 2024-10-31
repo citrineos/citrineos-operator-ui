@@ -32,7 +32,6 @@ import {
   COMPONENT_GET_QUERY,
   COMPONENT_LIST_QUERY,
 } from '../../pages/evses/variable-attributes/components/queries';
-import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
@@ -70,7 +69,7 @@ export class GetVariablesData {
   // customData?: CustomDataType;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.variableId,
+    parentIdFieldName: GetVariablesDataProps.variable,
     associatedIdFieldName: VariableProps.id,
     gqlQuery: VARIABLE_GET_QUERY,
     gqlListQuery: VARIABLE_LIST_QUERY,
@@ -85,7 +84,7 @@ export class GetVariablesData {
   variableInstance?: string;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.componentId,
+    parentIdFieldName: GetVariablesDataProps.component,
     associatedIdFieldName: ComponentProps.id,
     gqlQuery: COMPONENT_GET_QUERY,
     gqlListQuery: COMPONENT_LIST_QUERY,

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
@@ -54,6 +54,7 @@ export const AssociationSelection = <
   } = props;
 
   const dispatch = useDispatch();
+
   const associatedRecordClassInstance = useMemo(
     () => plainToInstance(associatedRecordClass, {}),
     [associatedRecordClass],
@@ -85,6 +86,7 @@ export const AssociationSelection = <
 
   const labelKey = label || primaryKeyFieldName;
 
+  const uniqueId = useId();
   const storageKey = useMemo(() => {
     if (Object.keys(associatedRecordClassInstance as object).length === 0)
       return '';
@@ -93,7 +95,7 @@ export const AssociationSelection = <
       window.location.pathname.split('/')[1] +
       (parentRecord as object).constructor.name;
 
-    return `${parentName}_${associatedRecordClass.name}`.toLowerCase();
+    return `${parentName}_${associatedRecordClass.name}_${uniqueId}`.toLowerCase();
   }, [parentRecord, associatedRecordClass]);
 
   const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
@@ -123,11 +125,12 @@ export const AssociationSelection = <
   useEffect(() => {
     let newVal;
     if (Array.isArray(value)) {
-      newVal = value
-        .map((v: any) => (v as any)[labelKey])
-        .join(', ');
+      newVal = value.map((v: any) => (v as any)[labelKey]).join(', ');
     } else if (value) {
-      newVal = JSON.stringify((value as any)[associatedIdFieldName]);
+      newVal = (value as any)[labelKey];
+      if (typeof newVal === 'object') {
+        newVal = JSON.stringify(newVal);
+      }
     } else {
       newVal = '';
     }
