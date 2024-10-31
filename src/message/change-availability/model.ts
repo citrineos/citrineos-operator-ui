@@ -1,12 +1,12 @@
 import { Type } from 'class-transformer';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { IsEnum, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
-import { OperationalStatusEnumType } from '../../../../citrineos-demo/citrineos-core/00_Base';
 import { CustomDataType } from '../../model/CustomData';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
+import { OperationalStatusEnumType } from '@citrineos/base';
 
 export enum ChangeAvailabilityRequestProps {
   customData = 'customData',

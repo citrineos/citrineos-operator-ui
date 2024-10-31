@@ -104,7 +104,6 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   // installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
   // installCertificateData[InstallCertificateDataProps.certificate] =
   //   installCertificate;
-  installCertificateData[InstallCertificateDataProps.certificate] = NEW_IDENTIFIER;
 
   const [_parentRecord, _setParentRecord] = useState<any>(
     installCertificateData,
