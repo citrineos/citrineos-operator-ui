@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Button, Collapse, AutoComplete } from 'antd';
+import { AutoComplete, Button, Collapse, Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTable } from '@refinedev/antd';
-import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { plainToInstance } from 'class-transformer';
 import { FaChargingStation } from 'react-icons/fa';
 
@@ -18,7 +18,6 @@ import { DEFAULT_SORTERS } from '../../components/defaults';
 import { CUSTOM_CHARGING_STATION_ACTIONS } from '../../message';
 import { ChargingStation } from './ChargingStation';
 import { ChargingStationProps } from './ChargingStationProps';
-import { EvseProps } from '../evses/Evse';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { RootState } from '../../redux/store';
 import { GenericDataTable } from '../../components/data-model-table/editable';
@@ -32,12 +31,6 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-
-import {
-  GET_EVSE_LIST_FOR_STATION,
-  GET_EVSES_FOR_STATION,
-} from '../../message/queries';
-
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 import { ChargingStationsListQuery } from '../../graphql/types';
 
@@ -161,23 +154,8 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
     <GenericDataTable
       dtoClass={ChargingStation}
       customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-      gqlQueryVariablesMap={{
-        [ChargingStationProps.evses]: (station: ChargingStation) => ({
-          stationId: station.id,
-        }),
-        [ChargingStationProps.transactions]: (station: ChargingStation) => ({
-          stationId: station.id,
-        }),
-      }}
       fieldAnnotations={{
         [ChargingStationProps.evses]: {
-          gqlAssociationProps: {
-            parentIdFieldName: ChargingStationProps.id,
-            associatedIdFieldName: EvseProps.id,
-            gqlQuery: GET_EVSES_FOR_STATION,
-            gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-            gqlUseQueryVariablesKey: ChargingStationProps.evses,
-          },
           customActions: [TriggerMessageForEvseCustomAction],
         },
       }}

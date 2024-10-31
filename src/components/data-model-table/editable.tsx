@@ -52,12 +52,13 @@ import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 import { HIDDENINTABLE } from '../../util/decorators/HiddenInTable';
+import { useSelector } from 'react-redux';
 
 const renderViewContent = (
   field: FieldSchema,
   _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
   record: any, // todo type
-  gqlQueryVariablesMap?: GqlQueryVariableMap | null,
+  useSelector: any,
 ) => {
   const value = record[field.name];
   const fieldType = field.type;
@@ -67,20 +68,10 @@ const renderViewContent = (
     field.gqlAssociationProps?.associatedIdFieldName;
   const gqlQuery = field.gqlAssociationProps?.gqlQuery;
   const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
-  const gqlUseQueryVariablesKey =
-    field.gqlAssociationProps?.gqlUseQueryVariablesKey;
-
+  const getGqlQueryVariables = field.gqlAssociationProps?.getGqlQueryVariables;
   let gqlQueryVariables = undefined;
-  if (
-    gqlUseQueryVariablesKey &&
-    gqlQueryVariablesMap &&
-    !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-  ) {
-    if (typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] === 'function') {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-    } else {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-    }
+  if (getGqlQueryVariables) {
+    gqlQueryVariables = getGqlQueryVariables(record, useSelector);
   }
 
   if (field.type === FieldType.customRender && field.customRender) {
@@ -143,10 +134,6 @@ export enum SelectionType {
   MULTIPLE = 'multiple',
 }
 
-export type GqlQueryVariableMap =
-  | { [key: string]: object }
-  | { [key: string]: (record: any) => object };
-
 export interface GenericDataTableProps {
   // todo make generic / typed
   dtoClass: Constructable<any>;
@@ -156,11 +143,10 @@ export interface GenericDataTableProps {
   onSelectionChange?: (selectedRows: any[]) => void;
   editable?: boolean;
   customActions?: CustomAction<any>[];
-  gqlQueryVariablesMap?: GqlQueryVariableMap;
   fieldAnnotations?: {
     [key: string]: {
-      customActions: CustomAction<any>[];
-      gqlAssociationProps: GqlAssociationProps;
+      customActions?: CustomAction<any>[];
+      gqlAssociationProps?: GqlAssociationProps;
     };
   };
 }
@@ -177,7 +163,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     onSelectionChange,
     editable = true,
     customActions,
-    gqlQueryVariablesMap = null,
     fieldAnnotations,
   } = props;
 
@@ -323,7 +308,11 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     Object.keys(valuesClass).forEach((key) => {
       const classTransformerType = getClassTransformerType(valuesClass, key);
       let gqlAssociationProps: GqlAssociationProps;
-      if (fieldAnnotations && fieldAnnotations[key]) {
+      if (
+        fieldAnnotations &&
+        fieldAnnotations[key] &&
+        fieldAnnotations[key].gqlAssociationProps
+      ) {
         gqlAssociationProps = fieldAnnotations[key].gqlAssociationProps;
       } else {
         gqlAssociationProps = Reflect.getMetadata(
@@ -513,13 +502,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     field: FieldSchema,
     record: any,
     form: any,
-    gqlQueryVariablesMap: any,
     setHasChanges: any,
     visibleOptionalFields: Flags,
     enableOptionalField: (path: FieldPath) => void,
     toggleOptionalField: (path: FieldPath) => void,
     unknowns: Unknowns,
     modifyUnknowns: any,
+    useSelector: any,
   ) => {
     if (field.type === FieldType.array) {
       let gqlAssociationProps;
@@ -537,22 +526,10 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
       const associatedIdFieldName = gqlAssociationProps.associatedIdFieldName;
       const gqlListQuery = gqlAssociationProps.gqlListQuery;
-      const gqlUseQueryVariablesKey =
-        gqlAssociationProps.gqlUseQueryVariablesKey;
+      const getGqlQueryVariables = gqlAssociationProps.getGqlQueryVariables;
       let gqlQueryVariables = undefined;
-      if (
-        gqlUseQueryVariablesKey &&
-        gqlQueryVariablesMap &&
-        !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-      ) {
-        if (
-          typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] === 'function'
-        ) {
-          gqlQueryVariables =
-            gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-        } else {
-          gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-        }
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(record, useSelector);
       }
       return (
         <div className="editable-cell">
@@ -600,22 +577,10 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
       const associatedIdFieldName = gqlAssociationProps.associatedIdFieldName;
       const gqlListQuery = gqlAssociationProps.gqlListQuery;
-      const gqlUseQueryVariablesKey =
-        gqlAssociationProps.gqlUseQueryVariablesKey;
+      const getGqlQueryVariables = gqlAssociationProps.getGqlQueryVariables;
       let gqlQueryVariables = undefined;
-      if (
-        gqlUseQueryVariablesKey &&
-        gqlQueryVariablesMap &&
-        !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-      ) {
-        if (
-          typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] === 'function'
-        ) {
-          gqlQueryVariables =
-            gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-        } else {
-          gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-        }
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(record, useSelector);
       }
       return (
         <div className="editable-cell">
@@ -660,6 +625,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       modifyUnknowns: modifyUnknowns,
       form,
       parentRecord: record,
+      useSelector,
     });
   };
 
@@ -708,18 +674,18 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               field,
               record,
               form,
-              gqlQueryVariablesMap,
               setHasChanges,
               visibleOptionalFields,
               enableOptionalField,
               toggleOptionalField,
               unknowns,
               modifyUnknowns,
+              useSelector,
             );
           }
           return (
             <div className="editable-cell">
-              {renderViewContent(field, value, record, gqlQueryVariablesMap)}
+              {renderViewContent(field, value, record, useSelector)}
             </div>
           );
         },

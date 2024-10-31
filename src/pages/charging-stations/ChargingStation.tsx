@@ -30,8 +30,10 @@ import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from '../status-notifications/queries';
-import { Evse } from '../evses/Evse';
+import { Evse, EvseProps } from '../evses/Evse';
 import {
+  GET_EVSE_LIST_FOR_STATION,
+  GET_EVSES_FOR_STATION,
   GET_TRANSACTION_LIST_FOR_STATION,
   GET_TRANSACTIONS_FOR_STATION,
 } from '../../message/queries';
@@ -73,19 +75,31 @@ export class ChargingStation extends BaseModel {
   @Type(() => StatusNotification)
   statusNotifications?: StatusNotification[];
 
-  // @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @IsArray()
   @IsOptional()
-  /*  @GqlAssociation({
+  @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: EvseProps.id,
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: ChargingStationProps.evses,
-  })*/
+    getGqlQueryVariables: (station: ChargingStation) => ({
+      stationId: station.id,
+    }),
+  })
   @Type(() => Evse)
   evses?: Evse[];
 
+  @IsArray()
+  @IsOptional()
+  @GqlAssociation({
+    parentIdFieldName: ChargingStationProps.id,
+    associatedIdFieldName: TransactionProps.transactionId,
+    gqlQuery: GET_TRANSACTIONS_FOR_STATION,
+    gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
+    getGqlQueryVariables: (station: ChargingStation) => ({
+      stationId: station.id,
+    }),
+  })
   @Type(() => Transaction)
   transactions?: Transaction[];
 

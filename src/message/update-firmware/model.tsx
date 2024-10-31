@@ -54,10 +54,15 @@ export class FirmwareType {
   @IsOptional()
   installDateTime?: Date;
 
+  // @IsOptional()
+  // @SupportedFileFormats(['.pem', '.id'])
+  // @Type(() => File)
+  // signingCertificate?: File;
+
+  @IsString()
+  @Length(0, 5500)
   @IsOptional()
-  @SupportedFileFormats(['.pem', '.id'])
-  @Type(() => File)
-  signingCertificate?: File;
+  signingCertificate?: string;
 
   @IsString()
   @Length(0, 800)

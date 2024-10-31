@@ -30,6 +30,7 @@ import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
 import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens/queries';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 export class IdTokenType {
   @IsString()
@@ -44,7 +45,7 @@ export class ChargingSchedulePeriodType {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsInt()
   @IsPositive()
@@ -58,20 +59,20 @@ export class ChargingSchedulePeriodType {
   @Min(1)
   @Max(3)
   @IsOptional()
-  numberPhases?: number | null = null;
+  numberPhases?: number | null;
 
   @IsInt()
   @Min(1)
   @Max(3)
   @IsOptional()
-  phaseToUse?: number | null = null;
+  phaseToUse?: number | null;
 }
 
 export class ChargingScheduleType {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsInt()
   @IsPositive()
@@ -80,11 +81,11 @@ export class ChargingScheduleType {
   @Type(() => Date)
   @TransformDate()
   @IsOptional()
-  startSchedule?: Dayjs | null = null;
+  startSchedule?: Dayjs | null;
 
   @IsInt()
   @IsOptional()
-  duration?: number | null = null;
+  duration?: number | null;
 
   @IsEnum(ChargingRateUnitEnumType)
   chargingRateUnit!: ChargingRateUnitEnumType;
@@ -96,7 +97,7 @@ export class ChargingScheduleType {
 
   @IsNumber()
   @IsOptional()
-  minChargingRate?: number | null = null;
+  minChargingRate?: number | null;
 }
 
 export enum RemoteStartChargingProfilePurpose {
@@ -106,7 +107,7 @@ export enum RemoteStartChargingProfilePurpose {
 export class ChargingProfileType {
   @IsOptional()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsInt()
   stackLevel!: number;
@@ -119,17 +120,17 @@ export class ChargingProfileType {
 
   @IsOptional()
   @IsEnum(RecurrencyKindEnumType)
-  recurrencyKind?: RecurrencyKindEnumType | null = null;
+  recurrencyKind?: RecurrencyKindEnumType | null;
 
   @IsOptional()
   @Type(() => Date)
   @TransformDate()
-  validFrom?: Dayjs | null = null;
+  validFrom?: Dayjs | null;
 
   @IsOptional()
   @Type(() => Date)
   @TransformDate()
-  validTo?: Dayjs | null = null;
+  validTo?: Dayjs | null;
 
   @ArrayMinSize(1)
   @ArrayMaxSize(3)
@@ -168,7 +169,15 @@ export class RequestStartTransactionRequest {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSE_LIST_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: RequestStartTransactionRequestProps.evse,
+    getGqlQueryVariables: (
+      _: RequestStartTransactionRequest,
+      selector: any,
+    ) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Evse)
   @IsNotEmpty()
@@ -177,7 +186,7 @@ export class RequestStartTransactionRequest {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData?: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @IsOptional()
   @ValidateNested()

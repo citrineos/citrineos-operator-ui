@@ -18,6 +18,8 @@ import {
   UnknownsActions,
 } from '../../components/form/state/unknowns';
 import { StatusInfoType } from '../model/StatusInfoType';
+import { MessageConfirmation } from '../MessageConfirmation';
+import { useSelector } from 'react-redux';
 
 export enum ClearCacheRequestProps {
   customData = 'customData',
@@ -26,7 +28,7 @@ export enum ClearCacheRequestProps {
 export class ClearCacheRequest {
   @Type(() => CustomDataType)
   @IsOptional()
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 }
 
 export class ClearCacheResponse {
@@ -55,14 +57,12 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
   const [parentRecord, setParentRecord] = useState(new ClearCacheRequest());
 
   const handleSubmit = async () => {
-    const plainValues = await form.validateFields();
-    const classInstance = plainToInstance(ClearCacheRequest, plainValues);
     await triggerMessageAndHandleResponse({
       url: `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
-      responseClass: ClearCacheResponse,
-      data: classInstance,
-      responseSuccessCheck: (response: ClearCacheResponse) =>
-        response && (response as any).success,
+      responseClass: MessageConfirmation,
+      data: {},
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
     });
   };
 
@@ -93,6 +93,7 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
     disabled: false,
     unknowns,
     modifyUnknowns,
+    useSelector,
   });
 
   return (

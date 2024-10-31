@@ -10,9 +10,10 @@ import type {
 } from '../../graphql/types';
 import type { GetFields, GetVariables } from '@refinedev/hasura';
 import { ID_TOKEN_INFOS_CREATE_MUTATION } from './queries';
+import { Exact, IdTokenInfos_Insert_Input } from '../../graphql/schema.types';
 
 export const IdTokenInfosCreate = () => {
-  const { formProps, saveButtonProps } = useForm<
+  const { formProps, onFinish, saveButtonProps } = useForm<
     GetFields<IdTokenInfosCreateMutation>,
     HttpError,
     GetVariables<IdTokenInfosCreateMutationVariables>
@@ -22,9 +23,21 @@ export const IdTokenInfosCreate = () => {
     },
   });
 
+  const onFinishAddTimestamp = (
+    values: GetVariables<
+      Exact<{
+        object: IdTokenInfos_Insert_Input;
+      }>
+    >,
+  ) => {
+    values.createdAt = new Date();
+    values.updatedAt = values.createdAt;
+    return onFinish(values);
+  };
+
   return (
     <Create saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+      <Form {...formProps} onFinish={onFinishAddTimestamp} layout="vertical">
         <Form.Item label="Cache Expiry DateTime" name="cacheExpiryDateTime">
           <Input />
         </Form.Item>

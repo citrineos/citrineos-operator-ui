@@ -1,18 +1,18 @@
 import { Type } from 'class-transformer';
 import { CustomDataType } from './CustomData';
-import { IdTokenProps, IdToken } from '../pages/id-tokens/IdToken';
+import { IdToken, IdTokenProps } from '../pages/id-tokens/IdToken';
 import { GqlAssociation } from '../util/decorators/GqlAssociation';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';
 import {
-  IsString,
-  IsOptional,
-  ValidateNested,
-  IsInt,
-  IsPositive,
-  IsNotEmpty,
   IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 
 const ID_TOKEN_FIELD = 'idToken';
@@ -36,7 +36,7 @@ export class CustomerInformationRequest {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 
   @GqlAssociation({
     parentIdFieldName: ID_TOKEN_FIELD,
@@ -50,7 +50,8 @@ export class CustomerInformationRequest {
 
   @IsString()
   @MinLength(1)
-  customerIdentifier!: string;
+  @IsOptional()
+  customerIdentifier?: string;
 }
 
 export enum GetCustomerInformationDataProps {
@@ -72,27 +73,35 @@ export const CustomerPayload = (plainValues: Record<string, any>) => {
     customerIdentifier,
   } = plainValues;
 
+  let finalIdToken = null;
+  if (idToken) {
+    finalIdToken = {
+      idToken: idToken.idToken,
+      type: idToken.type,
+      customData: idToken.customData,
+    };
+    if (
+      idToken.IdTokenAdditionalInfos &&
+      idToken.IdTokenAdditionalInfos.length > 0
+    ) {
+      (finalIdToken as any).additionalInfo =
+        idToken.IdTokenAdditionalInfos?.map(
+          ({ AdditionalInfo: info }: any) => ({
+            additionalIdToken: info.additionalIdToken,
+            type: info.type,
+            customData: info.customData,
+          }),
+        );
+    }
+  }
+
   return {
     requestId: plainValues.requestId,
     report: report ?? false,
     clear: clear ?? false,
     customData: customData,
     customerCertificate: customerCertificate,
-    idToken: idToken
-      ? {
-          idToken: idToken.idToken,
-          type: idToken.type,
-          customData: idToken.customData,
-          additionalInfo:
-            idToken.IdTokenAdditionalInfos?.map(
-              ({ AdditionalInfo: info }: any) => ({
-                additionalIdToken: info.additionalIdToken,
-                type: info.type,
-                customData: info.customData,
-              }),
-            ) || [],
-        }
-      : null,
+    idToken: finalIdToken,
     customerIdentifier,
   };
 };
