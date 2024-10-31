@@ -17,8 +17,6 @@ const renderActiveShape = (props: any) => {
     endAngle,
     fill,
     name,
-    percent,
-    value,
   } = props;
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
@@ -104,7 +102,15 @@ export const OnlinePercentage = () => {
     { name: '>80%', value: 20, color: 'var(--ant-green)' },
   ];
 
-  const needle = (value, total, cx, cy, iR, oR, color) => {
+  const needle = (
+    value: number,
+    total: number,
+    cx: number,
+    cy: number,
+    iR: number,
+    oR: number,
+    color: string,
+  ) => {
     const ang = 180.0 * (1 - value / total);
     const length = (iR + 2 * oR) / 3;
     const sin = Math.sin(-RADIAN * ang);
@@ -140,7 +146,7 @@ export const OnlinePercentage = () => {
     ];
   };
 
-  const handleResize = (width, height) => {
+  const handleResize = (width: number, height: number) => {
     setDimensions({ width, height });
   };
 

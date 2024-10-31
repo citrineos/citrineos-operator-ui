@@ -10,8 +10,6 @@ import {
   ChangeAvailabilityRequest,
   ChangeAvailabilityRequestProps,
 } from './model';
-import { useSelector } from 'react-redux';
-import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   station,
@@ -19,15 +17,6 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = { form };
-
-  const selectedChargingStation =
-    useSelector(getSelectedChargingStation()) || {};
-
-  const stationId = selectedChargingStation
-    ? selectedChargingStation.id
-    : station
-      ? station.id
-      : undefined;
 
   const changeAvailabilityRequest = new ChangeAvailabilityRequest();
 
@@ -41,7 +30,9 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     const data: any = {
       operationalStatus:
         classInstance[ChangeAvailabilityRequestProps.operationalStatus],
-      customData: classInstance[ChangeAvailabilityRequestProps.customData],
+      customData: (classInstance as any)[
+        ChangeAvailabilityRequestProps.customData
+      ],
     };
 
     if (evse && evse[EvseProps.id]) {
@@ -63,12 +54,6 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     });
   };
 
-  const qglQueryVariablesMap = {
-    [ChangeAvailabilityRequestProps.evse]: {
-      stationId: stationId,
-    },
-  };
-
   return (
     <GenericForm
       ref={formRef}
@@ -77,7 +62,6 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       onFinish={handleSubmit}
       initialValues={changeAvailabilityRequest}
       parentRecord={changeAvailabilityRequest}
-      gqlQueryVariablesMap={qglQueryVariablesMap}
     />
   );
 };
