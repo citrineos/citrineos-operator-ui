@@ -12,7 +12,7 @@ import {
   TRANSACTION_EVENT_EDIT_MUTATION,
   TRANSACTION_EVENT_GET_QUERY,
 } from './queries';
-import { TransactionEvent, TransactionEventProps } from './TransactionEvent';
+import { TransactionEvent } from './TransactionEvent';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MdOutlineEventRepeat } from 'react-icons/md';
 import { GenericDataTable } from '../../components/data-model-table/editable';
@@ -30,16 +30,7 @@ export const TransactionEventView: React.FC = () => {
 };
 
 export const TransactionEventList = () => {
-  return (
-    <GenericDataTable
-      dtoClass={TransactionEvent}
-      gqlQueryVariablesMap={{
-        [TransactionEventProps.meterValues]: (event: TransactionEvent) => ({
-          transactionEventId: event.id,
-        }),
-      }}
-    />
-  );
+  return <GenericDataTable dtoClass={TransactionEvent} />;
 };
 
 export const routes: React.FC = () => {

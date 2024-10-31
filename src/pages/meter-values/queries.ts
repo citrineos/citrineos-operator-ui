@@ -98,7 +98,7 @@ export const GET_METER_VALUES_FOR_TRANSACTION_EVENT = gql`
       limit: $limit
       order_by: $order_by
       where: {
-        transactionEventId: { _eq: $transactionEventId },
+        transactionEventId: { _eq: $transactionEventId }
         _and: [$where]
       }
     ) {
@@ -112,7 +112,7 @@ export const GET_METER_VALUES_FOR_TRANSACTION_EVENT = gql`
     }
     MeterValues_aggregate(
       where: {
-        transactionEventId: { _eq: $transactionEventId },
+        transactionEventId: { _eq: $transactionEventId }
         _and: [$where]
       }
     ) {

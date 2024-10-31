@@ -29,7 +29,9 @@ export const ValueDisplay: React.FC<ValueDisplayProps> = ({
     <Popover content={value}>
       <Tag color={color} style={{ cursor: 'pointer' }}>
         <pre style={{ margin: 0 }}>
-          {renderedPrefix}{roundedValue}{renderedSuffix}
+          {renderedPrefix}
+          {roundedValue}
+          {renderedSuffix}
         </pre>
       </Tag>
     </Popover>

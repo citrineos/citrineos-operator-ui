@@ -12,7 +12,7 @@ import { Alert, Spin } from 'antd';
 import {
   ChargingStateEnumType,
   ConnectorStatusEnumType,
-} from '../../../../citrineos-core/00_Base';
+} from '@citrineos/base';
 
 class ChargingStationWithLatestStatusNotificationsAndTransactions extends ChargingStation {
   Evses!: { Evse: Evse }[];
