@@ -5,6 +5,7 @@ import { setSelectedAssociatedItems } from '../../redux/selectionSlice';
 import { instanceToPlain } from 'class-transformer';
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { useSelector } from 'react-redux';
 
 export interface SelectedAssociatedItems<Model> {
   selectedItems: Model[];
@@ -42,7 +43,7 @@ export const SelectedAssociatedItems = <Model,>(
       render: (value: any, record: any) => {
         return (
           <div className="editable-cell">
-            {renderViewContent(field, value, record)}
+            {renderViewContent(field, value, record, useSelector)}
           </div>
         );
       },

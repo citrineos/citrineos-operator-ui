@@ -16,21 +16,11 @@ import {
 import { formatPem, showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
-import {
-  Certificate,
-  CertificateProps,
-} from '../../pages/certificates/Certificate';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import {
-  CERTIFICATES_GET_QUERY,
-  CERTIFICATES_LIST_QUERY,
-} from '../../pages/certificates/queries';
 import { BaseRestClient } from '../../util/BaseRestClient';
-import { NEW_IDENTIFIER } from '../../util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { MessageConfirmation } from '../MessageConfirmation';
 
-enum InstallCertificateDataProps {
+enum _InstallCertificateDataProps {
   certificate = 'certificate',
   certificateType = 'certificateType',
 }
@@ -132,11 +122,11 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
     //     {},
     //     rootCertificateRequest,
     //   );
-        
+
     try {
       const pemString = formatPem(data.certificate);
       if (pemString == null) {
-        throw new Error("Incorrectly formatted PEM");
+        throw new Error('Incorrectly formatted PEM');
       }
       data.certificate = pemString;
       const client = new BaseRestClient();
