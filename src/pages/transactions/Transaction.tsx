@@ -111,7 +111,9 @@ export class Transaction {
     associatedIdFieldName: TransactionEventProps.transactionDatabaseId,
     gqlQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
     gqlListQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
-    gqlUseQueryVariablesKey: TransactionProps.events,
+    getGqlQueryVariables: (transaction: Transaction) => ({
+      transactionDatabaseId: transaction.id,
+    }),
   })
   events?: TransactionEvent[];
 

@@ -117,7 +117,9 @@ export class TransactionEvent extends BaseModel {
     associatedIdFieldName: MeterValueProps.transactionEventId,
     gqlQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
     gqlListQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
-    gqlUseQueryVariablesKey: TransactionEventProps.meterValues,
+    getGqlQueryVariables: (transactionEvent: TransactionEvent) => ({
+      transactionEventId: transactionEvent[TransactionEventProps.id],
+    }),
   })
   meterValues?: MeterValue[];
 

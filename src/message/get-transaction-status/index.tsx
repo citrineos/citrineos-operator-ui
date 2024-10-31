@@ -14,6 +14,7 @@ import {
 import { GET_ACTIVE_TRANSACTIONS } from '../remote-stop/queries';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '../queries';
 import { MessageConfirmation } from '../MessageConfirmation';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 enum GetTransactionStatusRequestProps {
   transaction = 'transaction',
@@ -30,7 +31,12 @@ export class GetTransactionStatusRequest {
     associatedIdFieldName: TransactionProps.transactionId,
     gqlQuery: GET_ACTIVE_TRANSACTIONS,
     gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: GetTransactionStatusRequestProps.transaction,
+    getGqlQueryVariables: (_: GetTransactionStatusRequest, selector: any) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Transaction)
   @IsNotEmpty()
@@ -108,11 +114,6 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({
       onFinish={handleSubmit}
       initialValues={getTransactionStatusRequest}
       parentRecord={getTransactionStatusRequest}
-      gqlQueryVariablesMap={{
-        [GetTransactionStatusRequestProps.transaction]: {
-          stationId: station.id,
-        },
-      }}
     />
   );
 };

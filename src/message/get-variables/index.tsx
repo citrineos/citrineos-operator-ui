@@ -37,6 +37,7 @@ import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo
@@ -103,7 +104,12 @@ export class GetVariablesData {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSE_LIST_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: GetVariablesDataProps.evse,
+    getGqlQueryVariables: (_: GetVariablesData, selector: any) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Evse)
   @IsOptional()
@@ -249,11 +255,6 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       onFinish={handleSubmit}
       initialValues={getVariablesRequest}
       parentRecord={getVariablesRequest}
-      gqlQueryVariablesMap={{
-        [GetVariablesDataProps.evse]: {
-          stationId: station.id,
-        },
-      }}
     />
   );
 };

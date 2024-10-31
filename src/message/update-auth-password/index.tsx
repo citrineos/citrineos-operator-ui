@@ -71,7 +71,6 @@ export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
       onFinish={handleSubmit}
       initialValues={updateAuthPasswordRequest}
       parentRecord={updateAuthPasswordRequest}
-      gqlQueryVariablesMap={{}}
     />
   );
 };

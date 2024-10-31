@@ -18,7 +18,7 @@ export interface ArrayFieldProps {
   modifyUnknowns: any;
   form: any;
   parentRecord: any;
-  gqlQueryVariablesMap?: any;
+  useSelector: any;
 }
 
 export const ArrayField: React.FC<ArrayFieldProps> = (
@@ -36,22 +36,18 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
     modifyUnknowns,
     form,
     parentRecord,
-    gqlQueryVariablesMap,
+    useSelector,
   } = props;
   if (schema.gqlAssociationProps) {
     const parentIdFieldName = schema.gqlAssociationProps.parentIdFieldName;
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
     const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const gqlUseQueryVariablesKey =
-      schema.gqlAssociationProps.gqlUseQueryVariablesKey;
+    const getGqlQueryVariables =
+      schema.gqlAssociationProps?.getGqlQueryVariables;
     let gqlQueryVariables = undefined;
-    if (
-      gqlUseQueryVariablesKey &&
-      gqlQueryVariablesMap &&
-      gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-    ) {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
+    if (getGqlQueryVariables) {
+      gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
     }
     return (
       <div className="editable-cell">
@@ -128,7 +124,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
                               modifyUnknowns: modifyUnknowns,
                               form,
                               parentRecord,
-                              gqlQueryVariablesMap,
+                              useSelector,
                             }) as any,
                         )
                       : (renderField({
@@ -149,7 +145,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
                           modifyUnknowns: modifyUnknowns,
                           form,
                           parentRecord,
-                          gqlQueryVariablesMap,
+                          useSelector,
                         }) as any)}
                   </div>
                 </div>
