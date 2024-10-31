@@ -38,11 +38,14 @@ export const IdTokenInfosEdit = () => {
       <Form
         {...formProps}
         layout="vertical"
-        onFinish={(values) =>
+        onFinish={(values) => {
+          if (values.groupIdTokenId?.toString() === '') {
+            delete values.groupIdTokenId;
+          }
           formProps.onFinish?.({
             ...values,
-          })
-        }
+          });
+        }}
       >
         <Form.Item label="Cache Expiry DateTime" name="cacheExpiryDateTime">
           <Input />

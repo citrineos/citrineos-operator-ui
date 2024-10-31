@@ -12,7 +12,6 @@ import {
 import { Form, Input } from 'antd';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { TransformDate } from '../../util/TransformDate';
-import { SupportedFileFormats } from '../../util/decorators/SupportedFileFormats';
 
 export enum FirmwareTypeProps {
   location = 'location',

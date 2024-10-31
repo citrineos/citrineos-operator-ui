@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
@@ -21,6 +21,7 @@ import {
   setSelectedAssociatedItems,
 } from '../../redux/selectionSlice';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
+import { SelectedAssociatedItems } from './selected-associated-items';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -53,6 +54,7 @@ export const AssociationSelection = <
   } = props;
 
   const dispatch = useDispatch();
+
   const associatedRecordClassInstance = useMemo(
     () => plainToInstance(associatedRecordClass, {}),
     [associatedRecordClass],
@@ -82,11 +84,19 @@ export const AssociationSelection = <
     [associatedRecordClassInstance],
   );
 
+  const labelKey = label || primaryKeyFieldName;
+
+  const uniqueId = useId();
   const storageKey = useMemo(() => {
     if (Object.keys(associatedRecordClassInstance as object).length === 0)
       return '';
 
-    return `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
+    const parentName =
+      window.location.pathname.split('/')[1] +
+      '_' +
+      (parentRecord as object).constructor.name;
+
+    return `${parentName}_${associatedRecordClass.name}_${uniqueId}`.toLowerCase();
   }, [parentRecord, associatedRecordClass]);
 
   const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
@@ -94,7 +104,6 @@ export const AssociationSelection = <
   const selectedIdentifiers = useMemo(() => {
     if (selectedItems.length === 0) return '';
 
-    const labelKey = label || primaryKeyFieldName;
     return selectedItems
       .map((item: any) => plainToInstance(associatedRecordClass, item))
       .map((item: any) => item[labelKey])
@@ -115,14 +124,21 @@ export const AssociationSelection = <
 
   const [tagValue, setTagValue] = useState<string>('');
   useEffect(() => {
-    const newVal = Array.isArray(value)
-      ? value.map((v: any) => (v as any)[primaryKeyFieldName]).join(', ')
-      : value
-        ? JSON.stringify((value as any)[associatedIdFieldName])
-        : '';
-    setTagValue(
-      isNew ? 'Select' : newVal || (parentRecord as any)[parentIdFieldName],
-    );
+    let newVal;
+    if (Array.isArray(value)) {
+      newVal = value.map((v: any) => (v as any)[labelKey]).join(', ');
+    } else if (value) {
+      newVal = (value as any)[labelKey];
+      if (typeof newVal === 'object') {
+        newVal = JSON.stringify(newVal);
+      }
+    } else {
+      newVal = '';
+    }
+    const newTagValue = isNew
+      ? 'Select'
+      : newVal || (parentRecord as any)[parentIdFieldName];
+    setTagValue(newTagValue);
   }, [isNew, value, associatedIdFieldName, parentRecord, primaryKeyFieldName]);
 
   const meta: any = useMemo(
@@ -154,22 +170,45 @@ export const AssociationSelection = <
     setPageSize,
   } = useTable<GetQuery>(tableOptions);
 
-  const [selectedRows, setSelectedRows] = useState<AssociatedModel[]>(() =>
-    value ? [value] : [],
-  );
+  let initialSelectedRows: AssociatedModel[] = [];
+  if (Array.isArray(value)) {
+    initialSelectedRows = value;
+  } else if (value) {
+    initialSelectedRows = [value];
+  }
+  const [selectedRows, setSelectedRows] =
+    useState<AssociatedModel[]>(initialSelectedRows); // todo remove and use redux without state redundancy
 
   const handleRowChange = useCallback(
-    (newSelectedRowKeys: React.Key[], selectedRows: AssociatedModel[]) => {
+    (_newSelectedRowKeys: React.Key[], newSelectedRows: AssociatedModel[]) => {
+      const newSelections = newSelectedRows;
+      selectedRows.forEach((selection: AssociatedModel) => {
+        if (
+          !queryResult.data?.data.some(
+            (item) =>
+              item[primaryKeyFieldName] ===
+              (selection as any)[primaryKeyFieldName],
+          ) &&
+          !newSelections.some(
+            (item: any) =>
+              item[primaryKeyFieldName] ===
+              (selection as any)[primaryKeyFieldName],
+          ) &&
+          (selection as any)[primaryKeyFieldName] !== NEW_IDENTIFIER
+        ) {
+          newSelections.push(selection);
+        }
+      });
       dispatch(
         setSelectedAssociatedItems({
           storageKey,
-          selectedRows: JSON.stringify(instanceToPlain(selectedRows)),
+          selectedRows: JSON.stringify(instanceToPlain(newSelections)),
         }),
       );
-      setSelectedRows(selectedRows);
-      onChange?.(selectedRows);
+      setSelectedRows(newSelections);
+      onChange?.(newSelections);
     },
-    [dispatch, onChange, storageKey],
+    [dispatch, onChange, storageKey, selectedRows, queryResult],
   );
 
   const rowSelection = useMemo(
@@ -228,14 +267,36 @@ export const AssociationSelection = <
   return (
     <ExpandableColumn
       useInitialContentAsButton
+      onExpanded={async () => {
+        if (!isNew) {
+          let selectedRows: any[] = [];
+          if (Array.isArray(value)) {
+            selectedRows = value.map((v: any) => instanceToPlain(v));
+          } else if (value) {
+            selectedRows = [instanceToPlain(value)];
+          }
+          dispatch(
+            setSelectedAssociatedItems({
+              storageKey,
+              selectedRows: JSON.stringify(selectedRows),
+            }),
+          );
+        }
+      }}
       initialContent={
         <GenericTag stringValue={tagValue} icon={<ExportOutlined />} />
       }
       expandedContent={({ closeDrawer }) => (
         <>
-          <p>
-            Selected {associatedRecordClass.name}(s): {selectedIdentifiers}
-          </p>
+          <SelectedAssociatedItems
+            selectedItems={selectedItems}
+            dtoClass={associatedRecordClass}
+            associatedRecordResourceType={associatedRecordResourceType}
+            dispatch={dispatch}
+            setSelectedRows={setSelectedRows}
+            onChange={onChange}
+            storageKey={storageKey}
+          />
           <GenericDataTable
             dtoClass={associatedRecordClass}
             selectable={selectable}

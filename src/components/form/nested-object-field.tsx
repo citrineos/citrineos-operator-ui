@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import React from 'react';
 import { FieldSchema, renderField, renderLabel } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
-import { setProperty } from '../../util/objects';
+import { getProperty, setProperty } from '../../util/objects';
 
 export interface NestedObjectFieldProps {
   fieldPath: FieldPath;
@@ -75,7 +75,15 @@ export const NestedObjectField: (
             value={form.getFieldValue(fieldPath.keyPath)}
             onChange={(newValues: any[]) => {
               const currentValues = form.getFieldsValue(true);
-              setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+              if (newValues.length > 0) {
+                setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+              } else {
+                setProperty(
+                  currentValues,
+                  fieldPath.keyPath,
+                  getProperty(parentRecord, fieldPath.keyPath),
+                );
+              }
               form.setFieldsValue(currentValues);
             }}
             customActions={schema.customActions}

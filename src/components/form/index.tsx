@@ -195,16 +195,20 @@ export const getClassTransformerType = (instance: any, key: string): any => {
   return undefined;
 };
 
-export function label(instance: any, key: string) {
+export const label = (instance: any, key: string) => {
   const label = Reflect.getMetadata(FIELD_LABEL, instance, key);
   if (label) {
     return label;
   }
+  return keyToLabel(key);
+};
+
+export const keyToLabel = (key: string) => {
   return key
     .replace('_', '')
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, (str) => str.toUpperCase());
-}
+};
 
 export const getSchemaForInstanceAndKey = (
   instance: any,

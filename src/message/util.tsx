@@ -104,15 +104,15 @@ export const createClassWithoutProperty = <T,>(
 };
 
 /*
-* Returns null if not pem format
-*/
+ * Returns null if not pem format
+ */
 export function formatPem(pem: string): string | null {
   // Define PEM header and footer
-  const header = "-----BEGIN CERTIFICATE-----";
-  const footer = "-----END CERTIFICATE-----";
+  const header = '-----BEGIN CERTIFICATE-----';
+  const footer = '-----END CERTIFICATE-----';
 
   // Trim whitespace from the entire string
-  let trimmedPem = pem.trim();
+  const trimmedPem = pem.trim();
 
   // Check if the string contains valid header and footer
   if (!trimmedPem.startsWith(header) || !trimmedPem.endsWith(footer)) {
@@ -120,15 +120,20 @@ export function formatPem(pem: string): string | null {
   }
 
   // Extract content between the header and footer
-  const base64Content = trimmedPem.slice(header.length, trimmedPem.length - footer.length).replace(/\s+/g, "");
+  const base64Content = trimmedPem
+    .slice(header.length, trimmedPem.length - footer.length)
+    .replace(/\s+/g, '');
 
   // Validate the base64 content length
-  if (base64Content.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(base64Content)) {
+  if (
+    base64Content.length % 4 !== 0 ||
+    !/^[A-Za-z0-9+/]*={0,2}$/.test(base64Content)
+  ) {
     return null; // Not a valid base64 string
   }
 
   // Split the content into 64-character lines
-  const formattedContent = base64Content.match(/.{1,64}/g)?.join("\n");
+  const formattedContent = base64Content.match(/.{1,64}/g)?.join('\n');
 
   // Reassemble the PEM with correct newlines
   const formattedPem = `${header}\n${formattedContent}\n${footer}`;

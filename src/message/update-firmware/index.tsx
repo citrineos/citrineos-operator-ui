@@ -9,7 +9,7 @@ import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
-import { formatPem, readFileContent } from '../util';
+import { formatPem } from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 

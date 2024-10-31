@@ -33,11 +33,7 @@ export const TransactionView: React.FC = () => {
 };
 
 export const TransactionList = () => {
-  return (
-    <>
-      <GenericDataTable dtoClass={Transaction} />
-    </>
-  );
+  return <GenericDataTable dtoClass={Transaction} />;
 };
 
 export const routes: React.FC = () => {

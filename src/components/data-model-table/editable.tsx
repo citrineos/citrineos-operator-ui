@@ -54,7 +54,7 @@ import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
 import { HIDDENINTABLE } from '../../util/decorators/HiddenInTable';
 import { useSelector } from 'react-redux';
 
-const renderViewContent = (
+export const renderViewContent = (
   field: FieldSchema,
   _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
   record: any, // todo type
