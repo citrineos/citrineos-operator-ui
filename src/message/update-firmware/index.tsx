@@ -9,7 +9,7 @@ import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
-import { readFileContent } from '../util';
+import { formatPem, readFileContent } from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -83,6 +83,13 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
     try {
       setLoading(true);
 
+      if (request.firmware.signingCertificate) {
+        const pemString = formatPem(request.firmware.signingCertificate);
+        if (pemString == null) {
+          throw new Error('Incorrectly formatted PEM');
+        }
+        request.firmware.signingCertificate = pemString;
+      }
       // const signingCertificateFile = request.firmware.signingCertificate;
       // let signingCertificate = undefined;
       // if (signingCertificateFile) {
@@ -106,7 +113,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
         //     signingCertificate,
         //   },
         // },
-        request
+        request,
       );
 
       if (response && response.success) {

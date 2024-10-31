@@ -13,7 +13,7 @@ import {
   InstallCertificateStatusEnumType,
   InstallCertificateUseEnumType,
 } from '@citrineos/base';
-import { showError, showSucces } from '../util';
+import { formatPem, showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
 import {
@@ -104,7 +104,6 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   // installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
   // installCertificateData[InstallCertificateDataProps.certificate] =
   //   installCertificate;
-  installCertificateData[InstallCertificateDataProps.certificate] = NEW_IDENTIFIER;
 
   const [_parentRecord, _setParentRecord] = useState<any>(
     installCertificateData,
@@ -135,6 +134,11 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
     //   );
         
     try {
+      const pemString = formatPem(data.certificate);
+      if (pemString == null) {
+        throw new Error("Incorrectly formatted PEM");
+      }
+      data.certificate = pemString;
       const client = new BaseRestClient();
       await client.post(
         `/certificates/installCertificate?identifier=${station.id}&tenantId=1`,
