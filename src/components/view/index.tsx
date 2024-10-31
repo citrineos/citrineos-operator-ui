@@ -3,6 +3,7 @@ import {
   Create,
   DeleteButton,
   Edit,
+  EditButton,
   ListButton,
   RefreshButton,
   Show,
@@ -18,6 +19,8 @@ import { CustomAction, CustomActions } from '../custom-actions';
 import { ResourceType } from '../../resource-type';
 import dayjs from 'dayjs';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { useDispatch } from 'react-redux';
+import { setSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 export enum GenericViewState {
   SHOW = 'show',
@@ -94,6 +97,7 @@ export const GenericParameterizedView = (
     hideListButton = true,
     useFormProps,
   } = props;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const formRef = useRef();
   const gqlMutation =
@@ -109,6 +113,7 @@ export const GenericParameterizedView = (
       gqlMutation,
     },
   } as any;
+
   if (resourceType) {
     obj.resource = resourceType;
   }
@@ -155,6 +160,13 @@ export const GenericParameterizedView = (
         excludeExtraneousValues: false,
       });
       setParentRecord(instance);
+
+      // Set the selectedChargingStationSlice
+      dispatch(
+        setSelectedChargingStation({
+          selectedChargingStation: JSON.stringify(instanceToPlain(instance)),
+        }),
+      );
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };
@@ -197,6 +209,13 @@ export const GenericParameterizedView = (
               />
             )}
             {!hideListButton && <ListButton resource={resourceType} />}
+            {state === GenericViewState.SHOW && (
+              <EditButton
+                onClick={() => {
+                  navigate('./edit');
+                }}
+              />
+            )}
             {state !== GenericViewState.CREATE && (
               <RefreshButton onClick={() => queryResult?.refetch()} />
             )}
