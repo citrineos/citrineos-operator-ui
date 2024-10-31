@@ -35,6 +35,7 @@ import { ClassGqlEditMutation } from '../../../util/decorators/ClassGqlEditMutat
 import { ClassGqlGetQuery } from '../../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../../util/BaseModel';
+import { LabelField } from '../../../util/decorators/LabelField';
 
 export enum VariableAttributeProps {
   id = 'id',
@@ -52,6 +53,7 @@ export enum VariableAttributeProps {
 }
 
 @ClassResourceType(ResourceType.VARIABLE_ATTRIBUTES)
+@LabelField(VariableAttributeProps.stationId)
 @ClassGqlListQuery(VARIABLE_ATTRIBUTE_LIST_QUERY)
 @ClassGqlGetQuery(VARIABLE_ATTRIBUTE_GET_QUERY)
 @ClassGqlCreateMutation(VARIABLE_ATTRIBUTE_CREATE_MUTATION)

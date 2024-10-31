@@ -83,11 +83,17 @@ export const AssociationSelection = <
     [associatedRecordClassInstance],
   );
 
+  const labelKey = label || primaryKeyFieldName;
+
   const storageKey = useMemo(() => {
     if (Object.keys(associatedRecordClassInstance as object).length === 0)
       return '';
 
-    return `${(parentRecord as object).constructor.name}_${associatedRecordClass.name}`.toLowerCase();
+    const parentName =
+      window.location.pathname.split('/')[1] +
+      (parentRecord as object).constructor.name;
+
+    return `${parentName}_${associatedRecordClass.name}`.toLowerCase();
   }, [parentRecord, associatedRecordClass]);
 
   const selectedItems = useSelector(getSelectedAssociatedItems(storageKey));
@@ -95,7 +101,6 @@ export const AssociationSelection = <
   const selectedIdentifiers = useMemo(() => {
     if (selectedItems.length === 0) return '';
 
-    const labelKey = label || primaryKeyFieldName;
     return selectedItems
       .map((item: any) => plainToInstance(associatedRecordClass, item))
       .map((item: any) => item[labelKey])
@@ -119,7 +124,7 @@ export const AssociationSelection = <
     let newVal;
     if (Array.isArray(value)) {
       newVal = value
-        .map((v: any) => (v as any)[primaryKeyFieldName])
+        .map((v: any) => (v as any)[labelKey])
         .join(', ');
     } else if (value) {
       newVal = JSON.stringify((value as any)[associatedIdFieldName]);
