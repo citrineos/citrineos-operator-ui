@@ -6,23 +6,16 @@ import {
   GenericView,
   GenericViewState,
 } from '../../components/view';
-import { useTable } from '@refinedev/antd';
-import { TransactionListQuery } from '../../graphql/types';
 import { Transaction } from './Transaction';
-import { DataModelTable, IDataModelListProps } from '../../components';
-import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   TRANSACTION_CREATE_MUTATION,
   TRANSACTION_DELETE_MUTATION,
   TRANSACTION_EDIT_MUTATION,
   TRANSACTION_GET_ID_BY_TRANSACTION_ID_STATION_ID_QUERY,
   TRANSACTION_GET_QUERY,
-  TRANSACTION_LIST_QUERY,
 } from './queries';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { TbTransactionDollar } from 'react-icons/tb';
-import { TRANSACTION_COLUMNS } from './table-config';
-import { Transactions } from '../../graphql/schema.types';
 import { useCustom } from '@refinedev/core';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { GenericDataTable } from '../../components/data-model-table/editable';
@@ -39,23 +32,9 @@ export const TransactionView: React.FC = () => {
   );
 };
 
-export const TransactionList = (props: IDataModelListProps) => {
-  const { tableProps } = useTable<TransactionListQuery>({
-    resource: ResourceType.TRANSACTIONS,
-    sorters: DEFAULT_SORTERS,
-    filters: props.filters,
-    metaData: {
-      gqlQuery: TRANSACTION_LIST_QUERY,
-    },
-  });
-
+export const TransactionList = () => {
   return (
     <>
-      <DataModelTable<Transactions, TransactionListQuery>
-        tableProps={tableProps}
-        columns={TRANSACTION_COLUMNS(!props.hideActions, props.parentView)}
-        hideCreateButton={props.hideCreateButton}
-      />
       <GenericDataTable dtoClass={Transaction} />
     </>
   );

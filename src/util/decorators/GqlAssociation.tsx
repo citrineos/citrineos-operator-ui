@@ -18,9 +18,10 @@ export interface GqlAssociationProps {
    */
   gqlListQuery?: any;
   /**
-   * Key in gqlQueryVariablesMap to use for adding query variables to query
+   * Set a method to generate the query variables using the parent record
+   * @param record
    */
-  gqlUseQueryVariablesKey?: string;
+  getGqlQueryVariables?: (record: any, useSelector: any) => object;
 }
 
 export const GqlAssociation = (props: GqlAssociationProps) => {

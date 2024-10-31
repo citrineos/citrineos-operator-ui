@@ -35,6 +35,39 @@ enum InstallCertificateDataProps {
   certificateType = 'certificateType',
 }
 
+/*
+* Returns null if not pem format
+*/
+function formatPem(pem: string): string | null {
+  // Define PEM header and footer
+  const header = "-----BEGIN CERTIFICATE-----";
+  const footer = "-----END CERTIFICATE-----";
+
+  // Trim whitespace from the entire string
+  let trimmedPem = pem.trim();
+
+  // Check if the string contains valid header and footer
+  if (!trimmedPem.startsWith(header) || !trimmedPem.endsWith(footer)) {
+    return null; // Invalid PEM format
+  }
+
+  // Extract content between the header and footer
+  const base64Content = trimmedPem.slice(header.length, trimmedPem.length - footer.length).replace(/\s+/g, "");
+
+  // Validate the base64 content length
+  if (base64Content.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(base64Content)) {
+    return null; // Not a valid base64 string
+  }
+
+  // Split the content into 64-character lines
+  const formattedContent = base64Content.match(/.{1,64}/g)?.join("\n");
+
+  // Reassemble the PEM with correct newlines
+  const formattedPem = `${header}\n${formattedContent}\n${footer}`;
+
+  return formattedPem;
+}
+
 class InstallCertificateData {
   // @GqlAssociation({
   //   parentIdFieldName: InstallCertificateDataProps.certificate,
@@ -134,6 +167,11 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
     //   );
         
     try {
+      const pemString = formatPem(data.certificate);
+      if (pemString == null) {
+        throw new Error("Incorrectly formatted PEM");
+      }
+      data.certificate = pemString;
       const client = new BaseRestClient();
       await client.post(
         `/certificates/installCertificate?identifier=${station.id}&tenantId=1`,
