@@ -32,12 +32,13 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(ClearCacheRequest, plainValues);
-    await triggerMessageAndHandleResponse(
-      `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      classInstance,
-      (response: MessageConfirmation) => response?.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: classInstance,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response?.success,
+    });
   };
 
   return (
@@ -48,5 +49,5 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
       parentRecord={clearCacheRequest}
       initialValues={clearCacheRequest}
     />
-  )
+  );
 };
