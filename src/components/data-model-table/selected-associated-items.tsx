@@ -94,7 +94,7 @@ export const SelectedAssociatedItems = <Model,>(
 
   return (
     <>
-      <span>Selected {keyToLabel(associatedRecordResourceType)}:</span>
+      <h2>Selected {keyToLabel(associatedRecordResourceType)}:</h2>
       <Table
         dataSource={dataWithKeys}
         columns={columns}
