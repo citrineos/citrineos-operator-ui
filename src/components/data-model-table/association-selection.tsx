@@ -93,6 +93,7 @@ export const AssociationSelection = <
 
     const parentName =
       window.location.pathname.split('/')[1] +
+      '_' +
       (parentRecord as object).constructor.name;
 
     return `${parentName}_${associatedRecordClass.name}_${uniqueId}`.toLowerCase();
