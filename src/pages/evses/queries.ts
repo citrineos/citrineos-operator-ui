@@ -61,6 +61,23 @@ export const EVSE_GET_QUERY = gql`
       connectorId
       createdAt
       updatedAt
+
+      # Join the VariableAttributes for this EVSE
+      VariableAttributes {
+        id
+        stationId
+        type
+        dataType
+        value
+        mutability
+        persistent
+        constant
+        variableId
+        componentId
+        evseDatabaseId
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

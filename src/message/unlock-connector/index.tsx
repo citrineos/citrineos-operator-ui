@@ -104,6 +104,7 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
           parentIdFieldName={UnlockConnectorRequestProps.evseId}
           associatedIdFieldName={EvseProps.databaseId}
           gqlQuery={GET_EVSE_LIST_FOR_STATION}
+          form={form}
           gqlQueryVariables={{
             [VariableAttributeProps.stationId]: station.id,
           }}

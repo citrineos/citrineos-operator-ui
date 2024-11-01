@@ -109,11 +109,15 @@ export class Transaction {
   @GqlAssociation({
     parentIdFieldName: TransactionProps.id,
     associatedIdFieldName: TransactionEventProps.transactionDatabaseId,
-    gqlQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
-    gqlListQuery: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
-    getGqlQueryVariables: (transaction: Transaction) => ({
-      transactionDatabaseId: transaction.id,
-    }),
+    gqlQuery: {
+      query: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
+    },
+    gqlListQuery: {
+      query: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
+      getQueryVariables: (transaction: Transaction) => ({
+        transactionDatabaseId: transaction.id,
+      }),
+    },
   })
   events?: TransactionEvent[];
 

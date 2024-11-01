@@ -18,9 +18,28 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       locationId
       StatusNotifications {
         id
+        stationId
+        evseId
+        connectorId
+        timestamp
+        connectorStatus
+        createdAt
+        updatedAt
       }
       createdAt
       updatedAt
+      Location {
+        id
+        name
+        address
+        city
+        postalCode
+        state
+        country
+        coordinates
+        createdAt
+        updatedAt
+      }
     }
     ChargingStations_aggregate(where: $where) {
       aggregate {

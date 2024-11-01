@@ -72,8 +72,12 @@ export class GetVariablesData {
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.variable,
     associatedIdFieldName: VariableProps.id,
-    gqlQuery: VARIABLE_GET_QUERY,
-    gqlListQuery: VARIABLE_LIST_QUERY,
+    gqlQuery: {
+      query: VARIABLE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: VARIABLE_LIST_QUERY,
+    },
   })
   @Type(() => Variable)
   @IsNotEmpty()
@@ -87,8 +91,12 @@ export class GetVariablesData {
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.component,
     associatedIdFieldName: ComponentProps.id,
-    gqlQuery: COMPONENT_GET_QUERY,
-    gqlListQuery: COMPONENT_LIST_QUERY,
+    gqlQuery: {
+      query: COMPONENT_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: COMPONENT_LIST_QUERY,
+    },
   })
   @Type(() => Component)
   @IsNotEmpty()
@@ -102,13 +110,17 @@ export class GetVariablesData {
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.evse,
     associatedIdFieldName: EvseProps.databaseId,
-    gqlQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (_: GetVariablesData, selector: any) => {
-      const station = selector(getSelectedChargingStation()) || {};
-      return {
-        stationId: station.id,
-      };
+    gqlQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (_: GetVariablesData, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
     },
   })
   @Type(() => Evse)

@@ -41,8 +41,12 @@ export class CustomerInformationRequest {
   @GqlAssociation({
     parentIdFieldName: ID_TOKEN_FIELD,
     associatedIdFieldName: IdTokenProps.id,
-    gqlQuery: ADDITIONAL_INFOS_RELATED_IDTOKENS,
-    gqlListQuery: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+    gqlQuery: {
+      query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+    },
+    gqlListQuery: {
+      query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+    },
   })
   @Type(() => IdToken)
   @IsNotEmpty()
