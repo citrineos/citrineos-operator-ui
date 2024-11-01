@@ -1,7 +1,6 @@
 import {
   ArrayMinSize,
   IsArray,
-  IsEnum,
   IsInt,
   IsNotEmpty,
   ValidateNested,

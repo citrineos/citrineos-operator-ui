@@ -79,7 +79,6 @@ export const renderViewContent = (props: RenderViewContentProps) => {
     value: _value,
     record,
     hideLabels,
-    disabled,
     parentRecord,
     form,
     setHasChanges,
@@ -103,7 +102,7 @@ export const renderViewContent = (props: RenderViewContentProps) => {
   const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
   const gqlListSelectedQuery = field.gqlAssociationProps?.gqlListSelectedQuery;
   const getGqlQueryVariables = gqlListSelectedQuery?.getQueryVariables;
-  let gqlQueryVariables = undefined;
+  let gqlQueryVariables = undefined; // eslint-disable-line no-use-before-define
   if (getGqlQueryVariables) {
     gqlQueryVariables = getGqlQueryVariables(record, useSelector);
   }
@@ -456,8 +455,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               },
             ),
           };
-        }
-        else {
+        } else {
           (meta as any).variables = {
             id: id,
             object: valuesClass,
