@@ -28,6 +28,7 @@ import {
 } from '../status-notifications/StatusNotification';
 import {
   STATUS_NOTIFICATIONS_GET_QUERY,
+  STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from '../status-notifications/queries';
 import { Evse, EvseProps } from '../evses/Evse';
@@ -39,6 +40,8 @@ import {
 } from '../../message/queries';
 import { Transaction, TransactionProps } from '../transactions/Transaction';
 import { ChargingStationProps } from './ChargingStationProps';
+import { TRANSACTION_LIST_QUERY } from '../transactions/queries';
+import { EVSE_LIST_QUERY } from '../evses/queries';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -55,7 +58,7 @@ export class ChargingStation extends BaseModel {
   isOnline!: boolean;
 
   @GqlAssociation({
-    parentIdFieldName: ChargingStationProps.locationId,
+    parentIdFieldName: ChargingStationProps.Location,
     associatedIdFieldName: LocationProps.id,
     gqlQuery: {
       query: LOCATIONS_GET_QUERY,
@@ -66,7 +69,7 @@ export class ChargingStation extends BaseModel {
   })
   @Type(() => Location)
   @IsOptional()
-  locationId?: Location;
+  Location?: Location;
 
   @IsArray()
   @IsOptional()
@@ -78,6 +81,12 @@ export class ChargingStation extends BaseModel {
     },
     gqlListQuery: {
       query: STATUS_NOTIFICATIONS_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
+      query: STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,
+      getQueryVariables: (station: ChargingStation) => ({
+        stationId: station.id,
+      }),
     },
   })
   @Type(() => StatusNotification)
@@ -92,6 +101,9 @@ export class ChargingStation extends BaseModel {
       query: GET_EVSES_FOR_STATION,
     },
     gqlListQuery: {
+      query: EVSE_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
       getQueryVariables: (station: ChargingStation) => ({
         stationId: station.id,
@@ -110,6 +122,9 @@ export class ChargingStation extends BaseModel {
       query: GET_TRANSACTIONS_FOR_STATION,
     },
     gqlListQuery: {
+      query: TRANSACTION_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
       query: GET_TRANSACTION_LIST_FOR_STATION,
       getQueryVariables: (station: ChargingStation) => ({
         stationId: station.id,
@@ -125,7 +140,7 @@ export class ChargingStation extends BaseModel {
       Object.assign(this, {
         [ChargingStationProps.id]: data.id,
         [ChargingStationProps.isOnline]: data.isOnline,
-        [ChargingStationProps.locationId]: data.locationId,
+        [ChargingStationProps.Location]: data.Location,
       });
     }
   }

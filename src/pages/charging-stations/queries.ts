@@ -21,6 +21,18 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       }
       createdAt
       updatedAt
+      Location {
+        id
+        name
+        address
+        city
+        postalCode
+        state
+        country
+        coordinates
+        createdAt
+        updatedAt
+      }
     }
     ChargingStations_aggregate(where: $where) {
       aggregate {

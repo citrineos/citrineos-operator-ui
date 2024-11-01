@@ -72,6 +72,7 @@ export const NestedObjectField: (
             parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
             value={form.getFieldValue(fieldPath.keyPath)}
+            form={form}
             onChange={(newValues: any[]) => {
               const currentValues = form.getFieldsValue(true);
               if (newValues.length > 0) {

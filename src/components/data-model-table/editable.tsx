@@ -628,6 +628,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               associatedRecordClass={field.dtoClass!}
               value={form.getFieldValue(field.name)}
               gqlQueryVariables={gqlQueryVariables}
+              form={form}
               onChange={(newValues: any[]) => {
                 form.setFieldsValue({
                   [field.name]: newValues[0],

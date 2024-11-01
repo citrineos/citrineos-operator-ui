@@ -94,6 +94,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
               parentRecord={parentRecord}
               associatedRecordClass={schema.dtoClass!}
               value={form.getFieldValue(fieldPath.keyPath)}
+              form={form}
               onChange={(newValues: any[]) => {
                 form.setFieldsValue({
                   [fieldPath.keyPath as any]: newValues,
