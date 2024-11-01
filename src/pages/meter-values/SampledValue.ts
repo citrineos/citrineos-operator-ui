@@ -41,6 +41,15 @@ export class UnitOfMeasure {
   // customData?: CustomDataType | null; // todo: handle custom data
 }
 
+export enum SampledValueProps {
+  value = 'value',
+  context = 'context',
+  measurand = 'measurand',
+  phase = 'phase',
+  location = 'location',
+  signedMeterValue = 'signedMeterValue',
+  unitOfMeasure = 'unitOfMeasure',
+}
 export class SampledValue {
   @IsNumber()
   value!: number;

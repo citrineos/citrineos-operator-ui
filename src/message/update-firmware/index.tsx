@@ -9,7 +9,7 @@ import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
-import { readFileContent } from '../util';
+import { formatPem } from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -54,26 +54,26 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   };
 
   const onValuesChange = (_changedValues: any, allValues: any) => {
-    const signingCertificate = allValues.firmware.signingCertificate;
-    delete allValues.firmware.signingCertificate;
+    // const signingCertificate = allValues.firmware.signingCertificate;
+    // delete allValues.firmware.signingCertificate;
 
     const request = plainToInstance(UpdateFirmwareRequest, allValues, {
       excludeExtraneousValues: false,
     });
 
-    request.firmware.signingCertificate = signingCertificate;
+    // request.firmware.signingCertificate = signingCertificate;
     setValid(isRequestValid(request));
   };
 
   const onFinish = async (values: any) => {
-    const signingCertificate = values.firmware.signingCertificate;
-    delete values.firmware.signingCertificate;
+    // const signingCertificate = values.firmware.signingCertificate;
+    // delete values.firmware.signingCertificate;
 
     const request = plainToInstance(UpdateFirmwareRequest, values, {
       excludeExtraneousValues: false,
     });
 
-    request.firmware.signingCertificate = signingCertificate;
+    // request.firmware.signingCertificate = signingCertificate;
     if (isRequestValid(request)) {
       await updateFirmware(request);
     }
@@ -83,29 +83,37 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
     try {
       setLoading(true);
 
-      const signingCertificateFile = request.firmware.signingCertificate;
-      let signingCertificate = undefined;
-      if (signingCertificateFile) {
-        try {
-          signingCertificate = await readFileContent(signingCertificateFile);
-        } catch (error: any) {
-          const msg = `Could not read signing certificate file contents, got error: ${error.message}`;
-          console.error(msg, error);
+      if (request.firmware.signingCertificate) {
+        const pemString = formatPem(request.firmware.signingCertificate);
+        if (pemString == null) {
+          throw new Error('Incorrectly formatted PEM');
         }
+        request.firmware.signingCertificate = pemString;
       }
+      // const signingCertificateFile = request.firmware.signingCertificate;
+      // let signingCertificate = undefined;
+      // if (signingCertificateFile) {
+      //   try {
+      //     signingCertificate = await readFileContent(signingCertificateFile);
+      //   } catch (error: any) {
+      //     const msg = `Could not read signing certificate file contents, got error: ${error.message}`;
+      //     console.error(msg, error);
+      //   }
+      // }
 
       const client = new BaseRestClient();
       const response = await client.post(
         `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
         MessageConfirmation,
         {},
-        {
-          ...request,
-          firmware: {
-            ...request.firmware,
-            signingCertificate,
-          },
-        },
+        // {
+        //   ...request,
+        //   firmware: {
+        //     ...request.firmware,
+        //     signingCertificate,
+        //   },
+        // },
+        request,
       );
 
       if (response && response.success) {

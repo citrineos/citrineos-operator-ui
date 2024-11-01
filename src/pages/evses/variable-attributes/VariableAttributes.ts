@@ -35,6 +35,7 @@ import { ClassGqlEditMutation } from '../../../util/decorators/ClassGqlEditMutat
 import { ClassGqlGetQuery } from '../../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../../util/BaseModel';
+import { LabelField } from '../../../util/decorators/LabelField';
 
 export enum VariableAttributeProps {
   id = 'id',
@@ -45,13 +46,14 @@ export enum VariableAttributeProps {
   mutability = 'mutability',
   persistent = 'persistent',
   constant = 'constant',
-  variableId = 'variableId',
-  componentId = 'componentId',
+  Variable = 'Variable',
+  Component = 'Component',
   evseDatabaseId = 'evseDatabaseId',
   generatedAt = 'generatedAt',
 }
 
 @ClassResourceType(ResourceType.VARIABLE_ATTRIBUTES)
+@LabelField(VariableAttributeProps.stationId)
 @ClassGqlListQuery(VARIABLE_ATTRIBUTE_LIST_QUERY)
 @ClassGqlGetQuery(VARIABLE_ATTRIBUTE_GET_QUERY)
 @ClassGqlCreateMutation(VARIABLE_ATTRIBUTE_CREATE_MUTATION)
@@ -87,24 +89,24 @@ export class VariableAttribute extends BaseModel {
   constant!: boolean;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.variableId,
+    parentIdFieldName: VariableAttributeProps.Variable,
     associatedIdFieldName: VariableProps.id,
     gqlQuery: VARIABLE_GET_QUERY,
     gqlListQuery: VARIABLE_LIST_QUERY,
   })
   @Type(() => Variable)
   @IsOptional()
-  variableId?: Variable | null;
+  Variable?: Variable | null;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.componentId,
+    parentIdFieldName: VariableAttributeProps.Component,
     associatedIdFieldName: ComponentProps.id,
     gqlQuery: COMPONENT_GET_QUERY,
     gqlListQuery: COMPONENT_LIST_QUERY,
   })
   @Type(() => Component)
   @IsOptional()
-  componentId?: Component | null;
+  Component?: Component | null;
 
   @IsOptional()
   @IsNumber()
@@ -126,8 +128,8 @@ export class VariableAttribute extends BaseModel {
         [VariableAttributeProps.mutability]: data.mutability,
         [VariableAttributeProps.persistent]: data.persistent,
         [VariableAttributeProps.constant]: data.constant,
-        [VariableAttributeProps.variableId]: data.variableId,
-        [VariableAttributeProps.componentId]: data.componentId,
+        [VariableAttributeProps.Variable]: data.Variable,
+        [VariableAttributeProps.Component]: data.Component,
         [VariableAttributeProps.evseDatabaseId]: data.evseDatabaseId,
         [VariableAttributeProps.generatedAt]: data.generatedAt,
       });

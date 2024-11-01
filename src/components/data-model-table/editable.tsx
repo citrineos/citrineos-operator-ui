@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -37,7 +36,6 @@ import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldNam
 import { GetFields, GetVariables } from '@refinedev/hasura';
 import { CLASS_GQL_EDIT_MUTATION } from '../../util/decorators/ClassGqlEditMutation';
 import { CLASS_GQL_CREATE_MUTATION } from '../../util/decorators/ClassGqlCreateMutation';
-import { ColorModeContext } from '../../contexts/color-mode';
 import { CustomAction } from '../custom-actions';
 import { FieldPath } from '../form/state/fieldpath';
 import { AssociationSelection } from './association-selection';
@@ -53,12 +51,14 @@ import { TableWrapper, TableWrapperRef } from './table-wrapper';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
+import { HIDDENINTABLE } from '../../util/decorators/HiddenInTable';
+import { useSelector } from 'react-redux';
 
-const renderViewContent = (
+export const renderViewContent = (
   field: FieldSchema,
   _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
   record: any, // todo type
-  gqlQueryVariablesMap?: GqlQueryVariableMap | null,
+  useSelector: any,
 ) => {
   const value = record[field.name];
   const fieldType = field.type;
@@ -68,20 +68,10 @@ const renderViewContent = (
     field.gqlAssociationProps?.associatedIdFieldName;
   const gqlQuery = field.gqlAssociationProps?.gqlQuery;
   const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
-  const gqlUseQueryVariablesKey =
-    field.gqlAssociationProps?.gqlUseQueryVariablesKey;
-
+  const getGqlQueryVariables = field.gqlAssociationProps?.getGqlQueryVariables;
   let gqlQueryVariables = undefined;
-  if (
-    gqlUseQueryVariablesKey &&
-    gqlQueryVariablesMap &&
-    !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-  ) {
-    if (typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] === 'function') {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-    } else {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-    }
+  if (getGqlQueryVariables) {
+    gqlQueryVariables = getGqlQueryVariables(record, useSelector);
   }
 
   if (field.type === FieldType.customRender && field.customRender) {
@@ -144,10 +134,6 @@ export enum SelectionType {
   MULTIPLE = 'multiple',
 }
 
-export type GqlQueryVariableMap =
-  | { [key: string]: object }
-  | { [key: string]: (record: any) => object };
-
 export interface GenericDataTableProps {
   // todo make generic / typed
   dtoClass: Constructable<any>;
@@ -157,11 +143,10 @@ export interface GenericDataTableProps {
   onSelectionChange?: (selectedRows: any[]) => void;
   editable?: boolean;
   customActions?: CustomAction<any>[];
-  gqlQueryVariablesMap?: GqlQueryVariableMap;
   fieldAnnotations?: {
     [key: string]: {
-      customActions: CustomAction<any>[];
-      gqlAssociationProps: GqlAssociationProps;
+      customActions?: CustomAction<any>[];
+      gqlAssociationProps?: GqlAssociationProps;
     };
   };
 }
@@ -176,22 +161,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     filters = null,
     useTableProps: useTableProps = null,
     onSelectionChange,
-    editable: passedEditable = true,
+    editable = true,
     customActions,
-    gqlQueryVariablesMap = null,
     fieldAnnotations,
   } = props;
 
-  let editable = false;
-
   const getDataProvider = useDataProvider();
   const dataProvider: DataProvider = getDataProvider();
-
-  const { mode } = useContext(ColorModeContext);
-  const isDarkMode = mode === 'dark';
-  if (isDarkMode) {
-    editable = passedEditable;
-  }
 
   const dtoClassInstance = useMemo(() => {
     return plainToInstance(dtoClass, {});
@@ -332,7 +308,11 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     Object.keys(valuesClass).forEach((key) => {
       const classTransformerType = getClassTransformerType(valuesClass, key);
       let gqlAssociationProps: GqlAssociationProps;
-      if (fieldAnnotations && fieldAnnotations[key]) {
+      if (
+        fieldAnnotations &&
+        fieldAnnotations[key] &&
+        fieldAnnotations[key].gqlAssociationProps
+      ) {
         gqlAssociationProps = fieldAnnotations[key].gqlAssociationProps;
       } else {
         gqlAssociationProps = Reflect.getMetadata(
@@ -483,51 +463,210 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     [setUnknowns],
   );
 
+  const renderActionsColumn = (
+    record: any,
+    editingRecord: any,
+    primaryKeyFieldName: any,
+    editable: boolean,
+    onEdit: ((record: any) => void) | undefined,
+    handleRowSave: (_record: any) => void,
+    cancel: () => void,
+    onDeleteSuccess: () => void,
+    customActions: CustomAction<any>[] | undefined,
+    classCustomActions: any,
+  ) => {
+    const isCurrentlyEditing =
+      editingRecord &&
+      record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
+    const actions = !isCurrentlyEditing
+      ? editable
+        ? [ColumnAction.EDIT, ColumnAction.DELETE, ColumnAction.SHOW]
+        : [ColumnAction.SHOW, ColumnAction.DELETE]
+      : [ColumnAction.SAVE, ColumnAction.CANCEL, ColumnAction.DELETE];
+
+    return (
+      <ActionsColumnEnhanced
+        record={record}
+        dtoClass={dtoClass}
+        onEdit={
+          editable &&
+          !isCurrentlyEditing &&
+          record[primaryKeyFieldName] !== NEW_IDENTIFIER
+            ? onEdit
+            : undefined
+        }
+        onSave={isCurrentlyEditing ? handleRowSave : undefined}
+        onCancel={isCurrentlyEditing ? cancel : undefined}
+        onDeleteSuccess={onDeleteSuccess}
+        actions={actions}
+        customActions={customActions || classCustomActions}
+      />
+    );
+  };
+
+  const renderEditableCell = (
+    field: FieldSchema,
+    record: any,
+    form: any,
+    setHasChanges: any,
+    visibleOptionalFields: Flags,
+    enableOptionalField: (path: FieldPath) => void,
+    toggleOptionalField: (path: FieldPath) => void,
+    unknowns: Unknowns,
+    modifyUnknowns: any,
+    useSelector: any,
+  ) => {
+    if (field.type === FieldType.array) {
+      let gqlAssociationProps;
+      if (
+        fieldAnnotations &&
+        fieldAnnotations[field.name]?.gqlAssociationProps
+      ) {
+        gqlAssociationProps = fieldAnnotations[field.name]?.gqlAssociationProps;
+      } else if (field.gqlAssociationProps) {
+        gqlAssociationProps = field.gqlAssociationProps;
+      }
+      if (!gqlAssociationProps) {
+        return <Alert message="Missing gqlAssociationProps" type="error" />;
+      }
+      const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
+      const associatedIdFieldName = gqlAssociationProps.associatedIdFieldName;
+      const gqlListQuery = gqlAssociationProps.gqlListQuery;
+      const getGqlQueryVariables = gqlAssociationProps.getGqlQueryVariables;
+      let gqlQueryVariables = undefined;
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(record, useSelector);
+      }
+      return (
+        <div className="editable-cell">
+          <Form.Item name={field.name}>
+            <AssociationSelection
+              selectable={SelectionType.MULTIPLE}
+              parentIdFieldName={parentIdFieldName!}
+              associatedIdFieldName={associatedIdFieldName!}
+              gqlQuery={gqlListQuery}
+              parentRecord={record}
+              gqlQueryVariables={gqlQueryVariables}
+              associatedRecordClass={field.dtoClass!}
+              value={form.getFieldValue(field.name)}
+              onChange={(newValues: any[]) => {
+                form.setFieldsValue({
+                  [field.name]: newValues,
+                });
+                setHasChanges(true);
+              }}
+              customActions={
+                fieldAnnotations &&
+                fieldAnnotations[field.name] &&
+                fieldAnnotations[field.name].customActions
+                  ? fieldAnnotations![field.name].customActions
+                  : field.customActions
+              }
+            />
+          </Form.Item>
+        </div>
+      );
+    }
+    if (field.type === FieldType.nestedObject && field.gqlAssociationProps) {
+      let gqlAssociationProps;
+      if (
+        fieldAnnotations &&
+        fieldAnnotations[field.name]?.gqlAssociationProps
+      ) {
+        gqlAssociationProps = fieldAnnotations[field.name]?.gqlAssociationProps;
+      } else if (field.gqlAssociationProps) {
+        gqlAssociationProps = field.gqlAssociationProps;
+      }
+      if (!gqlAssociationProps) {
+        return <Alert message="Missing gqlAssociationProps" type="error" />;
+      }
+      const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
+      const associatedIdFieldName = gqlAssociationProps.associatedIdFieldName;
+      const gqlListQuery = gqlAssociationProps.gqlListQuery;
+      const getGqlQueryVariables = gqlAssociationProps.getGqlQueryVariables;
+      let gqlQueryVariables = undefined;
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(record, useSelector);
+      }
+      return (
+        <div className="editable-cell">
+          <Form.Item name={field.name}>
+            <AssociationSelection
+              parentIdFieldName={parentIdFieldName!}
+              associatedIdFieldName={associatedIdFieldName!}
+              gqlQuery={gqlListQuery}
+              parentRecord={record}
+              associatedRecordClass={field.dtoClass!}
+              value={form.getFieldValue(field.name)}
+              gqlQueryVariables={gqlQueryVariables}
+              onChange={(newValues: any[]) => {
+                form.setFieldsValue({
+                  [field.name]: newValues[0],
+                });
+                setHasChanges(true);
+              }}
+              customActions={
+                fieldAnnotations &&
+                fieldAnnotations[field.name] &&
+                fieldAnnotations[field.name].customActions
+                  ? fieldAnnotations![field.name].customActions
+                  : field.customActions
+              }
+            />
+          </Form.Item>
+        </div>
+      );
+    }
+    return renderField({
+      schema: field,
+      preFieldPath: FieldPath.empty(),
+      disabled:
+        record[primaryKeyFieldName] === NEW_IDENTIFIER &&
+        field.name === primaryKeyFieldName,
+      visibleOptionalFields: visibleOptionalFields,
+      hideLabels: true,
+      enableOptionalField: enableOptionalField,
+      toggleOptionalField: toggleOptionalField,
+      unknowns: unknowns,
+      modifyUnknowns: modifyUnknowns,
+      form,
+      parentRecord: record,
+      useSelector,
+    });
+  };
+
   const columns: FieldSchema[] = useMemo(() => {
     const actionsColumn = {
       title: 'Actions',
       dataIndex: 'actions',
       fixed: 'left' as const,
       className: 'actions-column',
-      render: (_: any, record: any) => {
-        const isCurrentlyEditing =
-          editingRecord &&
-          record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
-        const actions = !isCurrentlyEditing
-          ? editable
-            ? [ColumnAction.EDIT, ColumnAction.DELETE]
-            : [ColumnAction.SHOW, ColumnAction.DELETE]
-          : [ColumnAction.SAVE, ColumnAction.CANCEL, ColumnAction.DELETE];
-        return (
-          <ActionsColumnEnhanced
-            record={record}
-            dtoClass={dtoClass}
-            onEdit={
-              editable &&
-                !isCurrentlyEditing &&
-                record[primaryKeyFieldName] !== NEW_IDENTIFIER
-                ? onEdit
-                : undefined
-            }
-            onSave={isCurrentlyEditing ? handleRowSave : undefined}
-            onCancel={isCurrentlyEditing ? cancel : undefined}
-            onDeleteSuccess={onDeleteSuccess}
-            actions={actions}
-            customActions={
-              customActions
-                ? customActions
-                : classCustomActions
-                  ? classCustomActions
-                  : undefined
-            }
-          />
-        );
-      },
+      render: (_: any, record: any) =>
+        renderActionsColumn(
+          record,
+          editingRecord,
+          primaryKeyFieldName,
+          editable,
+          onEdit,
+          handleRowSave,
+          cancel,
+          onDeleteSuccess,
+          customActions,
+          classCustomActions,
+        ),
     } as any;
 
-    return [
-      actionsColumn,
-      ...schema.map((field: FieldSchema) => ({
+    const columnsArray: any[] = [actionsColumn];
+    for (const field of schema) {
+      if (dtoClass && !!editingRecord) {
+        const isEditableInTable = Reflect.getMetadata(
+          HIDDENINTABLE,
+          dtoClassInstance,
+          field.name,
+        );
+        if (isEditableInTable) continue;
+      }
+      columnsArray.push({
         title: field.label,
         dataIndex: primaryKeyFieldName,
         sorter: field.sorter,
@@ -537,171 +676,28 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             editingRecord &&
             record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
           if (isCurrentlyEditing) {
-            if (field.type === FieldType.array) {
-              let gqlAssociationProps;
-              if (
-                fieldAnnotations &&
-                fieldAnnotations[field.name]?.gqlAssociationProps
-              ) {
-                gqlAssociationProps =
-                  fieldAnnotations[field.name]?.gqlAssociationProps;
-              } else if (field.gqlAssociationProps) {
-                gqlAssociationProps = field.gqlAssociationProps;
-              }
-              if (!gqlAssociationProps) {
-                return (
-                  <Alert message="Missing gqlAssociationProps" type="error" />
-                );
-              }
-              const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
-              const associatedIdFieldName =
-                gqlAssociationProps.associatedIdFieldName;
-              const gqlListQuery = gqlAssociationProps.gqlListQuery;
-              const gqlUseQueryVariablesKey =
-                gqlAssociationProps.gqlUseQueryVariablesKey;
-              let gqlQueryVariables = undefined;
-              if (
-                gqlUseQueryVariablesKey &&
-                gqlQueryVariablesMap &&
-                !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-              ) {
-                if (
-                  typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] ===
-                  'function'
-                ) {
-                  gqlQueryVariables =
-                    gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-                } else {
-                  gqlQueryVariables =
-                    gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-                }
-              }
-              return (
-                <div className="editable-cell">
-                  <Form.Item name={field.name}>
-                    <AssociationSelection
-                      selectable={SelectionType.MULTIPLE}
-                      parentIdFieldName={parentIdFieldName!}
-                      associatedIdFieldName={associatedIdFieldName!}
-                      gqlQuery={gqlListQuery}
-                      parentRecord={record}
-                      gqlQueryVariables={gqlQueryVariables}
-                      associatedRecordClass={field.dtoClass!}
-                      value={form.getFieldValue(field.name)}
-                      onChange={(newValues: any[]) => {
-                        form.setFieldsValue({
-                          [field.name]: newValues,
-                        });
-                        setHasChanges(true);
-                      }}
-                      customActions={
-                        fieldAnnotations &&
-                          fieldAnnotations[field.name] &&
-                          fieldAnnotations[field.name].customActions
-                          ? fieldAnnotations![field.name].customActions
-                          : field.customActions
-                      }
-                    />
-                  </Form.Item>
-                </div>
-              );
-            }
-            if (
-              field.type === FieldType.nestedObject &&
-              field.gqlAssociationProps
-            ) {
-              let gqlAssociationProps;
-              if (
-                fieldAnnotations &&
-                fieldAnnotations[field.name]?.gqlAssociationProps
-              ) {
-                gqlAssociationProps =
-                  fieldAnnotations[field.name]?.gqlAssociationProps;
-              } else if (field.gqlAssociationProps) {
-                gqlAssociationProps = field.gqlAssociationProps;
-              }
-              if (!gqlAssociationProps) {
-                return (
-                  <Alert message="Missing gqlAssociationProps" type="error" />
-                );
-              }
-              const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
-              const associatedIdFieldName =
-                gqlAssociationProps.associatedIdFieldName;
-              const gqlListQuery = gqlAssociationProps.gqlListQuery;
-              const gqlUseQueryVariablesKey =
-                gqlAssociationProps.gqlUseQueryVariablesKey;
-              let gqlQueryVariables = undefined;
-              if (
-                gqlUseQueryVariablesKey &&
-                gqlQueryVariablesMap &&
-                !!gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-              ) {
-                if (
-                  typeof gqlQueryVariablesMap[gqlUseQueryVariablesKey] ===
-                  'function'
-                ) {
-                  gqlQueryVariables =
-                    gqlQueryVariablesMap[gqlUseQueryVariablesKey](record);
-                } else {
-                  gqlQueryVariables =
-                    gqlQueryVariablesMap[gqlUseQueryVariablesKey];
-                }
-              }
-              return (
-                <div className="editable-cell">
-                  <Form.Item name={field.name}>
-                    <AssociationSelection
-                      parentIdFieldName={parentIdFieldName!}
-                      associatedIdFieldName={associatedIdFieldName!}
-                      gqlQuery={gqlListQuery}
-                      parentRecord={record}
-                      associatedRecordClass={field.dtoClass!}
-                      value={form.getFieldValue(field.name)}
-                      gqlQueryVariables={gqlQueryVariables}
-                      onChange={(newValues: any[]) => {
-                        form.setFieldsValue({
-                          [field.name]: newValues[0],
-                        });
-                        setHasChanges(true);
-                      }}
-                      customActions={
-                        fieldAnnotations &&
-                          fieldAnnotations[field.name] &&
-                          fieldAnnotations[field.name].customActions
-                          ? fieldAnnotations![field.name].customActions
-                          : field.customActions
-                      }
-                    />
-                  </Form.Item>
-                </div>
-              );
-            }
-            return renderField({
-              schema: field,
-              preFieldPath: FieldPath.empty(),
-              // disabled: // todo do we want to disable primary field when creating new item?
-              //   record[primaryKeyFieldName] === NEW_IDENTIFIER &&
-              //   field.name === primaryKeyFieldName,
-              disabled: false,
-              visibleOptionalFields: visibleOptionalFields,
-              hideLabels: true,
-              enableOptionalField: enableOptionalField,
-              toggleOptionalField: toggleOptionalField,
-              unknowns: unknowns,
-              modifyUnknowns: modifyUnknowns,
+            return renderEditableCell(
+              field,
+              record,
               form,
-              parentRecord: record,
-            });
+              setHasChanges,
+              visibleOptionalFields,
+              enableOptionalField,
+              toggleOptionalField,
+              unknowns,
+              modifyUnknowns,
+              useSelector,
+            );
           }
           return (
             <div className="editable-cell">
-              {renderViewContent(field, value, record, gqlQueryVariablesMap)}
+              {renderViewContent(field, value, record, useSelector)}
             </div>
           );
         },
-      })),
-    ];
+      });
+    }
+    return columnsArray;
   }, [schema, editingRecord, visibleOptionalFields]) as FieldSchema[];
 
   const missingItems: string[] = [];

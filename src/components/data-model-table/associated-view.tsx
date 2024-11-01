@@ -11,6 +11,7 @@ import { useForm } from '@refinedev/antd';
 import { GenericParameterizedView, GenericViewState } from '../view';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
 
 export interface AssociatedViewProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -31,9 +32,22 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
     associatedRecordClassInstance as object,
   );
 
+  const associatedRecordPrimaryKeyFieldName = Reflect.getMetadata(
+    PRIMARY_KEY_FIELD_NAME,
+    associatedRecordClassInstance as object,
+  );
+
+  const associatedRecord = (parentRecord as any)[parentIdFieldName];
+  let id;
+  if (typeof associatedRecord === 'object') {
+    id = associatedRecord[associatedRecordPrimaryKeyFieldName];
+  } else {
+    id = associatedRecord;
+  }
+
   const useFormProps = useForm<any, any, any>({
     resource: associatedRecordResourceType,
-    id: (parentRecord as any)[parentIdFieldName],
+    id,
     queryOptions: {
       enabled:
         !!(parentRecord as any)[parentIdFieldName] &&
@@ -75,14 +89,18 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
         </>
       }
       expandedContent={
-        <GenericParameterizedView
-          resourceType={associatedRecordResourceType}
-          id={(parentRecord as any)[parentIdFieldName]}
-          state={GenericViewState.SHOW}
-          dtoClass={associatedRecordClass}
-          gqlQuery={gqlQuery}
-          useFormProps={useFormProps}
-        />
+        id ? (
+          <GenericParameterizedView
+            resourceType={associatedRecordResourceType}
+            id={id}
+            state={GenericViewState.SHOW}
+            dtoClass={associatedRecordClass}
+            gqlQuery={gqlQuery}
+            useFormProps={useFormProps}
+          />
+        ) : (
+          ''
+        )
       }
       viewTitle={`Associated ${associatedRecordResourceType}`}
     />

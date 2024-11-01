@@ -6,10 +6,10 @@ import './style.scss';
 import {
   ErrorComponent,
   ThemedLayoutV2,
-  ThemedSiderV2,
   useNotificationProvider,
 } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
+import { App as AntdApp, ConfigProvider } from 'antd';
 
 import dataProvider, {
   GraphQLClient,
@@ -26,8 +26,6 @@ import routerBindings, {
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { Header } from './components';
 import { ColorModeContextProvider } from './contexts/color-mode';
-import { App as AntdApp, ConfigProvider } from 'antd';
-import { ResourceType } from './resource-type';
 import {
   resources as IdTokenResources,
   routes as IdTokenRoutes,
@@ -44,6 +42,7 @@ import {
   resources as IdTokenInfosResources,
   routes as IdTokenInfosRoutes,
 } from './pages/id-tokens-infos';
+import { ResourceType } from './resource-type';
 import {
   resources as bootsResources,
   routes as BootsRoutes,
@@ -84,10 +83,6 @@ import {
   routes as TransactionsRoutes,
 } from './pages/transactions';
 import {
-  resources as transactionEventsResources,
-  routes as TransactionEventsRoutes,
-} from './pages/transaction-events';
-import {
   resources as meterValuesResources,
   routes as MeterValuesRoutes,
 } from './pages/meter-values';
@@ -99,6 +94,7 @@ import {
   resources as variableMonitoringsResources,
   routes as VariableMonitoringsRoutes,
 } from './pages/variable-monitorings';
+import { routes as HomeRoutes } from './pages/home';
 import React from 'react';
 import { MdOutlineSecurity } from 'react-icons/md';
 import {
@@ -122,6 +118,7 @@ import {
   routes as InstalledCertificatesRoutes,
 } from './pages/installed-certificates';
 import { theme } from './theme';
+import { MainMenu } from './components/main-menu';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
@@ -174,7 +171,6 @@ const resources = [
   ...tariffsResources,
   ...subscriptionsResources,
   ...transactionsResources,
-  ...transactionEventsResources,
   ...meterValuesResources,
   ...chargingProfilesResources,
   ...messageInfosResources,
@@ -221,20 +217,29 @@ function App() {
                     element={
                       <ThemedLayoutV2
                         Header={() => <Header sticky />}
-                        Sider={(props) => <ThemedSiderV2 {...props} fixed />}
+                        Sider={(props) => <MainMenu {...props} />}
                       >
                         <Outlet />
                       </ThemedLayoutV2>
                     }
                   >
+                    <Route index path="/home/*" element={<HomeRoutes />} />
                     <Route
-                      index
                       element={<NavigateToResource resource="Authorizations" />}
                     />
-                    <Route path="/additional-infos/*" element={<AdditionalInfosRoutes />} />
+                    <Route
+                      path="/additional-infos/*"
+                      element={<AdditionalInfosRoutes />}
+                    />
                     <Route path="/id-tokens/*" element={<IdTokenRoutes />} />
-                    <Route path="/id-token-infos/*" element={<IdTokenInfosRoutes />} />
-                    <Route path="/authorizations/*" element={<AuthorizationsRoutes />} />
+                    <Route
+                      path="/id-token-infos/*"
+                      element={<IdTokenInfosRoutes />}
+                    />
+                    <Route
+                      path="/authorizations/*"
+                      element={<AuthorizationsRoutes />}
+                    />
                     <Route path="/security-events">
                       <Route index element={<SecurityEventsList />} />
                       <Route path="create" element={<SecurityEventsCreate />} />
@@ -263,10 +268,6 @@ function App() {
                     <Route
                       path="/transactions/*"
                       element={<TransactionsRoutes />}
-                    />
-                    <Route
-                      path="/transaction-events/*"
-                      element={<TransactionEventsRoutes />}
                     />
                     <Route
                       path="/meter-values/*"
