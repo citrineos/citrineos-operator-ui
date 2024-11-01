@@ -50,6 +50,7 @@ import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileForma
 import { CustomAction } from '../custom-actions';
 import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
+import { FieldAnnotations } from '../data-model-table/editable';
 
 export enum ReflectType {
   array,
@@ -134,6 +135,7 @@ export interface GenericProps {
 export interface GenericFormProps extends GenericProps {
   ref?: React.Ref<FormInstance>;
   initialValues?: any;
+  fieldAnnotations?: FieldAnnotations;
 }
 
 export const getReflectTypeFromString = (type: string): ReflectType => {
@@ -214,6 +216,7 @@ export const getSchemaForInstanceAndKey = (
   instance: any,
   key: string,
   requiredFields: string[],
+  fieldAnnotations?: FieldAnnotations,
 ): FieldSchema => {
   const sorter = isSortable(instance.constructor, key);
 
@@ -312,30 +315,53 @@ export const getSchemaForInstanceAndKey = (
 
   if (fieldType === FieldType.array) {
     const classTransformerType = getClassTransformerType(instance, key);
-    const nestedInstance: any = plainToInstance(classTransformerType, {});
-    const gqlAssociationProps: GqlAssociationProps = Reflect.getMetadata(
-      GQL_ASSOCIATION,
-      instance,
-      key,
-    );
-    const customConstructor = Reflect.getMetadata(
-      CLASS_CUSTOM_CONSTRUCTOR,
-      nestedInstance,
-    );
-    return {
-      label: label(instance, key),
-      name: key,
-      type: FieldType.array,
-      isRequired: requiredFields.includes(key),
-      nestedFields: classTransformerType
-        ? extractSchema(classTransformerType)
-        : undefined,
-      dtoClass: classTransformerType,
-      customConstructor,
-      gqlAssociationProps,
-      sorter,
-      customActions,
-    } as unknown as FieldSchema;
+    if (typeof classTransformerType === 'object') {
+      // enum
+      options = Object.keys(classTransformerType).map((key: any) => {
+        const value = classTransformerType[key];
+        return {
+          label: key,
+          value: value,
+        } as FieldSelectOption;
+      });
+      return {
+        label: label(instance, key),
+        name: key,
+        type: FieldType.array,
+        isRequired: requiredFields.includes(key),
+        options,
+        sorter,
+        customActions,
+      } as unknown as FieldSchema;
+    } else {
+      const nestedInstance: any = plainToInstance(classTransformerType, {});
+      const annotatedGqlAssociationProps: GqlAssociationProps =
+        Reflect.getMetadata(GQL_ASSOCIATION, instance, key);
+      let gqlAssociationProps;
+      if (fieldAnnotations && fieldAnnotations[key]?.gqlAssociationProps) {
+        gqlAssociationProps = fieldAnnotations[key]?.gqlAssociationProps;
+      } else if (annotatedGqlAssociationProps) {
+        gqlAssociationProps = annotatedGqlAssociationProps;
+      }
+      const customConstructor = Reflect.getMetadata(
+        CLASS_CUSTOM_CONSTRUCTOR,
+        nestedInstance,
+      );
+      return {
+        label: label(instance, key),
+        name: key,
+        type: FieldType.array,
+        isRequired: requiredFields.includes(key),
+        nestedFields: classTransformerType
+          ? extractSchema(classTransformerType, fieldAnnotations)
+          : undefined,
+        dtoClass: classTransformerType,
+        customConstructor,
+        gqlAssociationProps,
+        sorter,
+        customActions,
+      } as unknown as FieldSchema;
+    }
   }
 
   if (fieldType === FieldType.unknownProperty) {
@@ -373,7 +399,10 @@ export const getSchemaForInstanceAndKey = (
   } as unknown as FieldSchema;
 };
 
-export const extractSchema = (dtoClass: any): FieldSchema[] => {
+export const extractSchema = (
+  dtoClass: any,
+  fieldAnnotations?: FieldAnnotations,
+): FieldSchema[] => {
   const instance = plainToInstance(
     dtoClass,
     {},
@@ -392,7 +421,14 @@ export const extractSchema = (dtoClass: any): FieldSchema[] => {
       const hideInTable = Reflect.getMetadata(HIDDEN, instance as any, key);
 
       if (!hideInTable) {
-        schema.push(getSchemaForInstanceAndKey(instance, key, requiredFields));
+        schema.push(
+          getSchemaForInstanceAndKey(
+            instance,
+            key,
+            requiredFields,
+            fieldAnnotations,
+          ),
+        );
       }
     } catch (e: any) {
       console.error('Error extracting key: %s', key, e);
@@ -429,15 +465,16 @@ export interface RenderFieldProps {
   schema: FieldSchema;
   preFieldPath: FieldPath;
   disabled: boolean;
-  visibleOptionalFields?: any;
+  visibleOptionalFields?: Flags;
   hideLabels?: boolean;
-  enableOptionalField?: any;
-  toggleOptionalField?: any;
-  unknowns?: any;
+  enableOptionalField?: (path: FieldPath) => void;
+  toggleOptionalField?: (path: FieldPath) => void;
+  unknowns?: Unknowns;
   modifyUnknowns?: any;
   form?: any;
   parentRecord?: any;
   useSelector: any;
+  fieldAnnotations?: FieldAnnotations;
 }
 
 export const renderField = (props: RenderFieldProps) => {
@@ -454,6 +491,7 @@ export const renderField = (props: RenderFieldProps) => {
     form,
     parentRecord,
     useSelector,
+    fieldAnnotations,
   } = props;
 
   let fieldPath = preFieldPath.with(schema.name);
@@ -492,6 +530,7 @@ export const renderField = (props: RenderFieldProps) => {
       >
         <Upload
           name={'file'}
+          disabled={disabled}
           maxCount={1}
           accept={
             schema.supportedFileFormats
@@ -521,6 +560,7 @@ export const renderField = (props: RenderFieldProps) => {
         form={form}
         parentRecord={parentRecord}
         useSelector={useSelector}
+        fieldAnnotations={fieldAnnotations}
       />
     );
   }
@@ -569,6 +609,7 @@ export const renderField = (props: RenderFieldProps) => {
       >
         <Form.Item label={'Type'}>
           <Select
+            disabled={disabled}
             value={unknown.type}
             onChange={(value: SupportedUnknownType) => {
               modifyUnknowns('updateFirst', fieldPath, { type: value });
@@ -582,9 +623,11 @@ export const renderField = (props: RenderFieldProps) => {
         </Form.Item>
         {unknown.type && (
           <Form.Item name={fieldPath.namePath} label={'Value'}>
-            {unknown.type === 'string' && <Input placeholder="Enter text" />}
+            {unknown.type === 'string' && (
+              <Input placeholder="Enter text" disabled={disabled} />
+            )}
             {unknown.type === 'number' && (
-              <InputNumber placeholder="Enter number" />
+              <InputNumber placeholder="Enter number" disabled={disabled} />
             )}
             {unknown.type === 'boolean' && <Switch />}
           </Form.Item>
@@ -618,6 +661,7 @@ export const renderField = (props: RenderFieldProps) => {
           <Col span={4}>
             <Form.Item label={'Key'}>
               <Input
+                disabled={disabled}
                 value={unknown?.name}
                 onChange={(e) => updateUnknown({ name: e.target.value })}
                 placeholder="Enter text"
@@ -627,6 +671,7 @@ export const renderField = (props: RenderFieldProps) => {
           <Col span={4}>
             <Form.Item label={'Type'} layout="horizontal">
               <Select
+                disabled={disabled}
                 value={unknown?.type}
                 onChange={(value: SupportedUnknownType) =>
                   updateUnknown({ type: value })
@@ -648,12 +693,14 @@ export const renderField = (props: RenderFieldProps) => {
                 name={[...fieldPath.namePath, unknown.name]}
               >
                 {unknown.type === 'string' && (
-                  <Input placeholder="Enter text" />
+                  <Input disabled={disabled} placeholder="Enter text" />
                 )}
                 {unknown.type === 'number' && (
-                  <InputNumber placeholder="Enter number" />
+                  <InputNumber disabled={disabled} placeholder="Enter number" />
                 )}
-                {unknown.type === 'boolean' && <Switch defaultValue={true} />}
+                {unknown.type === 'boolean' && (
+                  <Switch disabled={disabled} defaultValue={true} />
+                )}
               </Form.Item>
             </Col>
           )}
@@ -697,6 +744,7 @@ export const renderField = (props: RenderFieldProps) => {
                     form,
                     parentRecord,
                     useSelector,
+                    fieldAnnotations,
                   }) as any
                 }
               </Col>
@@ -849,6 +897,7 @@ export const GenericForm = forwardRef(function GenericForm(
     initialValues = undefined,
     submitDisabled = false,
     parentRecord,
+    fieldAnnotations,
   } = props;
 
   const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
@@ -868,12 +917,14 @@ export const GenericForm = forwardRef(function GenericForm(
     return setUnknowns((prev) => prev[method](...args));
   };
 
-  const schema: FieldSchema[] = extractSchema(dtoClass).map((field) => ({
-    ...field,
-    ...(overrides?.[field.name as FieldSchemaKeys]
-      ? overrides[field.name as FieldSchemaKeys]
-      : {}),
-  }));
+  const schema: FieldSchema[] = extractSchema(dtoClass, fieldAnnotations).map(
+    (field) => ({
+      ...field,
+      ...(overrides?.[field.name as FieldSchemaKeys]
+        ? overrides[field.name as FieldSchemaKeys]
+        : {}),
+    }),
+  );
 
   const setFieldsValues = (values: any) => {
     schema.forEach((fs) =>
@@ -892,7 +943,6 @@ export const GenericForm = forwardRef(function GenericForm(
       layout="vertical"
       onFinish={onFinish}
       onValuesChange={onValuesChange}
-      disabled={disabled}
       initialValues={initialValues}
     >
       {schema.map((field) => {
@@ -909,6 +959,7 @@ export const GenericForm = forwardRef(function GenericForm(
           form: formProps.form,
           parentRecord,
           useSelector,
+          fieldAnnotations,
         });
       })}
       <Form.Item>

@@ -43,11 +43,15 @@ export class TriggerMessageRequest {
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.chargingStation,
     associatedIdFieldName: ChargingStationProps.id,
-    gqlQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
-    gqlListQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
-    getGqlQueryVariables: (_: TriggerMessageRequest) => ({
-      [EvseProps.databaseId]: 1,
-    }),
+    gqlQuery: {
+      query: GET_CHARGING_STATION_LIST_FOR_EVSE,
+    },
+    gqlListQuery: {
+      query: GET_CHARGING_STATION_LIST_FOR_EVSE,
+      getQueryVariables: (_: TriggerMessageRequest) => ({
+        [EvseProps.databaseId]: 1,
+      }),
+    },
   })
   @Type(() => ChargingStation)
   @IsNotEmpty()
@@ -57,13 +61,17 @@ export class TriggerMessageRequest {
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
     associatedIdFieldName: EvseProps.databaseId,
-    gqlQuery: GET_EVSES_FOR_STATION,
-    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (_: TriggerMessageRequest, selector: any) => {
-      const station = selector(getSelectedChargingStation()) || {};
-      return {
-        stationId: station.id,
-      };
+    gqlQuery: {
+      query: GET_EVSES_FOR_STATION,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (_: TriggerMessageRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
     },
   })
   @Type(() => Evse)

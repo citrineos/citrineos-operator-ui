@@ -57,8 +57,12 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.locationId,
     associatedIdFieldName: LocationProps.id,
-    gqlQuery: LOCATIONS_GET_QUERY,
-    gqlListQuery: LOCATIONS_LIST_QUERY,
+    gqlQuery: {
+      query: LOCATIONS_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: LOCATIONS_LIST_QUERY,
+    },
   })
   @Type(() => Location)
   @IsOptional()
@@ -69,8 +73,12 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: StatusNotificationProps.stationId,
-    gqlQuery: STATUS_NOTIFICATIONS_GET_QUERY,
-    gqlListQuery: STATUS_NOTIFICATIONS_LIST_QUERY,
+    gqlQuery: {
+      query: STATUS_NOTIFICATIONS_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: STATUS_NOTIFICATIONS_LIST_QUERY,
+    },
   })
   @Type(() => StatusNotification)
   statusNotifications?: StatusNotification[];
@@ -80,11 +88,15 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: EvseProps.id,
-    gqlQuery: GET_EVSES_FOR_STATION,
-    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (station: ChargingStation) => ({
-      stationId: station.id,
-    }),
+    gqlQuery: {
+      query: GET_EVSES_FOR_STATION,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (station: ChargingStation) => ({
+        stationId: station.id,
+      }),
+    },
   })
   @Type(() => Evse)
   evses?: Evse[];
@@ -94,11 +106,15 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: TransactionProps.transactionId,
-    gqlQuery: GET_TRANSACTIONS_FOR_STATION,
-    gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
-    getGqlQueryVariables: (station: ChargingStation) => ({
-      stationId: station.id,
-    }),
+    gqlQuery: {
+      query: GET_TRANSACTIONS_FOR_STATION,
+    },
+    gqlListQuery: {
+      query: GET_TRANSACTION_LIST_FOR_STATION,
+      getQueryVariables: (station: ChargingStation) => ({
+        stationId: station.id,
+      }),
+    },
   })
   @Type(() => Transaction)
   transactions?: Transaction[];

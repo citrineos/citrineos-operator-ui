@@ -1,11 +1,14 @@
 import { extractSchema, FieldSchema, keyToLabel } from '../form';
 import React, { useCallback, useMemo } from 'react';
-import { renderViewContent } from './editable';
+import { FieldAnnotations, renderViewContent } from './editable';
 import { setSelectedAssociatedItems } from '../../redux/selectionSlice';
 import { instanceToPlain } from 'class-transformer';
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { useSelector } from 'react-redux';
+import { Flags } from '../form/state/flags';
+import { FieldPath } from '../form/state/fieldpath';
+import { Unknowns } from '../form/state/unknowns';
 
 export interface SelectedAssociatedItems<Model> {
   selectedItems: Model[];
@@ -15,6 +18,14 @@ export interface SelectedAssociatedItems<Model> {
   setSelectedRows: any;
   onChange: any;
   storageKey: any;
+  form: any;
+  setHasChanges?: any;
+  visibleOptionalFields?: Flags;
+  enableOptionalField?: (path: FieldPath) => void;
+  toggleOptionalField?: (path: FieldPath) => void;
+  unknowns?: Unknowns;
+  modifyUnknowns?: any;
+  fieldAnnotations?: FieldAnnotations;
 }
 
 export const SelectedAssociatedItems = <Model,>(
@@ -28,6 +39,14 @@ export const SelectedAssociatedItems = <Model,>(
     setSelectedRows,
     onChange,
     storageKey,
+    form,
+    setHasChanges,
+    visibleOptionalFields,
+    enableOptionalField,
+    toggleOptionalField,
+    unknowns,
+    modifyUnknowns,
+    fieldAnnotations,
   } = props;
 
   const schema: FieldSchema[] = useMemo(
@@ -43,7 +62,23 @@ export const SelectedAssociatedItems = <Model,>(
       render: (value: any, record: any) => {
         return (
           <div className="editable-cell">
-            {renderViewContent(field, value, record, useSelector)}
+            {renderViewContent({
+              field,
+              value,
+              record,
+              hideLabels: false,
+              disabled: false,
+              parentRecord: record,
+              form,
+              setHasChanges,
+              visibleOptionalFields,
+              enableOptionalField,
+              toggleOptionalField,
+              unknowns,
+              modifyUnknowns,
+              useSelector,
+              fieldAnnotations,
+            })}
           </div>
         );
       },
