@@ -88,10 +88,12 @@ export class Evse extends BaseModel {
   })
   VariableAttributes?: VariableAttribute[];
 
+  // TODO: Temp below please remove!!
   @IsArray()
   @ArrayMinSize(1)
   firstOne!: string[];
 
+  // TODO: Temp below please remove!!
   @IsArray()
   @ArrayMinSize(1)
   @Type(() => HashAlgorithmEnumType as any)

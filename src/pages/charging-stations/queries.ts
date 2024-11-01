@@ -18,6 +18,13 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       locationId
       StatusNotifications {
         id
+        stationId
+        evseId
+        connectorId
+        timestamp
+        connectorStatus
+        createdAt
+        updatedAt
       }
       createdAt
       updatedAt
