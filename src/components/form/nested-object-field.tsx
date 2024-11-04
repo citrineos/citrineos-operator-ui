@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import React from 'react';
 import { FieldSchema, renderField, renderLabel } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
-import { setProperty } from '../../util/objects';
+import { getProperty, setProperty } from '../../util/objects';
 
 export interface NestedObjectFieldProps {
   fieldPath: FieldPath;
@@ -17,7 +17,7 @@ export interface NestedObjectFieldProps {
   modifyUnknowns: any;
   form: any;
   parentRecord: any;
-  gqlQueryVariablesMap?: any;
+  useSelector: any;
 }
 
 export const NestedObjectField: (
@@ -35,7 +35,7 @@ export const NestedObjectField: (
     modifyUnknowns,
     form,
     parentRecord,
-    gqlQueryVariablesMap,
+    useSelector,
   } = props;
 
   if (schema.gqlAssociationProps) {
@@ -43,15 +43,11 @@ export const NestedObjectField: (
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
     const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const gqlUseQueryVariablesKey =
-      schema.gqlAssociationProps.gqlUseQueryVariablesKey;
+    const getGqlQueryVariables =
+      schema.gqlAssociationProps?.getGqlQueryVariables;
     let gqlQueryVariables = undefined;
-    if (
-      gqlUseQueryVariablesKey &&
-      gqlQueryVariablesMap &&
-      gqlQueryVariablesMap[gqlUseQueryVariablesKey]
-    ) {
-      gqlQueryVariables = gqlQueryVariablesMap[gqlUseQueryVariablesKey];
+    if (getGqlQueryVariables) {
+      gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
     }
     return (
       <div className="editable-cell">
@@ -79,7 +75,15 @@ export const NestedObjectField: (
             value={form.getFieldValue(fieldPath.keyPath)}
             onChange={(newValues: any[]) => {
               const currentValues = form.getFieldsValue(true);
-              setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+              if (newValues.length > 0) {
+                setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+              } else {
+                setProperty(
+                  currentValues,
+                  fieldPath.keyPath,
+                  getProperty(parentRecord, fieldPath.keyPath),
+                );
+              }
               form.setFieldsValue(currentValues);
             }}
             customActions={schema.customActions}
@@ -119,7 +123,7 @@ export const NestedObjectField: (
               modifyUnknowns: modifyUnknowns,
               form,
               parentRecord,
-              gqlQueryVariablesMap,
+              useSelector,
             }) as any,
         )}
       </div>

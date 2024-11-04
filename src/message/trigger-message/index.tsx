@@ -45,7 +45,9 @@ export class TriggerMessageRequest {
     associatedIdFieldName: ChargingStationProps.id,
     gqlQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
     gqlListQuery: GET_CHARGING_STATION_LIST_FOR_EVSE,
-    gqlUseQueryVariablesKey: TriggerMessageRequestProps.chargingStation,
+    getGqlQueryVariables: (_: TriggerMessageRequest) => ({
+      [EvseProps.databaseId]: 1,
+    }),
   })
   @Type(() => ChargingStation)
   @IsNotEmpty()
@@ -57,7 +59,12 @@ export class TriggerMessageRequest {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: TriggerMessageRequestProps.evse,
+    getGqlQueryVariables: (_: TriggerMessageRequest, selector: any) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Evse)
   @IsNotEmpty()
@@ -82,6 +89,11 @@ const TriggerMessageRequestWithoutEvse = createClassWithoutProperty(
   TriggerMessageRequestProps.evse,
 );
 
+const TriggerMessageRequestWithoutStation = createClassWithoutProperty(
+  TriggerMessageRequest,
+  TriggerMessageRequestProps.chargingStation,
+);
+
 export const TriggerMessage: React.FC<TriggerMessageProps> = ({
   station,
   evse,
@@ -99,8 +111,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     : station
       ? station.id
       : undefined;
-
-  console.log('selected stationId', stationId);
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
@@ -120,7 +130,9 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
-    : TriggerMessageRequest;
+    : stationId
+      ? TriggerMessageRequestWithoutStation
+      : TriggerMessageRequest;
   const parentRecord = evse
     ? triggerMessageRequestWithoutEvse
     : triggerMessageRequest;
@@ -135,7 +147,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: classInstance[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && Object.hasOwn(evse, EvseProps.id)) {
+    if (evse && evse[EvseProps.id]) {
       data.evse = {
         id: evse[EvseProps.id],
         // customData: todo,
@@ -143,24 +155,14 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       };
     }
 
-    await triggerMessageAndHandleResponse(
-      `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
-      MessageConfirmation,
-      data,
-      (response: MessageConfirmation) => response && response.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: data,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response && response.success,
+    });
   };
-
-  const qglQueryVariablesMap = {
-    [TriggerMessageRequestProps.evse]: {
-      stationId: stationId,
-    },
-    [TriggerMessageRequestProps.chargingStation]: {
-      [EvseProps.databaseId]: 1,
-    },
-  };
-
-  console.log('parent record', parentRecord);
 
   return (
     <GenericForm
@@ -169,7 +171,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       onFinish={handleSubmit}
       parentRecord={parentRecord}
       initialValues={parentRecord}
-      gqlQueryVariablesMap={qglQueryVariablesMap}
     />
   );
 };

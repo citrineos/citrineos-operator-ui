@@ -32,12 +32,12 @@ import {
   COMPONENT_GET_QUERY,
   COMPONENT_LIST_QUERY,
 } from '../../pages/evses/variable-attributes/components/queries';
-import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo
@@ -55,7 +55,6 @@ const GetVariablesDataCustomConstructor = () => {
   const evse = new Evse();
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  evse[EvseProps.databaseId] = NEW_IDENTIFIER as unknown as number;
   const getVariablesData = new GetVariablesData();
   getVariablesData[GetVariablesDataProps.component] = component;
   getVariablesData[GetVariablesDataProps.variable] = variable;
@@ -71,7 +70,7 @@ export class GetVariablesData {
   // customData?: CustomDataType;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.variableId,
+    parentIdFieldName: GetVariablesDataProps.variable,
     associatedIdFieldName: VariableProps.id,
     gqlQuery: VARIABLE_GET_QUERY,
     gqlListQuery: VARIABLE_LIST_QUERY,
@@ -86,7 +85,7 @@ export class GetVariablesData {
   variableInstance?: string;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.componentId,
+    parentIdFieldName: GetVariablesDataProps.component,
     associatedIdFieldName: ComponentProps.id,
     gqlQuery: COMPONENT_GET_QUERY,
     gqlListQuery: COMPONENT_LIST_QUERY,
@@ -105,13 +104,19 @@ export class GetVariablesData {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSE_LIST_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: GetVariablesDataProps.evse,
+    getGqlQueryVariables: (_: GetVariablesData, selector: any) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Evse)
-  @IsNotEmpty()
-  evse!: Evse | null;
+  @IsOptional()
+  evse?: Evse | null;
 
   @IsEnum(AttributeEnumType)
+  @IsOptional()
   attributeType?: AttributeEnumType | null;
 }
 
@@ -210,11 +215,13 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
           return {
             component: {
               name: component[ComponentProps.name],
-              evse: {
-                id: evse[EvseProps.databaseId],
-                connectorId: evse[EvseProps.connectorId],
-                // customData: null // todo
-              },
+              evse: evse[EvseProps.databaseId]
+                ? {
+                    id: evse[EvseProps.databaseId],
+                    connectorId: evse[EvseProps.connectorId],
+                    // customData: null // todo
+                  }
+                : undefined,
               instance: item[GetVariablesDataProps.componentInstance],
               // customData: null // todo
             },
@@ -232,12 +239,12 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       }),
       // customData: null // todo
     };
-    await triggerMessageAndHandleResponse(
-      `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
-      GetVariablesResponse,
-      getVariablesRequest,
-      (response: GetVariablesResponse) => !!response,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
+      responseClass: GetVariablesResponse,
+      data: getVariablesRequest,
+      responseSuccessCheck: (response: GetVariablesResponse) => !!response,
+    });
   };
 
   return (
@@ -248,11 +255,6 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       onFinish={handleSubmit}
       initialValues={getVariablesRequest}
       parentRecord={getVariablesRequest}
-      gqlQueryVariablesMap={{
-        [GetVariablesDataProps.evse]: {
-          stationId: station.id,
-        },
-      }}
     />
   );
 };

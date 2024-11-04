@@ -158,7 +158,7 @@ export const TableWrapper = forwardRef(function TableWrapper<
     };
 
     return {
-      selectedRowKeys: props?.rowSelection?.selectedRowKeys || [],
+      selectedRowKeys: passedUseTableProps?.rowSelection?.selectedRowKeys || [],
       onChange: handleRowChange,
       getCheckboxProps: (record: any) => ({
         disabled: record.name === 'Disabled User',

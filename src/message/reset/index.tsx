@@ -11,6 +11,7 @@ import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { triggerMessageAndHandleResponse } from '../util';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 enum ResetDataProps {
   evse = 'evse',
@@ -28,7 +29,12 @@ class ResetData {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSES_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlUseQueryVariablesKey: ResetDataProps.evse,
+    getGqlQueryVariables: (_: ResetData, selector: any) => {
+      const station = selector(getSelectedChargingStation()) || {};
+      return {
+        stationId: station.id,
+      };
+    },
   })
   @Type(() => Evse)
   @IsNotEmpty()
@@ -58,12 +64,13 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
   const handleSubmit = async (request: ResetData) => {
     const data = { type: request.type, evseId: request.evse?.id };
 
-    triggerMessageAndHandleResponse(
-      `/configuration/reset?identifier=${station.id}&tenantId=1`,
-      MessageConfirmation,
-      data,
-      (response: MessageConfirmation) => response?.success,
-    );
+    await triggerMessageAndHandleResponse({
+      url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
+      responseClass: MessageConfirmation,
+      data: data,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response?.success,
+    });
   };
 
   return (
@@ -73,11 +80,6 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
       onFinish={handleSubmit}
       parentRecord={resetData}
       initialValues={resetData}
-      gqlQueryVariablesMap={{
-        [ResetDataProps.evse]: {
-          stationId: station.id,
-        },
-      }}
     />
   );
 };

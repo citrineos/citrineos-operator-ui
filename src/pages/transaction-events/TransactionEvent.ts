@@ -5,14 +5,15 @@ import {
   TriggerReasonEnumType,
 } from '@citrineos/base';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { TransformDate } from '../../util/TransformDate';
 import { BaseModel } from '../../util/BaseModel';
@@ -31,6 +32,11 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
+import { Hidden } from '../../util/decorators/Hidden';
+import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
+import { Type } from 'class-transformer';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GET_METER_VALUES_FOR_TRANSACTION_EVENT } from '../meter-values/queries';
 
 export class TransactionType {
   @IsString()
@@ -71,6 +77,7 @@ export enum TransactionEventProps {
   transactionInfo = 'transactionInfo',
   evseId = 'evseId',
   idTokenId = 'idTokenId',
+  meterValues = 'meterValues',
 }
 
 @ClassResourceType(ResourceType.TRANSACTION_EVENTS)
@@ -81,6 +88,7 @@ export enum TransactionEventProps {
 @ClassGqlDeleteMutation(TRANSACTION_EVENT_DELETE_MUTATION)
 @PrimaryKeyFieldName(TransactionEventProps.id)
 export class TransactionEvent extends BaseModel {
+  @Hidden()
   @IsInt()
   @IsNotEmpty()
   id!: number;
@@ -89,9 +97,31 @@ export class TransactionEvent extends BaseModel {
   @IsNotEmpty()
   stationId!: string;
 
+  @IsOptional()
+  @IsInt()
+  evseId?: number | null;
+
+  @IsString()
+  @IsOptional()
+  transactionDatabaseId?: string;
+
   @IsString()
   @IsNotEmpty()
   eventType!: TransactionEventEnumType;
+
+  @IsArray()
+  @Type(() => MeterValue)
+  @ValidateNested({ each: true })
+  @GqlAssociation({
+    parentIdFieldName: TransactionEventProps.id,
+    associatedIdFieldName: MeterValueProps.transactionEventId,
+    gqlQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+    gqlListQuery: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+    getGqlQueryVariables: (transactionEvent: TransactionEvent) => ({
+      transactionEventId: transactionEvent[TransactionEventProps.id],
+    }),
+  })
+  meterValues?: MeterValue[];
 
   @TransformDate()
   @IsNotEmpty()
@@ -121,17 +151,10 @@ export class TransactionEvent extends BaseModel {
   @IsOptional()
   reservationId?: number | null;
 
-  @IsString()
-  @IsOptional()
-  transactionDatabaseId?: string;
-
-  @IsObject()
-  @IsNotEmpty()
-  transactionInfo!: TransactionType;
-
-  @IsOptional()
-  @IsInt()
-  evseId?: number | null;
+  // todo
+  // @IsObject()
+  // @IsNotEmpty()
+  // transactionInfo!: TransactionType;
 
   @IsOptional()
   @IsInt()

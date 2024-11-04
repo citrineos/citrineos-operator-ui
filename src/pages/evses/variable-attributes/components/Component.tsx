@@ -20,6 +20,7 @@ import { Searchable } from '../../../../util/decorators/Searcheable';
 import { Sortable } from '../../../../util/decorators/Sortable';
 import { Hidden } from '../../../../util/decorators/Hidden';
 import { CustomFormRender } from '../../../../util/decorators/CustomFormRender';
+import { HiddenInTable } from '../../../../util/decorators/HiddenInTable';
 
 export enum ComponentProps {
   id = 'id',
@@ -56,7 +57,7 @@ export class Component extends BaseModel {
 
   @IsNumber()
   @IsOptional()
-  @Hidden({ isEditable: false })
+  @HiddenInTable({ hiddenOnlyWhenEditing: true })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.id}</span>;
   })
@@ -64,7 +65,7 @@ export class Component extends BaseModel {
 
   @IsNumber()
   @IsOptional()
-  @Hidden({ isEditable: false })
+  @HiddenInTable({ hiddenOnlyWhenEditing: true })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.connectorId}</span>;
   })

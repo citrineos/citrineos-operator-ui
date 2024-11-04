@@ -15,9 +15,10 @@ export class GetBaseReportRequest {
   requestId!: number;
 
   @IsEnum(ReportBaseEnumType)
+  @IsNotEmpty()
   reportBase!: ReportBaseEnumType;
 
   @Type(() => CustomDataType)
   @IsOptional()
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 }

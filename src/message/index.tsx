@@ -5,10 +5,7 @@ import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
 import { ClearCache, ClearCacheProps } from './clear-cache';
-import {
-  ChangeAvailability,
-  ChangeAvailabilityProps,
-} from './change-availability';
+import { ChangeAvailability } from './change-availability';
 import { GetLog, GetLogProps } from './get-log';
 import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
 import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
@@ -40,7 +37,12 @@ import {
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
 import { GetCustomerProps } from '../model/CustomerInformation';
+import {
+  UpdateAuthPassword,
+  UpdateAuthPasswordProps,
+} from './update-auth-password';
 import { DeleteCertificate } from './delete-certificate';
+import { ChangeAvailabilityProps } from './change-availability/model';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -62,12 +64,14 @@ const chargingStationActionMap: {
     InstallCertificate as React.FC<InstallCertificateProps>,
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
-  'Reset': ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Set Network profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
+  Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
+  'Set Network Profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Set Variables': SetVariables as React.FC<SetVariablesProps>,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
   'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
+  'Update Auth Password':
+    UpdateAuthPassword as React.FC<UpdateAuthPasswordProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =

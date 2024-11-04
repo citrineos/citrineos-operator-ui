@@ -6,21 +6,16 @@ import {
   GenericView,
   GenericViewState,
 } from '../../components/view';
-import { useTable } from '@refinedev/antd';
-import { TransactionEventListQuery } from '../../graphql/types';
-import { DataModelTable, IDataModelListProps } from '../../components';
-import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   TRANSACTION_EVENT_CREATE_MUTATION,
   TRANSACTION_EVENT_DELETE_MUTATION,
   TRANSACTION_EVENT_EDIT_MUTATION,
   TRANSACTION_EVENT_GET_QUERY,
-  TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
-import { TRANSACTION_EVENT_COLUMNS } from './table-config';
 import { TransactionEvent } from './TransactionEvent';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MdOutlineEventRepeat } from 'react-icons/md';
+import { GenericDataTable } from '../../components/data-model-table/editable';
 
 export const TransactionEventView: React.FC = () => {
   return (
@@ -34,23 +29,8 @@ export const TransactionEventView: React.FC = () => {
   );
 };
 
-export const TransactionEventList = (props: IDataModelListProps) => {
-  const { tableProps } = useTable<TransactionEventListQuery>({
-    resource: ResourceType.TRANSACTION_EVENTS,
-    sorters: DEFAULT_SORTERS,
-    filters: props.filters,
-    metaData: {
-      gqlQuery: TRANSACTION_EVENT_LIST_QUERY,
-    },
-  });
-
-  return (
-    <DataModelTable<TransactionEvent, TransactionEventListQuery>
-      tableProps={tableProps}
-      columns={TRANSACTION_EVENT_COLUMNS(!props.hideActions, props.parentView)}
-      hideCreateButton={props.hideCreateButton}
-    />
-  );
+export const TransactionEventList = () => {
+  return <GenericDataTable dtoClass={TransactionEvent} />;
 };
 
 export const routes: React.FC = () => {

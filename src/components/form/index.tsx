@@ -49,6 +49,7 @@ import { ArrayField } from './array-field';
 import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
 import { CustomAction } from '../custom-actions';
 import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
+import { useSelector } from 'react-redux';
 
 export enum ReflectType {
   array,
@@ -133,7 +134,6 @@ export interface GenericProps {
 export interface GenericFormProps extends GenericProps {
   ref?: React.Ref<FormInstance>;
   initialValues?: any;
-  gqlQueryVariablesMap?: any;
 }
 
 export const getReflectTypeFromString = (type: string): ReflectType => {
@@ -195,16 +195,20 @@ export const getClassTransformerType = (instance: any, key: string): any => {
   return undefined;
 };
 
-export function label(instance: any, key: string) {
+export const label = (instance: any, key: string) => {
   const label = Reflect.getMetadata(FIELD_LABEL, instance, key);
   if (label) {
     return label;
   }
+  return keyToLabel(key);
+};
+
+export const keyToLabel = (key: string) => {
   return key
     .replace('_', '')
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, (str) => str.toUpperCase());
-}
+};
 
 export const getSchemaForInstanceAndKey = (
   instance: any,
@@ -386,6 +390,7 @@ export const extractSchema = (dtoClass: any): FieldSchema[] => {
   Object.keys(instance as any).forEach((key) => {
     try {
       const hideInTable = Reflect.getMetadata(HIDDEN, instance as any, key);
+
       if (!hideInTable) {
         schema.push(getSchemaForInstanceAndKey(instance, key, requiredFields));
       }
@@ -432,7 +437,7 @@ export interface RenderFieldProps {
   modifyUnknowns?: any;
   form?: any;
   parentRecord?: any;
-  gqlQueryVariablesMap?: any;
+  useSelector: any;
 }
 
 export const renderField = (props: RenderFieldProps) => {
@@ -448,7 +453,7 @@ export const renderField = (props: RenderFieldProps) => {
     modifyUnknowns,
     form,
     parentRecord,
-    gqlQueryVariablesMap,
+    useSelector,
   } = props;
 
   let fieldPath = preFieldPath.with(schema.name);
@@ -515,7 +520,7 @@ export const renderField = (props: RenderFieldProps) => {
         modifyUnknowns={modifyUnknowns}
         form={form}
         parentRecord={parentRecord}
-        gqlQueryVariablesMap={gqlQueryVariablesMap}
+        useSelector={useSelector}
       />
     );
   }
@@ -534,7 +539,7 @@ export const renderField = (props: RenderFieldProps) => {
         modifyUnknowns={modifyUnknowns}
         form={form}
         parentRecord={parentRecord}
-        gqlQueryVariablesMap={gqlQueryVariablesMap}
+        useSelector={useSelector}
       />
     );
   }
@@ -691,7 +696,7 @@ export const renderField = (props: RenderFieldProps) => {
                     modifyUnknowns: modifyUnknowns,
                     form,
                     parentRecord,
-                    gqlQueryVariablesMap,
+                    useSelector,
                   }) as any
                 }
               </Col>
@@ -844,7 +849,6 @@ export const GenericForm = forwardRef(function GenericForm(
     initialValues = undefined,
     submitDisabled = false,
     parentRecord,
-    gqlQueryVariablesMap,
   } = props;
 
   const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
@@ -904,7 +908,7 @@ export const GenericForm = forwardRef(function GenericForm(
           modifyUnknowns: modifyUnknowns,
           form: formProps.form,
           parentRecord,
-          gqlQueryVariablesMap,
+          useSelector,
         });
       })}
       <Form.Item>

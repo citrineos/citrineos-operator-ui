@@ -148,11 +148,6 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       parentRecord={requestStartTransactionRequest}
       onValuesChange={onValuesChange}
       submitDisabled={!valid}
-      gqlQueryVariablesMap={{
-        [RequestStartTransactionRequestProps.evse]: {
-          stationId: station.id,
-        },
-      }}
     />
   );
 };
