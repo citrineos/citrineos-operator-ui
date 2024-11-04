@@ -1,4 +1,7 @@
-export function generateSearchFilters (values: any, searchableKeys: Set<string>):[] {
+export function generateSearchFilters(
+  values: any,
+  searchableKeys: Set<string>,
+): [] {
   const result = [];
   let filterValue;
 
@@ -14,5 +17,5 @@ export function generateSearchFilters (values: any, searchableKeys: Set<string>)
     });
   }
 
-  return result;
+  return result as any;
 }

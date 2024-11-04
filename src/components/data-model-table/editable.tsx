@@ -79,7 +79,7 @@ export const renderViewContent = (props: RenderViewContentProps) => {
     value: _value,
     record,
     hideLabels,
-    disabled,
+    disabled: _disabled,
     parentRecord,
     form,
     setHasChanges,

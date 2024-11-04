@@ -85,7 +85,8 @@ export const TableWrapper = forwardRef(function TableWrapper<
     };
 
     if (searchableKeys && searchableKeys.size > 0) {
-      obj['onSearch'] = (values: any) => generateSearchFilters(values, searchableKeys);
+      obj['onSearch'] = (values: any) =>
+        generateSearchFilters(values, searchableKeys);
     }
 
     if (filters) {
