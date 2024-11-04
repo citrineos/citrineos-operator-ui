@@ -46,9 +46,9 @@ export const resources = [
   {
     name: ResourceType.ID_TOKEN_INFOS,
     list: '/id-token-infos',
-    create: '/id-token-infos/create',
-    edit: '/id-token-infos/edit/:id',
-    show: '/id-token-infos/show/:id',
+    create: '/id-token-infos/new',
+    edit: '/id-token-infos/:id/edit',
+    show: '/id-token-infos/:id',
     meta: {
       canDelete: true,
     },

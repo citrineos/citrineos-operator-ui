@@ -46,9 +46,9 @@ export const resources = [
   {
     name: ResourceType.AUTHORIZATIONS,
     list: '/authorizations',
-    create: '/authorizations/create',
-    edit: '/authorizations/edit/:id',
-    show: '/authorizations/show/:id',
+    create: '/authorizations/new',
+    edit: '/authorizations/:id/edit',
+    show: '/authorizations/:id',
     meta: {
       canDelete: true,
     },

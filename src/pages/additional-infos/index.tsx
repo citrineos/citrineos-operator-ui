@@ -46,9 +46,9 @@ export const resources = [
   {
     name: ResourceType.ADDITIONAL_INFOS,
     list: '/additional-infos',
-    create: '/additional-infos/create',
-    edit: '/additional-infos/edit/:id',
-    show: '/additional-infos/show/:id',
+    create: '/additional-infos/new',
+    edit: '/additional-infos/:id/edit',
+    show: '/additional-infos/:id',
     meta: {
       canDelete: true,
     },
