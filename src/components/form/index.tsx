@@ -512,7 +512,10 @@ export const renderField = (props: RenderFieldProps) => {
         className="optional-field-toggle"
       >
         <span>{schema.label}</span>
-        <Button type="link" onClick={() => toggleOptionalField(fieldPath)}>
+        <Button
+          type="link"
+          onClick={() => toggleOptionalField && toggleOptionalField(fieldPath)}
+        >
           (Optional) <PlusOutlined />
         </Button>
       </div>
@@ -585,7 +588,7 @@ export const renderField = (props: RenderFieldProps) => {
   }
 
   if (schema.type === FieldType.unknown) {
-    const unknown = unknowns.findFirst(fieldPath);
+    const unknown = unknowns?.findFirst(fieldPath);
     if (isNullOrUndefined(unknown)) {
       return modifyUnknowns('registerFirst', fieldPath);
     }
@@ -642,12 +645,12 @@ export const renderField = (props: RenderFieldProps) => {
 
     if (isDynamicFieldSchema(schema)) {
       fieldPath = fieldPath.pop().popName();
-      unknown = unknowns.find(fieldPath, schema.position)!;
+      unknown = unknowns?.find(fieldPath, schema.position)!;
       updateUnknown = (value: Partial<UnknownEntry>) =>
         modifyUnknowns('update', fieldPath, schema.position, value);
     } else {
       fieldPath = fieldPath.popName();
-      unknown = unknowns.findFirst(fieldPath);
+      unknown = unknowns?.findFirst(fieldPath);
       if (isNullOrUndefined(unknown)) {
         return modifyUnknowns('registerFirst', fieldPath);
       }
@@ -721,7 +724,7 @@ export const renderField = (props: RenderFieldProps) => {
             toggleOptionalField,
           )}
         <div>
-          {unknowns.findAll(fieldPath)?.map((_: any, arrayIndex: any) => (
+          {unknowns?.findAll(fieldPath)?.map((_: any, arrayIndex: any) => (
             <Row key={fieldPath.key + arrayIndex} align="middle">
               <Col span={23}>
                 {
@@ -735,8 +738,8 @@ export const renderField = (props: RenderFieldProps) => {
                     } as any,
                     preFieldPath: fieldPath,
                     disabled: disabled,
-                    visibleOptionalFields: hideLabels,
-                    hideLabels: visibleOptionalFields,
+                    visibleOptionalFields: visibleOptionalFields,
+                    hideLabels: hideLabels,
                     enableOptionalField: enableOptionalField,
                     toggleOptionalField: toggleOptionalField,
                     unknowns: unknowns,

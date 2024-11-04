@@ -42,6 +42,7 @@ import { Transaction, TransactionProps } from '../transactions/Transaction';
 import { ChargingStationProps } from './ChargingStationProps';
 import { TRANSACTION_LIST_QUERY } from '../transactions/queries';
 import { EVSE_LIST_QUERY } from '../evses/queries';
+import { Searchable } from '../../util/decorators/Searcheable';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -52,6 +53,7 @@ import { EVSE_LIST_QUERY } from '../evses/queries';
 @PrimaryKeyFieldName(ChargingStationProps.id)
 export class ChargingStation extends BaseModel {
   @IsString()
+  @Searchable()
   id!: string;
 
   @IsBoolean()

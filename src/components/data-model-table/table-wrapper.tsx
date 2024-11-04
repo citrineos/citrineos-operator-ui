@@ -19,6 +19,7 @@ import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { generateSearchFilters } from '../../util/tables';
 
 export interface TableWrapperProps<Model> extends TableProps<Model> {
   dtoClass: Constructable<Model>;
@@ -84,20 +85,8 @@ export const TableWrapper = forwardRef(function TableWrapper<
     };
 
     if (searchableKeys && searchableKeys.size > 0) {
-      obj['onSearch'] = (values: any) => {
-        const result = [];
-        if (!values || !values.search || values.search.length === 0) {
-          return [];
-        }
-        for (const searchableKey of searchableKeys) {
-          result.push({
-            field: searchableKey,
-            operator: 'contains',
-            value: values.search,
-          });
-        }
-        return result;
-      };
+      obj['onSearch'] = (values: any) =>
+        generateSearchFilters(values, searchableKeys);
     }
 
     if (filters) {
@@ -200,7 +189,6 @@ export const TableWrapper = forwardRef(function TableWrapper<
     refreshTable,
   }));
 
-  const [_searchTerm, setSearchTerm] = useState<string>('');
   const [searchSubject] = useState(() => new Subject<string>());
 
   useEffect(() => {
@@ -217,7 +205,6 @@ export const TableWrapper = forwardRef(function TableWrapper<
 
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setSearchTerm(value);
     searchSubject.next(value);
   };
 
