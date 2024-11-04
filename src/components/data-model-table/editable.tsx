@@ -101,12 +101,6 @@ export const renderViewContent = (props: RenderViewContentProps) => {
     field.gqlAssociationProps?.associatedIdFieldName;
   const gqlQuery = field.gqlAssociationProps?.gqlQuery;
   const gqlListQuery = field.gqlAssociationProps?.gqlListQuery;
-  const gqlListSelectedQuery = field.gqlAssociationProps?.gqlListSelectedQuery;
-  const getGqlQueryVariables = gqlListSelectedQuery?.getQueryVariables;
-  let gqlQueryVariables = undefined;
-  if (getGqlQueryVariables) {
-    gqlQueryVariables = getGqlQueryVariables(record, useSelector);
-  }
 
   if (field.type === FieldType.customRender && field.customRender) {
     return field.customRender(record);
@@ -279,7 +273,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     } else {
       form.resetFields(); // Reset form when editing ends
     }
-  }, [editingRecord, form, primaryKeyFieldName]);
+  }, [editingRecord, form]);
 
   const schema: FieldSchema[] = useMemo(
     () => extractSchema(dtoClass, fieldAnnotations),
