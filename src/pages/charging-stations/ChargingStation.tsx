@@ -37,6 +37,7 @@ import {
 } from '../../message/queries';
 import { Transaction, TransactionProps } from '../transactions/Transaction';
 import { ChargingStationProps } from './ChargingStationProps';
+import { Searchable } from '../../util/decorators/Searcheable';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -47,6 +48,7 @@ import { ChargingStationProps } from './ChargingStationProps';
 @PrimaryKeyFieldName(ChargingStationProps.id)
 export class ChargingStation extends BaseModel {
   @IsString()
+  @Searchable()
   id!: string;
 
   @IsBoolean()
