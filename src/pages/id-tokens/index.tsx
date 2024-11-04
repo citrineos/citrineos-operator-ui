@@ -37,7 +37,7 @@ export const routes: React.FC = () => {
   return (
     <Routes>
       <Route index element={<IdTokenList />} />
-      <Route path="/:id/" element={<IdTokenView />} />
+      <Route path="/:id/*" element={<IdTokenView />} />
     </Routes>
   );
 };

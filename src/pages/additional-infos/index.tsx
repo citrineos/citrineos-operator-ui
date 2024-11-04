@@ -37,7 +37,7 @@ export const routes: React.FC = () => {
   return (
     <Routes>
       <Route index element={<AdditionalInfosList />} />
-      <Route path="/:id/" element={<AdditionalInfosView />} />
+      <Route path="/:id/*" element={<AdditionalInfosView />} />
     </Routes>
   );
 };
