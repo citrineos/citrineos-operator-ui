@@ -20,6 +20,7 @@ import {
   setSelectedAssociatedItems,
 } from '../../redux/selectionSlice';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
+import { generateSearchFilters } from '../../util/tables';
 import { SelectedAssociatedItems } from './selected-associated-items';
 import GenericTag from '../tag';
 
@@ -246,12 +247,7 @@ export const AssociationSelection = <
 
   tableOptions.onSearch = useCallback(
     (values: any): CrudFilters => {
-      if (!values?.search?.length) return [];
-      return Array.from(searchableKeys).map((key) => ({
-        field: key,
-        operator: 'contains',
-        value: values.search,
-      }));
+      return generateSearchFilters(values, searchableKeys);
     },
     [searchableKeys],
   );
