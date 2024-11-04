@@ -10,6 +10,8 @@ import { Flags } from './state/flags';
 import { Unknowns } from './state/unknowns';
 import { ExpandableColumn } from '../data-model-table/expandable-column';
 import { AssociatedTable } from '../data-model-table/associated-table';
+import { getProperty } from '../../util/objects';
+import GenericTag from '../tag';
 
 export interface ArrayFieldProps {
   fieldPath: FieldPath;
@@ -116,11 +118,69 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
       );
     }
   } else {
-    const nonAssociationFieldContent = (
+    let nonAssociationFieldContent;
+    if (disabled) {
+      const list = getProperty(parentRecord, fieldPath.namePath);
+      if (list && list.length > 0) {
+        nonAssociationFieldContent = list.map((item: any, idx: number) => (
+          <GenericTag
+            key={`nonAssociationFieldContent-${idx}`}
+            stringValue={item}
+          />
+        ));
+      }
+    } else {
+      nonAssociationFieldContent = (
+        <Form.List key={`${fieldPath.key}-list`} name={fieldPath.namePath}>
+          {(fields, { add, remove }) => {
+            return (
+              <>
+                {fields.map((field, fieldIdx) => (
+                  <>
+                    <ArrayItem
+                      fieldPath={fieldPath}
+                      field={field}
+                      fieldIdx={fieldIdx}
+                      schema={schema}
+                      hideLabels={hideLabels}
+                      disabled={disabled}
+                      visibleOptionalFields={visibleOptionalFields}
+                      enableOptionalField={enableOptionalField}
+                      toggleOptionalField={toggleOptionalField}
+                      unknowns={unknowns}
+                      modifyUnknowns={modifyUnknowns}
+                      form={form}
+                      parentRecord={parentRecord}
+                      remove={remove}
+                      fieldAnnotations={fieldAnnotations}
+                    />
+                  </>
+                ))}
+                <Button
+                  type="dashed"
+                  onClick={() => {
+                    if (schema.customConstructor) {
+                      add(schema.customConstructor());
+                    } else {
+                      add();
+                    }
+                  }}
+                  icon={<PlusOutlined />}
+                  style={{ width: '100%' }}
+                >
+                  Add {schema.label}
+                </Button>
+              </>
+            );
+          }}
+        </Form.List>
+      );
+    }
+    return (
       <Form.Item
         key={`${fieldPath.key}-list-wrapper`}
         label={
-          hideLabels
+          hideLabels || isInTable
             ? undefined
             : renderLabel(
                 schema,
@@ -132,51 +192,12 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
         }
         required={schema.isRequired}
       >
-        <Form.List key={`${fieldPath.key}-list`} name={fieldPath.namePath}>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map((field, fieldIdx) => (
-                <ArrayItem
-                  fieldPath={fieldPath}
-                  field={field}
-                  fieldIdx={fieldIdx}
-                  schema={schema}
-                  hideLabels={hideLabels}
-                  disabled={disabled}
-                  visibleOptionalFields={visibleOptionalFields}
-                  enableOptionalField={enableOptionalField}
-                  toggleOptionalField={toggleOptionalField}
-                  unknowns={unknowns}
-                  modifyUnknowns={modifyUnknowns}
-                  form={form}
-                  parentRecord={parentRecord}
-                  remove={remove}
-                  fieldAnnotations={fieldAnnotations}
-                />
-              ))}
-              <Button
-                type="dashed"
-                onClick={() => {
-                  if (schema.customConstructor) {
-                    add(schema.customConstructor());
-                  } else {
-                    add();
-                  }
-                }}
-                icon={<PlusOutlined />}
-                style={{ width: '100%' }}
-              >
-                Add {schema.label}
-              </Button>
-            </>
-          )}
-        </Form.List>
+        {disabled || !isInTable ? (
+          nonAssociationFieldContent
+        ) : (
+          <ExpandableColumn expandedContent={nonAssociationFieldContent} />
+        )}
       </Form.Item>
     );
-    if (isInTable) {
-      return <ExpandableColumn expandedContent={nonAssociationFieldContent} />;
-    } else {
-      return nonAssociationFieldContent;
-    }
   }
 };
