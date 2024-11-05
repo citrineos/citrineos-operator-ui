@@ -15,7 +15,10 @@ import {
 } from '../../components/view';
 import { IDataModelListProps } from '../../components';
 import { DEFAULT_SORTERS } from '../../components/defaults';
-import { CUSTOM_CHARGING_STATION_ACTIONS } from '../../message';
+import {
+  CUSTOM_CHARGING_STATION_ACTIONS,
+  ADMIN_CHARGING_STATION_ACTIONS,
+} from '../../message';
 import { ChargingStation } from './ChargingStation';
 import { ChargingStationProps } from './ChargingStationProps';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
@@ -125,12 +128,28 @@ export const ChargingStationsView: React.FC = () => {
             <Panel
               key="1"
               collapsible="header"
-              header={!collapsed && 'Custom Actions'}
+              header={!collapsed && 'OCPP Request'}
             >
               <CustomActions
                 showInline
                 data={station}
-                actions={filteredActions}
+                actions={filteredActions.filter(
+                  (action) =>
+                    !ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+                )}
+              />
+            </Panel>
+            <Panel
+              key="2"
+              collapsible="header"
+              header={!collapsed && 'Admin Actions'}
+            >
+              <CustomActions
+                showInline
+                data={station}
+                actions={filteredActions.filter((action) =>
+                  ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+                )}
               />
             </Panel>
           </Collapse>

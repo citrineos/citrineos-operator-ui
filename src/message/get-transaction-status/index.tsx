@@ -29,13 +29,17 @@ export class GetTransactionStatusRequest {
   @GqlAssociation({
     parentIdFieldName: GetTransactionStatusRequestProps.transaction,
     associatedIdFieldName: TransactionProps.transactionId,
-    gqlQuery: GET_ACTIVE_TRANSACTIONS,
-    gqlListQuery: GET_TRANSACTION_LIST_FOR_STATION,
-    getGqlQueryVariables: (_: GetTransactionStatusRequest, selector: any) => {
-      const station = selector(getSelectedChargingStation()) || {};
-      return {
-        stationId: station.id,
-      };
+    gqlQuery: {
+      query: GET_ACTIVE_TRANSACTIONS,
+    },
+    gqlListQuery: {
+      query: GET_TRANSACTION_LIST_FOR_STATION,
+      getQueryVariables: (_: GetTransactionStatusRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
     },
   })
   @Type(() => Transaction)

@@ -28,7 +28,7 @@ import { Dayjs } from 'dayjs';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
-import { IdToken, IdTokenProps } from '../../pages/id-tokens/IdToken';
+import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens/queries';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
@@ -157,8 +157,12 @@ export class RequestStartTransactionRequest {
   @GqlAssociation({
     parentIdFieldName: RequestStartTransactionRequestProps.idToken,
     associatedIdFieldName: IdTokenProps.id,
-    gqlQuery: ID_TOKENS_LIST_QUERY,
-    gqlListQuery: ID_TOKENS_LIST_QUERY,
+    gqlQuery: {
+      query: ID_TOKENS_LIST_QUERY,
+    },
+    gqlListQuery: {
+      query: ID_TOKENS_LIST_QUERY,
+    },
   })
   @Type(() => IdToken)
   @IsNotEmpty()
@@ -167,16 +171,17 @@ export class RequestStartTransactionRequest {
   @GqlAssociation({
     parentIdFieldName: RequestStartTransactionRequestProps.evse,
     associatedIdFieldName: EvseProps.databaseId,
-    gqlQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (
-      _: RequestStartTransactionRequest,
-      selector: any,
-    ) => {
-      const station = selector(getSelectedChargingStation()) || {};
-      return {
-        stationId: station.id,
-      };
+    gqlQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (_: RequestStartTransactionRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
     },
   })
   @Type(() => Evse)

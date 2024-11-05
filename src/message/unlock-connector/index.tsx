@@ -11,6 +11,7 @@ import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { Form, notification } from 'antd';
+import { EVSE_LIST_QUERY } from '../../pages/evses/queries';
 
 enum UnlockConnectorFormProps {
   evse = 'evse',
@@ -20,13 +21,17 @@ export class UnlockConnectorForm {
   @GqlAssociation({
     parentIdFieldName: UnlockConnectorFormProps.evse,
     associatedIdFieldName: EvseProps.databaseId,
-    gqlQuery: GET_EVSE_LIST_FOR_STATION,
-    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (_: any, selector: any) => {
-      const station = selector(getSelectedChargingStation()) || {};
-      return {
-        stationId: station.id,
-      };
+    gqlQuery: {
+      query: EVSE_LIST_QUERY,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (_: any, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
     },
   })
   @Type(() => Evse)
@@ -73,7 +78,6 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
     const plainValues = await form.validateFields();
 
     const plainEvse = plainValues[UnlockConnectorFormProps.evse];
-
     // TODO add another gql filter to only pull EVSEs with a connector id
     // so that we don't have to show this error
     if (!plainEvse[EvseProps.connectorId]) {

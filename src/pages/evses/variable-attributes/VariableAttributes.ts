@@ -91,8 +91,12 @@ export class VariableAttribute extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: VariableAttributeProps.Variable,
     associatedIdFieldName: VariableProps.id,
-    gqlQuery: VARIABLE_GET_QUERY,
-    gqlListQuery: VARIABLE_LIST_QUERY,
+    gqlQuery: {
+      query: VARIABLE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: VARIABLE_LIST_QUERY,
+    },
   })
   @Type(() => Variable)
   @IsOptional()
@@ -101,8 +105,12 @@ export class VariableAttribute extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: VariableAttributeProps.Component,
     associatedIdFieldName: ComponentProps.id,
-    gqlQuery: COMPONENT_GET_QUERY,
-    gqlListQuery: COMPONENT_LIST_QUERY,
+    gqlQuery: {
+      query: COMPONENT_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: COMPONENT_LIST_QUERY,
+    },
   })
   @Type(() => Component)
   @IsOptional()

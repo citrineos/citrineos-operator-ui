@@ -51,8 +51,12 @@ class SetVariablesData {
   @GqlAssociation({
     parentIdFieldName: SetVariablesDataProps.component,
     associatedIdFieldName: ComponentProps.id,
-    gqlQuery: COMPONENT_LIST_QUERY,
-    gqlListQuery: COMPONENT_LIST_QUERY,
+    gqlQuery: {
+      query: COMPONENT_LIST_QUERY,
+    },
+    gqlListQuery: {
+      query: COMPONENT_LIST_QUERY,
+    },
   })
   @Type(() => Component)
   @IsNotEmpty()
@@ -61,8 +65,12 @@ class SetVariablesData {
   @GqlAssociation({
     parentIdFieldName: SetVariablesDataProps.variable,
     associatedIdFieldName: VariableProps.id,
-    gqlQuery: VARIABLE_LIST_QUERY,
-    gqlListQuery: VARIABLE_LIST_QUERY,
+    gqlQuery: {
+      query: VARIABLE_LIST_QUERY,
+    },
+    gqlListQuery: {
+      query: VARIABLE_LIST_QUERY,
+    },
   })
   @Type(() => Variable)
   @IsNotEmpty()

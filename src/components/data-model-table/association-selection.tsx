@@ -9,7 +9,6 @@ import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
 import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
 import { GenericDataTable, SelectionType } from './editable';
-import GenericTag from '../tag';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
@@ -21,7 +20,9 @@ import {
   setSelectedAssociatedItems,
 } from '../../redux/selectionSlice';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
+import { generateSearchFilters } from '../../util/tables';
 import { SelectedAssociatedItems } from './selected-associated-items';
+import GenericTag from '../tag';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -32,6 +33,7 @@ export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   selectable?: SelectionType | null;
   gqlQueryVariables?: any;
   customActions?: CustomAction<any>[];
+  form: any;
 }
 
 export const AssociationSelection = <
@@ -51,6 +53,7 @@ export const AssociationSelection = <
     selectable = SelectionType.SINGLE,
     associatedIdFieldName,
     gqlQueryVariables,
+    form,
   } = props;
 
   const dispatch = useDispatch();
@@ -244,12 +247,7 @@ export const AssociationSelection = <
 
   tableOptions.onSearch = useCallback(
     (values: any): CrudFilters => {
-      if (!values?.search?.length) return [];
-      return Array.from(searchableKeys).map((key) => ({
-        field: key,
-        operator: 'contains',
-        value: values.search,
-      }));
+      return generateSearchFilters(values, searchableKeys);
     },
     [searchableKeys],
   );
@@ -296,6 +294,7 @@ export const AssociationSelection = <
             setSelectedRows={setSelectedRows}
             onChange={onChange}
             storageKey={storageKey}
+            form={form}
           />
           <GenericDataTable
             dtoClass={associatedRecordClass}

@@ -1,5 +1,17 @@
 export const GQL_ASSOCIATION = 'gqlAssociation';
 
+export interface QueryWithVariableGetter {
+  /**
+   * Grapql query
+   */
+  query: any;
+  /**
+   * Set a method to generate the query variables using the parent record
+   * @param record
+   */
+  getQueryVariables?: (record: any, useSelector: any) => object;
+}
+
 export interface GqlAssociationProps {
   /**
    * Field in parent record that contains the id to be used for the association
@@ -12,16 +24,16 @@ export interface GqlAssociationProps {
   /**
    * Query to perform to get the associated record
    */
-  gqlQuery: any;
+  gqlQuery: QueryWithVariableGetter;
   /**
    * Query to perform to get the associated record list
    */
-  gqlListQuery?: any;
+  gqlListQuery?: QueryWithVariableGetter;
   /**
-   * Set a method to generate the query variables using the parent record
-   * @param record
+   * Query to perform to get the associated record list returning only items that
+   * are already selected / associated
    */
-  getGqlQueryVariables?: (record: any, useSelector: any) => object;
+  gqlListSelectedQuery?: QueryWithVariableGetter;
 }
 
 export const GqlAssociation = (props: GqlAssociationProps) => {

@@ -10,6 +10,7 @@ import { ClassResourceType } from '../../util/decorators/ClassResourceType';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import {
   VARIABLE_ATTRIBUTE_GET_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
   VARIABLE_ATTRIBUTE_LIST_QUERY,
 } from './variable-attributes/queries';
 import {
@@ -26,6 +27,7 @@ import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation
 import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../util/BaseModel';
+import { CustomDataType } from '../../model/CustomData';
 
 export enum EvseProps {
   databaseId = 'databaseId',
@@ -53,9 +55,9 @@ export class Evse extends BaseModel {
   @IsNumber()
   connectorId?: number | null;
 
+  @Type(() => CustomDataType)
   @IsOptional()
-  @IsNumber()
-  customData?: any | null;
+  customData: CustomDataType | null = null;
 
   @IsArray()
   @Type(() => VariableAttribute)
@@ -64,8 +66,18 @@ export class Evse extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: EvseProps.databaseId,
     associatedIdFieldName: VariableAttributeProps.evseDatabaseId,
-    gqlQuery: VARIABLE_ATTRIBUTE_GET_QUERY,
-    gqlListQuery: VARIABLE_ATTRIBUTE_LIST_QUERY,
+    gqlQuery: {
+      query: VARIABLE_ATTRIBUTE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: VARIABLE_ATTRIBUTE_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
+      query: VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
+      getQueryVariables: (evse: Evse) => ({
+        [VariableAttributeProps.evseDatabaseId]: evse.databaseId,
+      }),
+    },
   })
   VariableAttributes?: VariableAttribute[];
 
