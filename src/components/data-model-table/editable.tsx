@@ -450,6 +450,11 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               },
             ),
           };
+        } else {
+          (meta as any).variables = {
+            id: id,
+            object: valuesClass,
+          };
         }
         await mutate({
           meta,
