@@ -1,11 +1,7 @@
 import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
-import {
-  GenericParameterizedView,
-  GenericView,
-  GenericViewState,
-} from '../../components/view';
+import { GenericParameterizedView, GenericView } from '../../components/view';
 import { Transaction } from './Transaction';
 import {
   TRANSACTION_CREATE_MUTATION,
@@ -19,6 +15,7 @@ import { TbTransactionDollar } from 'react-icons/tb';
 import { useCustom } from '@refinedev/core';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { GenericDataTable } from '../../components/data-model-table/editable';
+import { GenericViewState } from '../../model/enums';
 
 export const TransactionView: React.FC = () => {
   return (

@@ -8,11 +8,7 @@ import { plainToInstance } from 'class-transformer';
 import { FaChargingStation } from 'react-icons/fa';
 
 import { ResourceType } from '../../resource-type';
-import {
-  GenericParameterizedView,
-  GenericView,
-  GenericViewState,
-} from '../../components/view';
+import { GenericParameterizedView, GenericView } from '../../components/view';
 import { IDataModelListProps } from '../../components';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
@@ -36,6 +32,7 @@ import {
 } from './queries';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 import { ChargingStationsListQuery } from '../../graphql/types';
+import { GenericViewState } from '../../model/enums';
 
 const { Panel } = Collapse;
 const { Sider, Content } = Layout;

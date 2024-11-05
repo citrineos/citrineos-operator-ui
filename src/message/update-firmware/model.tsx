@@ -12,6 +12,7 @@ import {
 import { Form, Input } from 'antd';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { TransformDate } from '../../util/TransformDate';
+import { CombinedFormRender } from '../../util/decorators/CombinedFormRender';
 
 export enum FirmwareTypeProps {
   location = 'location',
@@ -53,15 +54,30 @@ export class FirmwareType {
   @IsOptional()
   installDateTime?: Date;
 
-  // @IsOptional()
-  // @SupportedFileFormats(['.pem', '.id'])
-  // @Type(() => File)
-  // signingCertificate?: File;
-
-  @IsString()
-  @Length(0, 5500)
   @IsOptional()
-  signingCertificate?: string;
+  @Type(() => File)
+  @CombinedFormRender([
+    {
+      type: 'boolean',
+      info: 'Enter Text or Upload File',
+      checkedText: 'Enter Certificate Text',
+      uncheckedText: 'Upload Certificate File',
+    },
+    {
+      type: 'string',
+      minLength: 0,
+      maxLength: 5500,
+      label: 'Signing Certificate',
+      info: 'Input certificate Text',
+    },
+    {
+      type: 'file',
+      label: 'Signing Certificate',
+      info: 'Upload certificate File',
+      supportedFileFormats: ['.pem', '.id'],
+    },
+  ])
+  signingCertificate?: string | File;
 
   @IsString()
   @Length(0, 800)

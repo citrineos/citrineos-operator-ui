@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './selectionSlice';
+import counterReducer from './associationSelectionSlice';
 import selectedChargingStationSlice from './selectedChargingStationSlice';
 
 const store = configureStore({

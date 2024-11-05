@@ -1,35 +1,15 @@
-import { FieldPath } from './state/fieldpath';
 import { Button, Form } from 'antd';
 import { AssociationSelection } from '../data-model-table/association-selection';
-import { FieldAnnotations, SelectionType } from '../data-model-table/editable';
 import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-import { FieldSchema, renderLabel } from './index';
 import { ArrayItem } from './array-item';
-import { Flags } from './state/flags';
-import { Unknowns } from './state/unknowns';
 import { ExpandableColumn } from '../data-model-table/expandable-column';
 import { AssociatedTable } from '../data-model-table/associated-table';
 import { getProperty } from '../../util/objects';
 import GenericTag from '../tag';
-
-export interface ArrayFieldProps {
-  fieldPath: FieldPath;
-  schema: FieldSchema;
-  hideLabels?: boolean;
-  disabled: boolean;
-  visibleOptionalFields?: Flags;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  setHasChanges?: any;
-  modifyUnknowns?: any;
-  form: any;
-  parentRecord: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-  isInTable?: boolean;
-}
+import { ArrayFieldProps } from '../../model/interfaces';
+import { SelectionType } from '../data-model-table/editable';
+import { renderLabel } from '../../util/renderUtil';
 
 export const ArrayField: React.FC<ArrayFieldProps> = (
   props: ArrayFieldProps,

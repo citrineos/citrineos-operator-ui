@@ -7,13 +7,7 @@ import React, {
 } from 'react';
 import { Alert, Button, Form, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  extractSchema,
-  FieldSchema,
-  FieldType,
-  getClassTransformerType,
-  renderField,
-} from '../form';
+import { extractSchema, getClassTransformerType, renderField } from '../form';
 import { StatusIcon } from '../status-icon';
 import GenericTag from '../tag';
 import { TruncateDisplay } from '../truncate-display';
