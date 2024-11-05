@@ -22,10 +22,7 @@ export class UnlockConnectorForm {
     associatedIdFieldName: EvseProps.databaseId,
     gqlQuery: GET_EVSE_LIST_FOR_STATION,
     gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (
-      _: any,
-      selector: any,
-    ) => {
+    getGqlQueryVariables: (_: any, selector: any) => {
       const station = selector(getSelectedChargingStation()) || {};
       return {
         stationId: station.id,
@@ -51,7 +48,7 @@ export class UnlockConnectorRequest {
 
   @IsNumber()
   @IsNotEmpty()
-  connectorId!: number
+  connectorId!: number;
 
   // @Type(() => CustomDataType)
   // @ValidateNested()
@@ -96,7 +93,9 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
       url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) => response?.success });
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response?.success,
+    });
   };
 
   return (
