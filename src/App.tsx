@@ -131,6 +131,10 @@ import {
   resources as installedCertificatesResources,
   routes as InstalledCertificatesRoutes,
 } from './pages/installed-certificates';
+import {
+  resources as serverNetworkProfilesResources,
+  routes as ServerNetworkProfilesRoutes,
+} from './pages/server-network-profiles';
 import { theme } from './theme';
 import { MainMenu } from './components/main-menu';
 
@@ -233,6 +237,7 @@ const resources = [
   ...reservationsResources,
   ...evsesResources,
   ...installedCertificatesResources,
+  ...serverNetworkProfilesResources,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 function App() {
@@ -366,6 +371,10 @@ function App() {
                     <Route
                       path="/installed-certificates/*"
                       element={<InstalledCertificatesRoutes />}
+                    />
+                    <Route
+                      path="/server-network-profiles/*"
+                      element={<ServerNetworkProfilesRoutes />}
                     />
                     <Route
                       path="/reservations/*"

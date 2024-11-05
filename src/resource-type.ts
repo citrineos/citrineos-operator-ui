@@ -24,4 +24,5 @@ export enum ResourceType {
   CERTIFICATES = 'Certificates',
   INSTALLED_CERTIFICATES = 'InstalledCertificates',
   RESERVATIONS = 'Reservations',
+  SERVER_NETWORK_PROFILES = 'ServerNetworkProfiles',
 }
