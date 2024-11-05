@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { CustomDataType } from './CustomData';
-import { IdToken, IdTokenProps } from '../pages/id-tokens/IdToken';
+import { IdTokenProps, IdToken } from '../pages/id-tokens/id-token';
 import { GqlAssociation } from '../util/decorators/GqlAssociation';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';
@@ -41,8 +41,12 @@ export class CustomerInformationRequest {
   @GqlAssociation({
     parentIdFieldName: ID_TOKEN_FIELD,
     associatedIdFieldName: IdTokenProps.id,
-    gqlQuery: ADDITIONAL_INFOS_RELATED_IDTOKENS,
-    gqlListQuery: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+    gqlQuery: {
+      query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+    },
+    gqlListQuery: {
+      query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+    },
   })
   @Type(() => IdToken)
   @IsNotEmpty()

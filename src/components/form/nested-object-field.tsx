@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import React from 'react';
 import { FieldSchema, renderField, renderLabel } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
-import { setProperty } from '../../util/objects';
+import { getProperty, setProperty } from '../../util/objects';
 
 export interface NestedObjectFieldProps {
   fieldPath: FieldPath;
@@ -43,8 +43,7 @@ export const NestedObjectField: (
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
     const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const getGqlQueryVariables =
-      schema.gqlAssociationProps?.getGqlQueryVariables;
+    const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
     let gqlQueryVariables = undefined;
     if (getGqlQueryVariables) {
       gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
@@ -68,14 +67,23 @@ export const NestedObjectField: (
           <AssociationSelection
             parentIdFieldName={parentIdFieldName!}
             associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlListQuery}
+            gqlQuery={gqlListQuery?.query}
             gqlQueryVariables={gqlQueryVariables}
             parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
             value={form.getFieldValue(fieldPath.keyPath)}
+            form={form}
             onChange={(newValues: any[]) => {
               const currentValues = form.getFieldsValue(true);
-              setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+              if (newValues.length > 0) {
+                setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+              } else {
+                setProperty(
+                  currentValues,
+                  fieldPath.keyPath,
+                  getProperty(parentRecord, fieldPath.keyPath),
+                );
+              }
               form.setFieldsValue(currentValues);
             }}
             customActions={schema.customActions}

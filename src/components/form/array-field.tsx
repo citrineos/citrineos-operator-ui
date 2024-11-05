@@ -1,24 +1,34 @@
 import { FieldPath } from './state/fieldpath';
 import { Button, Form } from 'antd';
 import { AssociationSelection } from '../data-model-table/association-selection';
-import { SelectionType } from '../data-model-table/editable';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { FieldAnnotations, SelectionType } from '../data-model-table/editable';
+import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-import { FieldSchema, FieldType, renderField, renderLabel } from './index';
+import { FieldSchema, renderLabel } from './index';
+import { ArrayItem } from './array-item';
+import { Flags } from './state/flags';
+import { Unknowns } from './state/unknowns';
+import { ExpandableColumn } from '../data-model-table/expandable-column';
+import { AssociatedTable } from '../data-model-table/associated-table';
+import { getProperty } from '../../util/objects';
+import GenericTag from '../tag';
 
 export interface ArrayFieldProps {
   fieldPath: FieldPath;
   schema: FieldSchema;
-  hideLabels: boolean;
+  hideLabels?: boolean;
   disabled: boolean;
-  visibleOptionalFields: any;
-  enableOptionalField: any;
-  toggleOptionalField: any;
-  unknowns: any;
-  modifyUnknowns: any;
+  visibleOptionalFields?: Flags;
+  enableOptionalField?: (path: FieldPath) => void;
+  toggleOptionalField?: (path: FieldPath) => void;
+  unknowns?: Unknowns;
+  setHasChanges?: any;
+  modifyUnknowns?: any;
   form: any;
   parentRecord: any;
   useSelector: any;
+  fieldAnnotations?: FieldAnnotations;
+  isInTable?: boolean;
 }
 
 export const ArrayField: React.FC<ArrayFieldProps> = (
@@ -37,137 +47,157 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
     form,
     parentRecord,
     useSelector,
+    fieldAnnotations,
+    setHasChanges,
+    isInTable = false,
   } = props;
   if (schema.gqlAssociationProps) {
     const parentIdFieldName = schema.gqlAssociationProps.parentIdFieldName;
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
-    const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const getGqlQueryVariables =
-      schema.gqlAssociationProps?.getGqlQueryVariables;
-    let gqlQueryVariables = undefined;
-    if (getGqlQueryVariables) {
-      gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
-    }
-    return (
-      <div className="editable-cell">
+    if (disabled) {
+      const gqlQuery = schema.gqlAssociationProps.gqlListSelectedQuery;
+      const getGqlQueryVariables = gqlQuery?.getQueryVariables;
+      let gqlQueryVariables = undefined;
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
+      }
+      return (
         <Form.Item name={fieldPath.keyPath}>
-          <AssociationSelection
-            selectable={SelectionType.MULTIPLE}
-            parentIdFieldName={parentIdFieldName!}
-            associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlListQuery}
-            gqlQueryVariables={gqlQueryVariables}
-            parentRecord={parentRecord}
-            associatedRecordClass={schema.dtoClass!}
-            value={form.getFieldValue(fieldPath.keyPath)}
-            onChange={(newValues: any[]) => {
-              form.setFieldsValue({
-                [fieldPath.keyPath as any]: newValues,
-              });
-            }}
-            customActions={schema.customActions}
+          <ExpandableColumn
+            expandedContent={
+              <AssociatedTable
+                associatedRecordClass={schema.dtoClass!}
+                gqlQuery={gqlQuery?.query}
+                gqlQueryVariables={gqlQueryVariables}
+                customActions={schema.customActions}
+              />
+            }
+            viewTitle={`Associated Table: ${schema.dtoClass?.name}`}
           />
         </Form.Item>
-      </div>
-    );
-  }
-  return (
-    <Form.Item
-      key={`${fieldPath.key}-list-wrapper`}
-      label={
-        hideLabels
-          ? undefined
-          : renderLabel(
-              schema,
-              fieldPath,
-              disabled,
-              visibleOptionalFields,
-              toggleOptionalField,
-            )
+      );
+    } else {
+      const gqlQuery = schema.gqlAssociationProps.gqlListQuery;
+      const getGqlQueryVariables = gqlQuery?.getQueryVariables;
+      let gqlQueryVariables = undefined;
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
       }
-      required={schema.isRequired}
-    >
-      <Form.List key={`${fieldPath.key}-list`} name={fieldPath.namePath}>
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map((field, fieldIdx) => (
-              <Form.Item
-                key={`${fieldPath.key}-${fieldIdx}`}
-                label={
-                  <div className="form-item-label">
-                    <span>{`#${fieldIdx + 1} ${schema.label}`}</span>
-                    <Button
-                      type="link"
-                      icon={<MinusOutlined />}
-                      onClick={() => remove(field.name)}
-                    />
-                  </div>
-                }
-              >
-                <div className="array-item">
-                  <div className="array-item-content">
-                    {schema.nestedFields
-                      ? schema.nestedFields.map(
-                          (nestedField) =>
-                            renderField({
-                              schema: nestedField,
-                              preFieldPath: fieldPath
-                                .clearNamePath()
-                                .with(field.name),
-                              disabled: disabled,
-                              visibleOptionalFields: visibleOptionalFields,
-                              hideLabels: hideLabels,
-                              enableOptionalField: enableOptionalField,
-                              toggleOptionalField: toggleOptionalField,
-                              unknowns: unknowns,
-                              modifyUnknowns: modifyUnknowns,
-                              form,
-                              parentRecord,
-                              useSelector,
-                            }) as any,
-                        )
-                      : (renderField({
-                          schema: {
-                            label: `#${fieldIdx + 1} ${schema.label}`,
-                            name: String(field.name),
-                            type: FieldType.input,
-                            isRequired: true,
-                            sorter: schema.sorter,
-                          },
-                          preFieldPath: fieldPath.clearNamePath(),
-                          disabled: disabled,
-                          visibleOptionalFields: visibleOptionalFields,
-                          hideLabels: hideLabels,
-                          enableOptionalField: enableOptionalField,
-                          toggleOptionalField: toggleOptionalField,
-                          unknowns: unknowns,
-                          modifyUnknowns: modifyUnknowns,
-                          form,
-                          parentRecord,
-                          useSelector,
-                        }) as any)}
-                  </div>
-                </div>
-              </Form.Item>
-            ))}
-            <Button
-              type="dashed"
-              onClick={() => {
-                if (schema.customConstructor) {
-                  add(schema.customConstructor());
-                } else {
-                  add();
+      return (
+        <div className="editable-cell">
+          <Form.Item name={fieldPath.keyPath}>
+            <AssociationSelection
+              selectable={SelectionType.MULTIPLE}
+              parentIdFieldName={parentIdFieldName!}
+              associatedIdFieldName={associatedIdFieldName!}
+              gqlQuery={gqlQuery?.query}
+              gqlQueryVariables={gqlQueryVariables}
+              parentRecord={parentRecord}
+              associatedRecordClass={schema.dtoClass!}
+              value={form.getFieldValue(fieldPath.keyPath)}
+              form={form}
+              onChange={(newValues: any[]) => {
+                form.setFieldsValue({
+                  [fieldPath.keyPath as any]: newValues,
+                });
+                if (setHasChanges) {
+                  setHasChanges(true);
                 }
               }}
-              icon={<PlusOutlined />}
-              style={{ width: '100%' }}
-            >
-              Add {schema.label}
-            </Button>
-          </>
+              customActions={
+                fieldAnnotations &&
+                fieldAnnotations[schema.name] &&
+                fieldAnnotations[schema.name].customActions
+                  ? fieldAnnotations![schema.name].customActions
+                  : schema.customActions
+              }
+            />
+          </Form.Item>
+        </div>
+      );
+    }
+  } else {
+    let nonAssociationFieldContent;
+    if (disabled) {
+      const list = getProperty(parentRecord, fieldPath.namePath);
+      if (list && list.length > 0) {
+        nonAssociationFieldContent = list.map((item: any, idx: number) => (
+          <GenericTag
+            key={`nonAssociationFieldContent-${idx}`}
+            stringValue={item}
+          />
+        ));
+      }
+    } else {
+      nonAssociationFieldContent = (
+        <Form.List key={`${fieldPath.key}-list`} name={fieldPath.namePath}>
+          {(fields, { add, remove }) => {
+            return (
+              <>
+                {fields.map((field, fieldIdx) => (
+                  <>
+                    <ArrayItem
+                      fieldPath={fieldPath}
+                      field={field}
+                      fieldIdx={fieldIdx}
+                      schema={schema}
+                      hideLabels={hideLabels || false}
+                      disabled={disabled}
+                      visibleOptionalFields={visibleOptionalFields}
+                      enableOptionalField={enableOptionalField}
+                      toggleOptionalField={toggleOptionalField}
+                      unknowns={unknowns}
+                      modifyUnknowns={modifyUnknowns}
+                      form={form}
+                      parentRecord={parentRecord}
+                      remove={remove}
+                      fieldAnnotations={fieldAnnotations}
+                    />
+                  </>
+                ))}
+                <Button
+                  type="dashed"
+                  onClick={() => {
+                    if (schema.customConstructor) {
+                      add(schema.customConstructor());
+                    } else {
+                      add();
+                    }
+                  }}
+                  icon={<PlusOutlined />}
+                  style={{ width: '100%' }}
+                >
+                  Add {schema.label}
+                </Button>
+              </>
+            );
+          }}
+        </Form.List>
+      );
+    }
+    return (
+      <Form.Item
+        key={`${fieldPath.key}-list-wrapper`}
+        label={
+          hideLabels || isInTable
+            ? undefined
+            : renderLabel(
+                schema,
+                fieldPath,
+                disabled,
+                visibleOptionalFields,
+                toggleOptionalField,
+              )
+        }
+        required={schema.isRequired}
+      >
+        {disabled || !isInTable ? (
+          nonAssociationFieldContent
+        ) : (
+          <ExpandableColumn expandedContent={nonAssociationFieldContent} />
         )}
-      </Form.List>
-    </Form.Item>
-  );
+      </Form.Item>
+    );
+  }
 };

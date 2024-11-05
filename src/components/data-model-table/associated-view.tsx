@@ -11,6 +11,7 @@ import { useForm } from '@refinedev/antd';
 import { GenericParameterizedView, GenericViewState } from '../view';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
 
 export interface AssociatedViewProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -31,9 +32,22 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
     associatedRecordClassInstance as object,
   );
 
+  const associatedRecordPrimaryKeyFieldName = Reflect.getMetadata(
+    PRIMARY_KEY_FIELD_NAME,
+    associatedRecordClassInstance as object,
+  );
+
+  const associatedRecord = (parentRecord as any)[parentIdFieldName];
+  let id;
+  if (typeof associatedRecord === 'object') {
+    id = associatedRecord[associatedRecordPrimaryKeyFieldName];
+  } else {
+    id = associatedRecord;
+  }
+
   const useFormProps = useForm<any, any, any>({
     resource: associatedRecordResourceType,
-    id: (parentRecord as any)[parentIdFieldName],
+    id,
     queryOptions: {
       enabled:
         !!(parentRecord as any)[parentIdFieldName] &&
@@ -46,16 +60,19 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
   const { queryResult } = useFormProps;
 
   let val;
-  if (queryResult?.data?.data) {
-    const label = Reflect.getMetadata(
-      LABEL_FIELD,
-      associatedRecordClassInstance as object,
-    );
-    if (label && queryResult.data.data[label]) {
-      val = queryResult.data.data[label];
-    } else {
-      val = (parentRecord as any)[parentIdFieldName]; // just use associated ID
-    }
+  const labelField = Reflect.getMetadata(
+    LABEL_FIELD,
+    associatedRecordClassInstance as object,
+  );
+  const primaryKeyFieldName = Reflect.getMetadata(
+    PRIMARY_KEY_FIELD_NAME,
+    associatedRecordClassInstance as object,
+  );
+  const label = labelField || primaryKeyFieldName;
+  if (queryResult?.data?.data && queryResult.data.data[label]) {
+    val = queryResult.data.data[label];
+  } else {
+    val = (parentRecord as any)[label];
   }
   if (!associatedRecordResourceType) {
     return (
@@ -65,25 +82,29 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
       />
     );
   }
+  const expandedContent = id ? (
+    <>
+      <GenericParameterizedView
+        resourceType={associatedRecordResourceType}
+        id={id}
+        state={GenericViewState.SHOW}
+        dtoClass={associatedRecordClass}
+        gqlQuery={gqlQuery}
+        useFormProps={useFormProps}
+      />
+    </>
+  ) : (
+    ''
+  );
   return (
     <ExpandableColumn
       useInitialContentAsButton={!!val}
-      forceRender={true}
       initialContent={
         <>
           <GenericTag stringValue={val} icon={<ExportOutlined />} />
         </>
       }
-      expandedContent={
-        <GenericParameterizedView
-          resourceType={associatedRecordResourceType}
-          id={(parentRecord as any)[parentIdFieldName]}
-          state={GenericViewState.SHOW}
-          dtoClass={associatedRecordClass}
-          gqlQuery={gqlQuery}
-          useFormProps={useFormProps}
-        />
-      }
+      expandedContent={expandedContent}
       viewTitle={`Associated ${associatedRecordResourceType}`}
     />
   );

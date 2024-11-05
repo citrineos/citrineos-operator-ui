@@ -28,8 +28,6 @@ export const MainMenu = (props: any) => {
     </Menu.Item>
   ));
 
-  console.log('customMenuItems', customMenuItems, props);
-
   return (
     <ThemedSiderV2
       {...props}
