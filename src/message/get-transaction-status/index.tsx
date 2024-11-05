@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from 'antd';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
@@ -11,10 +11,9 @@ import {
   Transaction,
   TransactionProps,
 } from '../../pages/transactions/Transaction';
-import { GET_ACTIVE_TRANSACTIONS } from '../remote-stop/queries';
-import { GET_TRANSACTION_LIST_FOR_STATION } from '../queries';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { GET_TRANSACTION_LIST_FOR_STATION } from '../queries';
 
 enum GetTransactionStatusRequestProps {
   transaction = 'transaction',
@@ -28,10 +27,7 @@ export class GetTransactionStatusRequest {
 
   @GqlAssociation({
     parentIdFieldName: GetTransactionStatusRequestProps.transaction,
-    associatedIdFieldName: TransactionProps.transactionId,
-    gqlQuery: {
-      query: GET_ACTIVE_TRANSACTIONS,
-    },
+    associatedIdFieldName: TransactionProps.id,
     gqlListQuery: {
       query: GET_TRANSACTION_LIST_FOR_STATION,
       getQueryVariables: (_: GetTransactionStatusRequest, selector: any) => {
@@ -45,19 +41,6 @@ export class GetTransactionStatusRequest {
   @Type(() => Transaction)
   @IsNotEmpty()
   transaction!: Transaction | null;
-}
-
-export class GetTransactionStatusResultType {
-  @Type(() => Transaction)
-  @ValidateNested()
-  @IsNotEmpty()
-  transaction!: Transaction;
-}
-
-export class GetTransactionStatusResponse {
-  @Type(() => GetTransactionStatusResultType)
-  @IsNotEmpty()
-  getTransactionStatusResult!: GetTransactionStatusResultType;
 }
 
 export interface GetTransactionStatusProps {
@@ -107,7 +90,7 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({
   const getTransactionStatusRequest = new GetTransactionStatusRequest();
 
   const transaction = new Transaction();
-  transaction.transactionId = NEW_IDENTIFIER as unknown as string;
+  transaction.id = NEW_IDENTIFIER as unknown as number;
   getTransactionStatusRequest[GetTransactionStatusRequestProps.transaction] =
     transaction;
 
