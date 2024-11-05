@@ -1,10 +1,4 @@
-import {
-  ArrayMinSize,
-  IsArray,
-  IsNumber,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 import {
   VariableAttribute,
   VariableAttributeProps,
@@ -34,7 +28,6 @@ import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../util/BaseModel';
 import { CustomDataType } from '../../model/CustomData';
-import { HashAlgorithmEnumType } from '../../../../citrineos-core/00_Base';
 
 export enum EvseProps {
   databaseId = 'databaseId',
@@ -87,17 +80,6 @@ export class Evse extends BaseModel {
     },
   })
   VariableAttributes?: VariableAttribute[];
-
-  // TODO: Temp below please remove!!
-  @IsArray()
-  @ArrayMinSize(1)
-  firstOne!: string[];
-
-  // TODO: Temp below please remove!!
-  @IsArray()
-  @ArrayMinSize(1)
-  @Type(() => HashAlgorithmEnumType as any)
-  anotherOne!: HashAlgorithmEnumType[];
 
   constructor(data?: Partial<Evse>) {
     super();

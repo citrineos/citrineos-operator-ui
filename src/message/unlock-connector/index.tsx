@@ -1,52 +1,63 @@
-import React, { useState } from 'react';
-import { Button, Form } from 'antd';
-import { Type } from 'class-transformer';
-import { UnlockStatusEnumType } from '@citrineos/base';
-import { IsEnum, IsOptional, ValidateNested } from 'class-validator';
+import React from 'react';
+import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
-import { AssociationSelection } from '../../components/data-model-table/association-selection';
-import { SelectionType } from '../../components/data-model-table/editable';
 import { Evse, EvseProps } from '../../pages/evses/Evse';
-import { GET_EVSE_LIST_FOR_STATION } from '../queries';
-import { VariableAttributeProps } from '../../pages/evses/variable-attributes/VariableAttributes';
-import { StatusInfoType } from '../model/StatusInfoType';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { GenericForm } from '../../components/form';
+import { MessageConfirmation } from '../MessageConfirmation';
+import { Type } from 'class-transformer';
+import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GET_EVSE_LIST_FOR_STATION } from '../queries';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { Form, notification } from 'antd';
+import { EVSE_LIST_QUERY } from '../../pages/evses/queries';
 
-enum UnlockConnectorRequestProps {
-  // customData = 'customData', // todo
-  evseId = 'evseId',
+enum UnlockConnectorFormProps {
+  evse = 'evse',
 }
 
-export class UnlockConnectorRequest {
+export class UnlockConnectorForm {
+  @GqlAssociation({
+    parentIdFieldName: UnlockConnectorFormProps.evse,
+    associatedIdFieldName: EvseProps.databaseId,
+    gqlQuery: {
+      query: EVSE_LIST_QUERY,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (_: any, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
+    },
+  })
   @Type(() => Evse)
   @ValidateNested()
-  @IsOptional()
-  evseId?: Evse;
-
-  // @Type(() => CustomDataType)
-  // @ValidateNested()
-  // customData?: CustomDataType;
+  @IsNotEmpty()
+  evse!: Evse;
 
   constructor() {
     Object.assign(this, {
-      [UnlockConnectorRequestProps.evseId]: NEW_IDENTIFIER,
+      [UnlockConnectorFormProps.evse]: NEW_IDENTIFIER,
     });
   }
 }
 
-export class UnlockConnectorResponse {
+export class UnlockConnectorRequest {
+  @IsNumber()
+  @IsNotEmpty()
+  evseId!: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  connectorId!: number;
+
   // @Type(() => CustomDataType)
   // @ValidateNested()
-  // @IsOptional()
   // customData?: CustomDataType;
-
-  @IsEnum(UnlockStatusEnumType)
-  status!: UnlockStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  statusInfo?: StatusInfoType;
 }
 
 export interface UnlockConnectorProps {
@@ -57,75 +68,47 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
   station,
 }) => {
   const [form] = Form.useForm();
+  const formProps = {
+    form,
+  };
+
+  const unlockConnectorForm = new UnlockConnectorForm();
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
-    const data = {
-      evseId: plainValues[UnlockConnectorRequestProps.evseId][EvseProps.id],
-      connectorId:
-        plainValues[UnlockConnectorRequestProps.evseId][EvseProps.connectorId],
+
+    const plainEvse = plainValues[UnlockConnectorFormProps.evse];
+    // TODO add another gql filter to only pull EVSEs with a connector id
+    // so that we don't have to show this error
+    if (!plainEvse[EvseProps.connectorId]) {
+      notification.error({
+        message: 'Invalid EVSE',
+        description: 'Please select an EVSE with a connector',
+        placement: 'topRight',
+      });
+      return;
+    }
+
+    const data: UnlockConnectorRequest = {
+      evseId: plainEvse[EvseProps.id],
+      connectorId: plainEvse[EvseProps.connectorId],
     };
     await triggerMessageAndHandleResponse({
       url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
-      responseClass: UnlockConnectorResponse,
+      responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: UnlockConnectorResponse) =>
-        response &&
-        response.status &&
-        response.status === UnlockStatusEnumType.Unlocked,
+      responseSuccessCheck: (response: MessageConfirmation) =>
+        response?.success,
     });
   };
 
-  const [parentRecord, setParentRecord] = useState(
-    new UnlockConnectorRequest(),
-  );
-
-  const handleFormChange = (
-    _changedValues: any,
-    allValues: UnlockConnectorRequest,
-  ) => {
-    setParentRecord(allValues);
-  };
-
   return (
-    <Form
-      form={form}
-      layout="vertical"
+    <GenericForm
+      formProps={formProps}
+      dtoClass={UnlockConnectorForm}
       onFinish={handleSubmit}
-      initialValues={parentRecord}
-      onValuesChange={handleFormChange}
-    >
-      <Form.Item
-        label={UnlockConnectorRequestProps.evseId}
-        name={UnlockConnectorRequestProps.evseId}
-      >
-        <AssociationSelection
-          selectable={SelectionType.SINGLE}
-          parentIdFieldName={UnlockConnectorRequestProps.evseId}
-          associatedIdFieldName={EvseProps.databaseId}
-          gqlQuery={{
-            query: GET_EVSE_LIST_FOR_STATION,
-            getQueryVariables: (station: ChargingStation) => ({
-              [VariableAttributeProps.stationId]: station.id,
-            }),
-          }}
-          form={form}
-          parentRecord={parentRecord}
-          associatedRecordClass={Evse}
-          value={form.getFieldValue(UnlockConnectorRequestProps.evseId)}
-          onChange={(newValue: any[]) => {
-            const currentData: UnlockConnectorRequest =
-              form.getFieldValue(true) || {};
-            currentData[UnlockConnectorRequestProps.evseId] = newValue[0];
-            form.setFieldsValue(currentData);
-          }}
-        />
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Unlock Connector
-        </Button>
-      </Form.Item>
-    </Form>
+      parentRecord={unlockConnectorForm}
+      initialValues={unlockConnectorForm}
+    />
   );
 };
