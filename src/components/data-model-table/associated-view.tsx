@@ -60,16 +60,19 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
   const { queryResult } = useFormProps;
 
   let val;
-  if (queryResult?.data?.data) {
-    const label = Reflect.getMetadata(
-      LABEL_FIELD,
-      associatedRecordClassInstance as object,
-    );
-    if (label && queryResult.data.data[label]) {
-      val = queryResult.data.data[label];
-    } else {
-      val = (parentRecord as any)[parentIdFieldName]; // just use associated ID
-    }
+  const labelField = Reflect.getMetadata(
+    LABEL_FIELD,
+    associatedRecordClassInstance as object,
+  );
+  const primaryKeyFieldName = Reflect.getMetadata(
+    PRIMARY_KEY_FIELD_NAME,
+    associatedRecordClassInstance as object,
+  );
+  const label = labelField || primaryKeyFieldName;
+  if (queryResult?.data?.data && queryResult.data.data[label]) {
+    val = queryResult.data.data[label];
+  } else {
+    val = (parentRecord as any)[label];
   }
   if (!associatedRecordResourceType) {
     return (
@@ -79,29 +82,29 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
       />
     );
   }
+  const expandedContent = id ? (
+    <>
+      <GenericParameterizedView
+        resourceType={associatedRecordResourceType}
+        id={id}
+        state={GenericViewState.SHOW}
+        dtoClass={associatedRecordClass}
+        gqlQuery={gqlQuery}
+        useFormProps={useFormProps}
+      />
+    </>
+  ) : (
+    ''
+  );
   return (
     <ExpandableColumn
       useInitialContentAsButton={!!val}
-      forceRender={true}
       initialContent={
         <>
           <GenericTag stringValue={val} icon={<ExportOutlined />} />
         </>
       }
-      expandedContent={
-        id ? (
-          <GenericParameterizedView
-            resourceType={associatedRecordResourceType}
-            id={id}
-            state={GenericViewState.SHOW}
-            dtoClass={associatedRecordClass}
-            gqlQuery={gqlQuery}
-            useFormProps={useFormProps}
-          />
-        ) : (
-          ''
-        )
-      }
+      expandedContent={expandedContent}
       viewTitle={`Associated ${associatedRecordResourceType}`}
     />
   );

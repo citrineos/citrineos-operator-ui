@@ -30,6 +30,39 @@ export const STATUS_NOTIFICATIONS_LIST_QUERY = gql`
   }
 `;
 
+export const STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY = gql`
+  query StatusNotificationsList(
+    $stationId: String!
+    $order_by: [StatusNotifications_order_by!] = {}
+    $where: [StatusNotifications_bool_exp!] = []
+    $offset: Int!
+    $limit: Int!
+  ) {
+    StatusNotifications(
+      where: { stationId: { _eq: $stationId }, _and: $where }
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+    ) {
+      id
+      stationId
+      evseId
+      connectorId
+      timestamp
+      connectorStatus
+      createdAt
+      updatedAt
+    }
+    StatusNotifications_aggregate(
+      where: { stationId: { _eq: $stationId }, _and: $where }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const STATUS_NOTIFICATIONS_GET_QUERY = gql`
   query GetStatusNotificationById($id: Int!) {
     StatusNotifications_by_pk(id: $id) {

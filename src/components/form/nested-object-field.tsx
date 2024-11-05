@@ -43,8 +43,7 @@ export const NestedObjectField: (
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
     const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
-    const getGqlQueryVariables =
-      schema.gqlAssociationProps?.getGqlQueryVariables;
+    const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
     let gqlQueryVariables = undefined;
     if (getGqlQueryVariables) {
       gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
@@ -68,11 +67,12 @@ export const NestedObjectField: (
           <AssociationSelection
             parentIdFieldName={parentIdFieldName!}
             associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlListQuery}
+            gqlQuery={gqlListQuery?.query}
             gqlQueryVariables={gqlQueryVariables}
             parentRecord={parentRecord}
             associatedRecordClass={schema.dtoClass!}
             value={form.getFieldValue(fieldPath.keyPath)}
+            form={form}
             onChange={(newValues: any[]) => {
               const currentValues = form.getFieldsValue(true);
               if (newValues.length > 0) {

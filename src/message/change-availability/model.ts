@@ -23,13 +23,17 @@ export class ChangeAvailabilityRequest {
   @GqlAssociation({
     parentIdFieldName: ChangeAvailabilityRequestProps.evse,
     associatedIdFieldName: EvseProps.databaseId,
-    gqlQuery: GET_EVSES_FOR_STATION,
-    gqlListQuery: GET_EVSE_LIST_FOR_STATION,
-    getGqlQueryVariables: (_: ChangeAvailabilityRequest, selector: any) => {
-      const station = selector(getSelectedChargingStation()) || {};
-      return {
-        stationId: station.id,
-      };
+    gqlQuery: {
+      query: GET_EVSES_FOR_STATION,
+    },
+    gqlListQuery: {
+      query: GET_EVSE_LIST_FOR_STATION,
+      getQueryVariables: (_: ChangeAvailabilityRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
     },
   })
   @Type(() => Evse)

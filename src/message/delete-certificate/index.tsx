@@ -34,8 +34,12 @@ class DeleteCertificateData {
   @GqlAssociation({
     parentIdFieldName: DeleteCertificateDataProps.installedCertificate,
     associatedIdFieldName: InstalledCertificateProps.id,
-    gqlQuery: INSTALLED_CERTIFICATE_GET_QUERY,
-    gqlListQuery: INSTALLED_CERTIFICATE_LIST_QUERY,
+    gqlQuery: {
+      query: INSTALLED_CERTIFICATE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: INSTALLED_CERTIFICATE_LIST_QUERY,
+    },
   })
   @Type(() => InstalledCertificate)
   @IsNotEmpty()
