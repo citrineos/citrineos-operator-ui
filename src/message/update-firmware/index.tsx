@@ -10,6 +10,7 @@ import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 import { formatPem, readFileContent } from '../util';
+import { handleSwitchChange } from '../../util/renderUtil';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -155,6 +156,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
       });
     } finally {
       setLoading(false);
+      handleSwitchChange(true);
     }
   };
 

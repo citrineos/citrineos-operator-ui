@@ -319,23 +319,23 @@ export const renderPrimitiveField = (
   );
 };
 
+export const handleSwitchChange = (checked: boolean) => {
+  const elements = document.querySelectorAll('[class*="conditional"]');
+
+  elements.forEach((element) => {
+    const htmlElement = element as HTMLElement;
+    if (htmlElement.className.includes('conditional-true')) {
+      htmlElement.style.display = checked ? 'block' : 'none';
+    } else {
+      htmlElement.style.display = checked ? 'none' : 'block';
+    }
+  });
+};
+
 export const renderCombinedFields = (
   schema: FieldSchema,
   fieldPath: FieldPath,
 ) => {
-  const handleSwitchChange = (checked: boolean) => {
-    const elements = document.querySelectorAll('[class*="conditional"]');
-
-    elements.forEach((element) => {
-      const htmlElement = element as HTMLElement;
-      if (htmlElement.className.includes('conditional-true')) {
-        htmlElement.style.display = checked ? 'block' : 'none';
-      } else {
-        htmlElement.style.display = checked ? 'none' : 'block';
-      }
-    });
-  };
-
   handleSwitchChange(true);
   return (
     <Form.Item label={schema.label} name={fieldPath.namePath}>
