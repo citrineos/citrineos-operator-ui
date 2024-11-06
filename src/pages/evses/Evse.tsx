@@ -27,7 +27,6 @@ import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation
 import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../util/BaseModel';
-import { CustomDataType } from '../../model/CustomData';
 
 export enum EvseProps {
   databaseId = 'databaseId',
@@ -55,9 +54,10 @@ export class Evse extends BaseModel {
   @IsNumber()
   connectorId?: number | null;
 
-  @Type(() => CustomDataType)
+  /* @Type(() => CustomDataType)
   @IsOptional()
   customData: CustomDataType | null = null;
+  */
 
   @IsArray()
   @Type(() => VariableAttribute)
@@ -66,6 +66,7 @@ export class Evse extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: EvseProps.databaseId,
     associatedIdFieldName: VariableAttributeProps.evseDatabaseId,
+    hasNewAssociatedIdsVariable: true,
     gqlQuery: {
       query: VARIABLE_ATTRIBUTE_GET_QUERY,
     },
@@ -88,7 +89,6 @@ export class Evse extends BaseModel {
         [EvseProps.databaseId]: data.databaseId,
         [EvseProps.id]: data.id,
         [EvseProps.connectorId]: data.connectorId,
-        [EvseProps.customData]: data.customData,
         [EvseProps.VariableAttributes]: data.VariableAttributes,
       });
     }

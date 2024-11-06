@@ -1,4 +1,5 @@
 export const GQL_ASSOCIATION = 'gqlAssociation';
+export const GQL_CLASS_ASSOCIATED_FIELDS = 'gqlClassAssociatedFields';
 
 export interface QueryWithVariableGetter {
   /**
@@ -22,6 +23,10 @@ export interface GqlAssociationProps {
    */
   associatedIdFieldName: string;
   /**
+   * If set to true, will attempt to pass 'newAssociatedIds' variable to the mutation
+   */
+  hasNewAssociatedIdsVariable?: boolean;
+  /**
    * Query to perform to get the associated record
    */
   gqlQuery: QueryWithVariableGetter;
@@ -39,5 +44,22 @@ export interface GqlAssociationProps {
 export const GqlAssociation = (props: GqlAssociationProps) => {
   return function (target: any, key: string) {
     Reflect.defineMetadata(GQL_ASSOCIATION, props, target, key);
+    const existingAssociatedFields: Set<string> =
+      Reflect.getMetadata(GQL_CLASS_ASSOCIATED_FIELDS, target.constructor) ||
+      new Set<string>();
+    existingAssociatedFields.add(key);
+    Reflect.defineMetadata(
+      GQL_CLASS_ASSOCIATED_FIELDS,
+      existingAssociatedFields,
+      target.constructor,
+    );
   };
+};
+
+export const getAssociatedFields = (target: any): Set<string> => {
+  if (!target) return new Set<string>();
+  return (
+    Reflect.getMetadata(GQL_CLASS_ASSOCIATED_FIELDS, target) ||
+    new Set<string>()
+  );
 };

@@ -15,7 +15,6 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
     ) {
       id
       isOnline
-      locationId
       StatusNotifications {
         id
         stationId
@@ -28,7 +27,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       }
       createdAt
       updatedAt
-      Location {
+      locationId: Location {
         id
         name
         address

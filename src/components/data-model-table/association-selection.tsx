@@ -7,7 +7,10 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Constructable } from '../../util/Constructable';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
-import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
+import {
+  FieldNameAndIsEditable,
+  PRIMARY_KEY_FIELD_NAME,
+} from '../../util/decorators/PrimaryKeyFieldName';
 import { GenericDataTable, SelectionType } from './editable';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '../../util/consts';
@@ -21,11 +24,13 @@ import {
 } from '../../redux/selectionSlice';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
 import { generateSearchFilters } from '../../util/tables';
-import { SelectedAssociatedItems } from './selected-associated-items';
 import GenericTag from '../tag';
+import { SelectedAssociatedItems } from './selected-associated-items';
+import { FieldPath } from '../form/state/fieldpath';
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
+  fieldPath: FieldPath;
   parentRecord: ParentModel;
   associatedRecordClass: Constructable<AssociatedModel>;
   value?: AssociatedModel;
@@ -44,6 +49,7 @@ export const AssociationSelection = <
   props: AssociationSelectionProps<ParentModel, AssociatedModel>,
 ) => {
   const {
+    fieldPath,
     parentRecord,
     associatedRecordClass,
     parentIdFieldName,
@@ -55,7 +61,6 @@ export const AssociationSelection = <
     gqlQueryVariables,
     form,
   } = props;
-
   const dispatch = useDispatch();
 
   const associatedRecordClassInstance = useMemo(
@@ -78,13 +83,18 @@ export const AssociationSelection = <
     [associatedRecordClassInstance],
   );
 
-  const primaryKeyFieldName = useMemo(
+  const primaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable = useMemo(
     () =>
       Reflect.getMetadata(
         PRIMARY_KEY_FIELD_NAME,
         associatedRecordClassInstance as object,
       ),
     [associatedRecordClassInstance],
+  );
+
+  const primaryKeyFieldName = useMemo(
+    () => primaryKeyFieldNameAndIsEditable.fieldName,
+    [primaryKeyFieldNameAndIsEditable],
   );
 
   const labelKey = label || primaryKeyFieldName;
@@ -115,14 +125,14 @@ export const AssociationSelection = <
 
   const [isNew, setNew] = useState<boolean>(false);
   useEffect(() => {
-    setNew(
+    const newVal =
       (!!parentRecord &&
         ((parentRecord as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
           (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
-        (!!value &&
-          ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-            (value as any)[parentIdFieldName] === NEW_IDENTIFIER)),
-    );
+      (!!value &&
+        ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
+          (value as any)[parentIdFieldName] === NEW_IDENTIFIER));
+    setNew(newVal);
   }, [parentRecord, primaryKeyFieldName, parentIdFieldName, value]);
 
   const [tagValue, setTagValue] = useState<string>('');
@@ -132,15 +142,21 @@ export const AssociationSelection = <
       newVal = value.map((v: any) => (v as any)[labelKey]).join(', ');
     } else if (value) {
       newVal = (value as any)[labelKey];
-      if (typeof newVal === 'object') {
+      if (newVal && typeof newVal === 'object') {
         newVal = JSON.stringify(newVal);
       }
     } else {
       newVal = '';
     }
-    const newTagValue = isNew
-      ? 'Select'
-      : newVal || (parentRecord as any)[parentIdFieldName];
+    const associatedObject = (parentRecord as any)[parentIdFieldName];
+    let newTagValue = isNew ? 'Select' : newVal || associatedObject;
+    if (
+      newTagValue === associatedObject &&
+      associatedObject &&
+      typeof associatedObject === 'object'
+    ) {
+      newTagValue = associatedObject[associatedIdFieldName];
+    }
     setTagValue(newTagValue);
   }, [isNew, value, associatedIdFieldName, parentRecord, primaryKeyFieldName]);
 
@@ -287,6 +303,7 @@ export const AssociationSelection = <
       expandedContent={({ closeDrawer }) => (
         <>
           <SelectedAssociatedItems
+            fieldPath={fieldPath}
             selectedItems={selectedItems}
             dtoClass={associatedRecordClass}
             associatedRecordResourceType={associatedRecordResourceType}

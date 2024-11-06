@@ -1,7 +1,22 @@
 export const PRIMARY_KEY_FIELD_NAME = 'primaryKeyFieldName';
 
-export const PrimaryKeyFieldName = (fieldName: string): ClassDecorator => {
+export interface FieldNameAndIsEditable {
+  fieldName: string;
+  editableDuringCreate: boolean;
+}
+
+export const PrimaryKeyFieldName = (
+  fieldName: string,
+  editableDuringCreate = false,
+): ClassDecorator => {
   return (target: Function) => {
-    Reflect.defineMetadata(PRIMARY_KEY_FIELD_NAME, fieldName, target.prototype);
+    Reflect.defineMetadata(
+      PRIMARY_KEY_FIELD_NAME,
+      {
+        fieldName,
+        editableDuringCreate,
+      } as FieldNameAndIsEditable,
+      target.prototype,
+    );
   };
 };

@@ -88,6 +88,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
         <div className="editable-cell">
           <Form.Item name={fieldPath.keyPath}>
             <AssociationSelection
+              fieldPath={fieldPath}
               selectable={SelectionType.MULTIPLE}
               parentIdFieldName={parentIdFieldName!}
               associatedIdFieldName={associatedIdFieldName!}

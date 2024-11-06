@@ -11,7 +11,10 @@ import { useForm } from '@refinedev/antd';
 import { GenericParameterizedView, GenericViewState } from '../view';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
 import { NEW_IDENTIFIER } from '../../util/consts';
-import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
+import {
+  FieldNameAndIsEditable,
+  PRIMARY_KEY_FIELD_NAME,
+} from '../../util/decorators/PrimaryKeyFieldName';
 
 export interface AssociatedViewProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
@@ -32,14 +35,17 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
     associatedRecordClassInstance as object,
   );
 
-  const associatedRecordPrimaryKeyFieldName = Reflect.getMetadata(
-    PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as object,
-  );
+  const associatedRecordPrimaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable =
+    Reflect.getMetadata(
+      PRIMARY_KEY_FIELD_NAME,
+      associatedRecordClassInstance as object,
+    );
+  const associatedRecordPrimaryKeyFieldName =
+    associatedRecordPrimaryKeyFieldNameAndIsEditable.fieldName;
 
   const associatedRecord = (parentRecord as any)[parentIdFieldName];
   let id;
-  if (typeof associatedRecord === 'object') {
+  if (associatedRecord && typeof associatedRecord === 'object') {
     id = associatedRecord[associatedRecordPrimaryKeyFieldName];
   } else {
     id = associatedRecord;
@@ -64,16 +70,22 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
     LABEL_FIELD,
     associatedRecordClassInstance as object,
   );
-  const primaryKeyFieldName = Reflect.getMetadata(
-    PRIMARY_KEY_FIELD_NAME,
-    associatedRecordClassInstance as object,
-  );
+  const primaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable =
+    Reflect.getMetadata(
+      PRIMARY_KEY_FIELD_NAME,
+      associatedRecordClassInstance as object,
+    );
+  const primaryKeyFieldName = primaryKeyFieldNameAndIsEditable.fieldName;
   const label = labelField || primaryKeyFieldName;
-  if (queryResult?.data?.data && queryResult.data.data[label]) {
-    val = queryResult.data.data[label];
-  } else {
-    val = (parentRecord as any)[label];
+
+  if (associatedRecord) {
+    if (queryResult?.data?.data && queryResult.data.data[label]) {
+      val = queryResult.data.data[label];
+    } else {
+      val = (parentRecord as any)[label];
+    }
   }
+
   if (!associatedRecordResourceType) {
     return (
       <Alert
@@ -97,15 +109,15 @@ export const AssociatedView = <ParentModel, AssociatedModel>(
     ''
   );
   return (
-    <ExpandableColumn
-      useInitialContentAsButton={!!val}
-      initialContent={
-        <>
+    val && (
+      <ExpandableColumn
+        useInitialContentAsButton={!!val}
+        initialContent={
           <GenericTag stringValue={val} icon={<ExportOutlined />} />
-        </>
-      }
-      expandedContent={expandedContent}
-      viewTitle={`Associated ${associatedRecordResourceType}`}
-    />
+        }
+        expandedContent={expandedContent}
+        viewTitle={`Associated ${associatedRecordResourceType}`}
+      />
+    )
   );
 };

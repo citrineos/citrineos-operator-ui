@@ -1,7 +1,7 @@
 export enum ChargingStationProps {
   id = 'id',
   isOnline = 'isOnline',
-  Location = 'Location',
+  locationId = 'locationId',
   statusNotifications = 'statusNotifications',
   evses = 'evses',
   transactions = 'transactions',
