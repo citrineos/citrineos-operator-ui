@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { Button, Drawer, Dropdown, Menu, MenuProps, Spin } from 'antd';
 import {
-  MoreOutlined,
-  ThunderboltOutlined,
-  SafetyCertificateOutlined,
-  SyncOutlined,
   ClearOutlined,
-  UserOutlined,
-  DeleteOutlined,
-  FileTextOutlined,
-  IdcardOutlined,
-  FileSearchOutlined,
-  FieldTimeOutlined,
-  ProfileOutlined,
-  FileAddOutlined,
-  PlayCircleOutlined,
-  StopOutlined,
-  ReloadOutlined,
-  GlobalOutlined,
-  SettingOutlined,
-  MessageOutlined,
-  UnlockOutlined,
   CloudUploadOutlined,
+  DeleteOutlined,
+  FieldTimeOutlined,
+  FileAddOutlined,
+  FileSearchOutlined,
+  FileTextOutlined,
+  GlobalOutlined,
+  IdcardOutlined,
+  MessageOutlined,
+  MoreOutlined,
+  PlayCircleOutlined,
+  ProfileOutlined,
+  ReloadOutlined,
+  SafetyCertificateOutlined,
+  SettingOutlined,
+  StopOutlined,
+  SyncOutlined,
+  ThunderboltOutlined,
+  UnlockOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -52,12 +52,16 @@ export const CustomActions = <T,>({
   const [drawerContent, setDrawerContent] = useState<React.ReactNode | null>(
     null,
   );
+  const [drawerTitle, setDrawerTitle] = useState<React.ReactNode | null>(
+    'Details',
+  );
   const dispatch = useDispatch();
 
   const handleMenuClick = (action: CustomAction<T>) => {
     const result = action.execOrRender(data, setLoading, dispatch);
     if (React.isValidElement(result)) {
       setDrawerContent(result);
+      setDrawerTitle(action.label);
       setVisible(true); // Open the drawer with the returned content
     }
   };
@@ -65,6 +69,7 @@ export const CustomActions = <T,>({
   const onDrawerClose = () => {
     setVisible(false);
     setDrawerContent(null); // Clear the content when the drawer is closed
+    setDrawerTitle('Details');
   };
 
   const items: MenuProps['items'] = actions
@@ -156,7 +161,7 @@ export const CustomActions = <T,>({
         </>
       )}
       <Drawer
-        title="Details"
+        title={drawerTitle}
         open={visible}
         onClose={onDrawerClose}
         width="50%"
