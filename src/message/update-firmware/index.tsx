@@ -106,10 +106,13 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   };
 
   const updateFirmware = async (request: UpdateFirmwareRequest) => {
+    let signingCertificate: any;
+    let isFile: boolean = false;
+
     try {
       setLoading(true);
-      let signingCertificate: any;
       const signingCertificateFile = request.firmware.signingCertificate;
+      isFile = signingCertificateFile instanceof File;
 
       if (typeof request.firmware.signingCertificate === 'string') {
         const pemString = formatPem(request.firmware.signingCertificate);
@@ -156,7 +159,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
       });
     } finally {
       setLoading(false);
-      handleSwitchChange(true);
+      handleSwitchChange(!isFile);
     }
   };
 
