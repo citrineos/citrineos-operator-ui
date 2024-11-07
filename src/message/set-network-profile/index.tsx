@@ -82,8 +82,12 @@ export class SetNetworkProfileData {
   @GqlAssociation({
     parentIdFieldName: SetNetworkProfileDataProps.websocketServerConfig,
     associatedIdFieldName: ServerNetworkProfileProps.id,
-    gqlQuery: SERVER_NETWORK_PROFILE_GET_QUERY,
-    gqlListQuery: SERVER_NETWORK_PROFILE_LIST_QUERY,
+    gqlQuery: {
+      query: SERVER_NETWORK_PROFILE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: SERVER_NETWORK_PROFILE_LIST_QUERY,
+    },
   })
   @Type(() => ServerNetworkProfile)
   @IsOptional()

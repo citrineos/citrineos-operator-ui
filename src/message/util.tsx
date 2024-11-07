@@ -1,12 +1,13 @@
+import { HttpMethod } from '@citrineos/base';
 import { BaseRestClient } from '../util/BaseRestClient';
 import { Constructable } from '../util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 
-export const showSucces = () => {
+export const showSucces = (payload?: string) => {
   notification.success({
     message: 'Success',
-    description: 'The request was successful.',
+    description: 'The request was successful' + payload ? (': ' + payload) : '.',
     placement: 'topRight',
   });
 };
@@ -25,6 +26,7 @@ export interface TriggerMessageAndHandleResponseProps<T> {
   data: any;
   responseSuccessCheck: (response: T) => boolean;
   isDataUrl?: boolean;
+  method?: HttpMethod,
   setLoading?: (loading: boolean) => void;
 }
 
@@ -34,6 +36,7 @@ export const triggerMessageAndHandleResponse = async <T,>({
   data,
   responseSuccessCheck,
   isDataUrl = false,
+  method = HttpMethod.Post,
   setLoading,
 }: TriggerMessageAndHandleResponseProps<T>) => {
   try {
@@ -41,11 +44,21 @@ export const triggerMessageAndHandleResponse = async <T,>({
       setLoading(true);
     }
     const client = new BaseRestClient(isDataUrl);
-    const response = await client.post(url, responseClass, {}, data);
+    let response = undefined;
+    switch(method) {
+      case HttpMethod.Post:
+        response = await client.post(url, responseClass, {}, data);
+        break;
+      case HttpMethod.Delete:
+        response = await client.del(url, responseClass, {});
+        break;
+      default:
+        throw new Error("Unimplemented Http Method: " + method);
+    }
 
     // todo reuse handle response!
     if (responseSuccessCheck(response)) {
-      showSucces();
+      showSucces((response as any).payload);
     } else {
       let msg = 'The request did not receive a successful response.';
       if ((response as any).payload) {

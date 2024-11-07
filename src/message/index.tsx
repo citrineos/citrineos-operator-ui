@@ -41,6 +41,10 @@ import {
   UpdateAuthPassword,
   UpdateAuthPasswordProps,
 } from './update-auth-password';
+import {
+  DeleteStationNetworkProfiles,
+  DeleteStationNetworkProfilesProps,
+} from './delete-station-network-profiles';
 import { DeleteCertificate } from './delete-certificate';
 import { ChangeAvailabilityProps } from './change-availability/model';
 
@@ -53,6 +57,8 @@ const chargingStationActionMap: {
   'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
   'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
   'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
+  'Delete Station Network Profiles':
+    DeleteStationNetworkProfiles as React.FC<DeleteStationNetworkProfilesProps>,
   'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
   'Get Installed Certificate IDs':
     GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
