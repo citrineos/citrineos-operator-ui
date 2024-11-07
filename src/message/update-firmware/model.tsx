@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -12,7 +13,8 @@ import {
 import { Form, Input } from 'antd';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { TransformDate } from '../../util/TransformDate';
-import { CombinedFormRender } from '../../util/decorators/CombinedFormRender';
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { SupportedFileFormats } from '../../util/decorators/SupportedFileFormats';
 
 export enum FirmwareTypeProps {
   location = 'location',
@@ -54,29 +56,28 @@ export class FirmwareType {
   @IsOptional()
   installDateTime?: Date;
 
+  @IsBoolean()
+  @IsOptional()
+  signingCertificateIsFile?: boolean;
+
+  @IsString()
+  @Length(0, 5500)
+  @IsOptional()
+  @HiddenWhen((record: FirmwareType) => {
+    return record.signingCertificateIsFile === true;
+  })
+  signingCertificateText?: string;
+
   @IsOptional()
   @Type(() => File)
-  @CombinedFormRender([
-    {
-      type: 'boolean',
-      info: 'Enter Text or Upload File',
-      checkedText: 'Enter Certificate Text',
-      uncheckedText: 'Upload Certificate File',
-    },
-    {
-      type: 'string',
-      minLength: 0,
-      maxLength: 5500,
-      label: 'Signing Certificate',
-      info: 'Input certificate Text',
-    },
-    {
-      type: 'file',
-      label: 'Signing Certificate',
-      info: 'Upload certificate File',
-      supportedFileFormats: ['.pem', '.id'],
-    },
-  ])
+  @SupportedFileFormats(['.pem', '.id'])
+  @HiddenWhen((record: FirmwareType) => {
+    return record.signingCertificateIsFile !== true;
+  })
+  signingCertificateFile?: File;
+
+  @IsOptional()
+  @HiddenWhen(() => true)
   signingCertificate?: string | File;
 
   @IsString()

@@ -35,7 +35,6 @@ import { ArrayField } from './array-field';
 import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
 import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
-import { FieldAnnotations } from '../data-model-table/editable';
 import { HIDDEN_WHEN } from '../../util/decorators/HiddenWhen';
 import { renderLabel } from '../../util/renderUtil';
 
@@ -227,24 +226,6 @@ export const getSchemaForInstanceAndKey = (
       name: key,
       type: FieldType.customRender,
       customRender: customFormRender,
-      isRequired: requiredFields.includes(key),
-      sorter,
-      customActions,
-    };
-  }
-
-  const combinedFormRender = Reflect.getMetadata(
-    COMBINED_FORM_RENDER,
-    instance,
-    key,
-  );
-
-  if (combinedFormRender) {
-    return {
-      label: label(instance, key),
-      name: key,
-      type: FieldType.combinedRender,
-      combinedRender: combinedFormRender,
       isRequired: requiredFields.includes(key),
       sorter,
       customActions,
@@ -480,22 +461,6 @@ export const renderFieldContent = (field: FieldSchema, disabled = false) => {
   }
 };
 
-export interface RenderFieldProps {
-  schema: FieldSchema;
-  preFieldPath: FieldPath;
-  disabled: boolean;
-  visibleOptionalFields?: Flags;
-  hideLabels?: boolean;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  modifyUnknowns?: any;
-  form?: any;
-  parentRecord?: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-}
-
 export const renderField = (props: RenderFieldProps) => {
   const {
     schema,
@@ -534,11 +499,6 @@ export const renderField = (props: RenderFieldProps) => {
   console.log('data test type: ', dataTestType);
   if (schema.type === FieldType.customRender && schema.customRender) {
     return schema.customRender(parentRecord);
-  }
-
-  // Combined render handling
-  if (schema.type === FieldType.combinedRender && schema.combinedRender) {
-    return renderCombinedFields(schema, fieldPath);
   }
 
   // Optional field toggle

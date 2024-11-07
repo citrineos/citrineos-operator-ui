@@ -44,7 +44,7 @@ import {
   GQL_ASSOCIATION,
   GqlAssociationProps,
 } from '../../util/decorators/GqlAssociation';
-import { TableWrapper, TableWrapperRef } from './table-wrapper';
+import { TableWrapper } from './table-wrapper';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
@@ -54,25 +54,14 @@ import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConst
 import NestedObjectField from '../form/nested-object-field';
 import { DocumentNode } from 'graphql';
 import { HIDDEN_WHEN, IsHiddenCheck } from '../../util/decorators/HiddenWhen';
-
-export interface RenderViewContentProps {
-  field: FieldSchema;
-  preFieldPath?: FieldPath;
-  value: any;
-  record: any;
-  hideLabels?: boolean;
-  disabled: boolean;
-  parentRecord: any;
-  form: any;
-  setHasChanges?: any;
-  visibleOptionalFields?: Flags;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  modifyUnknowns?: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-}
+import {
+  FieldSchema,
+  GenericDataTableProps,
+  RenderEditableCellProps,
+  RenderViewContentProps,
+  TableWrapperRef,
+} from '../../model/interfaces';
+import { FieldType } from '../../model/enums';
 
 export const renderViewContent = (props: RenderViewContentProps) => {
   const {
@@ -159,47 +148,6 @@ export const renderViewContent = (props: RenderViewContentProps) => {
       );
   }
 };
-
-export enum SelectionType {
-  SINGLE = 'single',
-  MULTIPLE = 'multiple',
-}
-
-export interface FieldAnnotations {
-  [key: string]: {
-    customActions?: CustomAction<any>[];
-    gqlAssociationProps?: GqlAssociationProps;
-  };
-}
-
-export interface GenericDataTableProps {
-  // todo make generic / typed
-  dtoClass: Constructable<any>;
-  selectable?: SelectionType | null;
-  filters?: any;
-  useTableProps?: any;
-  onSelectionChange?: (selectedRows: any[]) => void;
-  editable?: boolean;
-  customActions?: CustomAction<any>[];
-  fieldAnnotations?: FieldAnnotations;
-}
-
-export interface RenderEditableCellProps {
-  field: FieldSchema;
-  preFieldPath?: FieldPath;
-  hideLabels?: boolean;
-  disabled: boolean;
-  parentRecord: any;
-  form?: any;
-  setHasChanges: any;
-  visibleOptionalFields?: Flags;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  modifyUnknowns?: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-}
 
 // todo add generic types
 export const GenericDataTable: React.FC<GenericDataTableProps> = (

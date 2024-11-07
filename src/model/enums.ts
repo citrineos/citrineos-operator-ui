@@ -11,7 +11,6 @@ export enum FieldType {
   unknownProperties,
   customRender,
   file,
-  combinedRender,
 }
 
 export enum SelectMode {

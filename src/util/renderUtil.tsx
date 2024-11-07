@@ -22,24 +22,11 @@ import { FieldType } from '../model/enums';
 
 export const renderUnknownValueField = (
   type: SupportedUnknownType,
-  fieldPath: FieldPath | string,
   disabled: boolean = false,
-  label: string = '',
-  isHidden = false,
 ) => {
   switch (type) {
     case 'string':
-      return (
-        <Form.Item
-          label={label}
-          name={
-            typeof fieldPath === 'string' ? [fieldPath] : fieldPath.namePath
-          }
-          hidden={isHidden}
-        >
-          <Input placeholder="Enter text" disabled={disabled} />
-        </Form.Item>
-      );
+      return <Input placeholder="Enter text" disabled={disabled} />;
     case 'number':
       return <InputNumber placeholder="Enter number" disabled={disabled} />;
     case 'boolean':
@@ -49,47 +36,29 @@ export const renderUnknownValueField = (
   }
 };
 
-export const renderSwitchField = (
-  label: string,
-  namePath: string,
-  checkedText: string,
-  uncheckedText: string,
-  onChange?: (checked: boolean) => void,
-  isHidden = false,
-) => {
-  return (
-    <Form.Item label={label} name={namePath} hidden={isHidden}>
-      <Switch
-        defaultChecked
-        onChange={onChange}
-        checkedChildren={checkedText}
-        unCheckedChildren={uncheckedText}
-      />
-    </Form.Item>
-  );
-};
-
 export const renderUploadField = (
   schema: FieldSchema,
-  fieldPath: FieldPath | string,
+  fieldPath: FieldPath,
   disabled: boolean,
-  isHidden = false,
 ) => {
   return (
     <Form.Item
-      hidden={isHidden}
       label={schema.label}
-      name={typeof fieldPath === 'string' ? fieldPath : fieldPath.namePath}
+      name={fieldPath.namePath}
       getValueFromEvent={(e) => {
         // Return the first file from the fileList array
         return e && e.fileList ? e.fileList[0]?.originFileObj : null;
       }}
     >
       <Upload
-        name="file"
+        name={'file'}
         disabled={disabled}
         maxCount={1}
-        accept={schema.supportedFileFormats?.join(',') || undefined}
+        accept={
+          schema.supportedFileFormats
+            ? schema.supportedFileFormats.join(',')
+            : undefined
+        }
         beforeUpload={() => false}
       >
         <Button icon={<UploadOutlined />}>Click to Upload</Button>
@@ -187,16 +156,16 @@ export const renderUnknownField = (
             )
       }
       required={schema.isRequired}
-      layout="vertical"
+      layout={'vertical'}
       className="merged-ant-form-item"
     >
-      <Form.Item label="Type">
+      <Form.Item label={'Type'}>
         <Select
           disabled={disabled}
           value={unknown.type}
-          onChange={(value: SupportedUnknownType) =>
-            modifyUnknowns('updateFirst', fieldPath, { type: value })
-          }
+          onChange={(value: SupportedUnknownType) => {
+            modifyUnknowns('updateFirst', fieldPath, { type: value });
+          }}
           options={[
             { value: 'string', label: 'String' },
             { value: 'number', label: 'Number' },
@@ -205,8 +174,14 @@ export const renderUnknownField = (
         />
       </Form.Item>
       {unknown.type && (
-        <Form.Item name={fieldPath.namePath} label="Value">
-          {renderUnknownValueField(unknown.type, fieldPath, disabled)}
+        <Form.Item name={fieldPath.namePath} label={'Value'}>
+          {unknown.type === 'string' && (
+            <Input placeholder="Enter text" disabled={disabled} />
+          )}
+          {unknown.type === 'number' && (
+            <InputNumber placeholder="Enter number" disabled={disabled} />
+          )}
+          {unknown.type === 'boolean' && <Switch />}
         </Form.Item>
       )}
     </Form.Item>
@@ -256,7 +231,7 @@ export const renderUnknownProperty = (
               layout="horizontal"
               name={[...fieldPath.namePath, unknown.name]}
             >
-              {renderUnknownValueField(unknown.type, fieldPath, disabled)}
+              {renderUnknownValueField(unknown.type, disabled)}
             </Form.Item>
           </Col>
         )}
@@ -315,69 +290,6 @@ export const renderPrimitiveField = (
       required={schema.isRequired}
     >
       {renderFieldContent(schema, disabled)}
-    </Form.Item>
-  );
-};
-
-export const handleSwitchChange = (checked: boolean) => {
-  const elements = document.querySelectorAll('[class*="conditional"]');
-
-  elements.forEach((element) => {
-    const htmlElement = element as HTMLElement;
-    if (htmlElement.className.includes('conditional-true')) {
-      htmlElement.style.display = checked ? 'block' : 'none';
-    } else {
-      htmlElement.style.display = checked ? 'none' : 'block';
-    }
-  });
-};
-
-export const renderCombinedFields = (
-  schema: FieldSchema,
-  fieldPath: FieldPath,
-) => {
-  handleSwitchChange(true);
-  return (
-    <Form.Item label={schema.label} name={fieldPath.namePath}>
-      {schema.combinedRender?.map((schemaField) => {
-        switch (schemaField.type) {
-          case 'boolean':
-            return renderSwitchField(
-              schemaField.info,
-              `${fieldPath.namePath}Switch`.replace(/,/g, '.'),
-              schemaField.checkedText,
-              schemaField.uncheckedText,
-              handleSwitchChange,
-            );
-
-          case 'string':
-            return (
-              <div className="conditional-true">
-                {renderUnknownValueField(
-                  schemaField.type,
-                  `${fieldPath.namePath}String`.replace(/,/g, '.'),
-                  false,
-                  schemaField.info,
-                )}
-              </div>
-            );
-
-          case 'file':
-            schema.supportedFileFormats = schemaField.supportedFileFormats;
-            return (
-              <div className="conditional-false">
-                {renderUploadField(
-                  schema,
-                  `${fieldPath.namePath}File`.replace(/,/g, '.'),
-                  false,
-                )}
-              </div>
-            );
-
-          default:
-            return null;
-        }
-      })}
     </Form.Item>
   );
 };

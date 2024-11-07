@@ -1,12 +1,16 @@
-import { FormInstance, FormListFieldData } from 'antd';
+import { FormInstance, FormListFieldData, TableProps } from 'antd';
 import { UseFormReturnType } from '@refinedev/antd';
 import { CustomAction } from '../components/custom-actions';
 import { ResourceType } from '../resource-type';
-import { FieldType, GenericViewState, SelectMode } from './enums';
+import {
+  FieldType,
+  GenericViewState,
+  SelectionType,
+  SelectMode,
+} from './enums';
 import { isDefined } from 'class-validator';
 import { Constructable } from '../util/Constructable';
 import { GqlAssociationProps } from '../util/decorators/GqlAssociation';
-import { FieldAnnotations } from '../components/data-model-table/editable';
 import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
@@ -16,7 +20,20 @@ export interface FieldSelectOption {
   value: string;
 }
 
+export interface AssociationSelectionProps<ParentModel, AssociatedModel>
+  extends GqlAssociationProps {
+  parentRecord: ParentModel;
+  associatedRecordClass: Constructable<AssociatedModel>;
+  value?: AssociatedModel;
+  onChange?: (value: AssociatedModel[]) => void;
+  selectable?: SelectionType | null;
+  gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
+  form: any;
+}
+
 export interface FieldSchema {
+  parentInstance: any;
   label: string;
   name: string;
   type: FieldType;
@@ -25,7 +42,6 @@ export interface FieldSchema {
   nestedFields?: FieldSchema[];
   isRequired?: boolean;
   customRender?: (record?: any) => any;
-  combinedRender?: Record<string, any>[];
   dtoClass?: Constructable<any>;
   customConstructor?: () => any;
   gqlAssociationProps?: GqlAssociationProps;
@@ -154,4 +170,76 @@ export interface NestedObjectFieldProps {
   form: any;
   parentRecord: any;
   useSelector: any;
+}
+
+export interface FieldAnnotations {
+  [key: string]: {
+    customActions?: CustomAction<any>[];
+    gqlAssociationProps?: GqlAssociationProps;
+  };
+}
+
+export interface GenericDataTableProps {
+  // todo make generic / typed
+  dtoClass: Constructable<any>;
+  selectable?: SelectionType | null;
+  filters?: any;
+  useTableProps?: any;
+  onSelectionChange?: (selectedRows: any[]) => void;
+  editable?: boolean;
+  customActions?: CustomAction<any>[];
+  fieldAnnotations?: FieldAnnotations;
+}
+
+export interface RenderEditableCellProps {
+  field: FieldSchema;
+  preFieldPath?: FieldPath;
+  hideLabels?: boolean;
+  disabled: boolean;
+  parentRecord: any;
+  form?: any;
+  setHasChanges: any;
+  visibleOptionalFields?: Flags;
+  enableOptionalField?: (path: FieldPath) => void;
+  toggleOptionalField?: (path: FieldPath) => void;
+  unknowns?: Unknowns;
+  modifyUnknowns?: any;
+  useSelector: any;
+  fieldAnnotations?: FieldAnnotations;
+}
+
+export interface RenderFieldProps {
+  schema: FieldSchema;
+  preFieldPath: FieldPath;
+  disabled: boolean;
+  visibleOptionalFields?: Flags;
+  hideLabels?: boolean;
+  enableOptionalField?: (path: FieldPath) => void;
+  toggleOptionalField?: (path: FieldPath) => void;
+  unknowns?: Unknowns;
+  modifyUnknowns?: any;
+  form?: any;
+  parentRecord?: any;
+  useSelector: any;
+  fieldAnnotations?: FieldAnnotations;
+}
+
+export interface TableWrapperProps<Model> extends TableProps<Model> {
+  dtoClass: Constructable<Model>;
+  useTableProps: any;
+  selectable?: SelectionType | null;
+  onSelectionChange?: (selectedRows: Model[]) => void;
+  primaryKeyFieldName: string;
+  columns: FieldSchema[];
+  editingRecord: Model;
+  filters?: any;
+  dtoResourceType?: string;
+  dtoGqlListQuery?: any;
+  gqlQueryVariables?: any;
+}
+
+export interface TableWrapperRef<Model> {
+  addRecordToTable: (record: Model) => void;
+  removeNewRow: () => void;
+  refreshTable: () => void;
 }

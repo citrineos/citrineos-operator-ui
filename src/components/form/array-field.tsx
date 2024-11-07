@@ -8,8 +8,8 @@ import { AssociatedTable } from '../data-model-table/associated-table';
 import { getProperty } from '../../util/objects';
 import GenericTag from '../tag';
 import { ArrayFieldProps } from '../../model/interfaces';
-import { SelectionType } from '../data-model-table/editable';
 import { renderLabel } from '../../util/renderUtil';
+import { SelectionType } from '../../model/enums';
 
 export const ArrayField: React.FC<ArrayFieldProps> = (
   props: ArrayFieldProps,

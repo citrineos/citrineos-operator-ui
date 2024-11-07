@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback, useMemo } from 'react';
 import { Form, notification, Spin } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
@@ -10,7 +10,6 @@ import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '../../util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 import { formatPem, readFileContent } from '../util';
-import { handleSwitchChange } from '../../util/renderUtil';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -21,167 +20,315 @@ export interface UpdateFirmwareProps {
 export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   const formRef = useRef();
   const [form] = Form.useForm();
-  const formProps = { form };
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [valid, setValid] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const apiUrl = useApiUrl();
-  const {
-    data: requestIdResponse,
-    isLoading: isLoadingRequestId,
-    // isError: isErrorLoadingRequestId,
-  } = useCustom<any>({
+  const { data: requestIdResponse, isLoading: isRequestIdLoading } = useCustom({
     url: `${apiUrl}`,
     method: 'post',
-    config: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
+    config: { headers: { 'Content-Type': 'application/json' } },
     meta: {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-      variables: {
-        stationId: station.id,
-        type: 'updateFirmware',
-      },
+      variables: { stationId: station.id, type: 'updateFirmware' },
     },
   });
 
-  const isRequestValid = (request: UpdateFirmwareRequest) => {
-    const errors = validateSync(request);
-    return errors.length === 0;
-  };
+  const initialRequest = useMemo(() => {
+    const request = new UpdateFirmwareRequest();
+    request[UpdateFirmwareRequestProps.requestId] =
+      requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+    request[UpdateFirmwareRequestProps.firmware] = {
+      location: `${DIRECTUS_URL}/files`,
+    } as any;
+    return request;
+  }, [requestIdResponse]);
 
-  const extractSigningCertificate = (values: any) => {
-    const {
-      'firmware.signingCertificateFile': certificateFile,
-      'firmware.signingCertificateString': certificateString,
-      'firmware.signingCertificateSwitch': certificateSwitch,
-    } = values;
+  const [parentRecord, setParentRecord] = useState(initialRequest);
 
-    let signingCertificate: any;
+  const validateRequest = useCallback((request: UpdateFirmwareRequest) => {
+    return validateSync(request).length === 0;
+  }, []);
 
-    if (
-      (certificateSwitch === undefined || certificateSwitch) &&
-      certificateString
-    ) {
-      signingCertificate = certificateString;
-    } else if (!certificateSwitch && certificateFile) {
-      signingCertificate = certificateFile;
-    }
+  const onValuesChange = useCallback(
+    (changedValues: any, allValues: any) => {
+      setParentRecord(allValues);
 
-    [
-      'firmware.signingCertificateFile',
-      'firmware.signingCertificateString',
-      'firmware.signingCertificateSwitch',
-    ].forEach((key) => delete values[key]);
+      if (
+        !changedValues.firmware ||
+        (!changedValues.firmware.signingCertificateText &&
+          !changedValues.firmware.signingCertificateFile)
+      ) {
+        return;
+      }
 
-    return signingCertificate;
-  };
+      const signingCertificate =
+        allValues.firmware.signingCertificateText ??
+        allValues.firmware.signingCertificateFile;
+      delete allValues.firmware.signingCertificateText;
+      delete allValues.firmware.signingCertificateFile;
+      delete allValues.firmware.signingCertificateIsFile;
 
-  const onValuesChange = (_changedValues: any, allValues: any) => {
-    const signingCertificate = extractSigningCertificate(allValues);
+      const request = plainToInstance(UpdateFirmwareRequest, allValues, {
+        excludeExtraneousValues: false,
+      });
+      request.firmware.signingCertificate = signingCertificate;
 
-    const request = plainToInstance(UpdateFirmwareRequest, allValues, {
-      excludeExtraneousValues: false,
-    });
+      setIsFormValid(validateRequest(request));
+    },
+    [validateRequest],
+  );
 
-    request.firmware.signingCertificate = signingCertificate;
-    setValid(isRequestValid(request));
-  };
+  const onFinish = useCallback(
+    async (values: any) => {
+      const signingCertificate =
+        values.firmware.signingCertificateText ??
+        values.firmware.signingCertificateFile;
+      delete values.firmware.signingCertificateText;
+      delete values.firmware.signingCertificateFile;
+      delete values.firmware.signingCertificateIsFile;
 
-  const onFinish = async (values: any) => {
-    const signingCertificate = extractSigningCertificate(values);
+      const request = plainToInstance(UpdateFirmwareRequest, values, {
+        excludeExtraneousValues: false,
+      });
+      request.firmware.signingCertificate = signingCertificate;
 
-    const request = plainToInstance(UpdateFirmwareRequest, values, {
-      excludeExtraneousValues: false,
-    });
+      if (validateRequest(request)) {
+        await updateFirmware(request);
+      }
+    },
+    [validateRequest],
+  );
 
-    request.firmware.signingCertificate = signingCertificate;
-    if (isRequestValid(request)) {
-      await updateFirmware(request);
-    }
-  };
-
-  const updateFirmware = async (request: UpdateFirmwareRequest) => {
-    let signingCertificate: any;
-    let isFile: boolean = false;
-
-    try {
-      setLoading(true);
-      const signingCertificateFile = request.firmware.signingCertificate;
-      isFile = signingCertificateFile instanceof File;
-
+  const getSigningCertificate = useCallback(
+    async (request: UpdateFirmwareRequest) => {
       if (typeof request.firmware.signingCertificate === 'string') {
         const pemString = formatPem(request.firmware.signingCertificate);
-        if (pemString == null) {
-          throw new Error('Incorrectly formatted PEM');
-        }
-        request.firmware.signingCertificate = pemString;
-      } else if (signingCertificateFile instanceof File) {
-        try {
-          signingCertificate = await readFileContent(signingCertificateFile);
-          request.firmware.signingCertificate = signingCertificate;
-        } catch (error: any) {
-          const msg = `Could not read signing certificate file contents, got error: ${error.message}`;
-          console.error(msg, error);
-        }
+        if (!pemString) throw new Error('Incorrect PEM format');
+        return pemString;
       }
+      return await readFileContent(request.firmware.signingCertificate ?? null);
+    },
+    [],
+  );
 
-      const client = new BaseRestClient();
-      const response = await client.post(
-        `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
-        MessageConfirmation,
-        {},
-        request,
-      );
+  const updateFirmware = useCallback(
+    async (request: UpdateFirmwareRequest) => {
+      setLoading(true);
+      try {
+        const signingCertificate = await getSigningCertificate(request);
+        request.firmware.signingCertificate = signingCertificate;
 
-      if (response && response.success) {
-        notification.success({
-          message: 'Success',
-          description: 'The update firmware request was successful.',
-        });
-      } else {
+        const client = new BaseRestClient();
+        const response = await client.post(
+          `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
+          MessageConfirmation,
+          {},
+          request,
+        );
+
+        if (response && response.success) {
+          notification.success({
+            message: 'Success',
+            description: 'The update firmware request was successful.',
+          });
+        } else {
+          notification.error({
+            message: 'Request Failed',
+            description: 'The update firmware request was not successful.',
+          });
+        }
+      } catch (error) {
         notification.error({
-          message: 'Request Failed',
-          description:
-            'The update firmware request did not receive a successful response.',
+          message: 'Error',
+          description: `Update firmware failed: ${(error as any).message}`,
         });
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      const msg = `Could not perform update firmware, got error: ${error.message}`;
-      console.error(msg, error);
-      notification.error({
-        message: 'Error',
-        description: msg,
-      });
-    } finally {
-      setLoading(false);
-      handleSwitchChange(!isFile);
-    }
-  };
+    },
+    [getSigningCertificate, station.id],
+  );
 
-  if (loading || isLoadingRequestId) return <Spin />;
-
-  const updateFirmwareRequest = new UpdateFirmwareRequest();
-  updateFirmwareRequest[UpdateFirmwareRequestProps.requestId] =
-    requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
-  updateFirmwareRequest[UpdateFirmwareRequestProps.firmware] = {
-    location: `${DIRECTUS_URL}/files`,
-  } as any; // Type assertion if necessary
+  if (loading || isRequestIdLoading) return <Spin />;
 
   return (
     <GenericForm
       ref={formRef as any}
       dtoClass={UpdateFirmwareRequest}
-      formProps={formProps}
+      formProps={{ form }}
       onFinish={onFinish}
-      initialValues={updateFirmwareRequest}
-      parentRecord={updateFirmwareRequest}
+      initialValues={parentRecord}
+      parentRecord={parentRecord}
       onValuesChange={onValuesChange}
-      submitDisabled={!valid}
+      submitDisabled={!isFormValid}
     />
   );
 };
+
+// import React, { useRef, useState } from 'react';
+// import { Form, notification, Spin } from 'antd';
+// import { GenericForm } from '../../components/form';
+// import { plainToInstance } from 'class-transformer';
+// import { useApiUrl, useCustom } from '@refinedev/core';
+// import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+// import { UpdateFirmwareRequest, UpdateFirmwareRequestProps } from './model';
+// import { validateSync } from 'class-validator';
+// import { MessageConfirmation } from '../MessageConfirmation';
+// import { BaseRestClient } from '../../util/BaseRestClient';
+// import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+// import { formatPem, readFileContent } from '../util';
+
+// const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
+
+// export interface UpdateFirmwareProps {
+//   station: ChargingStation;
+// }
+
+// export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
+//   const formRef = useRef();
+//   const [form] = Form.useForm();
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const [valid, setValid] = useState<boolean>(false);
+
+//   const apiUrl = useApiUrl();
+//   const { data: requestIdResponse, isLoading: isLoadingRequestId } =
+//     useCustom<any>({
+//       url: `${apiUrl}`,
+//       method: 'post',
+//       config: { headers: { 'Content-Type': 'application/json' } },
+//       meta: {
+//         operation: 'ChargingStationSequencesGet',
+//         gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
+//         variables: { stationId: station.id, type: 'updateFirmware' },
+//       },
+//     });
+
+//   const updateFirmwareRequest = new UpdateFirmwareRequest();
+//   updateFirmwareRequest[UpdateFirmwareRequestProps.requestId] =
+//     requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+//   updateFirmwareRequest[UpdateFirmwareRequestProps.firmware] = {
+//     location: `${DIRECTUS_URL}/files`,
+//   } as any;
+//   const [parentRecord, setParentRecord] = useState<any>(updateFirmwareRequest);
+
+//   const isRequestValid = (request: UpdateFirmwareRequest) => {
+//     const errors = validateSync(request);
+//     return errors.length === 0;
+//   };
+
+//   const onValuesChange = (
+//     changedValues: UpdateFirmwareRequest,
+//     allValues: UpdateFirmwareRequest,
+//   ) => {
+//     setParentRecord(allValues);
+
+//     if (
+//       !changedValues.firmware ||
+//       (!changedValues.firmware.signingCertificateText &&
+//         !changedValues.firmware.signingCertificateFile)
+//     ) {
+//       return;
+//     }
+
+//     const signingCertificate =
+//       allValues.firmware.signingCertificateText ??
+//       allValues.firmware.signingCertificateFile;
+//     delete allValues.firmware.signingCertificateText;
+//     delete allValues.firmware.signingCertificateFile;
+//     delete allValues.firmware.signingCertificateIsFile;
+
+//     const request = plainToInstance(UpdateFirmwareRequest, allValues, {
+//       excludeExtraneousValues: false,
+//     });
+//     request.firmware.signingCertificate = signingCertificate;
+
+//     setValid(isRequestValid(request));
+//   };
+
+//   const onFinish = async (values: any) => {
+//     const signingCertificate =
+//       values.firmware.signingCertificateText ??
+//       values.firmware.signingCertificateFile;
+//     delete values.firmware.signingCertificateText;
+//     delete values.firmware.signingCertificateFile;
+//     delete values.firmware.signingCertificateIsFile;
+
+//     const request = plainToInstance(UpdateFirmwareRequest, values, {
+//       excludeExtraneousValues: false,
+//     });
+//     request.firmware.signingCertificate = signingCertificate;
+
+//     if (isRequestValid(request)) {
+//       await updateFirmware(request);
+//     }
+//   };
+
+//   const getSigningCertificate = async (firmware: any) => {
+//     if (typeof firmware.signingCertificate === 'string') {
+//       const pemString = formatPem(firmware.signingCertificate);
+//       if (!pemString) throw new Error('Incorrect PEM format');
+//       return pemString;
+//     }
+
+//     try {
+//       return await readFileContent(firmware.signingCertificate ?? null);
+//     } catch (error) {
+//       console.error('Error reading signing certificate:', error);
+//       throw new Error('Could not read signing certificate file contents.');
+//     }
+//   };
+
+//   const updateFirmware = async (request: UpdateFirmwareRequest) => {
+//     try {
+//       setLoading(true);
+
+//       const signingCertificate = await getSigningCertificate(request.firmware);
+//       request.firmware.signingCertificate = signingCertificate;
+
+//       const client = new BaseRestClient();
+//       const response = await client.post(
+//         `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
+//         MessageConfirmation,
+//         {},
+//         request,
+//       );
+
+//       if (response && response.success) {
+//         notification.success({
+//           message: 'Success',
+//           description: 'The update firmware request was successful.',
+//         });
+//       } else {
+//         notification.error({
+//           message: 'Request Failed',
+//           description:
+//             'The update firmware request did not receive a successful response.',
+//         });
+//       }
+//     } catch (error: any) {
+//       notification.error({
+//         message: 'Error',
+//         description: `Could not perform update firmware, got error: ${error.message}`,
+//       });
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   if (loading || isLoadingRequestId) return <Spin />;
+
+//   return (
+//     <GenericForm
+//       ref={formRef as any}
+//       dtoClass={UpdateFirmwareRequest}
+//       formProps={{ form }}
+//       onFinish={onFinish}
+//       initialValues={parentRecord}
+//       parentRecord={parentRecord}
+//       onValuesChange={onValuesChange}
+//       submitDisabled={!valid}
+//     />
+//   );
+// };
