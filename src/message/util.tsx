@@ -9,6 +9,9 @@ export const showSucces = (payload?: string) => {
     message: 'Success',
     description: 'The request was successful' + payload ? ': ' + payload : '.',
     placement: 'topRight',
+    props: {
+      'data-test': 'success-notification',
+    } as any,
   });
 };
 
@@ -17,6 +20,9 @@ export const showError = (msg: string) => {
     message: 'Request Failed',
     description: msg,
     placement: 'topRight',
+    props: {
+      'data-test': 'error-notification',
+    } as any,
   });
 };
 

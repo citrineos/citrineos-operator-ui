@@ -16,7 +16,16 @@ describe('Charging station actions', () => {
     cy.visit('http://localhost:5173/charging-stations');
   });
 
-  it('Get Charging station actions', () => {
+  it('Reset charging station immediately', () => {
+    //Mock response to avoid having to connect real charger during test
+    cy.intercept('POST', /\/configuration\/reset\?identifier=.*&tenantId=1$/, {
+      statusCode: 200,
+      body: {
+        success: true,
+        payload: { message: 'Reset operation successful' },
+      },
+    }).as('resetRequest');
+
     cy.getByData('citrine-os-icon').should(
       'have.attr',
       'src',
@@ -24,9 +33,11 @@ describe('Charging station actions', () => {
     );
 
     cy.getByData('custom-action-dropdown-button').click();
-    cy.get('ul.ant-dropdown-menu[role="menu"] li[role="menuitem"]')
-      .eq(11) // 0-based index, so 11 corresponds to the 12th item
-      .click();
+    cy.get('.ant-dropdown') // Target the dropdown container
+      .within(() => {
+        cy.get('[role="menuitem"]').contains('Reset').click();
+      });
+
     cy.getByData('field-type-input').click();
     cy.get('.ant-select-dropdown')
       .should('not.have.class', 'ant-select-dropdown-hidden')
@@ -35,5 +46,8 @@ describe('Charging station actions', () => {
       .should('be.visible')
       .click();
     cy.getByData('ResetData2-generic-form-submit').click();
+
+    cy.wait('@resetRequest');
+    cy.get('[data-test="success-notification"]').should('be.visible');
   });
 });
