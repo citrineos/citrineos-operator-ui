@@ -7,7 +7,7 @@ import { Expose } from 'class-transformer';
 export const showSucces = (payload?: string) => {
   notification.success({
     message: 'Success',
-    description: 'The request was successful' + payload ? ': ' + payload : '.',
+    description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
     placement: 'topRight',
   });
 };
