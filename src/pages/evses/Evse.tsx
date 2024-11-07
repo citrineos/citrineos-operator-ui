@@ -28,14 +28,7 @@ import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '../../util/BaseModel';
 import { CustomDataType } from '../../model/CustomData';
-
-export enum EvseProps {
-  databaseId = 'databaseId',
-  id = 'id',
-  connectorId = 'connectorId',
-  customData = 'customData',
-  VariableAttributes = 'VariableAttributes',
-}
+import { EvseProps } from './EvseProps';
 
 @ClassResourceType(ResourceType.EVSES)
 @ClassGqlListQuery(EVSE_LIST_QUERY)

@@ -18,9 +18,8 @@ import { ClassGqlCreateMutation } from '../../../../util/decorators/ClassGqlCrea
 import { BaseModel } from '../../../../util/BaseModel';
 import { Searchable } from '../../../../util/decorators/Searcheable';
 import { Sortable } from '../../../../util/decorators/Sortable';
-import { Hidden } from '../../../../util/decorators/Hidden';
 import { CustomFormRender } from '../../../../util/decorators/CustomFormRender';
-import { HiddenInTable } from '../../../../util/decorators/HiddenInTable';
+import { HiddenWhen } from '../../../../util/decorators/HiddenWhen';
 
 export enum ComponentProps {
   id = 'id',
@@ -51,13 +50,18 @@ export class Component extends BaseModel {
   @IsString()
   instance?: string | null;
 
-  @Hidden()
   @IsNumber()
+  @IsOptional()
+  @HiddenWhen((record) => {
+    return !record;
+  })
   evseDatabaseId!: number;
 
   @IsNumber()
   @IsOptional()
-  @HiddenInTable({ hiddenOnlyWhenEditing: true })
+  @HiddenWhen((record) => {
+    return !!record;
+  })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.id}</span>;
   })
@@ -65,7 +69,9 @@ export class Component extends BaseModel {
 
   @IsNumber()
   @IsOptional()
-  @HiddenInTable({ hiddenOnlyWhenEditing: true })
+  @HiddenWhen((record) => {
+    return !!record;
+  })
   @CustomFormRender((record: Component) => {
     return <span>{(record as any).Evse?.connectorId}</span>;
   })
