@@ -401,7 +401,6 @@ export const getSchemaForInstanceAndKey = (
     type: fieldType,
     isRequired: requiredFields.includes(key),
     selectMode: type === ReflectType.array ? SelectMode.multiple : undefined,
-    selectValues: type === ReflectType.array ? instance[key] : undefined,
     options: options,
     sorter,
     customActions,
@@ -663,7 +662,9 @@ export const renderField = (props: RenderFieldProps) => {
 
     if (isDynamicFieldSchema(schema)) {
       fieldPath = fieldPath.pop().popName();
-      unknown = unknowns?.find(fieldPath, schema.position)!;
+      if (unknowns) {
+        unknown = unknowns.find(fieldPath, schema.position)!;
+      }
       updateUnknown = (value: Partial<UnknownEntry>) =>
         modifyUnknowns('update', fieldPath, schema.position, value);
     } else {
