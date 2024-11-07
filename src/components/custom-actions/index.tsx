@@ -146,6 +146,7 @@ export const CustomActions = <T,>({
                   key={item.key}
                   icon={getIcon(item.label)}
                   onClick={item.onClick}
+                  data-test="custom-action-dropdown-menu-item"
                   data-testid="custom-action-dropdown-menu-item"
                 >
                   {item.label}
