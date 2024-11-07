@@ -1,7 +1,7 @@
 import React from 'react';
 import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { Evse } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GenericForm } from '../../components/form';
@@ -12,6 +12,7 @@ import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { Form, notification } from 'antd';
 import { EVSE_LIST_QUERY } from '../../pages/evses/queries';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 enum UnlockConnectorFormProps {
   evse = 'evse',

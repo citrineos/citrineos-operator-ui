@@ -10,11 +10,12 @@ import {
   RequestStartTransactionRequestProps,
 } from './model';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { Evse } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 export interface RemoteStartProps {
   station: ChargingStation;

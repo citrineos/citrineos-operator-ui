@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { Form } from 'antd';
 import { plainToInstance } from 'class-transformer';
-import { EvseProps } from '../../pages/evses/Evse';
 import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../util';
 import { MessageConfirmation } from '../MessageConfirmation';
@@ -10,6 +9,7 @@ import {
   ChangeAvailabilityRequest,
   ChangeAvailabilityRequestProps,
 } from './model';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   station,

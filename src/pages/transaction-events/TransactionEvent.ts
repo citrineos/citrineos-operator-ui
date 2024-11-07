@@ -1,6 +1,4 @@
 import {
-  ChargingStateEnumType,
-  ReasonEnumType,
   TransactionEventEnumType,
   TriggerReasonEnumType,
 } from '@citrineos/base';
@@ -32,7 +30,6 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
-import { Hidden } from '../../util/decorators/Hidden';
 import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
@@ -41,30 +38,7 @@ import {
   METER_VALUE_GET_QUERY,
   METER_VALUE_LIST_QUERY,
 } from '../meter-values/queries';
-
-export class TransactionType {
-  @IsString()
-  @IsNotEmpty()
-  transactionId!: string;
-
-  @IsEnum(ChargingStateEnumType)
-  @IsOptional()
-  chargingState?: ChargingStateEnumType | null;
-
-  @IsNumber()
-  @IsOptional()
-  timeSpentCharging?: number | null;
-
-  @IsEnum(ReasonEnumType)
-  @IsOptional()
-  stoppedReason?: ReasonEnumType | null;
-
-  @IsInt()
-  @IsOptional()
-  remoteStartId?: number | null;
-
-  // customData?: CustomDataType | null; // todo handle custom data
-}
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
 
 export enum TransactionEventProps {
   id = 'id',
@@ -92,7 +66,7 @@ export enum TransactionEventProps {
 @ClassGqlDeleteMutation(TRANSACTION_EVENT_DELETE_MUTATION)
 @PrimaryKeyFieldName(TransactionEventProps.id)
 export class TransactionEvent extends BaseModel {
-  @Hidden()
+  @HiddenWhen(() => true)
   @IsInt()
   @IsNotEmpty()
   id!: number;

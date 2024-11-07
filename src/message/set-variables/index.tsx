@@ -27,6 +27,7 @@ import { triggerMessageAndHandleResponse } from '../util';
 import { GenericForm } from '../../components/form';
 import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
 
 enum SetVariablesDataProps {
   component = 'component',
@@ -71,6 +72,14 @@ class SetVariablesData {
     gqlListQuery: {
       query: VARIABLE_LIST_QUERY,
     },
+  })
+  @HiddenWhen((parentRecord: SetVariablesData) => {
+    return (
+      parentRecord[SetVariablesDataProps.component] &&
+      (parentRecord[SetVariablesDataProps.component][
+        ComponentProps.id
+      ] as any) === NEW_IDENTIFIER
+    );
   })
   @Type(() => Variable)
   @IsNotEmpty()

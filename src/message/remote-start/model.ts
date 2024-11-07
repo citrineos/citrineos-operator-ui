@@ -26,11 +26,12 @@ import { CustomDataType } from '../../model/CustomData';
 import { TransformDate } from '../../util/TransformDate';
 import { Dayjs } from 'dayjs';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { Evse } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 import { ID_TOKENS_LIST_QUERY } from '../../pages/id-tokens/queries';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 export class IdTokenType {
   @IsString()

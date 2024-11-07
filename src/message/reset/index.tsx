@@ -8,10 +8,11 @@ import { GenericForm } from '../../components/form';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { Evse } from '../../pages/evses/Evse';
 import { triggerMessageAndHandleResponse } from '../util';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 enum ResetDataProps {
   evse = 'evse',

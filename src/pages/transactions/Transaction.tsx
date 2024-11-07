@@ -42,9 +42,9 @@ import { requestStopTransaction } from '../../message/remote-stop';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { ValueDisplay } from '../../components/value-display';
 import React from 'react';
-import { Hidden } from '../../util/decorators/Hidden';
 import { Searchable } from '../../util/decorators/Searcheable';
 import { Sortable } from '../../util/decorators/Sortable';
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
 
 export enum TransactionProps {
   id = 'id',
@@ -84,7 +84,7 @@ export enum TransactionProps {
   },
 ])
 export class Transaction {
-  @Hidden()
+  @HiddenWhen(() => true)
   id!: number;
 
   @Searchable()
