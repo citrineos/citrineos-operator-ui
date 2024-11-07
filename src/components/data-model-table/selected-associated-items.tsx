@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { Flags } from '../form/state/flags';
 import { FieldPath } from '../form/state/fieldpath';
 import { Unknowns } from '../form/state/unknowns';
+import { HIDDEN_WHEN, IsHiddenCheck } from '../../util/decorators/HiddenWhen';
 
 export interface SelectedAssociatedItems<Model> {
   fieldPath: FieldPath;
@@ -57,35 +58,49 @@ export const SelectedAssociatedItems = <Model,>(
   );
 
   const columns = useMemo(() => {
-    return schema.map((field: FieldSchema) => ({
-      title: field.label,
-      sorter: field.sorter,
-      editable: true,
-      render: (value: any, record: any) => {
-        return (
-          <div className="editable-cell">
-            {renderViewContent({
-              preFieldPath: fieldPath,
-              field,
-              value,
-              record,
-              hideLabels: true,
-              disabled: true,
-              parentRecord: record,
-              form,
-              setHasChanges,
-              visibleOptionalFields,
-              enableOptionalField,
-              toggleOptionalField,
-              unknowns,
-              modifyUnknowns,
-              useSelector,
-              fieldAnnotations,
-            })}
-          </div>
+    return schema
+      .filter((field) => {
+        const isHiddenCheck: IsHiddenCheck = Reflect.getMetadata(
+          HIDDEN_WHEN,
+          field.parentInstance as any,
+          field.name,
         );
-      },
-    }));
+
+        if (isHiddenCheck && isHiddenCheck(selectedItems[0])) {
+          return false;
+        } else {
+          return true;
+        }
+      })
+      .map((field: FieldSchema) => ({
+        title: field.label,
+        sorter: field.sorter,
+        editable: true,
+        render: (value: any, record: any) => {
+          return (
+            <div className="editable-cell">
+              {renderViewContent({
+                preFieldPath: fieldPath,
+                field,
+                value,
+                record,
+                hideLabels: true,
+                disabled: true,
+                parentRecord: record,
+                form,
+                setHasChanges,
+                visibleOptionalFields,
+                enableOptionalField,
+                toggleOptionalField,
+                unknowns,
+                modifyUnknowns,
+                useSelector,
+                fieldAnnotations,
+              })}
+            </div>
+          );
+        },
+      }));
   }, [schema]);
 
   const handleRowChange = useCallback(

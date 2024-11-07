@@ -70,6 +70,7 @@ export const ArrayItem: React.FC<ArrayItemProps> = (props: ArrayItemProps) => {
       type: FieldType.input,
       isRequired: true,
       sorter: schema.sorter,
+      parentInstance: schema.parentInstance,
     };
     if (schema.options) {
       nestedSchema.options = schema.options;

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { Evse } from '../../pages/evses/Evse';
 import {
   IsEnum,
   IsNotEmpty,
@@ -12,6 +12,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 export enum ChangeAvailabilityRequestProps {
   customData = 'customData',

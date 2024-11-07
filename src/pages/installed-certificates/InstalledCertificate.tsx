@@ -8,7 +8,6 @@ import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMuta
 import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
 import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
 import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
-import { EvseProps } from '../evses/Evse';
 import {
   INSTALLED_CERTIFICATE_CREATE_MUTATION,
   INSTALLED_CERTIFICATE_DELETE_MUTATION,
@@ -33,7 +32,7 @@ export enum InstalledCertificateProps {
 @ClassGqlCreateMutation(INSTALLED_CERTIFICATE_CREATE_MUTATION)
 @ClassGqlEditMutation(INSTALLED_CERTIFICATE_EDIT_MUTATION)
 @ClassGqlDeleteMutation(INSTALLED_CERTIFICATE_DELETE_MUTATION)
-@PrimaryKeyFieldName(EvseProps.databaseId)
+@PrimaryKeyFieldName(InstalledCertificateProps.id)
 export class InstalledCertificate extends BaseModel {
   @IsInt()
   @IsNotEmpty()

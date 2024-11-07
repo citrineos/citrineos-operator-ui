@@ -31,7 +31,7 @@ import {
   STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from '../status-notifications/queries';
-import { Evse, EvseProps } from '../evses/Evse';
+import { Evse } from '../evses/Evse';
 import {
   GET_EVSE_LIST_FOR_STATION,
   GET_EVSES_FOR_STATION,
@@ -45,6 +45,7 @@ import { EVSE_LIST_QUERY } from '../evses/queries';
 import { Searchable } from '../../util/decorators/Searcheable';
 import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '../../util/consts';
+import { EvseProps } from '../evses/EvseProps';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
