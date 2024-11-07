@@ -7,7 +7,7 @@ import { Expose } from 'class-transformer';
 export const showSucces = (payload?: string) => {
   notification.success({
     message: 'Success',
-    description: 'The request was successful' + payload ? (': ' + payload) : '.',
+    description: 'The request was successful' + payload ? ': ' + payload : '.',
     placement: 'topRight',
   });
 };
@@ -26,7 +26,7 @@ export interface TriggerMessageAndHandleResponseProps<T> {
   data: any;
   responseSuccessCheck: (response: T) => boolean;
   isDataUrl?: boolean;
-  method?: HttpMethod,
+  method?: HttpMethod;
   setLoading?: (loading: boolean) => void;
 }
 
@@ -53,7 +53,7 @@ export const triggerMessageAndHandleResponse = async <T,>({
         response = await client.del(url, responseClass, {});
         break;
       default:
-        throw new Error("Unimplemented Http Method: " + method);
+        throw new Error(`Unimplemented Http Method: ${method}`);
     }
 
     // todo reuse handle response!

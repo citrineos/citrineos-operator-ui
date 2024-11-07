@@ -14,7 +14,13 @@ import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
 import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
 import { ClassResourceType } from '../../util/decorators/ClassResourceType';
 import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
-import { SERVER_NETWORK_PROFILE_LIST_QUERY, SERVER_NETWORK_PROFILE_GET_QUERY, SERVER_NETWORK_PROFILE_CREATE_MUTATION, SERVER_NETWORK_PROFILE_EDIT_MUTATION, SERVER_NETWORK_PROFILE_DELETE_MUTATION } from './queries';
+import { 
+  SERVER_NETWORK_PROFILE_LIST_QUERY,
+  SERVER_NETWORK_PROFILE_GET_QUERY,
+  SERVER_NETWORK_PROFILE_CREATE_MUTATION,
+  SERVER_NETWORK_PROFILE_EDIT_MUTATION,
+  SERVER_NETWORK_PROFILE_DELETE_MUTATION,
+} from './queries';
 
 export enum ServerNetworkProfileProps {
   id = 'id',

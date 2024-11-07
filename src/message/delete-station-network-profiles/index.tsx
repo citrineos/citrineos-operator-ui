@@ -50,8 +50,7 @@ export const DeleteStationNetworkProfiles: React.FC<
       responseClass: MessageConfirmation,
       isDataUrl: true,
       data: undefined,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        true,
+      responseSuccessCheck: (response: MessageConfirmation) => true,
       method: HttpMethod.Delete,
     });
   };
