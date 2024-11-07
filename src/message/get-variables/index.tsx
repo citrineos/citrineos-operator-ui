@@ -96,9 +96,9 @@ export class GetVariablesData {
       query: VARIABLE_LIST_BY_COMPONENT_QUERY,
       getQueryVariables: (record: GetVariablesData) => {
         return {
-          componentId: record.component?.id
+          componentId: record.component?.id,
         };
-      }
+      },
     },
   })
   @Type(() => Variable)
@@ -244,10 +244,10 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
               name: component[ComponentProps.name],
               evse: evse[EvseProps.databaseId]
                 ? {
-                  id: evse[EvseProps.databaseId],
-                  connectorId: evse[EvseProps.connectorId],
-                  // customData: null // todo
-                }
+                    id: evse[EvseProps.databaseId],
+                    connectorId: evse[EvseProps.connectorId],
+                    // customData: null // todo
+                  }
                 : undefined,
               instance: item[GetVariablesDataProps.componentInstance],
               // customData: null // todo
