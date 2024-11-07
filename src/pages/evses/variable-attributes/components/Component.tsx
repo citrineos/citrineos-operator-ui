@@ -28,8 +28,6 @@ export enum ComponentProps {
   evseDatabaseId = 'evseDatabaseId',
 }
 
-export class Special {}
-
 @ClassResourceType(ResourceType.COMPONENTS)
 @LabelField(ComponentProps.name)
 @ClassGqlListQuery(COMPONENT_LIST_QUERY)
