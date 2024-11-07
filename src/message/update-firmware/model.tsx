@@ -60,9 +60,9 @@ export class FirmwareType {
   @IsOptional()
   signingCertificateIsFile?: boolean;
 
+  @IsOptional()
   @IsString()
   @Length(0, 5500)
-  @IsOptional()
   @HiddenWhen((record: FirmwareType) => {
     return record.signingCertificateIsFile === true;
   })
