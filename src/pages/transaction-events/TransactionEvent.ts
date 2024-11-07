@@ -32,11 +32,11 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
-import { Hidden } from '../../util/decorators/Hidden';
 import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import { GET_METER_VALUES_FOR_TRANSACTION_EVENT } from '../meter-values/queries';
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
 
 export class TransactionType {
   @IsString()
@@ -88,7 +88,7 @@ export enum TransactionEventProps {
 @ClassGqlDeleteMutation(TRANSACTION_EVENT_DELETE_MUTATION)
 @PrimaryKeyFieldName(TransactionEventProps.id)
 export class TransactionEvent extends BaseModel {
-  @Hidden()
+  @HiddenWhen(() => true)
   @IsInt()
   @IsNotEmpty()
   id!: number;

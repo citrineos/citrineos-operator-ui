@@ -1,15 +1,15 @@
 import { TransformDate } from './TransformDate';
 import { IsOptional } from 'class-validator';
-import { Hidden } from './decorators/Hidden';
+import { HiddenWhen } from './decorators/HiddenWhen';
 
 export class BaseModel {
   @TransformDate()
   @IsOptional()
-  @Hidden()
+  @HiddenWhen(() => true)
   updatedAt?: Date;
 
   @TransformDate()
   @IsOptional()
-  @Hidden()
+  @HiddenWhen(() => true)
   createdAt?: Date;
 }

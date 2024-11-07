@@ -32,12 +32,13 @@ import {
   COMPONENT_GET_QUERY,
   COMPONENT_LIST_QUERY,
 } from '../../pages/evses/variable-attributes/components/queries';
-import { Evse, EvseProps } from '../../pages/evses/Evse';
+import { Evse } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo

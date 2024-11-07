@@ -40,7 +40,6 @@ import { AssociationSelection } from './association-selection';
 import { ActionsColumnEnhanced, ColumnAction } from './actions-column-enhanced';
 import { Unknowns, UnknownsActions } from '../form/state/unknowns';
 import { Flags } from '../form/state/flags';
-import { EvseProps } from '../../pages/evses/Evse';
 import {
   GQL_ASSOCIATION,
   GqlAssociationProps,
@@ -49,9 +48,9 @@ import { TableWrapper, TableWrapperRef } from './table-wrapper';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { hasOwnProperty } from '../../message/util';
 import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
-import { HIDDENINTABLE } from '../../util/decorators/HiddenInTable';
 import { useSelector } from 'react-redux';
 import { ArrayField } from '../form/array-field';
+import { HIDDEN_WHEN, IsHiddenCheck } from '../../util/decorators/HiddenWhen';
 
 export interface RenderViewContentProps {
   field: FieldSchema;
@@ -305,7 +304,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 
     const newRecord = {
       [primaryKeyFieldName]: NEW_IDENTIFIER, // Unique key for the new record
-      [EvseProps.customData]: {}, // todo real custom data
     };
 
     if (
@@ -688,14 +686,16 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 
     const columnsArray: any[] = [actionsColumn];
     for (const field of schema) {
-      if (dtoClass && !!editingRecord) {
-        const hiddenOnlyWhenEditing = Reflect.getMetadata(
-          HIDDENINTABLE,
-          dtoClassInstance,
-          field.name,
-        );
-        if (hiddenOnlyWhenEditing) continue;
+      const isHiddenCheck: IsHiddenCheck = Reflect.getMetadata(
+        HIDDEN_WHEN,
+        field.parentInstance as any,
+        field.name,
+      );
+
+      if (isHiddenCheck && isHiddenCheck(editingRecord)) {
+        continue;
       }
+
       columnsArray.push({
         title: field.label,
         dataIndex: primaryKeyFieldName,

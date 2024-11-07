@@ -30,7 +30,6 @@ import {
   GQL_ASSOCIATION,
   GqlAssociationProps,
 } from '../../util/decorators/GqlAssociation';
-import { HIDDEN } from '../../util/decorators/Hidden';
 
 import { getProperty, omitProperties } from '../../util/objects';
 import { Flags } from './state/flags';
@@ -51,6 +50,7 @@ import { CustomAction } from '../custom-actions';
 import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { FieldAnnotations } from '../data-model-table/editable';
+import { HIDDEN_WHEN } from '../../util/decorators/HiddenWhen';
 
 export enum ReflectType {
   array,
@@ -90,6 +90,7 @@ export interface FieldSelectOption {
 }
 
 export interface FieldSchema {
+  parentInstance: any;
   label: string;
   name: string;
   type: FieldType;
@@ -234,6 +235,7 @@ export const getSchemaForInstanceAndKey = (
 
   if (customFormRender) {
     return {
+      parentInstance: instance,
       label: label(instance, key),
       name: key,
       type: FieldType.customRender,
@@ -279,6 +281,7 @@ export const getSchemaForInstanceAndKey = (
         key,
       );
       return {
+        parentInstance: instance,
         label: label(instance, key),
         name: key,
         type: FieldType.file,
@@ -286,7 +289,7 @@ export const getSchemaForInstanceAndKey = (
         dtoClass: classTransformerType,
         sorter,
         supportedFileFormats,
-      } as unknown as FieldSchema;
+      };
     }
     const nestedInstance: any = plainToInstance(metadata, {});
     const nestedFields = extractSchema(nestedInstance.constructor);
@@ -300,6 +303,7 @@ export const getSchemaForInstanceAndKey = (
       nestedInstance,
     );
     return {
+      parentInstance: instance,
       label: label(instance, key),
       name: key,
       type: FieldType.nestedObject,
@@ -310,7 +314,7 @@ export const getSchemaForInstanceAndKey = (
       gqlAssociationProps,
       sorter,
       customActions,
-    } as unknown as FieldSchema;
+    };
   }
 
   if (fieldType === FieldType.array) {
@@ -325,6 +329,7 @@ export const getSchemaForInstanceAndKey = (
         } as FieldSelectOption;
       });
       return {
+        parentInstance: instance,
         label: label(instance, key),
         name: key,
         type: FieldType.array,
@@ -332,7 +337,7 @@ export const getSchemaForInstanceAndKey = (
         options,
         sorter,
         customActions,
-      } as unknown as FieldSchema;
+      };
     } else {
       const nestedInstance: any = plainToInstance(classTransformerType, {});
       const annotatedGqlAssociationProps: GqlAssociationProps =
@@ -348,6 +353,7 @@ export const getSchemaForInstanceAndKey = (
         nestedInstance,
       );
       return {
+        parentInstance: instance,
         label: label(instance, key),
         name: key,
         type: FieldType.array,
@@ -360,33 +366,36 @@ export const getSchemaForInstanceAndKey = (
         gqlAssociationProps,
         sorter,
         customActions,
-      } as unknown as FieldSchema;
+      };
     }
   }
 
   if (fieldType === FieldType.unknownProperty) {
     return {
+      parentInstance: instance,
       label: label(instance, key),
       name: key,
       type: FieldType.unknownProperty,
       isRequired: requiredFields.includes(key),
       sorter,
       customActions,
-    } as unknown as FieldSchema;
+    };
   }
 
   if (fieldType === FieldType.unknownProperties) {
     return {
+      parentInstance: instance,
       label: label(instance, key),
       name: key,
       type: FieldType.unknownProperties,
       isRequired: requiredFields.includes(key),
       sorter,
       customActions,
-    } as unknown as FieldSchema;
+    };
   }
 
   return {
+    parentInstance: instance,
     label: label(instance, key),
     name: key,
     type: fieldType,
@@ -396,7 +405,7 @@ export const getSchemaForInstanceAndKey = (
     options: options,
     sorter,
     customActions,
-  } as unknown as FieldSchema;
+  };
 };
 
 export const extractSchema = (
@@ -418,18 +427,14 @@ export const extractSchema = (
 
   Object.keys(instance as any).forEach((key) => {
     try {
-      const hideInTable = Reflect.getMetadata(HIDDEN, instance as any, key);
-
-      if (!hideInTable) {
-        schema.push(
-          getSchemaForInstanceAndKey(
-            instance,
-            key,
-            requiredFields,
-            fieldAnnotations,
-          ),
-        );
-      }
+      schema.push(
+        getSchemaForInstanceAndKey(
+          instance,
+          key,
+          requiredFields,
+          fieldAnnotations,
+        ),
+      );
     } catch (e: any) {
       console.error('Error extracting key: %s', key, e);
     }
@@ -493,6 +498,19 @@ export const renderField = (props: RenderFieldProps) => {
     useSelector,
     fieldAnnotations,
   } = props;
+
+  const isHiddenCheck = Reflect.getMetadata(
+    HIDDEN_WHEN,
+    schema.parentInstance as any,
+    schema.name,
+  );
+
+  if (
+    isHiddenCheck &&
+    isHiddenCheck(form.getFieldValue(preFieldPath.keyPath))
+  ) {
+    return;
+  }
 
   let fieldPath = preFieldPath.with(schema.name);
   if (schema.type === FieldType.customRender && schema.customRender) {
