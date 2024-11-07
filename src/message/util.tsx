@@ -45,7 +45,7 @@ export const triggerMessageAndHandleResponse = async <T,>({
     }
     const client = new BaseRestClient(isDataUrl);
     let response = undefined;
-    switch(method) {
+    switch (method) {
       case HttpMethod.Post:
         response = await client.post(url, responseClass, {}, data);
         break;

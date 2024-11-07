@@ -3,7 +3,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
-  IsString,
   IsUrl,
   MaxLength,
   ValidateNested,

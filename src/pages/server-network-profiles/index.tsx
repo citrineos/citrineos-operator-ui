@@ -28,8 +28,7 @@ export const ServerNetworkProfileView: React.FC = () => {
 export const ServerNetworkProfileList = (_props: IDataModelListProps) => {
   return (
     <>
-      <GenericDataTable dtoClass={ServerNetworkProfile}
-      />
+      <GenericDataTable dtoClass={ServerNetworkProfile} />
     </>
   );
 };

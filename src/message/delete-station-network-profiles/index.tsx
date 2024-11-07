@@ -11,7 +11,7 @@ export interface DeleteStationNetworkProfilesProps {
   station: ChargingStation;
 }
 
-enum DeleteStationNetworkProfilesRequestProps {
+export enum DeleteStationNetworkProfilesRequestProps {
   configurationSlots = 'configurationSlots',
 }
 
@@ -50,7 +50,7 @@ export const DeleteStationNetworkProfiles: React.FC<
       responseClass: MessageConfirmation,
       isDataUrl: true,
       data: undefined,
-      responseSuccessCheck: (response: MessageConfirmation) => true,
+      responseSuccessCheck: () => true,
       method: HttpMethod.Delete,
     });
   };
