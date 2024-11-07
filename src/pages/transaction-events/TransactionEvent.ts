@@ -1,6 +1,4 @@
 import {
-  ChargingStateEnumType,
-  ReasonEnumType,
   TransactionEventEnumType,
   TriggerReasonEnumType,
 } from '@citrineos/base';
@@ -35,32 +33,12 @@ import {
 import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import { GET_METER_VALUES_FOR_TRANSACTION_EVENT } from '../meter-values/queries';
+import {
+  GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+  METER_VALUE_GET_QUERY,
+  METER_VALUE_LIST_QUERY,
+} from '../meter-values/queries';
 import { HiddenWhen } from '../../util/decorators/HiddenWhen';
-
-export class TransactionType {
-  @IsString()
-  @IsNotEmpty()
-  transactionId!: string;
-
-  @IsEnum(ChargingStateEnumType)
-  @IsOptional()
-  chargingState?: ChargingStateEnumType | null;
-
-  @IsNumber()
-  @IsOptional()
-  timeSpentCharging?: number | null;
-
-  @IsEnum(ReasonEnumType)
-  @IsOptional()
-  stoppedReason?: ReasonEnumType | null;
-
-  @IsInt()
-  @IsOptional()
-  remoteStartId?: number | null;
-
-  // customData?: CustomDataType | null; // todo handle custom data
-}
 
 export enum TransactionEventProps {
   id = 'id',
@@ -116,9 +94,12 @@ export class TransactionEvent extends BaseModel {
     parentIdFieldName: TransactionEventProps.id,
     associatedIdFieldName: MeterValueProps.transactionEventId,
     gqlQuery: {
-      query: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+      query: METER_VALUE_GET_QUERY,
     },
     gqlListQuery: {
+      query: METER_VALUE_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
       query: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
       getQueryVariables: (transactionEvent: TransactionEvent) => ({
         transactionEventId: transactionEvent[TransactionEventProps.id],
