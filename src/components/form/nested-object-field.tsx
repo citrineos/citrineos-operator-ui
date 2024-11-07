@@ -46,7 +46,12 @@ export const NestedObjectField: (
     const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
     let gqlQueryVariables = undefined;
     if (getGqlQueryVariables) {
-      let record = form.getFieldValue();
+      let record;
+      try {
+        record = form.getFieldValue(fieldPath.pop().keyPath);
+      } catch (_e: any) {
+        // ignore
+      }
       if (!record) {
         record = parentRecord;
       }
@@ -69,7 +74,6 @@ export const NestedObjectField: (
           }
         >
           <AssociationSelection
-            fieldPath={fieldPath}
             parentIdFieldName={parentIdFieldName!}
             associatedIdFieldName={associatedIdFieldName!}
             gqlQuery={gqlListQuery?.query}
