@@ -82,12 +82,17 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
       const getGqlQueryVariables = gqlQuery?.getQueryVariables;
       let gqlQueryVariables = undefined;
       if (getGqlQueryVariables) {
-        gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
+        let record = form.getFieldValue();
+        if (!record) {
+          record = parentRecord;
+        }
+        gqlQueryVariables = getGqlQueryVariables(record, useSelector);
       }
       return (
         <div className="editable-cell">
           <Form.Item name={fieldPath.keyPath}>
             <AssociationSelection
+              fieldPath={fieldPath}
               selectable={SelectionType.MULTIPLE}
               parentIdFieldName={parentIdFieldName!}
               associatedIdFieldName={associatedIdFieldName!}
