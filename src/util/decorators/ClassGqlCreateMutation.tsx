@@ -1,10 +1,29 @@
+import { DocumentNode } from 'graphql';
+
 export const CLASS_GQL_CREATE_MUTATION = 'classGqlCreateMutation';
 
-export const ClassGqlCreateMutation = (mutation: any): ClassDecorator => {
+export interface MutationAndGetVariables {
+  mutation: DocumentNode;
+  getVariables?: (record: any) => any;
+}
+
+export const ClassGqlCreateMutation = (
+  mutation: DocumentNode | MutationAndGetVariables,
+): ClassDecorator => {
+  const isGqlType =
+    mutation && typeof mutation === 'object' && 'loc' in mutation;
+  let mutationAndGetVariables;
+  if (isGqlType) {
+    mutationAndGetVariables = {
+      mutation,
+    };
+  } else {
+    mutationAndGetVariables = mutation;
+  }
   return (target: Function) => {
     Reflect.defineMetadata(
       CLASS_GQL_CREATE_MUTATION,
-      mutation,
+      mutationAndGetVariables,
       target.prototype,
     );
   };

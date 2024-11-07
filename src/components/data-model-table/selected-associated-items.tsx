@@ -12,6 +12,7 @@ import { Unknowns } from '../form/state/unknowns';
 import { HIDDEN_WHEN, IsHiddenCheck } from '../../util/decorators/HiddenWhen';
 
 export interface SelectedAssociatedItems<Model> {
+  fieldPath: FieldPath;
   selectedItems: Model[];
   dtoClass: Model;
   associatedRecordResourceType: ResponseType;
@@ -33,6 +34,7 @@ export const SelectedAssociatedItems = <Model,>(
   props: SelectedAssociatedItems<Model>,
 ) => {
   const {
+    fieldPath,
     selectedItems,
     dtoClass,
     associatedRecordResourceType,
@@ -78,11 +80,12 @@ export const SelectedAssociatedItems = <Model,>(
           return (
             <div className="editable-cell">
               {renderViewContent({
+                preFieldPath: fieldPath,
                 field,
                 value,
                 record,
-                hideLabels: false,
-                disabled: false,
+                hideLabels: true,
+                disabled: true,
                 parentRecord: record,
                 form,
                 setHasChanges,

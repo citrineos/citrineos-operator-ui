@@ -4,6 +4,7 @@ import React from 'react';
 import { FieldSchema, renderField, renderLabel } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
 import { getProperty, setProperty } from '../../util/objects';
+import { AssociatedView } from '../data-model-table/associated-view';
 
 export interface NestedObjectFieldProps {
   fieldPath: FieldPath;
@@ -42,6 +43,7 @@ export const NestedObjectField: (
     const parentIdFieldName = schema.gqlAssociationProps.parentIdFieldName;
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
+    const gqlQuery = schema.gqlAssociationProps.gqlQuery;
     const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
     const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
     let gqlQueryVariables = undefined;
@@ -57,49 +59,63 @@ export const NestedObjectField: (
       }
       gqlQueryVariables = getGqlQueryVariables(record, useSelector);
     }
-    return (
-      <div className="editable-cell">
-        <Form.Item
-          name={fieldPath.namePath}
-          label={
-            hideLabels
-              ? undefined
-              : renderLabel(
-                  schema,
-                  fieldPath,
-                  disabled,
-                  visibleOptionalFields,
-                  toggleOptionalField,
-                )
-          }
-        >
-          <AssociationSelection
-            parentIdFieldName={parentIdFieldName!}
-            associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlListQuery?.query}
-            gqlQueryVariables={gqlQueryVariables}
-            parentRecord={parentRecord}
-            associatedRecordClass={schema.dtoClass!}
-            value={form.getFieldValue(fieldPath.keyPath)}
-            form={form}
-            onChange={(newValues: any[]) => {
-              const currentValues = form.getFieldsValue(true);
-              if (newValues.length > 0) {
-                setProperty(currentValues, fieldPath.keyPath, newValues[0]);
-              } else {
-                setProperty(
-                  currentValues,
-                  fieldPath.keyPath,
-                  getProperty(parentRecord, fieldPath.keyPath),
-                );
-              }
-              form.setFieldsValue(currentValues);
-            }}
-            customActions={schema.customActions}
-          />
-        </Form.Item>
-      </div>
-    );
+    if (disabled) {
+      return (
+        <AssociatedView
+          parentRecord={parentRecord}
+          associatedRecordClass={schema.dtoClass!}
+          parentIdFieldName={parentIdFieldName!}
+          associatedIdFieldName={associatedIdFieldName!}
+          gqlQuery={gqlQuery?.query}
+          gqlListQuery={gqlListQuery?.query}
+        />
+      );
+    } else {
+      return (
+        <div className="editable-cell">
+          <Form.Item
+            name={fieldPath.namePath}
+            label={
+              hideLabels
+                ? undefined
+                : renderLabel(
+                    schema,
+                    fieldPath,
+                    disabled,
+                    visibleOptionalFields,
+                    toggleOptionalField,
+                  )
+            }
+          >
+            <AssociationSelection
+              fieldPath={fieldPath}
+              parentIdFieldName={parentIdFieldName!}
+              associatedIdFieldName={associatedIdFieldName!}
+              gqlQuery={gqlListQuery?.query}
+              gqlQueryVariables={gqlQueryVariables}
+              parentRecord={parentRecord}
+              associatedRecordClass={schema.dtoClass!}
+              value={form.getFieldValue(fieldPath.keyPath)}
+              form={form}
+              onChange={(newValues: any[]) => {
+                const currentValues = form.getFieldsValue(true);
+                if (newValues.length > 0) {
+                  setProperty(currentValues, fieldPath.keyPath, newValues[0]);
+                } else {
+                  setProperty(
+                    currentValues,
+                    fieldPath.keyPath,
+                    getProperty(parentRecord, fieldPath.keyPath),
+                  );
+                }
+                form.setFieldsValue(currentValues);
+              }}
+              customActions={schema.customActions}
+            />
+          </Form.Item>
+        </div>
+      );
+    }
   }
 
   return (

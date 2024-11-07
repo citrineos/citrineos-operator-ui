@@ -18,7 +18,6 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
-import { NEW_IDENTIFIER } from '../../util/consts';
 import { generateSearchFilters } from '../../util/tables';
 
 export interface TableWrapperProps<Model> extends TableProps<Model> {
@@ -131,6 +130,7 @@ export const TableWrapper = forwardRef(function TableWrapper<
       key: (item as any)[primaryKeyFieldName] || (item as any).id,
     })),
   );
+  const [newRecord, setNewRecord] = useState<Model | null>(null);
 
   useEffect(() => {
     const newVal = (tableProps.dataSource || []).map((item: any) => {
@@ -170,14 +170,15 @@ export const TableWrapper = forwardRef(function TableWrapper<
   }, [selectable, onSelectionChange]);
 
   const addRecordToTable = (record: Model) => {
+    setNewRecord(record);
     setDataWithKeys([record, ...((tableProps.dataSource as Model[]) || [])]);
   };
 
   const removeNewRow = () => {
     setDataWithKeys((prev: any) => {
-      return prev.filter(
-        (item: any) => item[primaryKeyFieldName] !== NEW_IDENTIFIER,
-      );
+      return prev.filter((item: any) => {
+        return item !== newRecord;
+      });
     });
   };
 

@@ -250,7 +250,7 @@ export const getSchemaForInstanceAndKey = (
   let type, fieldType;
   let options: FieldSelectOption[] | undefined = undefined;
   // enum
-  if (typeof metadata === 'object') {
+  if (metadata && typeof metadata === 'object') {
     type = ReflectType.string;
     fieldType = FieldType.select;
     options = Object.keys(metadata).map((key: any) => {
@@ -319,7 +319,7 @@ export const getSchemaForInstanceAndKey = (
 
   if (fieldType === FieldType.array) {
     const classTransformerType = getClassTransformerType(instance, key);
-    if (typeof classTransformerType === 'object') {
+    if (classTransformerType && typeof classTransformerType === 'object') {
       // enum
       options = Object.keys(classTransformerType).map((key: any) => {
         const value = classTransformerType[key];

@@ -43,6 +43,8 @@ import { ChargingStationProps } from './ChargingStationProps';
 import { TRANSACTION_LIST_QUERY } from '../transactions/queries';
 import { EVSE_LIST_QUERY } from '../evses/queries';
 import { Searchable } from '../../util/decorators/Searcheable';
+import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
+import { NEW_IDENTIFIER } from '../../util/consts';
 import { EvseProps } from '../evses/EvseProps';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
@@ -51,7 +53,14 @@ import { EvseProps } from '../evses/EvseProps';
 @ClassGqlCreateMutation(CHARGING_STATIONS_CREATE_MUTATION)
 @ClassGqlEditMutation(CHARGING_STATIONS_EDIT_MUTATION)
 @ClassGqlDeleteMutation(CHARGING_STATIONS_DELETE_MUTATION)
-@PrimaryKeyFieldName(ChargingStationProps.id)
+@PrimaryKeyFieldName(ChargingStationProps.id, true)
+@ClassCustomConstructor(() => {
+  const chargingStation = new ChargingStation();
+  const location = new Location();
+  location[LocationProps.id] = NEW_IDENTIFIER as unknown as string;
+  chargingStation[ChargingStationProps.locationId] = location;
+  return chargingStation;
+})
 export class ChargingStation extends BaseModel {
   @IsString()
   @Searchable()
@@ -61,7 +70,7 @@ export class ChargingStation extends BaseModel {
   isOnline!: boolean;
 
   @GqlAssociation({
-    parentIdFieldName: ChargingStationProps.Location,
+    parentIdFieldName: ChargingStationProps.locationId,
     associatedIdFieldName: LocationProps.id,
     gqlQuery: {
       query: LOCATIONS_GET_QUERY,
@@ -72,7 +81,7 @@ export class ChargingStation extends BaseModel {
   })
   @Type(() => Location)
   @IsOptional()
-  Location?: Location;
+  locationId?: Location;
 
   @IsArray()
   @IsOptional()
@@ -143,7 +152,7 @@ export class ChargingStation extends BaseModel {
       Object.assign(this, {
         [ChargingStationProps.id]: data.id,
         [ChargingStationProps.isOnline]: data.isOnline,
-        [ChargingStationProps.Location]: data.Location,
+        [ChargingStationProps.locationId]: data.locationId,
       });
     }
   }

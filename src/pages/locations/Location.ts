@@ -64,7 +64,7 @@ export class Location {
   @ToClass<GeoPoint>(GeoPoint.parse)
   coordinates!: GeoPoint;
 
-  constructor(data: Location) {
+  constructor(data?: Location) {
     if (data) {
       Object.assign(this, {
         [LocationProps.id]: data.id,

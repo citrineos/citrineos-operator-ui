@@ -6,7 +6,10 @@ import { EditButton, ShowButton } from '@refinedev/antd';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DeleteButton } from '../custom-actions/delete';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
-import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
+import {
+  FieldNameAndIsEditable,
+  PRIMARY_KEY_FIELD_NAME,
+} from '../../util/decorators/PrimaryKeyFieldName';
 import { plainToInstance } from 'class-transformer';
 import { CLASS_GQL_DELETE_MUTATION } from '../../util/decorators/ClassGqlDeleteMutation';
 
@@ -78,11 +81,9 @@ export const ActionsColumnEnhanced = ({
       />
     );
   }
-  const primaryKeyFieldName = Reflect.getMetadata(
-    PRIMARY_KEY_FIELD_NAME,
-    dtoClassInstance as object,
-  );
-  if (!primaryKeyFieldName) {
+  const primaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable =
+    Reflect.getMetadata(PRIMARY_KEY_FIELD_NAME, dtoClassInstance as object);
+  if (!primaryKeyFieldNameAndIsEditable) {
     return (
       <Alert
         message="Error: ActionsColumnEnhanced cannot find primaryKeyFieldName for dtoClass"
@@ -90,6 +91,7 @@ export const ActionsColumnEnhanced = ({
       />
     );
   }
+  const primaryKeyFieldName = primaryKeyFieldNameAndIsEditable.fieldName;
 
   const dtoGqlDeleteMutation = Reflect.getMetadata(
     CLASS_GQL_DELETE_MUTATION,
