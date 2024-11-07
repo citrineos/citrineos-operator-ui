@@ -6,7 +6,7 @@ describe('Charging station actions', () => {
 
     //TODO figure out why this is thrown!
     const stub = cy.stub();
-    Cypress.on('uncaught:exception', (err, runnable) => {
+    Cypress.on('uncaught:exception', (err, _runnable) => {
       if (err.message.includes('ResizeObserver')) {
         stub();
         return false;

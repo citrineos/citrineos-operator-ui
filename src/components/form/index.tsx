@@ -768,15 +768,16 @@ export const renderField = (props: RenderFieldProps) => {
                     } as any,
                     preFieldPath: fieldPath,
                     disabled: disabled,
-                    visibleOptionalFields: hideLabels,
-                    hideLabels: visibleOptionalFields,
+                    visibleOptionalFields: visibleOptionalFields,
+                    hideLabels: hideLabels,
                     enableOptionalField: enableOptionalField,
                     toggleOptionalField: toggleOptionalField,
                     unknowns: unknowns,
                     modifyUnknowns: modifyUnknowns,
                     form,
                     parentRecord,
-                    gqlQueryVariablesMap,
+                    useSelector,
+                    fieldAnnotations,
                   }) as any
                 }
               </Col>
