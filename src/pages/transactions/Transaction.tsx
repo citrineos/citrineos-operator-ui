@@ -31,7 +31,11 @@ import {
   TransactionEvent,
   TransactionEventProps,
 } from '../transaction-events/TransactionEvent';
-import { GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY } from '../transaction-events/queries';
+import {
+  GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
+  TRANSACTION_EVENT_GET_QUERY,
+  TRANSACTION_EVENT_LIST_QUERY,
+} from '../transaction-events/queries';
 import { TransformDate } from '../../util/TransformDate';
 import { ClassCustomActions } from '../../util/decorators/ClassCustomActions';
 import { requestStopTransaction } from '../../message/remote-stop';
@@ -110,9 +114,12 @@ export class Transaction {
     parentIdFieldName: TransactionProps.id,
     associatedIdFieldName: TransactionEventProps.transactionDatabaseId,
     gqlQuery: {
-      query: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
+      query: TRANSACTION_EVENT_GET_QUERY,
     },
     gqlListQuery: {
+      query: TRANSACTION_EVENT_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
       query: GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
       getQueryVariables: (transaction: Transaction) => ({
         transactionDatabaseId: transaction.id,

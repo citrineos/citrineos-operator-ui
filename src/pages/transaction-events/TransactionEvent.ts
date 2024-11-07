@@ -36,7 +36,11 @@ import { Hidden } from '../../util/decorators/Hidden';
 import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import { GET_METER_VALUES_FOR_TRANSACTION_EVENT } from '../meter-values/queries';
+import {
+  GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+  METER_VALUE_GET_QUERY,
+  METER_VALUE_LIST_QUERY,
+} from '../meter-values/queries';
 
 export class TransactionType {
   @IsString()
@@ -116,9 +120,12 @@ export class TransactionEvent extends BaseModel {
     parentIdFieldName: TransactionEventProps.id,
     associatedIdFieldName: MeterValueProps.transactionEventId,
     gqlQuery: {
-      query: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
+      query: METER_VALUE_GET_QUERY,
     },
     gqlListQuery: {
+      query: METER_VALUE_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
       query: GET_METER_VALUES_FOR_TRANSACTION_EVENT,
       getQueryVariables: (transactionEvent: TransactionEvent) => ({
         transactionEventId: transactionEvent[TransactionEventProps.id],
