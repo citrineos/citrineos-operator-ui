@@ -12,7 +12,6 @@ import { StatusIcon } from '../status-icon';
 import GenericTag from '../tag';
 import { TruncateDisplay } from '../truncate-display';
 import { TimestampDisplay } from '../timestamp-display';
-import { Constructable } from '../../util/Constructable';
 import { plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
 import { CLASS_GQL_LIST_QUERY } from '../../util/decorators/ClassGqlListQuery';
