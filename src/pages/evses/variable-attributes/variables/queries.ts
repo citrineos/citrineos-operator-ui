@@ -27,6 +27,46 @@ export const VARIABLE_LIST_QUERY = gql`
   }
 `;
 
+export const VARIABLE_LIST_BY_COMPONENT_QUERY = gql`
+  query VariableListByComponent(
+    $componentId: Int!
+    $offset: Int!
+    $limit: Int!
+    $order_by: [Variables_order_by!]
+    $where: Variables_bool_exp = {}
+  ) {
+    Variables(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: {
+        _and: [
+          { ComponentVariables: { componentId: { _eq: $componentId } } },
+          $where
+        ]
+      }
+    ) {
+      id
+      instance
+      name
+      createdAt
+      updatedAt
+    }
+    Variables_aggregate(
+      where: {
+        _and: [
+          { ComponentVariables: { componentId: { _eq: $componentId } } },
+          $where
+        ]
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const VARIABLE_GET_QUERY = gql`
   query GetVariableById($id: Int!) {
     Variables_by_pk(id: $id) {

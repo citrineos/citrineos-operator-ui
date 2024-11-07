@@ -4,7 +4,7 @@ import {
   Variable,
   VariableProps,
 } from '../../pages/evses/variable-attributes/variables/Variable';
-import { VARIABLE_LIST_QUERY } from '../../pages/evses/variable-attributes/variables/queries';
+import { VARIABLE_LIST_BY_COMPONENT_QUERY, VARIABLE_LIST_QUERY } from '../../pages/evses/variable-attributes/variables/queries';
 import {
   Component,
   ComponentProps,
@@ -70,7 +70,12 @@ class SetVariablesData {
       query: VARIABLE_LIST_QUERY,
     },
     gqlListQuery: {
-      query: VARIABLE_LIST_QUERY,
+      query: VARIABLE_LIST_BY_COMPONENT_QUERY,
+      getQueryVariables: (record: SetVariablesData) => {
+        return {
+          componentId: record.component?.id
+        };
+      }
     },
   })
   @HiddenWhen((parentRecord: SetVariablesData) => {

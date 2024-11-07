@@ -26,6 +26,7 @@ import {
 import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import {
   VARIABLE_GET_QUERY,
+  VARIABLE_LIST_BY_COMPONENT_QUERY,
   VARIABLE_LIST_QUERY,
 } from '../../pages/evses/variable-attributes/variables/queries';
 import {
@@ -39,6 +40,7 @@ import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstru
 import { NEW_IDENTIFIER } from '../../util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { EvseProps } from '../../pages/evses/EvseProps';
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo
@@ -71,25 +73,6 @@ export class GetVariablesData {
   // customData?: CustomDataType;
 
   @GqlAssociation({
-    parentIdFieldName: GetVariablesDataProps.variable,
-    associatedIdFieldName: VariableProps.id,
-    gqlQuery: {
-      query: VARIABLE_GET_QUERY,
-    },
-    gqlListQuery: {
-      query: VARIABLE_LIST_QUERY,
-    },
-  })
-  @Type(() => Variable)
-  @IsNotEmpty()
-  variable!: Variable | null;
-
-  @MaxLength(50)
-  @IsString()
-  @IsOptional()
-  variableInstance?: string;
-
-  @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.component,
     associatedIdFieldName: ComponentProps.id,
     gqlQuery: {
@@ -102,6 +85,37 @@ export class GetVariablesData {
   @Type(() => Component)
   @IsNotEmpty()
   component!: Component | null;
+
+  @GqlAssociation({
+    parentIdFieldName: GetVariablesDataProps.variable,
+    associatedIdFieldName: VariableProps.id,
+    gqlQuery: {
+      query: VARIABLE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: VARIABLE_LIST_BY_COMPONENT_QUERY,
+      getQueryVariables: (record: GetVariablesData) => {
+        return {
+          componentId: record.component?.id
+        };
+      }
+    },
+  })
+  @Type(() => Variable)
+  @HiddenWhen((record: GetVariablesData) => {
+    return (
+      !record[GetVariablesDataProps.component] ||
+      (record[GetVariablesDataProps.component][ComponentProps.id] as any) ===
+        NEW_IDENTIFIER
+    );
+  })
+  @IsNotEmpty()
+  variable!: Variable | null;
+
+  @MaxLength(50)
+  @IsString()
+  @IsOptional()
+  variableInstance?: string;
 
   @MaxLength(50)
   @IsString()
@@ -230,10 +244,10 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
               name: component[ComponentProps.name],
               evse: evse[EvseProps.databaseId]
                 ? {
-                    id: evse[EvseProps.databaseId],
-                    connectorId: evse[EvseProps.connectorId],
-                    // customData: null // todo
-                  }
+                  id: evse[EvseProps.databaseId],
+                  connectorId: evse[EvseProps.connectorId],
+                  // customData: null // todo
+                }
                 : undefined,
               instance: item[GetVariablesDataProps.componentInstance],
               // customData: null // todo
