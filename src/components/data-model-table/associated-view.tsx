@@ -15,6 +15,7 @@ import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
 } from '../../util/decorators/PrimaryKeyFieldName';
+import { GenericViewState } from '../../model/enums';
 
 export interface AssociatedViewProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {

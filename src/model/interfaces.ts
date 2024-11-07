@@ -22,6 +22,7 @@ export interface FieldSelectOption {
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {
+  fieldPath: FieldPath;
   parentRecord: ParentModel;
   associatedRecordClass: Constructable<AssociatedModel>;
   value?: AssociatedModel;
