@@ -104,6 +104,72 @@ export const GET_TRANSACTIONS_FOR_STATION = gql`
   }
 `;
 
+export const GET_ACTIVE_TRANSACTION_LIST_FOR_STATION = gql`
+  query GetActiveTransactionListForStation(
+    $stationId: String!
+    $where: [Transactions_bool_exp!] = []
+    $order_by: [Transactions_order_by!] = {}
+    $offset: Int
+    $limit: Int
+  ) {
+    Transactions(
+      where: {
+        stationId: { _eq: $stationId }
+        isActive: { _eq: true }
+        _and: $where
+      }
+      order_by: $order_by
+      offset: $offset
+      limit: $limit
+    ) {
+      id
+      timeSpentCharging
+      isActive
+      chargingState
+      stationId
+      stoppedReason
+      transactionId
+      evseDatabaseId
+      remoteStartId
+      totalKwh
+      createdAt
+      updatedAt
+    }
+    Transactions_aggregate(
+      where: {
+        stationId: { _eq: $stationId }
+        isActive: { _eq: true }
+        _and: $where
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const GET_ACTIVE_TRANSACTIONS_FOR_STATION = gql`
+  query GetActiveTransactionsForStation($stationId: String!) {
+    Transactions(
+      where: { stationId: { _eq: $stationId }, isActive: { _eq: true } }
+    ) {
+      id
+      timeSpentCharging
+      isActive
+      chargingState
+      stationId
+      stoppedReason
+      transactionId
+      evseDatabaseId
+      remoteStartId
+      totalKwh
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const GET_CHARGING_STATION_LIST_FOR_EVSE = gql`
   query GetChargingStationListForEvse(
     $databaseId: Int!

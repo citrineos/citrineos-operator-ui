@@ -94,4 +94,6 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
     )
     .sort((a, b) => a.label.localeCompare(b.label));
 
-export const ADMIN_CHARGING_STATION_ACTIONS: string[] = ['Update Auth Password'];
+export const ADMIN_CHARGING_STATION_ACTIONS: string[] = [
+  'Update Auth Password',
+];

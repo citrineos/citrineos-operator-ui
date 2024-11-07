@@ -185,23 +185,25 @@ export const AssociationSelection = <
   const handleRowChange = useCallback(
     (_newSelectedRowKeys: React.Key[], newSelectedRows: AssociatedModel[]) => {
       const newSelections = newSelectedRows;
-      selectedRows.forEach((selection: AssociatedModel) => {
-        if (
-          !queryResult.data?.data.some(
-            (item) =>
-              item[primaryKeyFieldName] ===
-              (selection as any)[primaryKeyFieldName],
-          ) &&
-          !newSelections.some(
-            (item: any) =>
-              item[primaryKeyFieldName] ===
-              (selection as any)[primaryKeyFieldName],
-          ) &&
-          (selection as any)[primaryKeyFieldName] !== NEW_IDENTIFIER
-        ) {
-          newSelections.push(selection);
-        }
-      });
+      if (selectable === SelectionType.MULTIPLE) {
+        selectedRows.forEach((selection: AssociatedModel) => {
+          if (
+            !queryResult.data?.data.some(
+              (item) =>
+                item[primaryKeyFieldName] ===
+                (selection as any)[primaryKeyFieldName],
+            ) &&
+            !newSelections.some(
+              (item: any) =>
+                item[primaryKeyFieldName] ===
+                (selection as any)[primaryKeyFieldName],
+            ) &&
+            (selection as any)[primaryKeyFieldName] !== NEW_IDENTIFIER
+          ) {
+            newSelections.push(selection);
+          }
+        });
+      }
       dispatch(
         setSelectedAssociatedItems({
           storageKey,

@@ -24,7 +24,7 @@ export interface GqlAssociationProps {
   /**
    * Query to perform to get the associated record
    */
-  gqlQuery: QueryWithVariableGetter;
+  gqlQuery?: QueryWithVariableGetter;
   /**
    * Query to perform to get the associated record list
    */
