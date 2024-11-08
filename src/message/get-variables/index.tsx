@@ -27,7 +27,6 @@ import { GqlAssociation } from '../../util/decorators/GqlAssociation';
 import {
   VARIABLE_GET_QUERY,
   VARIABLE_LIST_BY_COMPONENT_QUERY,
-  VARIABLE_LIST_QUERY,
 } from '../../pages/evses/variable-attributes/variables/queries';
 import {
   COMPONENT_GET_QUERY,
