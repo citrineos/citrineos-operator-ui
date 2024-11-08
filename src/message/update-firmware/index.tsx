@@ -53,14 +53,12 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
 
   const onValuesChange = useCallback(
     (changedValues: any, allValues: any) => {
-      setParentRecord(allValues);
-
       if (
-        !changedValues.firmware ||
-        (!changedValues.firmware.signingCertificateText &&
-          !changedValues.firmware.signingCertificateFile)
+        changedValues.firmware !== undefined &&
+        (changedValues.firmware.signingCertificateText !== undefined ||
+          changedValues.firmware.signingCertificateFile !== undefined)
       ) {
-        return;
+        setParentRecord(allValues);
       }
 
       const signingCertificate =
