@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BaseModel } from '../../util/BaseModel';
 import { ClassResourceType } from '../../util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
@@ -58,9 +58,10 @@ export class IdTokenInfos extends BaseModel {
   language2!: string;
 
   @IsInt()
-  @IsNotEmpty()
+  @IsOptional()
   groupIdTokenId!: number;
 
   @IsString()
+  @IsOptional()
   personalMessage!: string;
 }
