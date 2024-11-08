@@ -76,6 +76,7 @@ class SetVariablesData {
       query: VARIABLE_LIST_BY_COMPONENT_QUERY,
       getQueryVariables: (record: SetVariablesData) => {
         return {
+          mutability: 'ReadOnly',
           componentId: record.component?.id,
         };
       },
