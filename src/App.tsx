@@ -211,7 +211,7 @@ function App() {
                         src={CitrineOSPng}
                         alt="icon"
                         style={{ height: '48px', margin: '-8px -8px' }}
-                        data-test="citrine-os-icon"
+                        data-testid="citrine-os-icon"
                       />
                     ),
                     text: 'Citrine OS',

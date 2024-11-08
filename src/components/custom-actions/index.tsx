@@ -146,7 +146,7 @@ export const CustomActions = <T,>({
                   key={item.key}
                   icon={getIcon(item.label)}
                   onClick={item.onClick}
-                  data-test="custom-action-dropdown-menu-item"
+                  data-testid="custom-action-dropdown-menu-item"
                 >
                   {item.label}
                 </Menu.Item>
@@ -161,7 +161,7 @@ export const CustomActions = <T,>({
               size="small"
               type={'default'}
               icon={<MoreOutlined />}
-              data-test="custom-action-dropdown-button"
+              data-testid="custom-action-dropdown-button"
             />
           </Dropdown>
         </>

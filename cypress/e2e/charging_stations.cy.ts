@@ -48,6 +48,6 @@ describe('Charging station actions', () => {
     cy.getByData('ResetData2-generic-form-submit').click();
 
     cy.wait('@resetRequest');
-    cy.get('[data-test="success-notification"]').should('be.visible');
+    cy.getByData('success-notification').should('be.visible');
   });
 });
