@@ -68,11 +68,7 @@ describe('Charging station actions', () => {
         .click();
       cy.getByData('ResetData2-generic-form-submit').click();
 
-      cy.wait('@resetRequest');
-      cy.get('[data-test="success-notification"]').should('be.visible');
-    });
+    cy.wait('@resetRequest');
+    cy.getByData('success-notification').should('be.visible');
   });
 });
-function beforeEach(arg0: () => void) {
-  throw new Error('Function not implemented.');
-}

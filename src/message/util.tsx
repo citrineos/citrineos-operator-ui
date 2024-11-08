@@ -10,8 +10,8 @@ export const showSucces = (payload?: string) => {
     description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
     placement: 'topRight',
     props: {
-      'data-test': 'success-notification',
-    } as any,
+      'data-testid': 'success-notification',
+    },
   });
 };
 
@@ -21,7 +21,7 @@ export const showError = (msg: string) => {
     description: msg,
     placement: 'topRight',
     props: {
-      'data-test': 'error-notification',
+      'data-testid': 'error-notification',
     } as any,
   });
 };
