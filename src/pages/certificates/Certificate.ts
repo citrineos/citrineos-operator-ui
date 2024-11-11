@@ -131,3 +131,40 @@ export class Certificate {
     }
   }
 }
+
+export class NewCertificateRequest {
+  @IsInt()
+  @IsOptional()
+  keyLength?: number;
+
+  @IsString()
+  organizationName!: string;
+
+  @IsString()
+  commonName!: string;
+
+  @Type(() => Date)
+  @IsDate()
+  @IsOptional()
+  @TransformDate()
+  validBefore: Dayjs | null = null;
+
+  @IsString()
+  @IsOptional()
+  filePath?: string;
+
+  @IsBoolean()
+  selfSigned!: boolean;
+
+  @IsOptional()
+  @IsEnum(CountryNameEnumType)
+  countryName?: CountryNameEnumType;
+
+  @IsOptional()
+  @IsEnum(SignatureAlgorithmEnumType)
+  signatureAlgorithm?: SignatureAlgorithmEnumType;
+
+  @IsInt()
+  @IsOptional()
+  pathLen?: number;
+}
