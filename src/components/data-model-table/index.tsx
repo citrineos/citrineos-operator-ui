@@ -2,7 +2,6 @@ import './style.scss';
 import { List } from '@refinedev/antd';
 import { BaseRecord } from '@refinedev/core';
 import { Table, TableColumnsType, TableProps } from 'antd';
-import React from 'react';
 import { ColumnType } from 'antd/es/table/interface';
 import { AnyObject } from 'antd/es/_util/type';
 import { ResourceType } from '../../resource-type';

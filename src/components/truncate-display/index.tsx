@@ -27,6 +27,9 @@ export const TruncateDisplay: React.FC<IDDisplayProps> = ({
 };
 
 function getTruncatedId(id: string, startLength: number, endLength: number) {
+  if (id === undefined || id === null) {
+    return '';
+  }
   if (startLength + endLength >= id.length) {
     return id;
   }

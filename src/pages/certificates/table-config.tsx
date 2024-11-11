@@ -1,20 +1,21 @@
 import { TableColumnsType } from 'antd';
-import { ActionsColumn } from '../../components/data-model-table/actions-column';
-import { CERTIFICATES_DELETE_MUTATION } from './queries';
+import {
+  ActionsColumn,
+  ColumnAction,
+} from '../../components/data-model-table/actions-column';
 import { ResourceType } from '../../resource-type';
 import { Certificates } from '../../graphql/schema.types';
 import GenericTag, { DefaultColors } from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
-import React from 'react';
 import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { CustomAction } from '../../components/custom-actions';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,
-  parentView?: ResourceType,
-  customActions?: CustomAction<Certificates>[],
+  _parentView?: ResourceType,
+  _customActions?: CustomAction<Certificates>[],
 ): TableColumnsType<Certificates> => {
   const baseColumns: TableColumnsType<Certificates> = [
     {
@@ -122,8 +123,7 @@ export const CERTIFICATES_COLUMNS = (
       render: (_: any, record: any) => (
         <ActionsColumn
           record={record}
-          gqlDeleteMutation={CERTIFICATES_DELETE_MUTATION}
-          customActions={customActions}
+          actions={[{ type: ColumnAction.SHOW }]}
         />
       ),
     });
