@@ -49,8 +49,8 @@ export class CustomerInformationRequest {
     },
   })
   @Type(() => IdToken)
-  @IsNotEmpty()
-  idToken!: IdToken | null;
+  @IsOptional()
+  idToken?: IdToken | null;
 
   @IsString()
   @MinLength(1)

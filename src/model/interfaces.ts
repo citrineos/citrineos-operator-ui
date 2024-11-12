@@ -14,10 +14,18 @@ import { GqlAssociationProps } from '../util/decorators/GqlAssociation';
 import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
+import { DefaultColors } from '../components/tag';
 
 export interface FieldSelectOption {
   label: string;
   value: string;
+}
+
+export interface IDDisplayProps {
+  id: string;
+  startLength?: number; // Number of characters to show from the start
+  endLength?: number; // Number of characters to show from the end
+  color?: DefaultColors; // Color of the Tag
 }
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
