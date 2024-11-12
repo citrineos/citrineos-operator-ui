@@ -63,5 +63,5 @@ export class IdTokenInfos extends BaseModel {
 
   @IsString()
   @IsOptional()
-  personalMessage!: string;
+  personalMessage?: string;
 }
