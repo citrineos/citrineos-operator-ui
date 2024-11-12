@@ -160,8 +160,10 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       data.evse = {
         id: evse[EvseProps.id],
         // customData: todo,
-        connectorId: evse[EvseProps.connectorId],
       };
+      if (evse[EvseProps.connectorId]) {
+        data.evse.connectorId = evse[EvseProps.connectorId];
+      }
     }
 
     await triggerMessageAndHandleResponse({
