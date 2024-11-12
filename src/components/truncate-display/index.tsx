@@ -1,13 +1,7 @@
 import React from 'react';
 import { Popover, Tag } from 'antd';
 import { DefaultColors } from '../tag';
-
-interface IDDisplayProps {
-  id: string;
-  startLength?: number; // Number of characters to show from the start
-  endLength?: number; // Number of characters to show from the end
-  color?: DefaultColors; // Color of the Tag
-}
+import { IDDisplayProps } from '../../model/interfaces';
 
 export const TruncateDisplay: React.FC<IDDisplayProps> = ({
   id,
@@ -27,6 +21,8 @@ export const TruncateDisplay: React.FC<IDDisplayProps> = ({
 };
 
 function getTruncatedId(id: string, startLength: number, endLength: number) {
+  if (id === null || id === undefined) return '';
+
   if (startLength + endLength >= id.length) {
     return id;
   }
