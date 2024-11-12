@@ -1,5 +1,10 @@
 import React from 'react';
-import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
 import { Evse } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '../../util/consts';
@@ -53,8 +58,8 @@ export class UnlockConnectorRequest {
   evseId!: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  connectorId!: number;
+  @IsOptional()
+  connectorId?: number;
 
   // @Type(() => CustomDataType)
   // @ValidateNested()
@@ -92,8 +97,11 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
 
     const data: UnlockConnectorRequest = {
       evseId: plainEvse[EvseProps.id],
-      connectorId: plainEvse[EvseProps.connectorId],
     };
+
+    if (plainEvse[EvseProps.connectorId]) {
+      data.connectorId = plainEvse[EvseProps.connectorId];
+    }
     await triggerMessageAndHandleResponse({
       url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
