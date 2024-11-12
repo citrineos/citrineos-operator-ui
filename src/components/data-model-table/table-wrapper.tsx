@@ -1,5 +1,3 @@
-import { FieldSchema } from '../form';
-import { SelectionType } from './editable';
 import React, {
   forwardRef,
   useEffect,
@@ -13,32 +11,13 @@ import { useTable } from '@refinedev/antd';
 import isEqual from 'lodash.isequal';
 import type { TableRowSelection } from 'antd/lib/table/interface';
 import { SorterResult } from 'antd/lib/table/interface';
-import { Constructable } from '../../util/Constructable';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
 import { getSearchableKeys } from '../../util/decorators/Searcheable';
 import { generateSearchFilters } from '../../util/tables';
-
-export interface TableWrapperProps<Model> extends TableProps<Model> {
-  dtoClass: Constructable<Model>;
-  useTableProps: any;
-  selectable?: SelectionType | null;
-  onSelectionChange?: (selectedRows: Model[]) => void;
-  primaryKeyFieldName: string;
-  columns: FieldSchema[];
-  editingRecord: Model;
-  filters?: any;
-  dtoResourceType?: string;
-  dtoGqlListQuery?: any;
-  gqlQueryVariables?: any;
-}
-
-export interface TableWrapperRef<Model> {
-  addRecordToTable: (record: Model) => void;
-  removeNewRow: () => void;
-  refreshTable: () => void;
-}
+import { TableWrapperProps, TableWrapperRef } from '../../model/interfaces';
+import { SelectionType } from '../../model/enums';
 
 export const TableWrapper = forwardRef(function TableWrapper<
   Model extends { key: any },

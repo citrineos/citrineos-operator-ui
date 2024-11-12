@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -12,6 +13,8 @@ import {
 import { Form, Input } from 'antd';
 import { CustomFormRender } from '../../util/decorators/CustomFormRender';
 import { TransformDate } from '../../util/TransformDate';
+import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { SupportedFileFormats } from '../../util/decorators/SupportedFileFormats';
 
 export enum FirmwareTypeProps {
   location = 'location',
@@ -53,15 +56,29 @@ export class FirmwareType {
   @IsOptional()
   installDateTime?: Date;
 
-  // @IsOptional()
-  // @SupportedFileFormats(['.pem', '.id'])
-  // @Type(() => File)
-  // signingCertificate?: File;
+  @IsBoolean()
+  @IsOptional()
+  signingCertificateIsFile?: boolean;
 
+  @IsOptional()
   @IsString()
   @Length(0, 5500)
+  @HiddenWhen((record: FirmwareType) => {
+    return record.signingCertificateIsFile === true;
+  })
+  signingCertificateText?: string;
+
   @IsOptional()
-  signingCertificate?: string;
+  @Type(() => File)
+  @SupportedFileFormats(['.pem', '.id'])
+  @HiddenWhen((record: FirmwareType) => {
+    return record.signingCertificateIsFile !== true;
+  })
+  signingCertificateFile?: File;
+
+  @IsOptional()
+  @HiddenWhen(() => true)
+  signingCertificate?: string | File;
 
   @IsString()
   @Length(0, 800)

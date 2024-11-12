@@ -10,22 +10,15 @@ import {
   Row,
   Select,
   Switch,
-  Upload,
 } from 'antd';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import './style.scss';
-import {
-  CloseOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { defaultMetadataStorage } from '../../util/DefaultMetadataStorage';
 import { isDefined, isNullOrUndefined } from '../../util/assertion';
 import { IS_DATE } from '../../util/TransformDate';
 import { FIELD_LABEL } from '../../util/decorators/FieldLabel';
-import { Constructable } from '../../util/Constructable';
 import {
   GQL_ASSOCIATION,
   GqlAssociationProps,
@@ -33,12 +26,7 @@ import {
 
 import { getProperty, omitProperties } from '../../util/objects';
 import { Flags } from './state/flags';
-import {
-  SupportedUnknownType,
-  UnknownEntry,
-  Unknowns,
-  UnknownsActions,
-} from './state/unknowns';
+import { SupportedUnknownType, UnknownEntry, Unknowns, UnknownsActions } from './state/unknowns';
 import { FieldPath } from './state/fieldpath';
 import { CUSTOM_FORM_RENDER } from '../../util/decorators/CustomFormRender';
 import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
@@ -46,11 +34,13 @@ import { isSortable } from '../../util/decorators/Sortable';
 import { NestedObjectField } from './nested-object-field';
 import { ArrayField } from './array-field';
 import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
-import { CustomAction } from '../custom-actions';
 import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
-import { FieldAnnotations } from '../data-model-table/editable';
 import { HIDDEN_WHEN } from '../../util/decorators/HiddenWhen';
+import { renderLabel, renderOptionalToggle, renderUnknownProperty, renderUploadField } from '../../util/renderUtil';
+import { FieldAnnotations, RenderFieldProps } from '../../model/interfaces';
+import { Constructable } from '@citrineos/base';
+import { CustomAction } from '../custom-actions';
 
 export enum ReflectType {
   array,
@@ -475,22 +465,6 @@ export const renderFieldContent = (field: FieldSchema, disabled = false) => {
   }
 };
 
-export interface RenderFieldProps {
-  schema: FieldSchema;
-  preFieldPath: FieldPath;
-  disabled: boolean;
-  visibleOptionalFields?: Flags;
-  hideLabels?: boolean;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  modifyUnknowns?: any;
-  form?: any;
-  parentRecord?: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-}
-
 export const renderField = (props: RenderFieldProps) => {
   const {
     schema,
@@ -531,6 +505,7 @@ export const renderField = (props: RenderFieldProps) => {
     return schema.customRender(parentRecord);
   }
 
+  // Optional field toggle
   if (
     !hideLabels &&
     !disabled &&
@@ -538,46 +513,12 @@ export const renderField = (props: RenderFieldProps) => {
     visibleOptionalFields &&
     !visibleOptionalFields.isEnabled(fieldPath.key)
   ) {
-    return (
-      <div
-        key={`${fieldPath.key}-optional-toggle`}
-        className="optional-field-toggle"
-      >
-        <span>{schema.label}</span>
-        <Button
-          type="link"
-          onClick={() => toggleOptionalField && toggleOptionalField(fieldPath)}
-        >
-          (Optional) <PlusOutlined />
-        </Button>
-      </div>
-    );
+    return renderOptionalToggle(schema, fieldPath, toggleOptionalField);
   }
+
+  // Render file upload
   if (schema.type === FieldType.file) {
-    return (
-      <Form.Item
-        label={schema.label}
-        name={fieldPath.namePath}
-        getValueFromEvent={(e) => {
-          // Return the first file from the fileList array
-          return e && e.fileList ? e.fileList[0]?.originFileObj : null;
-        }}
-      >
-        <Upload
-          name={'file'}
-          disabled={disabled}
-          maxCount={1}
-          accept={
-            schema.supportedFileFormats
-              ? schema.supportedFileFormats.join(',')
-              : undefined
-          }
-          beforeUpload={() => false}
-        >
-          <Button icon={<UploadOutlined />}>Click to Upload</Button>
-        </Upload>
-      </Form.Item>
-    );
+    return renderUploadField(schema, fieldPath, disabled);
   }
 
   if (schema.type === FieldType.array) {
@@ -621,6 +562,7 @@ export const renderField = (props: RenderFieldProps) => {
     );
   }
 
+  // Handle unknown field types
   if (schema.type === FieldType.unknown) {
     const unknown = unknowns?.findFirst(fieldPath);
     if (isNullOrUndefined(unknown)) {
@@ -694,60 +636,16 @@ export const renderField = (props: RenderFieldProps) => {
         modifyUnknowns('updateFirst', fieldPath, value);
     }
 
-    return (
-      <Form.Item required={schema.isRequired} className="merged-ant-form-item">
-        <Row gutter={32}>
-          <Col span={4}>
-            <Form.Item label={'Key'}>
-              <Input
-                disabled={disabled}
-                value={unknown?.name}
-                onChange={(e) => updateUnknown({ name: e.target.value })}
-                placeholder="Enter text"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item label={'Type'} layout="horizontal">
-              <Select
-                disabled={disabled}
-                value={unknown?.type}
-                onChange={(value: SupportedUnknownType) =>
-                  updateUnknown({ type: value })
-                }
-                options={[
-                  { value: 'string', label: 'String' },
-                  { value: 'number', label: 'Number' },
-                  { value: 'boolean', label: 'Boolean' },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-
-          {unknown && unknown.type && unknown.name && (
-            <Col span={16}>
-              <Form.Item
-                label={'Value'}
-                layout="horizontal"
-                name={[...fieldPath.namePath, unknown.name]}
-              >
-                {unknown.type === 'string' && (
-                  <Input disabled={disabled} placeholder="Enter text" />
-                )}
-                {unknown.type === 'number' && (
-                  <InputNumber disabled={disabled} placeholder="Enter number" />
-                )}
-                {unknown.type === 'boolean' && (
-                  <Switch disabled={disabled} defaultValue={true} />
-                )}
-              </Form.Item>
-            </Col>
-          )}
-        </Row>
-      </Form.Item>
+    return renderUnknownProperty(
+      schema,
+      fieldPath,
+      unknown,
+      updateUnknown,
+      disabled,
     );
   }
 
+  // Render unknown properties array
   if (schema.type === FieldType.unknownProperties) {
     return (
       <Form.Item required={schema.isRequired}>
@@ -833,25 +731,6 @@ export const renderField = (props: RenderFieldProps) => {
   );
 };
 
-export const renderLabel = (
-  schema: FieldSchema,
-  fieldPath: FieldPath,
-  disabled: boolean,
-  visibleOptionalFields: any,
-  toggleOptionalField: any,
-) => (
-  <div className="form-item-label">
-    <span>{schema.label}</span>
-    {tryRenderOptionalButton(
-      schema,
-      fieldPath,
-      disabled,
-      visibleOptionalFields,
-      toggleOptionalField,
-    )}
-  </div>
-);
-
 export const recreateState = (
   values: any,
   fieldSchema: FieldSchema,
@@ -902,26 +781,6 @@ export const recreateState = (
     ),
   );
 };
-
-export const tryRenderOptionalButton = (
-  schema: FieldSchema,
-  fieldPath: FieldPath,
-  disabled: boolean,
-  visibleOptionalFields: any,
-  toggleOptionalField: any,
-) =>
-  !disabled &&
-  !schema.isRequired && (
-    <Button type="link" onClick={() => toggleOptionalField(fieldPath)}>
-      (Optional){' '}
-      {visibleOptionalFields &&
-      visibleOptionalFields.isEnabled(fieldPath.key) ? (
-        <MinusOutlined />
-      ) : (
-        <PlusOutlined />
-      )}
-    </Button>
-  );
 
 export const GenericForm = forwardRef(function GenericForm(
   props: GenericFormProps,
@@ -983,6 +842,7 @@ export const GenericForm = forwardRef(function GenericForm(
       layout="vertical"
       onFinish={onFinish}
       onValuesChange={onValuesChange}
+      disabled={disabled}
       initialValues={initialValues}
       data-testid="generic-form"
     >
@@ -1000,7 +860,6 @@ export const GenericForm = forwardRef(function GenericForm(
           form: formProps.form,
           parentRecord,
           useSelector,
-          fieldAnnotations,
         });
       })}
       <Form.Item>

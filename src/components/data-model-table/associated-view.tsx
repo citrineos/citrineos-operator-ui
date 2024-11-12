@@ -8,13 +8,14 @@ import React from 'react';
 import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
 import { Constructable } from '../../util/Constructable';
 import { useForm } from '@refinedev/antd';
-import { GenericParameterizedView, GenericViewState } from '../view';
+import { GenericParameterizedView } from '../view';
 import { LABEL_FIELD } from '../../util/decorators/LabelField';
 import { NEW_IDENTIFIER } from '../../util/consts';
 import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
 } from '../../util/decorators/PrimaryKeyFieldName';
+import { GenericViewState } from '../../model/enums';
 
 export interface AssociatedViewProps<ParentModel, AssociatedModel>
   extends GqlAssociationProps {

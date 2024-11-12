@@ -1,15 +1,16 @@
-import { extractSchema, FieldSchema, keyToLabel } from '../form';
+import { extractSchema, keyToLabel } from '../form';
 import React, { useCallback, useMemo } from 'react';
-import { FieldAnnotations, renderViewContent } from './editable';
-import { setSelectedAssociatedItems } from '../../redux/selectionSlice';
+import { renderViewContent } from './editable';
+import { setSelectedAssociatedItems } from '../../redux/associationSelectionSlice';
 import { instanceToPlain } from 'class-transformer';
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { useSelector } from 'react-redux';
-import { Flags } from '../form/state/flags';
-import { FieldPath } from '../form/state/fieldpath';
-import { Unknowns } from '../form/state/unknowns';
 import { HIDDEN_WHEN, IsHiddenCheck } from '../../util/decorators/HiddenWhen';
+import { FieldAnnotations, FieldSchema } from '../../model/interfaces';
+import { FieldPath } from '../form/state/fieldpath';
+import { Flags } from '../form/state/flags';
+import { Unknowns } from '../form/state/unknowns';
 
 export interface SelectedAssociatedItems<Model> {
   fieldPath: FieldPath;

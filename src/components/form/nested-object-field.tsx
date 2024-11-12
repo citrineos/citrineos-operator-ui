@@ -1,25 +1,11 @@
-import { FieldPath } from './state/fieldpath';
 import { Form } from 'antd';
 import React from 'react';
-import { FieldSchema, renderField, renderLabel } from './index';
+import { renderField } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
 import { getProperty, setProperty } from '../../util/objects';
 import { AssociatedView } from '../data-model-table/associated-view';
-
-export interface NestedObjectFieldProps {
-  fieldPath: FieldPath;
-  schema: FieldSchema;
-  hideLabels: boolean;
-  disabled: boolean;
-  visibleOptionalFields: any;
-  enableOptionalField: any;
-  toggleOptionalField: any;
-  unknowns: any;
-  modifyUnknowns: any;
-  form: any;
-  parentRecord: any;
-  useSelector: any;
-}
+import { NestedObjectFieldProps } from '../../model/interfaces';
+import { renderLabel } from '../../util/renderUtil';
 
 export const NestedObjectField: (
   props: NestedObjectFieldProps,
