@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Drawer, Form } from 'antd';
 import { useTable } from '@refinedev/antd';
@@ -9,6 +9,7 @@ import { GenericView } from '../../components/view';
 import { DataModelTable, IDataModelListProps } from '../../components';
 import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../../message/util';
+import { useRequestValidator } from '../../util/useRequestValidator';
 
 import {
   CERTIFICATES_CREATE_MUTATION,
@@ -22,6 +23,8 @@ import { Certificate, NewCertificateRequest } from './Certificate';
 import { Certificates } from '../../graphql/schema.types';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import { CertificatesListQuery } from '../../graphql/types';
+import { validateSync } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 
 const BUTTON_TEXT = 'Generate Certificates';
 const DRAWER_TITLE = 'Generate New Certificate';
@@ -43,9 +46,14 @@ export const CertificatesList: React.FC<IDataModelListProps> = ({
   hideActions,
   parentView,
 }) => {
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
   const formRef = useRef(null);
+  const [form] = Form.useForm();
+  const [open, setOpen] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const { onValuesChange } = useRequestValidator(
+    NewCertificateRequest,
+    setIsFormValid,
+  );
 
   const { tableProps } = useTable<CertificatesListQuery>({
     resource: ResourceType.CERTIFICATES,
@@ -83,6 +91,8 @@ export const CertificatesList: React.FC<IDataModelListProps> = ({
           ref={formRef}
           formProps={{ form }}
           onFinish={handleSubmit}
+          submitDisabled={!isFormValid}
+          onValuesChange={onValuesChange}
           dtoClass={NewCertificateRequest}
           parentRecord={initialCertificateRequest}
           initialValues={initialCertificateRequest}
