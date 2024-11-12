@@ -98,14 +98,18 @@ export const CustomerPayload = (plainValues: Record<string, any>) => {
         );
     }
   }
-
-  return {
+  const payload: any = {
     requestId: plainValues.requestId,
     report: report ?? false,
     clear: clear ?? false,
     customData: customData,
     customerCertificate: customerCertificate,
-    idToken: finalIdToken,
     customerIdentifier,
   };
+
+  if (finalIdToken) {
+    payload.idToken = finalIdToken;
+  }
+
+  return payload;
 };
