@@ -58,9 +58,11 @@
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react": "^4.0.0",
     "cross-env": "^7.0.3",
+    "cypress": "^13.15.0",
     "dotenv-cli": "^7.4.2",
     "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-cypress": "^4.0.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.1",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -85,7 +87,8 @@
     "fi": "npm run fresh && npm install",
     "clean-tsbuildinfo": "find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -exec rm -f {} +",
     "clean-dist": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} +",
-    "clean": "npm run clean-dist && npm run clean-tsbuildinfo"
+    "clean": "npm run clean-dist && npm run clean-tsbuildinfo",
+    "cy:open": "cypress open"
   },
   "browserslist": {
     "production": [
