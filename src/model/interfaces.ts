@@ -1,4 +1,4 @@
-import { FormInstance, FormListFieldData, TableProps } from 'antd';
+import { FormInstance, FormListFieldData, TableColumnsType, TableProps } from 'antd';
 import { UseFormReturnType } from '@refinedev/antd';
 import { CustomAction } from '../components/custom-actions';
 import { ResourceType } from '../resource-type';
@@ -14,6 +14,8 @@ import { GqlAssociationProps } from '../util/decorators/GqlAssociation';
 import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
+import { AnyObject } from 'antd/es/_util/type';
+import { BaseRecord } from '@refinedev/core';
 
 export interface FieldSelectOption {
   label: string;
@@ -243,4 +245,24 @@ export interface TableWrapperRef<Model> {
   addRecordToTable: (record: Model) => void;
   removeNewRow: () => void;
   refreshTable: () => void;
+}
+
+export interface IDataModelTableProps<
+  T extends AnyObject,
+  U extends BaseRecord,
+> {
+  tableProps: TableProps<U>;
+  columns: TableColumnsType<T>;
+  hideCreateButton?: boolean;
+  text?: string;
+  buttonAction?: () => void;
+}
+
+// For any list views using DataModelTable
+export interface IDataModelListProps {
+  filters?: Record<string, any>;
+  hideCreateButton?: boolean;
+  hideActions?: boolean;
+  parentView?: ResourceType;
+  viewMode?: 'table' | 'map';
 }
