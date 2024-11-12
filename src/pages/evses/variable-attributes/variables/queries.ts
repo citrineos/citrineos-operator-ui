@@ -32,6 +32,7 @@ export const VARIABLE_LIST_BY_COMPONENT_QUERY = gql`
     $componentId: Int!
     $offset: Int!
     $limit: Int!
+    $mutability: String!
     $order_by: [Variables_order_by!]
     $where: Variables_bool_exp = {}
   ) {
@@ -44,6 +45,7 @@ export const VARIABLE_LIST_BY_COMPONENT_QUERY = gql`
           { ComponentVariables: { componentId: { _eq: $componentId } } }
           $where
         ]
+        VariableAttributes: { mutability: { _neq: $mutability } }
       }
     ) {
       id

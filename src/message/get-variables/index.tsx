@@ -95,6 +95,7 @@ export class GetVariablesData {
       query: VARIABLE_LIST_BY_COMPONENT_QUERY,
       getQueryVariables: (record: GetVariablesData) => {
         return {
+          mutability: 'WriteOnly',
           componentId: record.component?.id,
         };
       },
