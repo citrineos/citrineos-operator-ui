@@ -59,7 +59,7 @@ export class IdTokenInfos extends BaseModel {
 
   @IsInt()
   @IsOptional()
-  groupIdTokenId!: number;
+  groupIdTokenId?: number;
 
   @IsString()
   @IsOptional()
