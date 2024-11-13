@@ -10,8 +10,8 @@ import {
   Transaction,
   TransactionProps,
 } from '../../pages/transactions/Transaction';
-import { NEW_IDENTIFIER } from '../../util/consts';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { IsNotEmpty } from 'class-validator';
 

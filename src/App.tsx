@@ -100,6 +100,10 @@ import {
   resources as variableMonitoringsResources,
   routes as VariableMonitoringsRoutes,
 } from './pages/variable-monitorings';
+import {
+  resources as VariableAttributesResources,
+  routes as VariableAttributesRoutes,
+} from './pages/variable-attributes';
 import { routes as HomeRoutes } from './pages/home';
 import React from 'react';
 import { MdOutlineSecurity } from 'react-icons/md';
@@ -185,6 +189,7 @@ const resources = [
   ...chargingProfilesResources,
   ...messageInfosResources,
   ...variableMonitoringsResources,
+  ...VariableAttributesResources,
   ...certificatesResources,
   ...reservationsResources,
   ...evsesResources,
@@ -299,6 +304,10 @@ function App() {
                     <Route
                       path="/variable-monitorings/*"
                       element={<VariableMonitoringsRoutes />}
+                    />
+                    <Route
+                      path="/variable-attributes/*"
+                      element={<VariableAttributesRoutes />}
                     />
                     <Route
                       path="/certificates/*"

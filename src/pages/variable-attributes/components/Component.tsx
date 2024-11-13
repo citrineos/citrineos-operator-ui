@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { ResourceType } from '../../../../resource-type';
+import { ResourceType } from '../../../resource-type';
 import { LabelField } from '@util/decorators/LabelField';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';

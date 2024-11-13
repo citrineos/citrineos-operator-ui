@@ -16,14 +16,11 @@ import { HttpError } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CustomActions } from '../custom-actions';
 import dayjs from 'dayjs';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { useDispatch } from 'react-redux';
 import { setSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
-import {
-  GenericParameterizedViewProps,
-  GenericViewProps,
-} from '../../model/interfaces';
-import { GenericViewState } from '../../model/enums';
+import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
+import { GenericViewState } from '@enums';
 
 export const GenericView = (props: GenericViewProps) => {
   const {

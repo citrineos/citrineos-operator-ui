@@ -14,10 +14,10 @@ import { SorterResult } from 'antd/lib/table/interface';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
-import { getSearchableKeys } from '../../util/decorators/Searcheable';
-import { generateSearchFilters } from '../../util/tables';
-import { TableWrapperProps, TableWrapperRef } from '../../model/interfaces';
-import { SelectionType } from '../../model/enums';
+import { getSearchableKeys } from '@util/decorators/Searcheable';
+import { generateSearchFilters } from '@util/tables';
+import { TableWrapperProps, TableWrapperRef } from '@interfaces';
+import { SelectionType } from '@enums';
 
 export const TableWrapper = forwardRef(function TableWrapper<
   Model extends { key: any },

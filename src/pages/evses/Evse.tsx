@@ -4,10 +4,10 @@ import {
   VariableAttributeProps,
 } from './variable-attributes/VariableAttributes';
 import { Type } from 'class-transformer';
-import { FieldLabel } from '../../util/decorators/FieldLabel';
+import { FieldLabel } from '@util/decorators/FieldLabel';
 import { ResourceType } from '../../resource-type';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   VARIABLE_ATTRIBUTE_GET_QUERY,
   VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
@@ -20,13 +20,13 @@ import {
   EVSE_GET_QUERY,
   EVSE_LIST_QUERY,
 } from './queries';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { BaseModel } from '../../util/BaseModel';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { BaseModel } from '@util/BaseModel';
 import { EvseProps } from './EvseProps';
 
 @ClassResourceType(ResourceType.EVSES)

@@ -25,12 +25,12 @@ import {
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { AttributeEnumType } from '@citrineos/base';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { triggerMessageAndHandleResponse } from '../util';
 import { GenericForm } from '../../components/form';
-import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
-import { NEW_IDENTIFIER } from '../../util/consts';
-import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 enum SetVariablesDataProps {
   component = 'component',

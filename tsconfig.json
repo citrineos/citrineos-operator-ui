@@ -16,7 +16,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "@util/*": ["src/util/*"],
+      "@enums": ["src/model/enums"],
+      "@interfaces": ["src/model/interfaces"],
+    }
   },
   "include": ["src"],
   "references": [

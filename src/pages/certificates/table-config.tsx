@@ -3,13 +3,14 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { CERTIFICATES_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { Certificates } from '../../graphql/schema.types';
-import GenericTag, { DefaultColors } from '../../components/tag';
+import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { CustomAction } from '../../components/custom-actions';
+import { DefaultColors } from '@enums';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,

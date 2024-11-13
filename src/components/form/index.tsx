@@ -4,7 +4,6 @@ import {
   Col,
   DatePicker,
   Form,
-  FormInstance,
   Input,
   InputNumber,
   Row,
@@ -15,16 +14,16 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import './style.scss';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { defaultMetadataStorage } from '../../util/DefaultMetadataStorage';
-import { isDefined, isNullOrUndefined } from '../../util/assertion';
-import { IS_DATE } from '../../util/TransformDate';
-import { FIELD_LABEL } from '../../util/decorators/FieldLabel';
+import { defaultMetadataStorage } from '@util/DefaultMetadataStorage';
+import { isDefined, isNullOrUndefined } from '@util/assertion';
+import { IS_DATE } from '@util/TransformDate';
+import { FIELD_LABEL } from '@util/decorators/FieldLabel';
 import {
   GQL_ASSOCIATION,
   GqlAssociationProps,
-} from '../../util/decorators/GqlAssociation';
+} from '@util/decorators/GqlAssociation';
 
-import { getProperty, omitProperties } from '../../util/objects';
+import { getProperty, omitProperties } from '@util/objects';
 import { Flags } from './state/flags';
 import {
   SupportedUnknownType,
@@ -32,112 +31,32 @@ import {
   Unknowns,
   UnknownsActions,
 } from './state/unknowns';
+
 import { FieldPath } from './state/fieldpath';
-import { CUSTOM_FORM_RENDER } from '../../util/decorators/CustomFormRender';
-import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
-import { isSortable } from '../../util/decorators/Sortable';
+import { CUSTOM_FORM_RENDER } from '@util/decorators/CustomFormRender';
+import { CLASS_CUSTOM_CONSTRUCTOR } from '@util/decorators/ClassCustomConstructor';
+import { isSortable } from '@util/decorators/Sortable';
 import { NestedObjectField } from './nested-object-field';
 import { ArrayField } from './array-field';
-import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
-import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
+import { SUPPORTED_FILE_FORMATS } from '@util/decorators/SupportedFileFormats';
+import { FIELD_CUSTOM_ACTIONS } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
-import { HIDDEN_WHEN } from '../../util/decorators/HiddenWhen';
+import { HIDDEN_WHEN } from '@util/decorators/HiddenWhen';
 import {
   renderLabel,
   renderOptionalToggle,
   renderUnknownProperty,
   renderUploadField,
-} from '../../util/renderUtil';
-import { FieldAnnotations, RenderFieldProps } from '../../model/interfaces';
-import { Constructable } from '@citrineos/base';
-import { CustomAction } from '../custom-actions';
-
-export enum ReflectType {
-  array,
-  string,
-  date,
-  number,
-  boolean,
-  object,
-  unknown,
-  unknownProperty,
-  unknownProperties,
-}
-
-export enum SelectMode {
-  multiple = 'multiple',
-  tags = 'tags',
-}
-
-export enum FieldType {
-  select,
-  datetime,
-  input,
-  number,
-  boolean,
-  nestedObject,
-  array,
-  unknown,
-  unknownProperty,
-  unknownProperties,
-  customRender,
-  file,
-}
-
-export interface FieldSelectOption {
-  label: string;
-  value: string;
-}
-
-export interface FieldSchema {
-  parentInstance: any;
-  label: string;
-  name: string;
-  type: FieldType;
-  options?: FieldSelectOption[];
-  selectMode?: SelectMode;
-  nestedFields?: FieldSchema[];
-  isRequired?: boolean;
-  customRender?: (record?: any) => any;
-  dtoClass?: Constructable<any>;
-  customConstructor?: () => any;
-  gqlAssociationProps?: GqlAssociationProps;
-  customActions?: CustomAction<any>[];
-  sorter: boolean;
-  supportedFileFormats?: string[];
-}
-
-export interface DynamicFieldSchema extends FieldSchema {
-  position: number;
-}
-
-export function isDynamicFieldSchema(value: any): value is DynamicFieldSchema {
-  return (
-    isDefined(value.label) &&
-    isDefined(value.name) &&
-    isDefined(value.type) &&
-    isDefined(value.position)
-  );
-}
-
-export type FieldSchemaKeys = keyof FieldSchema;
-
-export interface GenericProps {
-  dtoClass: Constructable<any>;
-  parentRecord?: any;
-  formProps?: any;
-  overrides?: { [key in FieldSchemaKeys]: Partial<FieldSchema> };
-  onFinish?: (values: any) => void;
-  onValuesChange?: (changedValues: any, allValues: any) => void;
-  disabled?: boolean;
-  submitDisabled?: boolean;
-}
-
-export interface GenericFormProps extends GenericProps {
-  ref?: React.Ref<FormInstance>;
-  initialValues?: any;
-  fieldAnnotations?: FieldAnnotations;
-}
+} from '@util/renderUtil';
+import {
+  FieldAnnotations,
+  FieldSchema,
+  FieldSchemaKeys,
+  GenericFormProps,
+  isDynamicFieldSchema,
+  RenderFieldProps,
+} from '@interfaces';
+import { FieldSelectOption, FieldType, ReflectType, SelectMode } from '@enums';
 
 export const getReflectTypeFromString = (type: string): ReflectType => {
   switch (type) {

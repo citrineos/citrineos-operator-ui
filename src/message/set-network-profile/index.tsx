@@ -15,7 +15,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NetworkConnectionProfileType } from '../model/NetworkConnectionProfileType';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   ServerNetworkProfile,
   ServerNetworkProfileProps,
@@ -24,7 +24,7 @@ import {
   SERVER_NETWORK_PROFILE_GET_QUERY,
   SERVER_NETWORK_PROFILE_LIST_QUERY,
 } from '../../pages/server-network-profiles/queries';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 
 // enum SetNetworkProfileDataProps {}
 // customData = 'customData', // todo

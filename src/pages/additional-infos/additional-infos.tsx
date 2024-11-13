@@ -1,12 +1,12 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { BaseModel } from '../../util/BaseModel';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { BaseModel } from '@util/BaseModel';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ResourceType } from '../../resource-type';
 import {
   ADDITIONAL_INFOS_CREATE_MUTATION,

@@ -23,7 +23,7 @@ import {
   Component,
   ComponentProps,
 } from '../../pages/evses/variable-attributes/components/Component';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   VARIABLE_GET_QUERY,
   VARIABLE_LIST_BY_COMPONENT_QUERY,
@@ -35,11 +35,11 @@ import {
 import { Evse } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
-import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { EvseProps } from '../../pages/evses/EvseProps';
-import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo

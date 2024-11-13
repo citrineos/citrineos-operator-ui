@@ -11,9 +11,9 @@ import { DeleteCertificateStatusEnumType } from '@citrineos/base';
 import { showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import { BaseRestClient } from '../../util/BaseRestClient';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import { BaseRestClient } from '@util/BaseRestClient';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import {
   InstalledCertificate,

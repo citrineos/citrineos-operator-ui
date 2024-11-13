@@ -11,7 +11,7 @@ import {
   MutabilityEnumType,
 } from '@citrineos/base';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '../../resource-type';
 import { Component, ComponentProps } from './components/Component';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
