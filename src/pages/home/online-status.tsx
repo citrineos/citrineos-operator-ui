@@ -100,6 +100,8 @@ const getOnlineStatusCountsForStation = (
             // no handling
             break;
         }
+      } else {
+        counts.unavailable++;
       }
     }
   }

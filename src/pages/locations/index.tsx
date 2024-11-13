@@ -17,7 +17,7 @@ import {
 import { LOCATIONS_COLUMNS } from './table-config';
 import { GoogleMapContainer, MarkerProps } from '../../components/map';
 import { LocationMarker } from './location-marker';
-import { Button, Space, AutoComplete, Input } from 'antd';
+import { AutoComplete, Button, Input, Space } from 'antd';
 import { EnvironmentOutlined, TableOutlined } from '@ant-design/icons';
 import { Locations } from '../../graphql/schema.types';
 import { MdOutlineLocationOn } from 'react-icons/md';
@@ -135,16 +135,13 @@ export const LocationsList: React.FC<IDataModelListProps> = (props) => {
           style={{
             width: '100%',
             height: '100%',
-            textAlign: 'center',
-            alignItems: 'center',
-            marginBottom: '60px',
+            textAlign: 'start',
+            alignItems: 'start',
+            margin: '10px',
             justifyContent: 'center',
           }}
         >
           <AutoComplete
-            style={{
-              width: '98%',
-            }}
             options={filteredLocations.map((location) => ({
               value: location.id,
               label: `${location.name} - ${location.address}`,
@@ -153,19 +150,9 @@ export const LocationsList: React.FC<IDataModelListProps> = (props) => {
             value={searchQuery}
             onSearch={handleSearch}
             onChange={setSearchQuery}
-            placeholder="Search locations..."
             onSelect={(value) => (window.location.href = `/locations/${value}`)}
           >
-            <Input
-              style={{
-                width: '100%',
-                color: 'black',
-                height: '50px',
-                padding: '10px',
-                borderBlockColor: 'transparent',
-                backgroundColor: 'white',
-              }}
-            />
+            <Input placeholder="Search for a location" />
           </AutoComplete>
           <GoogleMapContainer
             markers={markers}
