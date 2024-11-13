@@ -9,14 +9,14 @@ import {
   VARIABLE_ATTRIBUTE_CREATE_MUTATION,
   VARIABLE_ATTRIBUTE_DELETE_MUTATION,
   VARIABLE_ATTRIBUTE_EDIT_MUTATION,
-  VARIABLE_ATTRIBUTE_LIST_QUERY,
+  VARIABLE_ATTRIBUTE_GET_QUERY,
 } from './queries';
 
 export const VariableAttributesView: React.FC = () => {
   return (
     <GenericView
       dtoClass={VariableAttribute}
-      gqlQuery={VARIABLE_ATTRIBUTE_LIST_QUERY}
+      gqlQuery={VARIABLE_ATTRIBUTE_GET_QUERY}
       editMutation={VARIABLE_ATTRIBUTE_EDIT_MUTATION}
       createMutation={VARIABLE_ATTRIBUTE_CREATE_MUTATION}
       deleteMutation={VARIABLE_ATTRIBUTE_DELETE_MUTATION}
@@ -27,9 +27,7 @@ export const VariableAttributesView: React.FC = () => {
 export const VariableAttributesList = (_props: IDataModelListProps) => {
   return (
     <>
-      <GenericDataTable
-        dtoClass={VariableAttribute}
-      />
+      <GenericDataTable dtoClass={VariableAttribute} />
     </>
   );
 };
