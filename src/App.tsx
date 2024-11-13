@@ -23,7 +23,13 @@ import routerBindings, {
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { Header } from './components';
 import { ColorModeContextProvider } from './contexts/color-mode';
 import {
@@ -229,6 +235,7 @@ function App() {
                       </ThemedLayoutV2>
                     }
                   >
+                    <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route index path="/home/*" element={<HomeRoutes />} />
                     <Route
                       element={<NavigateToResource resource="Authorizations" />}
