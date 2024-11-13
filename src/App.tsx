@@ -186,6 +186,8 @@ const resources = [
   ...serverNetworkProfilesResources,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
+const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
+
 function App() {
   return (
     <BrowserRouter>
@@ -214,7 +216,7 @@ function App() {
                         data-testid="citrine-os-icon"
                       />
                     ),
-                    text: 'Citrine OS',
+                    text: `Citrine OS ${CITRINEOS_VERSION}`,
                   },
                 }}
               >
