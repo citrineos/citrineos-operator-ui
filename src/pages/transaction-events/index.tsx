@@ -2,7 +2,6 @@ import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericParameterizedView, GenericView } from '../../components/view';
-import { GenericParameterizedView, GenericView } from '../../components/view';
 import {
   TRANSACTION_EVENT_CREATE_MUTATION,
   TRANSACTION_EVENT_DELETE_MUTATION,
