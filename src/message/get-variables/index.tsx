@@ -15,31 +15,33 @@ import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import {
-  Variable,
-  VariableProps,
-} from '../../pages/evses/variable-attributes/variables/Variable';
-import {
-  Component,
-  ComponentProps,
-} from '../../pages/evses/variable-attributes/components/Component';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import {
-  VARIABLE_GET_QUERY,
-  VARIABLE_LIST_BY_COMPONENT_QUERY,
-} from '../../pages/evses/variable-attributes/variables/queries';
-import {
-  COMPONENT_GET_QUERY,
-  COMPONENT_LIST_QUERY,
-} from '../../pages/evses/variable-attributes/components/queries';
+
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+
 import { Evse } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
-import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { EvseProps } from '../../pages/evses/EvseProps';
-import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
+import {
+  Variable,
+  VariableProps,
+} from '../../pages/variable-attributes/variables/Variable';
+import {
+  Component,
+  ComponentProps,
+} from '../../pages/variable-attributes/components/Component';
+import {
+  COMPONENT_GET_QUERY,
+  COMPONENT_LIST_QUERY,
+} from '../../pages/variable-attributes/components/queries';
+import {
+  VARIABLE_GET_QUERY,
+  VARIABLE_LIST_BY_COMPONENT_QUERY,
+} from '../../pages/variable-attributes/variables/queries';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo

@@ -10,18 +10,18 @@ import {
   DataEnumType,
   MutabilityEnumType,
 } from '@citrineos/base';
-import { ClassResourceType } from '../../../util/decorators/ClassResourceType';
-import { ResourceType } from '../../../resource-type';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
+import { ResourceType } from '../../resource-type';
 import { Component, ComponentProps } from './components/Component';
 import { Type } from 'class-transformer';
-import { GqlAssociation } from '../../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   COMPONENT_GET_QUERY,
   COMPONENT_LIST_QUERY,
 } from './components/queries';
 import { Variable, VariableProps } from './variables/Variable';
 import { VARIABLE_GET_QUERY, VARIABLE_LIST_QUERY } from './variables/queries';
-import { ClassGqlListQuery } from '../../../util/decorators/ClassGqlListQuery';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import {
   VARIABLE_ATTRIBUTE_CREATE_MUTATION,
   VARIABLE_ATTRIBUTE_DELETE_MUTATION,
@@ -29,13 +29,13 @@ import {
   VARIABLE_ATTRIBUTE_GET_QUERY,
   VARIABLE_ATTRIBUTE_LIST_QUERY,
 } from './queries';
-import { ClassGqlDeleteMutation } from '../../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../../util/decorators/PrimaryKeyFieldName';
-import { ClassGqlEditMutation } from '../../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlGetQuery } from '../../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../../util/decorators/ClassGqlCreateMutation';
-import { BaseModel } from '../../../util/BaseModel';
-import { LabelField } from '../../../util/decorators/LabelField';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { BaseModel } from '@util/BaseModel';
+import { LabelField } from '@util/decorators/LabelField';
 
 export enum VariableAttributeProps {
   id = 'id',

@@ -2,6 +2,7 @@ import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericParameterizedView, GenericView } from '../../components/view';
+import { GenericParameterizedView, GenericView } from '../../components/view';
 import {
   TRANSACTION_EVENT_CREATE_MUTATION,
   TRANSACTION_EVENT_DELETE_MUTATION,
@@ -12,7 +13,7 @@ import { TransactionEvent } from './TransactionEvent';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MdOutlineEventRepeat } from 'react-icons/md';
 import { GenericDataTable } from '../../components/data-model-table/editable';
-import { GenericViewState } from '../../model/enums';
+import { GenericViewState } from '@enums';
 
 export const TransactionEventView: React.FC = () => {
   return (

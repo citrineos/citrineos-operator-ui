@@ -2,10 +2,10 @@ import { Form } from 'antd';
 import React from 'react';
 import { renderField } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
-import { getProperty, setProperty } from '../../util/objects';
+import { getProperty, setProperty } from '@util/objects';
 import { AssociatedView } from '../data-model-table/associated-view';
-import { NestedObjectFieldProps } from '../../model/interfaces';
-import { renderLabel } from '../../util/renderUtil';
+import { NestedObjectFieldProps } from '@interfaces';
+import { renderLabel } from '@util/renderUtil';
 
 export const NestedObjectField: (
   props: NestedObjectFieldProps,

@@ -2,7 +2,7 @@ import { Cell, Pie, PieChart, Sector } from 'recharts';
 import React from 'react';
 import { ChartWrapper } from './chart-wrapper';
 import { GET_CHARGING_STATIONS_WITH_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS } from './queries';
-import { useGqlCustom } from '../../util/use-gql-custom';
+import { useGqlCustom } from '@util/use-gql-custom';
 import { Transaction } from '../transactions/Transaction';
 import { StatusNotification } from '../status-notifications/StatusNotification';
 import { ChargingStation } from '../charging-stations/ChargingStation';

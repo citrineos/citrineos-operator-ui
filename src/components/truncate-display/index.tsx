@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover, Tag } from 'antd';
-import { DefaultColors } from '../tag';
-import { IDDisplayProps } from '../../model/interfaces';
+import { IDDisplayProps } from '@interfaces';
+import { DefaultColors } from '@enums';
 
 export const TruncateDisplay: React.FC<IDDisplayProps> = ({
   id,

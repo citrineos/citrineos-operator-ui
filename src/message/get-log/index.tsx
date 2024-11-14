@@ -7,7 +7,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GetLogRequest, GetLogRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import { BaseRestClient } from '@util/BaseRestClient';
 import { LogEnumType } from '@citrineos/base';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 

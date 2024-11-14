@@ -1,27 +1,21 @@
 import { plainToInstance } from 'class-transformer';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import { Alert } from 'antd';
 import { ExpandableColumn } from './expandable-column';
 import GenericTag from '../tag';
 import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
-import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
-import { Constructable } from '../../util/Constructable';
 import { useForm } from '@refinedev/antd';
 import { GenericParameterizedView } from '../view';
-import { LABEL_FIELD } from '../../util/decorators/LabelField';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { LABEL_FIELD } from '@util/decorators/LabelField';
+import { NEW_IDENTIFIER } from '@util/consts';
 import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
-} from '../../util/decorators/PrimaryKeyFieldName';
-import { GenericViewState } from '../../model/enums';
+} from '@util/decorators/PrimaryKeyFieldName';
+import { GenericViewState } from '@enums';
+import { AssociatedViewProps } from '@interfaces';
 
-export interface AssociatedViewProps<ParentModel, AssociatedModel>
-  extends GqlAssociationProps {
-  parentRecord: ParentModel; // record
-  associatedRecordClass: Constructable<AssociatedModel>; // record class
-}
 export const AssociatedView = <ParentModel, AssociatedModel>(
   props: AssociatedViewProps<ParentModel, AssociatedModel>,
 ) => {

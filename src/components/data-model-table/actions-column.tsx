@@ -1,29 +1,9 @@
-import { DocumentNode } from 'graphql';
 import { DeleteButton, EditButton, ShowButton } from '@refinedev/antd';
 import { Space } from 'antd';
-import { CustomAction, CustomActions } from '../custom-actions';
+import { CustomActions } from '../custom-actions';
 import React from 'react';
-
-export enum ColumnAction {
-  DELETE = 'DELETE',
-  EDIT = 'EDIT',
-  SHOW = 'SHOW',
-  SAVE = 'SAVE',
-  CANCEL = 'CANCEL',
-}
-
-export interface IActionsColumnProps {
-  record: any;
-  idField?: string;
-  gqlDeleteMutation?: DocumentNode;
-  actions?: ColumnActionProps[];
-  customActions?: CustomAction<any>[];
-}
-
-export interface ColumnActionProps {
-  type: ColumnAction;
-  override?: any; // Override the component that is already mapped in ColumnActionDefaultElements
-}
+import { ColumnAction } from '@enums';
+import { ColumnActionProps, IActionsColumnProps } from '@interfaces';
 
 export const ColumnActionDefaultElements = {
   [ColumnAction.DELETE]: ({ record, idField, gqlDeleteMutation }: any) => (

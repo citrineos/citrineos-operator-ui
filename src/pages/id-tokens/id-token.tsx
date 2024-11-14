@@ -1,14 +1,14 @@
-import { BaseModel } from '../../util/BaseModel';
+import { BaseModel } from '@util/BaseModel';
 import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { IdTokenEnumType } from '@citrineos/base';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   ID_TOKENS_CREATE_MUTATION,
   ID_TOKENS_DELETE_MUTATION,

@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import TransformDatetime from '../../util/TransformDatetime';
+import TransformDatetime from '@util/TransformDatetime';
 import { Type } from 'class-transformer';
 import {
   ChargingLimitSourceEnumType,

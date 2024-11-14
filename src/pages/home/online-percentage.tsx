@@ -3,7 +3,7 @@ import { Cell, Pie, PieChart, Sector } from 'recharts';
 import React, { useState } from 'react';
 import { ChartWrapper } from './chart-wrapper';
 import { GET_CHARGING_STATIONS_ONLINE_COUNTS } from './queries';
-import { useGqlCustom } from '../../util/use-gql-custom';
+import { useGqlCustom } from '@util/use-gql-custom';
 
 const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180;

@@ -11,8 +11,9 @@ import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import { AssociatedTransaction } from '../transactions';
-import GenericTag, { DefaultColors } from '../../components/tag';
+import GenericTag from '../../components/tag';
 import { MessageInfo } from './MessageInfo';
+import { DefaultColors } from '@enums';
 
 export const MESSAGE_INFOS_COLUMNS = (
   withActions: boolean,

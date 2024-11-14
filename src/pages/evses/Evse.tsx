@@ -1,18 +1,11 @@
 import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
-import {
-  VariableAttribute,
-  VariableAttributeProps,
-} from './variable-attributes/VariableAttributes';
+
 import { Type } from 'class-transformer';
-import { FieldLabel } from '../../util/decorators/FieldLabel';
+import { FieldLabel } from '@util/decorators/FieldLabel';
 import { ResourceType } from '../../resource-type';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import {
-  VARIABLE_ATTRIBUTE_GET_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_QUERY,
-} from './variable-attributes/queries';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+
 import {
   EVSE_CREATE_MUTATION,
   EVSE_DELETE_MUTATION,
@@ -20,14 +13,23 @@ import {
   EVSE_GET_QUERY,
   EVSE_LIST_QUERY,
 } from './queries';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { BaseModel } from '../../util/BaseModel';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { BaseModel } from '@util/BaseModel';
 import { EvseProps } from './EvseProps';
+import {
+  VariableAttribute,
+  VariableAttributeProps,
+} from '../variable-attributes/VariableAttributes';
+import {
+  VARIABLE_ATTRIBUTE_GET_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_QUERY,
+} from '../variable-attributes/queries';
 
 @ClassResourceType(ResourceType.EVSES)
 @ClassGqlListQuery(EVSE_LIST_QUERY)

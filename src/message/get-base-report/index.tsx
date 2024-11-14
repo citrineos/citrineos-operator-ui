@@ -8,7 +8,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GetBaseReportRequest, GetBaseReportRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import { BaseRestClient } from '@util/BaseRestClient';
 import { ReportBaseEnumType } from '@citrineos/base';
 
 export interface GetBaseReportProps {
