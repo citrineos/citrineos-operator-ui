@@ -239,16 +239,19 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
           const evse: Evse = item[GetVariablesDataProps.evse]!;
           const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
-          return {
+          let evsePayload: any = undefined;
+          if (evse[EvseProps.databaseId]) {
+            evsePayload = {
+              id: evse[EvseProps.databaseId],
+              // customData: null // todo
+            };
+          }
+          if (evsePayload && evse[EvseProps.connectorId]) {
+            evsePayload.connectorId = evse[EvseProps.connectorId];
+          }
+          const data: any = {
             component: {
               name: component[ComponentProps.name],
-              evse: evse[EvseProps.databaseId]
-                ? {
-                    id: evse[EvseProps.databaseId],
-                    connectorId: evse[EvseProps.connectorId],
-                    // customData: null // todo
-                  }
-                : undefined,
               instance: item[GetVariablesDataProps.componentInstance],
               // customData: null // todo
             },
@@ -260,6 +263,10 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
             attributeType: item[GetVariablesDataProps.attributeType],
             // customData: null // todo
           };
+          if (evsePayload) {
+            data.component.evse = evsePayload;
+          }
+          return data;
         } else {
           return null;
         }
