@@ -1,21 +1,19 @@
+import { setupTestEnvironment } from '../utils/test-setup';
+
 describe('Charging station actions', () => {
+  const graphqlUrl = 'http://localhost:8090/v1/graphql';
+  const fixtures = [
+    'ChargingStationsList',
+    'GetEvseListForStation',
+    'GetLocationById',
+  ];
+
   beforeEach(() => {
-    cy.clearAllCookies();
-    cy.clearAllLocalStorage();
-    cy.clearAllSessionStorage();
-
-    //TODO figure out why this is thrown!
-    const stub = cy.stub();
-    Cypress.on('uncaught:exception', (err, _runnable) => {
-      if (err.message.includes('ResizeObserver')) {
-        stub();
-        return false;
-      }
-    });
-
+    setupTestEnvironment(graphqlUrl, fixtures, 'charging_stations');
     cy.visit('http://localhost:5173/charging-stations');
+    cy.wait('@gqlChargingStationsList');
+    cy.wait('@gqlGetLocationById');
   });
-
   it('Reset charging station immediately', () => {
     //Mock response to avoid having to connect real charger during test
     cy.intercept('POST', /\/configuration\/reset\?identifier=.*&tenantId=1$/, {
@@ -42,9 +40,16 @@ describe('Charging station actions', () => {
     cy.get('.ant-select-dropdown')
       .should('not.have.class', 'ant-select-dropdown-hidden')
       .and('be.visible');
+    cy.wait('@gqlGetEvseListForStation');
     cy.getByData('field-type-input-option-Immediate')
       .should('be.visible')
       .click();
+    // cy.getByData('evse-editable-cell')
+    //   .should('be.visible')
+    //   .within(() => {
+    //     cy.getByData('expandable-column-clickable-span').click()
+    //   });
+
     cy.getByData('ResetData2-generic-form-submit').click();
 
     cy.wait('@resetRequest');

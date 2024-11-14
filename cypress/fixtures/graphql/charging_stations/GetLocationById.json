@@ -1,0 +1,28 @@
+{
+  "data": {
+    "Locations_by_pk": {
+      "id": 4,
+      "name": "Home",
+      "address": "Home sweet home",
+      "city": "Home",
+      "postalCode": "94117",
+      "state": "NY",
+      "country": "USA",
+      "coordinates": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "urn:ogc:def:crs:EPSG::4326"
+          }
+        },
+        "coordinates": [
+          -73.97926328905082,
+          40.76676968761191
+        ]
+      },
+      "createdAt": "2024-09-26T16:40:14.028+00:00",
+      "updatedAt": "2024-09-26T16:40:14.028+00:00"
+    }
+  }
+}

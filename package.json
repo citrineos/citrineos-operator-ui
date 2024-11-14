@@ -88,7 +88,7 @@
     "clean-tsbuildinfo": "find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -exec rm -f {} +",
     "clean-dist": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} +",
     "clean": "npm run clean-dist && npm run clean-tsbuildinfo",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open -C cypress/cypress.config.ts"
   },
   "browserslist": {
     "production": [

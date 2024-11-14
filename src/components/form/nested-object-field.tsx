@@ -72,6 +72,7 @@ export const NestedObjectField: (
                     toggleOptionalField,
                   )
             }
+            data-testid={`${fieldPath.namePath}-editable-cell`}
           >
             <AssociationSelection
               fieldPath={fieldPath}

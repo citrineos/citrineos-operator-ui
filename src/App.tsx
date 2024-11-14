@@ -229,6 +229,7 @@ function App() {
                     ),
                     text: `Citrine OS ${CITRINEOS_VERSION}`,
                   },
+                  disableTelemetry: true,
                 }}
               >
                 <Routes>
