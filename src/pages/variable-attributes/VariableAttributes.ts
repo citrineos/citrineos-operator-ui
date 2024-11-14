@@ -136,8 +136,8 @@ export class VariableAttribute extends BaseModel {
         [VariableAttributeProps.mutability]: data.mutability,
         [VariableAttributeProps.persistent]: data.persistent,
         [VariableAttributeProps.constant]: data.constant,
-        [VariableAttributeProps.variableId]: data.Variable,
-        [VariableAttributeProps.componentId]: data.Component,
+        [VariableAttributeProps.variableId]: data.variableId,
+        [VariableAttributeProps.componentId]: data.componentId,
         [VariableAttributeProps.evseDatabaseId]: data.evseDatabaseId,
         [VariableAttributeProps.generatedAt]: data.generatedAt,
       });
