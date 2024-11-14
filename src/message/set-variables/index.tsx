@@ -1,18 +1,6 @@
 import React from 'react';
 import { Form } from 'antd';
-import {
-  Variable,
-  VariableProps,
-} from '../../pages/evses/variable-attributes/variables/Variable';
-import {
-  VARIABLE_LIST_BY_COMPONENT_QUERY,
-  VARIABLE_LIST_QUERY,
-} from '../../pages/evses/variable-attributes/variables/queries';
-import {
-  Component,
-  ComponentProps,
-} from '../../pages/evses/variable-attributes/components/Component';
-import { COMPONENT_LIST_QUERY } from '../../pages/evses/variable-attributes/components/queries';
+
 import { plainToInstance, Type } from 'class-transformer';
 import {
   ArrayMinSize,
@@ -31,6 +19,19 @@ import { GenericForm } from '../../components/form';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
+import {
+  Variable,
+  VariableProps,
+} from '../../pages/variable-attributes/variables/Variable';
+import {
+  Component,
+  ComponentProps,
+} from '../../pages/variable-attributes/components/Component';
+import { COMPONENT_LIST_QUERY } from '../../pages/variable-attributes/components/queries';
+import {
+  VARIABLE_LIST_BY_COMPONENT_QUERY,
+  VARIABLE_LIST_QUERY,
+} from '../../pages/variable-attributes/variables/queries';
 
 enum SetVariablesDataProps {
   component = 'component',

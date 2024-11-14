@@ -101,7 +101,7 @@ import {
   routes as VariableMonitoringsRoutes,
 } from './pages/variable-monitorings';
 import {
-  resources as VariableAttributesResources,
+  resources as variableAttributesResources,
   routes as VariableAttributesRoutes,
 } from './pages/variable-attributes';
 import { routes as HomeRoutes } from './pages/home';
@@ -189,7 +189,7 @@ const resources = [
   ...chargingProfilesResources,
   ...messageInfosResources,
   ...variableMonitoringsResources,
-  ...VariableAttributesResources,
+  ...variableAttributesResources,
   ...certificatesResources,
   ...reservationsResources,
   ...evsesResources,

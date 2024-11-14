@@ -50,6 +50,59 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
   }
 `;
 
+export const VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY = gql`
+  query VariableAttributeListByEvse(
+    $evseDatabaseId: Int!
+    $offset: Int
+    $limit: Int
+    $order_by: [VariableAttributes_order_by!] = {}
+    $where: [VariableAttributes_bool_exp!] = []
+  ) {
+    VariableAttributes(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: { evseDatabaseId: { _eq: $evseDatabaseId }, _and: $where }
+    ) {
+      id
+      stationId
+      type
+      dataType
+      value
+      mutability
+      persistent
+      constant
+      variableId
+      componentId
+      evseDatabaseId
+      createdAt
+      updatedAt
+      Variable {
+        id
+        instance
+        name
+        createdAt
+        updatedAt
+      }
+      Component {
+        id
+        instance
+        name
+        evseDatabaseId
+        createdAt
+        updatedAt
+      }
+    }
+    VariableAttributes_aggregate(
+      where: { evseDatabaseId: { _eq: $evseDatabaseId }, _and: $where }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const VARIABLE_ATTRIBUTE_GET_QUERY = gql`
   query GetVariableAttributeById($id: Int!) {
     VariableAttributes_by_pk(id: $id) {
