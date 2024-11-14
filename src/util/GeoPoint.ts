@@ -35,6 +35,9 @@ export class GeoPoint {
   }
 
   static parse(value: GeoPoint | Point): GeoPoint {
+    if (value === null || value === undefined) {
+      return undefined;
+    }
     if (isGeoPoint(value)) {
       return value;
     } else {
