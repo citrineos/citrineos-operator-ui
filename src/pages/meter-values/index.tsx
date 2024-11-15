@@ -44,7 +44,6 @@ export const resources = [
     list: '/meter-values',
     create: '/meter-values/new',
     show: '/meter-values/:id',
-    edit: '/meter-values/:id/edit',
     meta: {
       canDelete: true,
     },

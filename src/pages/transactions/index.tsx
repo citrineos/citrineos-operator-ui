@@ -48,7 +48,6 @@ export const resources = [
     list: '/transactions',
     create: '/transactions/new',
     show: '/transactions/:id',
-    edit: '/transactions/:id/edit',
     meta: {
       canDelete: true,
     },

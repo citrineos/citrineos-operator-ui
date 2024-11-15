@@ -64,7 +64,6 @@ export const resources = [
     list: '/certificates',
     create: '/certificates/new',
     show: '/certificates/:id',
-    edit: '/certificates/:id/edit',
     meta: {
       canDelete: true,
     },
