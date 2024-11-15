@@ -55,4 +55,51 @@ describe('Charging station actions', () => {
     cy.wait('@resetRequest');
     cy.getByData('success-notification').should('be.visible');
   });
+
+  it.only('Start remoteStart', () => {
+    //Mock response to avoid having to connect real charger during test
+    cy.intercept(
+      'POST',
+      '/ocpp/evdriver/requestStartTransaction?identifier=cp001&tenantId=1',
+      {
+        statusCode: 200,
+        body: {
+          success: true,
+          message: 'Transaction started successfully',
+        },
+      },
+    ).as('requestStartTransaction');
+
+    cy.getByData('custom-action-dropdown-button').click();
+    cy.get('.ant-dropdown') // Target the dropdown container
+      .within(() => {
+        cy.get('[role="menuitem"]').contains('Remote Start').click();
+      });
+
+    cy.getByData('field-remoteStartId-input')
+      .should('be.visible')
+      .clear()
+      .type('42');
+    cy.getByData('RequestStartTransactionRequest2-generic-form-submit').click();
+    cy.wait('@requestStartTransaction');
+    cy.getByData('success-notification').should('be.visible');
+
+    // cy.get('.ant-select-dropdown')
+    //   .should('not.have.class', 'ant-select-dropdown-hidden')
+    //   .and('be.visible');
+    // cy.wait('@gqlGetEvseListForStation');
+    // cy.getByData('field-type-input-option-Immediate')
+    //   .should('be.visible')
+    //   .click();
+    // // cy.getByData('evse-editable-cell')
+    // //   .should('be.visible')
+    // //   .within(() => {
+    // //     cy.getByData('expandable-column-clickable-span').click()
+    // //   });
+    //
+    // cy.getByData('ResetData2-generic-form-submit').click();
+    //
+    // cy.wait('@resetRequest');
+    // cy.getByData('success-notification').should('be.visible');
+  });
 });
