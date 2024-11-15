@@ -1,15 +1,37 @@
-name: End-to-end tests
-on: push
+name: Cypress tests
+on:
+  pull_request:
+
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # Install npm dependencies, cache them correctly
-      # and run all Cypress tests
+      - name: Clone citrineos-core repository
+        run: git clone -b rc-1.5.0 https://github.com/citrineos/citrineos-core.git ../citrineos-core
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install core and build as a dependency
+        run: |
+          npm install
+          npm run build:base:esm
+        working-directory: ../citrineos-core
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           start: npm run dev
-          spec: cypress/e2e/charging_stations.cy.js
+          browser: chrome
