@@ -4,7 +4,7 @@ import { Constructable } from '@util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 
-export const showSucces = (payload?: string) => {
+export const showSuccess = (payload?: string) => {
   notification.success({
     message: 'Success',
     description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
@@ -64,7 +64,7 @@ export const triggerMessageAndHandleResponse = async <T,>({
 
     // todo reuse handle response!
     if (responseSuccessCheck(response)) {
-      showSucces((response as any).payload);
+      showSuccess((response as any).payload);
     } else {
       let msg = 'The request did not receive a successful response.';
       if ((response as any).payload) {
