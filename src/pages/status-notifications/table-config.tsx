@@ -6,6 +6,7 @@ import { StatusNotifications } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { ChargingStationsList } from '../charging-stations';
+import { ColumnAction } from '@enums';
 
 export const STATUS_NOTIFICATIONS_COLUMNS = (
   withActions: boolean,
@@ -75,6 +76,7 @@ export const STATUS_NOTIFICATIONS_COLUMNS = (
         <ActionsColumn
           record={record}
           gqlDeleteMutation={STATUS_NOTIFICATIONS_DELETE_MUTATION}
+          actions={[{ type: ColumnAction.SHOW }, { type: ColumnAction.DELETE }]}
         />
       ),
     });

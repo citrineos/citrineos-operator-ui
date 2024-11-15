@@ -3,6 +3,7 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { SecurityEvents } from '../../graphql/schema.types';
 import { ResourceType } from '../../resource-type';
 import { SECURITY_EVENTS_DELETE_MUTATION } from './queries';
+import { ColumnAction } from '@enums';
 
 export const SECURITY_EVENTS_COLUMNS = (
   withActions: boolean,
@@ -44,6 +45,7 @@ export const SECURITY_EVENTS_COLUMNS = (
         <ActionsColumn
           record={record}
           gqlDeleteMutation={SECURITY_EVENTS_DELETE_MUTATION}
+          actions={[{ type: ColumnAction.SHOW }, { type: ColumnAction.DELETE }]}
         />
       ),
     });

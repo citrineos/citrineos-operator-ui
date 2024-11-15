@@ -10,7 +10,7 @@ import React from 'react';
 import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { CustomAction } from '../../components/custom-actions';
-import { DefaultColors } from '@enums';
+import { ColumnAction, DefaultColors } from '@enums';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,
@@ -123,8 +123,9 @@ export const CERTIFICATES_COLUMNS = (
       render: (_: any, record: any) => (
         <ActionsColumn
           record={record}
-          gqlDeleteMutation={CERTIFICATES_DELETE_MUTATION}
           customActions={customActions}
+          gqlDeleteMutation={CERTIFICATES_DELETE_MUTATION}
+          actions={[{ type: ColumnAction.SHOW }, { type: ColumnAction.DELETE }]}
         />
       ),
     });
