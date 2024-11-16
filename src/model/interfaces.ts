@@ -19,6 +19,14 @@ import { Unknowns } from '../components/form/state/unknowns';
 import { MouseEventHandler } from 'react';
 import { DocumentNode } from 'graphql';
 
+export interface ChargingStations {
+  id: string;
+  isOnline: boolean;
+  locationId: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface FieldSelectOption {
   label: string;
   value: string;
@@ -296,4 +304,11 @@ export interface ValueDisplayProps {
   prefix?: string; // Text to display before the value
   suffix?: string; // Text to display after the value
   color?: DefaultColors; // Color of the Tag
+}
+
+export interface AssociatedTableProps<AssociatedModel> {
+  associatedRecordClass: Constructable<AssociatedModel>; // record class
+  gqlQuery: any;
+  gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
 }

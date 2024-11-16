@@ -48,6 +48,18 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
   }
 `;
 
+export const CHARGING_STATIONS_GET_ALL_QUERY = gql`
+  query GetAllChargingStations {
+    ChargingStations(order_by: { isOnline: desc_nulls_last }) {
+      id
+      isOnline
+      locationId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const CHARGING_STATIONS_GET_QUERY = gql`
   query GetChargingStationById($id: String!) {
     ChargingStations_by_pk(id: $id) {

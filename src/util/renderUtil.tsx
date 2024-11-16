@@ -9,16 +9,38 @@ import {
   Switch,
   Upload,
   DatePicker,
+  Alert,
 } from 'antd';
 import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { FieldSchema } from '@interfaces';
+import { useDispatch } from 'react-redux';
+import { useGqlCustom } from './use-gql-custom';
+import { plainToInstance } from 'class-transformer';
+
+import { FieldType } from '@enums';
+import { ChargingStations, FieldSchema } from '@interfaces';
 import { FieldPath } from '../components/form/state/fieldpath';
 import {
-  SupportedUnknownType,
   UnknownEntry,
+  SupportedUnknownType,
 } from '../components/form/state/unknowns';
-import { FieldType } from '@enums';
+import { setChargingStations } from '../redux/selectedChargingStationSlice';
+import { CHARGING_STATIONS_GET_ALL_QUERY } from '../pages/charging-stations/queries';
+
+// Utility function to fetch metadata and handle errors
+export const getMetadata = (
+  dtoClass: any,
+  key: string,
+  errorMessage: string,
+) => {
+  const dtoClassInstance = plainToInstance(dtoClass, {});
+
+  const metadata = Reflect.getMetadata(key, dtoClassInstance as object);
+  if (!metadata) {
+    return <Alert message={`Error: ${errorMessage}`} type="error" />;
+  }
+  return metadata;
+};
 
 export const renderUnknownValueField = (
   type: SupportedUnknownType,
@@ -34,6 +56,51 @@ export const renderUnknownValueField = (
     default:
       return null;
   }
+};
+
+export const ChargingStationSelect: React.FC<{
+  onChange: (value: string) => void;
+  onSearch?: (value: string) => void;
+  showSearch?: boolean;
+}> = ({ onChange, onSearch, showSearch = false }) => {
+  const dispatch = useDispatch();
+
+  const { data, isLoading, isError } = useGqlCustom({
+    gqlQuery: CHARGING_STATIONS_GET_ALL_QUERY,
+  });
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) {
+    return (
+      <Alert
+        message="Error"
+        description="Unable to get charging stations"
+        type="error"
+      />
+    );
+  }
+
+  const options = data?.data?.ChargingStations.map(
+    (station: ChargingStations) => ({
+      label: station.id,
+      value: station.id,
+      style: { color: station.isOnline ? 'green' : 'red' },
+    }),
+  );
+
+  dispatch(setChargingStations(data?.data?.ChargingStations || []));
+
+  return (
+    <Select
+      options={options}
+      onChange={onChange}
+      onSearch={onSearch}
+      style={{ width: 200 }}
+      showSearch={showSearch}
+      optionFilterProp="label"
+      placeholder="Select Charging Station"
+    />
+  );
 };
 
 export const renderUploadField = (

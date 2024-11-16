@@ -9,7 +9,11 @@ import {
   Typography,
 } from 'antd';
 import React, { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import { ColorModeContext } from '../../contexts/color-mode';
+
+import { ChargingStationSelect } from '@util/renderUtil';
+import { setCurrentValue } from '../../redux/selectedChargingStationSlice';
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -24,8 +28,13 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   sticky = true,
 }) => {
   const { token } = useToken();
+  const dispatch = useDispatch();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+
+  const onChange = (value: string) => {
+    dispatch(setCurrentValue({ value }));
+  };
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
@@ -45,6 +54,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   return (
     <AntdLayout.Header style={headerStyles}>
       <Space>
+        <ChargingStationSelect onChange={onChange} />
+
         <Switch
           checkedChildren="🌛"
           unCheckedChildren="🔆"
