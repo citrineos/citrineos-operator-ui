@@ -17,8 +17,9 @@ import { useDispatch } from 'react-redux';
 import { useGqlCustom } from './use-gql-custom';
 import { plainToInstance } from 'class-transformer';
 
+import { themes } from '../theme';
 import { FieldType } from '@enums';
-import { ChargingStations, FieldSchema } from '@interfaces';
+import { ChargingStations, FieldSchema, ThemeSelectorProps } from '@interfaces';
 import { FieldPath } from '../components/form/state/fieldpath';
 import {
   UnknownEntry,
@@ -56,6 +57,25 @@ export const renderUnknownValueField = (
     default:
       return null;
   }
+};
+
+export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onChange }) => {
+  const { Option } = Select;
+  localStorage.setItem('theme', 'default');
+  localStorage.setItem('themes', JSON.stringify(themes));
+
+  return (
+    <>
+      <span>Select Theme</span>
+      <Select defaultValue="default" style={{ width: 200 }} onChange={onChange}>
+        {Object.keys(themes).map((themeKey) => (
+          <Option key={themeKey} value={themeKey}>
+            {themeKey}
+          </Option>
+        ))}
+      </Select>
+    </>
+  );
 };
 
 export const ChargingStationSelect: React.FC<{

@@ -27,6 +27,10 @@ export interface ChargingStations {
   updatedAt: Date;
 }
 
+export interface ThemeSelectorProps {
+  onChange: (theme: any) => void;
+}
+
 export interface FieldSelectOption {
   label: string;
   value: string;

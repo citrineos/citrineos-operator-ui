@@ -12,7 +12,7 @@ import React, { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import { ColorModeContext } from '../../contexts/color-mode';
 
-import { ChargingStationSelect } from '@util/renderUtil';
+import { ChargingStationSelect, ThemeSelector } from '@util/renderUtil';
 import { setCurrentValue } from '../../redux/selectedChargingStationSlice';
 
 const { Text } = Typography;
@@ -31,6 +31,10 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const dispatch = useDispatch();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+
+  const handleThemeChange = (themeKey: string) => {
+    localStorage.setItem('theme', themeKey);
+  };
 
   const onChange = (value: string) => {
     dispatch(setCurrentValue({ value }));
@@ -55,6 +59,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     <AntdLayout.Header style={headerStyles}>
       <Space>
         <ChargingStationSelect onChange={onChange} />
+        <ThemeSelector onChange={handleThemeChange} />
 
         <Switch
           checkedChildren="🌛"

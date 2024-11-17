@@ -9,7 +9,7 @@ import {
   useNotificationProvider,
 } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
-import { App as AntdApp, ConfigProvider } from 'antd';
+import { App as AntdApp, ConfigProvider, ThemeConfig } from 'antd';
 
 import dataProvider, {
   GraphQLClient,
@@ -130,7 +130,7 @@ import {
   resources as serverNetworkProfilesResources,
   routes as ServerNetworkProfilesRoutes,
 } from './pages/server-network-profiles';
-import { theme } from './theme';
+import { themes } from './theme';
 import { MainMenu } from './components/main-menu';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -199,12 +199,44 @@ const resources = [
 const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
 
 function App() {
+  // const [themeObject, setThemeObject] = React.useState<ThemeConfig | undefined>(
+  //   undefined,
+  // );
+
+  // const [theme, setTheme] = React.useState(
+  //   localStorage.getItem('theme') || 'default',
+  // );
+
+  // React.useEffect(() => {
+  //   const handleStorageChange = () => {
+  //     const newTheme = localStorage.getItem('theme') || 'default';
+  //     setTheme(newTheme);
+  //   };
+
+  //   window.addEventListener('storage', handleStorageChange);
+
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, []);
+
+  // React.useEffect(() => {
+  //   const themesString = localStorage.getItem('themes');
+  //   const themes = themesString ? JSON.parse(themesString) : null;
+
+  //   if (themes && themes[theme]) {
+  //     setThemeObject(themes[theme]);
+  //   } else {
+  //     throw new Error(`Theme "${theme}" not found.`);
+  //   }
+  // }, [theme]);
+
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
-            <ConfigProvider theme={theme}>
+            <ConfigProvider theme={themes.default}>
               <Refine
                 dataProvider={hasuraDataProvider}
                 liveProvider={liveProvider(webSocketClient)}
