@@ -1,5 +1,9 @@
-import { FormInstance, FormListFieldData, TableProps } from 'antd';
+import { DocumentNode } from 'graphql';
+import { MouseEventHandler } from 'react';
 import { UseFormReturnType } from '@refinedev/antd';
+import { FormInstance, FormListFieldData, TableProps } from 'antd';
+import type { RefineThemedLayoutV2HeaderProps as OriginalRefineThemedLayoutV2HeaderProps } from '@refinedev/antd';
+
 import { CustomAction } from '../components/custom-actions';
 import { ResourceType } from '../resource-type';
 import {
@@ -12,12 +16,10 @@ import {
 } from './enums';
 import { isDefined } from 'class-validator';
 import { Constructable } from '@util/Constructable';
-import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
-import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
-import { MouseEventHandler } from 'react';
-import { DocumentNode } from 'graphql';
+import { FieldPath } from '../components/form/state/fieldpath';
+import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
 
 export interface ChargingStations {
   id: string;
@@ -27,13 +29,15 @@ export interface ChargingStations {
   updatedAt: Date;
 }
 
-export interface ThemeSelectorProps {
-  onChange: (theme: any) => void;
-}
-
 export interface FieldSelectOption {
   label: string;
   value: string;
+}
+
+export interface RefineThemedLayoutV2HeaderProps
+  extends OriginalRefineThemedLayoutV2HeaderProps {
+  themeName: string;
+  handleThemeChange: (themeName: string) => void;
 }
 
 export interface IDDisplayProps {

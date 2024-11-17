@@ -19,7 +19,7 @@ import { plainToInstance } from 'class-transformer';
 
 import { themes } from '../theme';
 import { FieldType } from '@enums';
-import { ChargingStations, FieldSchema, ThemeSelectorProps } from '@interfaces';
+import { ChargingStations, FieldSchema } from '@interfaces';
 import { FieldPath } from '../components/form/state/fieldpath';
 import {
   UnknownEntry,
@@ -59,21 +59,27 @@ export const renderUnknownValueField = (
   }
 };
 
-export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onChange }) => {
-  const { Option } = Select;
-  localStorage.setItem('theme', 'default');
-  localStorage.setItem('themes', JSON.stringify(themes));
+export const ThemeSelector: React.FC<{
+  themeName: string;
+  onChange: (value: string) => void;
+}> = ({ themeName, onChange }) => {
+  const options = Object.keys(themes).map((themeKey) => ({
+    label: themeKey,
+    value: themeKey,
+  }));
 
   return (
     <>
-      <span>Select Theme</span>
-      <Select defaultValue="default" style={{ width: 200 }} onChange={onChange}>
-        {Object.keys(themes).map((themeKey) => (
-          <Option key={themeKey} value={themeKey}>
-            {themeKey}
-          </Option>
-        ))}
-      </Select>
+      <span>Use Theme: </span>
+      <Select
+        value={themeName}
+        options={options}
+        onChange={onChange}
+        defaultValue="default"
+        style={{ width: 200 }}
+        optionFilterProp="label"
+        placeholder="Select Theme"
+      />
     </>
   );
 };

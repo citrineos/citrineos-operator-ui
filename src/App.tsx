@@ -9,7 +9,7 @@ import {
   useNotificationProvider,
 } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
-import { App as AntdApp, ConfigProvider, ThemeConfig } from 'antd';
+import { App as AntdApp, ConfigProvider } from 'antd';
 
 import dataProvider, {
   GraphQLClient,
@@ -199,44 +199,36 @@ const resources = [
 const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
 
 function App() {
-  // const [themeObject, setThemeObject] = React.useState<ThemeConfig | undefined>(
-  //   undefined,
-  // );
+  type ThemeKeys = keyof typeof themes;
+  const [currentTheme, setCurrentTheme] = React.useState(themes.default);
+  const [currentThemeName, setCurrentThemeName] = React.useState('default');
 
-  // const [theme, setTheme] = React.useState(
-  //   localStorage.getItem('theme') || 'default',
-  // );
+  const switchTheme = (themeName: string) => {
+    const selectedTheme = themes[themeName as ThemeKeys];
 
-  // React.useEffect(() => {
-  //   const handleStorageChange = () => {
-  //     const newTheme = localStorage.getItem('theme') || 'default';
-  //     setTheme(newTheme);
-  //   };
-
-  //   window.addEventListener('storage', handleStorageChange);
-
-  //   return () => {
-  //     window.removeEventListener('storage', handleStorageChange);
-  //   };
-  // }, []);
-
-  // React.useEffect(() => {
-  //   const themesString = localStorage.getItem('themes');
-  //   const themes = themesString ? JSON.parse(themesString) : null;
-
-  //   if (themes && themes[theme]) {
-  //     setThemeObject(themes[theme]);
-  //   } else {
-  //     throw new Error(`Theme "${theme}" not found.`);
-  //   }
-  // }, [theme]);
+    if (selectedTheme) {
+      setCurrentThemeName(themeName);
+      setCurrentTheme((prevTheme) => ({
+        ...prevTheme,
+        ...selectedTheme,
+        token: {
+          ...prevTheme.token,
+          ...selectedTheme.token,
+        },
+        components: {
+          ...prevTheme.components,
+          ...selectedTheme.components,
+        },
+      }));
+    }
+  };
 
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
-            <ConfigProvider theme={themes.default}>
+            <ConfigProvider theme={currentTheme}>
               <Refine
                 dataProvider={hasuraDataProvider}
                 liveProvider={liveProvider(webSocketClient)}
@@ -266,7 +258,13 @@ function App() {
                   <Route
                     element={
                       <ThemedLayoutV2
-                        Header={() => <Header sticky />}
+                        Header={() => (
+                          <Header
+                            sticky
+                            themeName={currentThemeName}
+                            handleThemeChange={switchTheme}
+                          />
+                        )}
                         Sider={(props) => <MainMenu {...props} />}
                       >
                         <Outlet />

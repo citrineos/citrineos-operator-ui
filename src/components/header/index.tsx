@@ -1,4 +1,3 @@
-import type { RefineThemedLayoutV2HeaderProps } from '@refinedev/antd';
 import { useGetIdentity } from '@refinedev/core';
 import {
   Layout as AntdLayout,
@@ -14,6 +13,7 @@ import { ColorModeContext } from '../../contexts/color-mode';
 
 import { ChargingStationSelect, ThemeSelector } from '@util/renderUtil';
 import { setCurrentValue } from '../../redux/selectedChargingStationSlice';
+import { RefineThemedLayoutV2HeaderProps } from '@interfaces';
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -26,15 +26,13 @@ type IUser = {
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   sticky = true,
+  themeName = 'default',
+  handleThemeChange = () => {},
 }) => {
   const { token } = useToken();
   const dispatch = useDispatch();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
-
-  const handleThemeChange = (themeKey: string) => {
-    localStorage.setItem('theme', themeKey);
-  };
 
   const onChange = (value: string) => {
     dispatch(setCurrentValue({ value }));
@@ -59,13 +57,13 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     <AntdLayout.Header style={headerStyles}>
       <Space>
         <ChargingStationSelect onChange={onChange} />
-        <ThemeSelector onChange={handleThemeChange} />
+        <ThemeSelector themeName={themeName} onChange={handleThemeChange} />
 
         <Switch
           checkedChildren="🌛"
           unCheckedChildren="🔆"
-          onChange={() => setMode(mode === 'light' ? 'dark' : 'light')}
           defaultChecked={mode === 'dark'}
+          onChange={() => setMode(mode === 'light' ? 'dark' : 'light')}
         />
         <Space style={{ marginLeft: '8px' }} size="middle">
           {user?.name && <Text strong>{user.name}</Text>}
