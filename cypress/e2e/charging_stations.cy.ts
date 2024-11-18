@@ -78,16 +78,16 @@ describe('Charging station actions', () => {
 
     //TODO needs selection for idToken
 
-    cy.getByData('field-remoteStartId-input')
-      .should('be.visible')
-      .clear()
-      .type('42');
+    cy.getByData('field-remoteStartId-input').should('be.visible').clear();
+
+    cy.getByData('field-remoteStartId-input').type('42');
+
     cy.getByData('RequestStartTransactionRequest2-generic-form-submit').click();
     cy.wait('@requestStartTransaction');
     cy.getByData('success-notification').should('be.visible');
   });
 
-  it.only('Change Availability to inoperable', () => {
+  it('Change Availability to inoperable', () => {
     //Mock response to avoid having to connect real charger during test
     cy.intercept(
       'POST',

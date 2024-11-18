@@ -191,7 +191,7 @@ export const TableWrapper = forwardRef(function TableWrapper<
   return (
     <Col
       className="table-wrapper"
-      data-testId={`${dtoClass.name}-data-model-table`}
+      data-testId={`${dtoResourceType}-data-model-table`}
     >
       {searchableKeys && searchableKeys.size > 0 && (
         <Form {...searchFormProps} className="search-form">
@@ -200,7 +200,7 @@ export const TableWrapper = forwardRef(function TableWrapper<
               <Input
                 placeholder="Search"
                 onChange={handleSearchInputChange}
-                data-testId={`${dtoClass.name}-table-search`}
+                data-testId={`${dtoResourceType}-table-search`}
               />
             </Form.Item>
             <Col className="search-icon">

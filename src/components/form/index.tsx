@@ -773,7 +773,7 @@ export const GenericForm = forwardRef(function GenericForm(
       onValuesChange={onValuesChange}
       disabled={disabled}
       initialValues={initialValues}
-      // data-testid={`${dtoClass.name}-generic-form`}
+      data-testid={`${dtoClass.name}-generic-form`}
     >
       {schema.map((field) => {
         return renderField({

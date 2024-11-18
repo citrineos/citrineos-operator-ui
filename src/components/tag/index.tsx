@@ -56,7 +56,7 @@ const GenericTag = <T extends Record<string, string | number>>({
   }
 
   return (
-    <Tag color={color} data-testId="tag!">
+    <Tag color={color} data-testId={`${displayValue}-tag`}>
       {displayValue}
       {icon && <span style={{ marginLeft: 5 }}>{icon}</span>}
     </Tag>
