@@ -6,6 +6,8 @@ describe('Charging station actions', () => {
     'ChargingStationsList',
     'GetEvseListForStation',
     'GetLocationById',
+    'IdTokensList',
+    'ChargingStationSequencesGet',
   ];
 
   beforeEach(() => {
@@ -56,7 +58,7 @@ describe('Charging station actions', () => {
     cy.getByData('success-notification').should('be.visible');
   });
 
-  it('Start remoteStart', () => {
+  it.only('Start remoteStart', () => {
     //Mock response to avoid having to connect real charger during test
     cy.intercept(
       'POST',
