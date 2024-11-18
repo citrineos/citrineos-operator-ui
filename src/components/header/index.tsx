@@ -39,12 +39,12 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   };
 
   const headerStyles: React.CSSProperties = {
-    backgroundColor: token.colorBgElevated,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: '0px 24px',
     height: '64px',
+    display: 'flex',
+    padding: '0px 24px',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    backgroundColor: token.colorBgElevated,
   };
 
   if (sticky) {
