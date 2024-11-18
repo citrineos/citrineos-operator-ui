@@ -1,6 +1,6 @@
 import { FormInstance, FormListFieldData, TableProps } from 'antd';
 import { UseFormReturnType } from '@refinedev/antd';
-import { CustomAction } from '../components/custom-actions';
+import type { Dispatch } from 'redux';
 import { ResourceType } from '../resource-type';
 import {
   ColumnAction,
@@ -18,6 +18,23 @@ import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
 import { MouseEventHandler } from 'react';
 import { DocumentNode } from 'graphql';
+
+export interface CustomAction<T> {
+  label: string;
+  isVisible?: (arg?: T) => boolean;
+  execOrRender: (
+    setLoading: (loading: boolean) => void,
+    dispatch: Dispatch,
+    arg?: T,
+  ) => void | React.ReactNode;
+}
+
+export interface CustomActionsProps<T> {
+  actions?: CustomAction<T>[];
+  data?: T;
+  showInline?: boolean;
+  displayText?: string;
+}
 
 export interface FieldSelectOption {
   label: string;
@@ -193,14 +210,14 @@ export interface FieldAnnotations {
 
 export interface GenericDataTableProps {
   // todo make generic / typed
+  filters?: any;
+  editable?: boolean;
+  useTableProps?: any;
   dtoClass: Constructable<any>;
   selectable?: SelectionType | null;
-  filters?: any;
-  useTableProps?: any;
-  onSelectionChange?: (selectedRows: any[]) => void;
-  editable?: boolean;
   customActions?: CustomAction<any>[];
   fieldAnnotations?: FieldAnnotations;
+  onSelectionChange?: (selectedRows: any[]) => void;
 }
 
 export interface RenderEditableCellProps {
@@ -248,6 +265,8 @@ export interface TableWrapperProps<Model> extends TableProps<Model> {
   dtoResourceType?: string;
   dtoGqlListQuery?: any;
   gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
+  handleCreate?: () => void;
 }
 
 export interface TableWrapperRef<Model> {

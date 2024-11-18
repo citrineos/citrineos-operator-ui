@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { AutoComplete, Button, Collapse, Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -22,7 +22,6 @@ import { RootState } from '../../redux/store';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { CustomActions } from '../../components/custom-actions';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-
 import {
   CHARGING_STATIONS_CREATE_MUTATION,
   CHARGING_STATIONS_DELETE_MUTATION,
@@ -32,29 +31,51 @@ import {
 } from './queries';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 import { ChargingStationsListQuery } from '../../graphql/types';
-import { GenericViewState } from '../../model/enums';
+import { useDebounce } from '../../hooks/useDebounce';
+import { GenericViewState, SelectionType } from '@enums';
 
 const { Panel } = Collapse;
 const { Sider, Content } = Layout;
 
-export const ChargingStationsView: React.FC = () => {
+const styles = {
+  layout: { minHeight: '100vh' },
+  sidebar: { overflow: 'auto', height: '100vh' },
+  sidebarHeader: {
+    display: 'flex',
+    padding: '0 5px',
+    marginBottom: '15px',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  searchInput: { width: '100%', marginBottom: '15px' },
+};
+
+export const ChargingStationsView: React.FC = React.memo(() => {
   const [collapsed, setCollapsed] = useState(true);
   const [searchValue, setSearchValue] = useState('');
-  const [filteredActions, setFilteredActions] = useState(
-    CUSTOM_CHARGING_STATION_ACTIONS,
-  );
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
 
   const selectedChargingStation = useSelector((state: RootState) =>
     getSelectedChargingStation()(state),
   );
 
-  const station: ChargingStation = plainToInstance(
-    ChargingStation,
-    Array.isArray(selectedChargingStation)
-      ? selectedChargingStation
-      : [selectedChargingStation],
-  )[0];
+  const station = useMemo(
+    () =>
+      plainToInstance(
+        ChargingStation,
+        Array.isArray(selectedChargingStation)
+          ? selectedChargingStation
+          : [selectedChargingStation],
+      )[0],
+    [selectedChargingStation],
+  );
+
+  const filteredActions = useMemo(() => {
+    if (searchValue === undefined) return CUSTOM_CHARGING_STATION_ACTIONS;
+    return CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
+      (action.label?.toLowerCase() || '').includes(searchValue.toLowerCase()),
+    );
+  }, [searchValue]);
 
   useEffect(() => {
     const storedColorMode = localStorage.getItem('colorMode');
@@ -63,130 +84,116 @@ export const ChargingStationsView: React.FC = () => {
     }
   }, []);
 
-  const toggleSidebar = () => setCollapsed(!collapsed);
+  const toggleSidebar = () => setCollapsed((prev) => !prev);
 
-  const handleSearch = (value: string) => {
+  const handleSearch = useDebounce((value: string) => {
     setSearchValue(value);
-    setFilteredActions(
-      CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
-        action.label.toLowerCase().includes(value.toLowerCase()),
-      ),
-    );
-  };
+  }, 300);
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Layout>
-        <Content>
-          <GenericView
-            dtoClass={ChargingStation}
-            gqlQuery={CHARGING_STATIONS_GET_QUERY}
-            editMutation={CHARGING_STATIONS_EDIT_MUTATION}
-            createMutation={CHARGING_STATIONS_CREATE_MUTATION}
-            deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
-            customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-          />
-        </Content>
-        <Sider
-          width={280}
-          collapsible
-          trigger={null}
-          theme={colorMode}
-          collapsedWidth={60}
-          collapsed={collapsed}
-          style={{ overflow: 'auto', height: '100vh' }}
-        >
-          <span
-            style={{
-              display: 'flex',
-              padding: '0 5px',
-              marginBottom: '15px',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            {!collapsed && <h1>Actions</h1>}
-            <Button type="text" onClick={toggleSidebar}>
-              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            </Button>
-          </span>
-
-          <AutoComplete
-            size="large"
-            allowClear
-            value={searchValue}
-            onChange={handleSearch}
-            placeholder="Search actions"
-            onClear={() => handleSearch('')}
-            style={{ width: '100%', marginBottom: '15px' }}
-          />
-
-          <Collapse>
-            <Panel
-              key="1"
-              collapsible="header"
-              header={!collapsed && 'OCPP Request'}
-            >
-              <CustomActions
-                showInline
-                data={station}
-                actions={filteredActions.filter(
-                  (action) =>
-                    !ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
-                )}
-              />
-            </Panel>
-            <Panel
-              key="2"
-              collapsible="header"
-              header={!collapsed && 'Admin Actions'}
-            >
-              <CustomActions
-                showInline
-                data={station}
-                actions={filteredActions.filter((action) =>
-                  ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
-                )}
-              />
-            </Panel>
-          </Collapse>
-        </Sider>
-      </Layout>
+    <Layout style={styles.layout}>
+      <Content>
+        <GenericView
+          dtoClass={ChargingStation}
+          gqlQuery={CHARGING_STATIONS_GET_QUERY}
+          editMutation={CHARGING_STATIONS_EDIT_MUTATION}
+          createMutation={CHARGING_STATIONS_CREATE_MUTATION}
+          deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
+          customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+        />
+      </Content>
+      <Sider
+        width={280}
+        collapsible
+        trigger={null}
+        theme={colorMode}
+        collapsedWidth={60}
+        collapsed={collapsed}
+        style={styles.sidebar}
+      >
+        <div style={styles.sidebarHeader}>
+          {!collapsed && <h1>Actions</h1>}
+          <Button type="text" onClick={toggleSidebar}>
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </Button>
+        </div>
+        <AutoComplete
+          size="large"
+          allowClear
+          placeholder="Search actions"
+          value={searchValue}
+          onChange={handleSearch}
+          style={styles.searchInput}
+        />
+        <Collapse>
+          <Panel key="1" header={!collapsed && 'OCPP Request'}>
+            <CustomActions
+              showInline
+              data={station}
+              actions={filteredActions.filter(
+                (action) =>
+                  !ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+              )}
+            />
+          </Panel>
+          <Panel key="2" header={!collapsed && 'Admin Actions'}>
+            <CustomActions
+              showInline
+              data={station}
+              actions={filteredActions.filter((action) =>
+                ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+              )}
+            />
+          </Panel>
+        </Collapse>
+      </Sider>
     </Layout>
   );
-};
+});
 
-export const ChargingStationsList = (props: IDataModelListProps) => {
-  const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
-    resource: ResourceType.CHARGING_STATIONS,
-    sorters: DEFAULT_SORTERS,
-    filters: props.filters,
-    metaData: {
-      gqlQuery: CHARGING_STATIONS_LIST_QUERY,
-    },
-  });
+export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
+  (props) => {
+    useTable<ChargingStationsListQuery>({
+      resource: ResourceType.CHARGING_STATIONS,
+      sorters: DEFAULT_SORTERS,
+      filters: props.filters,
+      metaData: { gqlQuery: CHARGING_STATIONS_LIST_QUERY },
+    });
 
-  return (
-    <GenericDataTable
-      dtoClass={ChargingStation}
-      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-      fieldAnnotations={{
-        [ChargingStationProps.evses]: {
-          customActions: [TriggerMessageForEvseCustomAction],
-        },
-      }}
-    />
-  );
-};
+    const [chargingStations, setSelectedChargingStations] = useState<
+      ChargingStation[]
+    >([]);
 
-export const routes: React.FC = () => {
-  return (
-    <Routes>
-      <Route index element={<ChargingStationsList />} />
-      <Route path="/:id/*" element={<ChargingStationsView />} />
-    </Routes>
-  );
-};
+    const selectionChange = useCallback((selected: ChargingStation[]) => {
+      setSelectedChargingStations((prev) => [...prev, ...selected]);
+    }, []);
+
+    useEffect(() => {
+      console.log('chargingStations', chargingStations);
+    }, [chargingStations]);
+
+    return (
+      <GenericDataTable
+        dtoClass={ChargingStation}
+        selectable={SelectionType.MULTIPLE}
+        onSelectionChange={selectionChange}
+        customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+        fieldAnnotations={{
+          [ChargingStationProps.evses]: {
+            customActions: [TriggerMessageForEvseCustomAction],
+          },
+        }}
+      />
+    );
+  },
+);
+
+export const routes: React.FC = () => (
+  <Routes>
+    <Route index element={<ChargingStationsList />} />
+    <Route path="/:id/*" element={<ChargingStationsView />} />
+  </Routes>
+);
 
 export const resources = [
   {
@@ -195,17 +202,15 @@ export const resources = [
     create: '/charging-stations/new',
     show: '/charging-stations/:id',
     edit: '/charging-stations/:id/edit',
-    meta: {
-      canDelete: true,
-    },
+    meta: { canDelete: true },
     icon: <FaChargingStation />,
   },
 ];
 
-export const renderAssociatedStationId = (
-  _: any,
-  record: { stationId: string; [key: string]: any },
-) => {
+export const renderAssociatedStationId = (record: {
+  stationId: string;
+  [key: string]: any;
+}) => {
   return record?.stationId ? (
     <ExpandableColumn
       initialContent={record.stationId}

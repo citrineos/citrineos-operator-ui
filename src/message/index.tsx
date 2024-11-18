@@ -86,7 +86,7 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
       ([label, Component]) =>
         ({
           label,
-          execOrRender: (station: ChargingStation, _setLoading, dispatch) => {
+          execOrRender: (_setLoading, dispatch, station: ChargingStation) => {
             dispatch(
               setSelectedChargingStation({
                 selectedChargingStation: JSON.stringify(

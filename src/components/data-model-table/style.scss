@@ -100,8 +100,22 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
   }
 }
 
+.table-header {
+  display: flex;
+  padding-top: 5px;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-actions {
+  gap: 8px;
+  display: flex;
+}
+
 .table-wrapper {
   .search-form {
+    padding-top: 5px;
     .ant-input {
       background: transparent;
       border: 0;

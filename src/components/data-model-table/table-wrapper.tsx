@@ -5,19 +5,22 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { Col, Form, Input, Row, Table, TableProps } from 'antd';
-import { plainToInstance } from 'class-transformer';
 import { useTable } from '@refinedev/antd';
-import isEqual from 'lodash.isequal';
-import type { TableRowSelection } from 'antd/lib/table/interface';
 import { SorterResult } from 'antd/lib/table/interface';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import { Col, Form, Input, Row, Table, Button } from 'antd';
+
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { SearchOutlined } from '@ant-design/icons';
-import { getSearchableKeys } from '@util/decorators/Searcheable';
-import { generateSearchFilters } from '@util/tables';
-import { TableWrapperProps, TableWrapperRef } from '@interfaces';
+import isEqual from 'lodash.isequal';
+import { plainToInstance } from 'class-transformer';
+
 import { SelectionType } from '@enums';
+import { CustomActions } from '../custom-actions';
+import { generateSearchFilters } from '@util/tables';
+import { CUSTOM_CHARGING_STATION_ACTIONS } from '../../message';
+import { getSearchableKeys } from '@util/decorators/Searcheable';
+import { TableWrapperProps, TableWrapperRef } from '@interfaces';
 
 export const TableWrapper = forwardRef(function TableWrapper<
   Model extends { key: any },
@@ -29,50 +32,44 @@ export const TableWrapper = forwardRef(function TableWrapper<
     columns,
     editingRecord,
     dtoClass,
-    useTableProps: passedUseTableProps = null,
+    useTableProps: externalTableProps = null,
     filters,
     dtoResourceType,
     dtoGqlListQuery,
     gqlQueryVariables,
+    customActions,
+    handleCreate,
   } = props;
 
-  const searchableKeys = useMemo(() => {
-    return getSearchableKeys(dtoClass);
-  }, [dtoClass]);
+  // Memoized Searchable Keys
+  const searchableKeys = useMemo(() => getSearchableKeys(dtoClass), [dtoClass]);
 
-  const tableOptions: any = useMemo(() => {
-    const meta: any = {
+  // Table Configuration
+  const tableOptions = useMemo(() => {
+    const meta: Record<string, any> = {
       gqlQuery: dtoGqlListQuery,
+      ...(gqlQueryVariables && { gqlVariables: gqlQueryVariables }),
     };
 
-    if (gqlQueryVariables) {
-      meta.gqlVariables = gqlQueryVariables;
-    }
-
-    const obj: any = {
+    const options: Record<string, any> = {
       resource: dtoResourceType,
-      sorters: {
-        initial: [
-          {
-            field: 'updatedAt',
-            order: 'desc',
-          },
-        ],
-      },
+      sorters: { initial: [{ field: 'updatedAt', order: 'desc' }] },
       meta,
     };
 
-    if (searchableKeys && searchableKeys.size > 0) {
-      obj['onSearch'] = (values: any) =>
+    if (searchableKeys?.size) {
+      options.onSearch = (values: any) =>
         generateSearchFilters(values, searchableKeys);
     }
 
     if (filters) {
-      obj['filters'] = filters;
+      options.filters = filters;
     }
-    return obj;
-  }, [filters]);
 
+    return options;
+  }, [dtoGqlListQuery, gqlQueryVariables, filters, searchableKeys]);
+
+  // useTable Hook
   const {
     tableProps: defaultTableProps,
     tableQuery: defaultQueryResult,
@@ -80,172 +77,142 @@ export const TableWrapper = forwardRef(function TableWrapper<
     setSorters: defaultSetSorters,
     setCurrent: defaultSetCurrent,
     setPageSize: defaultSetPageSize,
-  } = useTable(tableOptions as any);
+  } = useTable(tableOptions);
 
-  const tableProps: TableProps<Model> = (
-    passedUseTableProps ? passedUseTableProps.tableProps : defaultTableProps
-  ) as any;
-  const queryResult = (
-    passedUseTableProps ? passedUseTableProps.tableQuery : defaultQueryResult
-  ) as any;
-  const searchFormProps = (
-    passedUseTableProps
-      ? passedUseTableProps.searchFormProps
-      : defaultSearchFormProps
-  ) as any;
-  const setSorters = (
-    passedUseTableProps ? passedUseTableProps.setSorters : defaultSetSorters
-  ) as any;
-  const setCurrent = (
-    passedUseTableProps ? passedUseTableProps.setCurrent : defaultSetCurrent
-  ) as any;
-  const setPageSize = (
-    passedUseTableProps ? passedUseTableProps.setPageSize : defaultSetPageSize
-  ) as any;
+  // Derived Table Props
+  const tableProps = externalTableProps?.tableProps ?? defaultTableProps;
+  const queryResult = externalTableProps?.tableQuery ?? defaultQueryResult;
+  const searchFormProps =
+    externalTableProps?.searchFormProps ?? defaultSearchFormProps;
+  const setSorters = externalTableProps?.setSorters ?? defaultSetSorters;
+  const setCurrent = externalTableProps?.setCurrent ?? defaultSetCurrent;
+  const setPageSize = externalTableProps?.setPageSize ?? defaultSetPageSize;
 
-  const [dataWithKeys, setDataWithKeys] = useState(() =>
-    ((tableProps.dataSource as Model[]) || []).map((item: Model) => ({
-      ...item,
-      key: (item as any)[primaryKeyFieldName] || (item as any).id,
-    })),
-  );
+  // Data State Management
+  const [dataWithKeys, setDataWithKeys] = useState<Model[]>([]);
   const [newRecord, setNewRecord] = useState<Model | null>(null);
 
   useEffect(() => {
-    const newVal = (tableProps.dataSource || []).map((item: any) => {
-      const newPlain = {
+    const updatedData = (tableProps.dataSource ?? []).map((item: any) =>
+      plainToInstance(dtoClass as any, {
         ...item,
-        key: item[primaryKeyFieldName] || item.id,
-      };
-      return plainToInstance(dtoClass as any, newPlain);
-    });
-    if (!isEqual(newVal, dataWithKeys)) {
-      setDataWithKeys(newVal as any);
+        key: item[primaryKeyFieldName] ?? item.id,
+      }),
+    );
+
+    if (!isEqual(updatedData, dataWithKeys)) {
+      setDataWithKeys(updatedData as Model[]);
     }
   }, [tableProps.dataSource, primaryKeyFieldName]);
 
+  // Row Selection
   const rowSelection = useMemo(() => {
     if (!selectable) return undefined;
 
-    const handleRowChange = (
-      selectedRowKeys: React.Key[],
-      selectedRows: any[],
-    ) => {
-      // Notify parent of selection change
-      if (onSelectionChange) {
-        onSelectionChange(selectedRows);
-      }
-    };
-
     return {
-      selectedRowKeys: passedUseTableProps?.rowSelection?.selectedRowKeys || [],
-      onChange: handleRowChange,
-      getCheckboxProps: (record: any) => ({
-        disabled: record.name === 'Disabled User',
-        name: record.name,
+      selectedRowKeys: externalTableProps?.rowSelection?.selectedRowKeys || [],
+      onChange: (selectedRowKeys: React.Key[], selectedRows: Model[]) => {
+        onSelectionChange?.(selectedRows);
+      },
+      getCheckboxProps: (record: Model) => ({
+        disabled: (record as any).name === 'Disabled User',
       }),
       type: selectable === SelectionType.SINGLE ? 'radio' : 'checkbox',
     };
-  }, [selectable, onSelectionChange]);
+  }, [selectable, onSelectionChange, externalTableProps?.rowSelection]);
 
-  const addRecordToTable = (record: Model) => {
-    setNewRecord(record);
-    setDataWithKeys([record, ...((tableProps.dataSource as Model[]) || [])]);
-  };
-
-  const removeNewRow = () => {
-    setDataWithKeys((prev: any) => {
-      return prev.filter((item: any) => {
-        return item !== newRecord;
-      });
-    });
-  };
-
-  const refreshTable = () => queryResult && queryResult.refetch();
-
+  // Imperative Handle
   useImperativeHandle(ref, () => ({
-    addRecordToTable,
-    removeNewRow,
-    refreshTable,
+    addRecordToTable: (record: Model) => {
+      setNewRecord(record);
+      setDataWithKeys([record, ...dataWithKeys]);
+    },
+    removeNewRow: () => {
+      setDataWithKeys((prev) => prev.filter((item) => item !== newRecord));
+    },
+    refreshTable: () => queryResult?.refetch(),
   }));
 
+  // Search Handling
   const [searchSubject] = useState(() => new Subject<string>());
-
   useEffect(() => {
-    const { form } = searchFormProps;
     const subscription = searchSubject
       .pipe(debounceTime(250))
-      .subscribe((_searchValue) => {
-        searchFormProps.onFinish();
-        form.submit();
-      });
-
-    return () => subscription.unsubscribe(); // Clean up the subscription
+      .subscribe(() => searchFormProps.onFinish?.());
+    return () => subscription.unsubscribe();
   }, [searchFormProps]);
 
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    searchSubject.next(value);
+    searchSubject.next(e.target.value);
   };
 
+  // Render
   return (
     <Col className="table-wrapper">
-      {searchableKeys && searchableKeys.size > 0 && (
-        <Form {...searchFormProps} className="search-form">
-          <Row align="middle" justify="start">
-            <Form.Item name="search">
-              <Input placeholder="Search" onChange={handleSearchInputChange} />
-            </Form.Item>
-            <Col className="search-icon">
-              <SearchOutlined />
-            </Col>
-          </Row>
-        </Form>
-      )}
+      <div className="table-header">
+        {searchableKeys?.size > 0 && (
+          <Form {...searchFormProps} className="search-form">
+            <Row>
+              <Form.Item name="search" style={{ margin: 0 }}>
+                <Input
+                  placeholder="Search"
+                  onChange={handleSearchInputChange}
+                />
+              </Form.Item>
+              <Col className="search-icon">
+                <SearchOutlined />
+              </Col>
+            </Row>
+          </Form>
+        )}
+        <div className="table-actions">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleCreate}
+            disabled={!!editingRecord}
+            style={{ float: 'left' }}
+          >
+            Create
+          </Button>
+          {customActions && (
+            <CustomActions
+              displayText="Custom Actions"
+              actions={CUSTOM_CHARGING_STATION_ACTIONS}
+            />
+          )}
+        </div>
+      </div>
       <Table
-        ref={ref as any}
         {...tableProps}
-        rowSelection={
-          (passedUseTableProps && passedUseTableProps.rowSelection
-            ? passedUseTableProps.rowSelection
-            : rowSelection) as TableRowSelection<Model> | undefined
-        }
+        rowSelection={externalTableProps?.rowSelection ?? rowSelection}
         dataSource={dataWithKeys}
-        columns={columns as any}
-        rowClassName={(record: Model) => {
-          const isCurrentlyEditing =
-            editingRecord &&
-            (record as any)[primaryKeyFieldName] ===
-              (editingRecord as any)[primaryKeyFieldName];
-          return isCurrentlyEditing
+        columns={columns}
+        rowClassName={(record) =>
+          editingRecord &&
+          record[primaryKeyFieldName] ===
+            (editingRecord as any)[primaryKeyFieldName]
             ? 'editable-row editing-row'
-            : 'editable-row';
-        }}
-        onChange={(pagination, filters, sorter) => {
-          // Handle pagination
-          if (pagination.current) {
-            setCurrent(pagination.current);
-          }
-
-          if (pagination.pageSize) {
-            setPageSize(pagination.pageSize);
-          }
+            : 'editable-row'
+        }
+        onChange={(pagination, _, sorter) => {
+          if (pagination.current) setCurrent(pagination.current);
+          if (pagination.pageSize) setPageSize(pagination.pageSize);
 
           const sort = sorter as SorterResult<any>;
           if (sort.field && sort.order) {
             setSorters([
               {
-                field: sort.field as string,
+                field: sort.field,
                 order: sort.order === 'ascend' ? 'asc' : 'desc',
               },
             ]);
           } else {
-            // Clear sorting if no valid sort is applied
             setSorters([]);
           }
         }}
         className="editable-table"
       />
     </Col>
-  ) as any;
+  );
 });
