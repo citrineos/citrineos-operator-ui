@@ -1,31 +1,32 @@
-// utils/graphql-interceptor.ts
 import { getFixtures } from './fixture-loader';
 
-// utils/graphql-interceptor.ts
-export const interceptGraphQL = (url: string): void => {
+export const interceptGraphQL = (): void => {
+  const url = Cypress.env('GRAPHQL_URL');
+  const shouldMock = Cypress.env('MOCK_RESPONSES') !== false; // Default to true
+  const fixtures = getFixtures();
+
   cy.intercept('POST', url, (req) => {
     const operationName = req.body.operationName;
-    const fixtures = getFixtures();
 
-    if (operationName) {
-      // Dynamically alias the request based on operationName
-      const alias = `gql${operationName}`;
-      req.alias = alias;
-      console.log(`Intercepted and aliased: ${alias}`);
+    if (!operationName) {
+      console.warn('No operationName found in the GraphQL request body.');
+      return req.continue();
+    }
 
-      // Mock the response if a fixture is available
+    req.alias = `gql${operationName}`;
+    if (shouldMock) {
       if (fixtures[operationName]) {
-        req.reply({
+        console.log(`Mocking response for ${operationName}`);
+        return req.reply({
           statusCode: 200,
           body: fixtures[operationName],
         });
-      } else {
-        console.warn(`No fixture found for ${operationName}. Passing through.`);
-        req.continue();
       }
+      console.warn(`No fixture found for ${operationName}. Passing through.`);
     } else {
-      console.warn('No operationName found in the GraphQL request body.');
-      req.continue();
+      console.log(`Mocking disabled. Passing through ${operationName}.`);
     }
+
+    req.continue();
   });
 };

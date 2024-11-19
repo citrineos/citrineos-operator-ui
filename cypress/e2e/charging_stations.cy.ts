@@ -1,7 +1,7 @@
 import { setupTestEnvironment } from '../utils/test-setup';
+import { conditionalIntercept } from '../utils/conditional-interceptor';
 
 describe('Charging station actions', () => {
-  const graphqlUrl = 'http://localhost:8090/v1/graphql';
   const fixtures = [
     'ChargingStationsList',
     'GetEvseListForStation',
@@ -11,68 +11,29 @@ describe('Charging station actions', () => {
   ];
 
   beforeEach(() => {
-    setupTestEnvironment(graphqlUrl, fixtures, 'charging_stations');
-    cy.visit('http://localhost:5173/charging-stations');
+    setupTestEnvironment(fixtures, 'charging_stations');
+    cy.visit('/charging-stations');
     cy.wait('@gqlChargingStationsList');
     cy.wait('@gqlGetLocationById');
   });
-  it('Reset charging station immediately', () => {
+  it('Start remoteStart', () => {
     //Mock response to avoid having to connect real charger during test
-    cy.intercept('POST', /\/configuration\/reset\?identifier=.*&tenantId=1$/, {
-      statusCode: 200,
-      body: {
-        success: true,
-        payload: 'Reset operation successful',
-      },
-    }).as('resetRequest');
-
-    cy.getByData('citrine-os-icon').should(
-      'have.attr',
-      'src',
-      '/Citrine_OS_Logo.png',
-    );
-
-    cy.getByData('custom-action-dropdown-button').click();
-    cy.get('.ant-dropdown') // Target the dropdown container
-      .within(() => {
-        cy.get('[role="menuitem"]').contains('Reset').click();
-      });
-
-    cy.getByData('field-type-input').click();
-    cy.get('.ant-select-dropdown')
-      .should('not.have.class', 'ant-select-dropdown-hidden')
-      .and('be.visible');
-    cy.wait('@gqlGetEvseListForStation');
-    cy.getByData('field-type-input-option-Immediate')
-      .should('be.visible')
-      .click();
-    // cy.getByData('evse-editable-cell')
-    //   .should('be.visible')
-    //   .within(() => {
-    //     cy.getByData('expandable-column-clickable-span').click()
-    //   });
-
-    cy.getByData('ResetData2-generic-form-submit').click();
-
-    cy.wait('@resetRequest');
-    cy.getByData('success-notification').should('be.visible');
-  });
-
-  it.only('Start remoteStart', () => {
-    //Mock response to avoid having to connect real charger during test
-    cy.intercept(
+    conditionalIntercept(
       'POST',
-      '/ocpp/evdriver/requestStartTransaction?identifier=cp001&tenantId=1',
+      /\/evdriver\/requestStartTransaction\?identifier=.*&tenantId=1$/,
+      'requestStartTransaction',
       {
         statusCode: 200,
         body: {
           success: true,
-          payload: 'Transaction started successfully',
         },
       },
-    ).as('requestStartTransaction');
+    );
 
-    cy.getByData('custom-action-dropdown-button').click();
+    cy.getByData('row-primarykey-cp001').within(() => {
+      cy.getByData('custom-action-dropdown-button').click();
+    });
+
     cy.get('.ant-dropdown') // Target the dropdown container
       .within(() => {
         cy.get('[role="menuitem"]').contains('Remote Start').click();
@@ -80,9 +41,15 @@ describe('Charging station actions', () => {
 
     //TODO needs selection for idToken
 
-    cy.getByData('field-remoteStartId-input').should('be.visible').clear();
+    cy.getByData('field-remoteStartId-input').should('be.visible');
 
+    cy.getByData('field-remoteStartId-input').clear();
     cy.getByData('field-remoteStartId-input').type('42');
+    cy.getByData('idToken-editable-cell')
+      .find('[data-testid="Select-tag"]')
+      .click();
+    cy.getByData('row-primarykey-1').find('input.ant-radio-input').click();
+    cy.getByData('idToken-selected-associated-items-save').click();
 
     cy.getByData('RequestStartTransactionRequest2-generic-form-submit').click();
     cy.wait('@requestStartTransaction');
@@ -91,17 +58,17 @@ describe('Charging station actions', () => {
 
   it('Change Availability to inoperable', () => {
     //Mock response to avoid having to connect real charger during test
-    cy.intercept(
+    conditionalIntercept(
       'POST',
       /\/configuration\/changeAvailability\?identifier=.*&tenantId=1$/,
+      'changeAvailabilityRequest',
       {
         statusCode: 200,
         body: {
           success: true,
-          payload: 'Operation successful',
         },
       },
-    ).as('changeAvailabilityRequest');
+    );
 
     cy.getByData('custom-action-dropdown-button').click();
     cy.get('.ant-dropdown') // Target the dropdown container
@@ -114,18 +81,58 @@ describe('Charging station actions', () => {
       .should('not.have.class', 'ant-select-dropdown-hidden')
       .and('be.visible');
     cy.wait('@gqlGetEvseListForStation');
-    cy.getByData('field-operationalStatus-input-option-Inoperative')
-      .should('be.visible')
-      .click();
+    cy.getByData('field-operationalStatus-input-option-Inoperative').should(
+      'be.visible',
+    );
+    cy.getByData('field-operationalStatus-input-option-Inoperative').click();
+
+    cy.getByData('ChangeAvailabilityRequest2-generic-form-submit').click();
+
+    // cy.wait('@changeAvailabilityRequest');
+    cy.getByData('success-notification').should('be.visible');
+  });
+
+  it('Reset charging station immediately', () => {
+    conditionalIntercept(
+      'POST',
+      /\/configuration\/reset\?identifier=.*&tenantId=1$/,
+      'resetRequest',
+      {
+        statusCode: 200,
+        body: {
+          success: true,
+        },
+      },
+    ).as('resetRequest');
+
+    cy.getByData('citrine-os-icon').should(
+      'have.attr',
+      'src',
+      '/Citrine_OS_Logo.png',
+    );
+    cy.wait('@gqlChargingStationsList');
+    cy.getByData('custom-action-dropdown-button').click();
+    cy.get('.ant-dropdown') // Target the dropdown container
+      .within(() => {
+        cy.get('[role="menuitem"]').contains('Reset').click();
+      });
+
+    cy.getByData('field-type-input').click();
+    cy.get('.ant-select-dropdown')
+      .should('not.have.class', 'ant-select-dropdown-hidden')
+      .and('be.visible');
+    cy.wait('@gqlGetEvseListForStation');
+    cy.getByData('field-type-input-option-Immediate').should('be.visible');
+    cy.getByData('field-type-input-option-Immediate').click();
     // cy.getByData('evse-editable-cell')
     //   .should('be.visible')
     //   .within(() => {
     //     cy.getByData('expandable-column-clickable-span').click()
     //   });
 
-    cy.getByData('ChangeAvailabilityRequest2-generic-form-submit').click();
+    cy.getByData('ResetData2-generic-form-submit').click();
 
-    cy.wait('@changeAvailabilityRequest');
+    cy.wait('@resetRequest');
     cy.getByData('success-notification').should('be.visible');
   });
 });

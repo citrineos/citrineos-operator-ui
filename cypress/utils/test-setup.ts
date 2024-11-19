@@ -3,16 +3,13 @@ import { preloadGraphQLFixtures } from './fixture-loader';
 import { interceptGraphQL } from './graphql-interceptor';
 
 export const setupTestEnvironment = (
-  graphqlUrl: string,
   fixtureNames: string[],
   testClass: string,
 ): Cypress.Chainable => {
   return cy.then(() => {
-    // Preload fixtures
     preloadGraphQLFixtures(fixtureNames, testClass);
 
-    // Set up GraphQL interceptor
-    interceptGraphQL(graphqlUrl);
+    interceptGraphQL();
 
     // Clear cookies, local storage, and session storage
     cy.clearAllCookies();

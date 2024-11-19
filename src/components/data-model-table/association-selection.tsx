@@ -317,7 +317,7 @@ export const AssociationSelection = <
             icon={<SaveOutlined />}
             onClick={() => handleSelectionSave(closeDrawer)}
             disabled={selectedRows.length === 0}
-            // data-testid={`${associatedRecordClass.name}-selected-associated-items-save`}
+            data-testid={`${parentIdFieldName}-selected-associated-items-save`}
           >
             Save
           </Button>

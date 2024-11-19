@@ -15,5 +15,9 @@ export default defineConfig({
       // implement node event listeners here
     },
     baseUrl: 'http://localhost:5173',
+    env: {
+      MOCK_RESPONSES: true,
+      GRAPHQL_URL: 'http://localhost:8090/v1/graphql',
+    },
   },
 });
