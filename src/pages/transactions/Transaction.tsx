@@ -71,8 +71,8 @@ export enum TransactionProps {
 @ClassCustomActions([
   {
     label: 'Remote Stop',
-    isVisible: (transaction) => transaction[TransactionProps.isActive],
-    execOrRender: (transaction: Transaction, setLoading) => {
+    isVisible: (transaction: any) => transaction[TransactionProps.isActive],
+    execOrRender: (transaction: Transaction, setLoading: any) => {
       requestStopTransaction(
         transaction[TransactionProps.stationId],
         transaction[TransactionProps.transactionId],

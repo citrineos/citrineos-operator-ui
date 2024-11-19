@@ -9,8 +9,8 @@ import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
-import { CustomAction } from '../../components/custom-actions';
 import { ColumnAction, DefaultColors } from '@enums';
+import { CustomAction } from '@interfaces';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,

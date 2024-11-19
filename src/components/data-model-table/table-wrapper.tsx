@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -10,17 +11,20 @@ import { SorterResult } from 'antd/lib/table/interface';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Col, Form, Input, Row, Table, Button } from 'antd';
 
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
 import isEqual from 'lodash.isequal';
 import { plainToInstance } from 'class-transformer';
 
 import { SelectionType } from '@enums';
 import { CustomActions } from '../custom-actions';
 import { generateSearchFilters } from '@util/tables';
-import { CUSTOM_CHARGING_STATION_ACTIONS } from '../../message';
+import { useDebounce } from '../../hooks/useDebounce';
+import {
+  CUSTOM_CHARGING_STATION_ACTIONS,
+  EXCLUDED_FROM_MULTI_SELECT,
+} from '../../message';
 import { getSearchableKeys } from '@util/decorators/Searcheable';
 import { TableWrapperProps, TableWrapperRef } from '@interfaces';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 export const TableWrapper = forwardRef(function TableWrapper<
   Model extends { key: any },
@@ -40,6 +44,8 @@ export const TableWrapper = forwardRef(function TableWrapper<
     customActions,
     handleCreate,
   } = props;
+
+  const [isDisabled, setIsDisabled] = useState(true);
 
   // Memoized Searchable Keys
   const searchableKeys = useMemo(() => getSearchableKeys(dtoClass), [dtoClass]);
@@ -73,10 +79,10 @@ export const TableWrapper = forwardRef(function TableWrapper<
   const {
     tableProps: defaultTableProps,
     tableQuery: defaultQueryResult,
-    searchFormProps: defaultSearchFormProps,
     setSorters: defaultSetSorters,
     setCurrent: defaultSetCurrent,
     setPageSize: defaultSetPageSize,
+    searchFormProps: defaultSearchFormProps,
   } = useTable(tableOptions);
 
   // Derived Table Props
@@ -112,10 +118,11 @@ export const TableWrapper = forwardRef(function TableWrapper<
     return {
       selectedRowKeys: externalTableProps?.rowSelection?.selectedRowKeys || [],
       onChange: (selectedRowKeys: React.Key[], selectedRows: Model[]) => {
+        setIsDisabled(selectedRows.length <= 0);
         onSelectionChange?.(selectedRows);
       },
-      getCheckboxProps: (record: Model) => ({
-        disabled: (record as any).name === 'Disabled User',
+      getCheckboxProps: (_record: Model) => ({
+        disabled: false,
       }),
       type: selectable === SelectionType.SINGLE ? 'radio' : 'checkbox',
     };
@@ -133,18 +140,22 @@ export const TableWrapper = forwardRef(function TableWrapper<
     refreshTable: () => queryResult?.refetch(),
   }));
 
-  // Search Handling
-  const [searchSubject] = useState(() => new Subject<string>());
-  useEffect(() => {
-    const subscription = searchSubject
-      .pipe(debounceTime(250))
-      .subscribe(() => searchFormProps.onFinish?.());
-    return () => subscription.unsubscribe();
-  }, [searchFormProps]);
+  // Search Handling with useDebounce
+  const [searchText, setSearchText] = useState('');
+  const debouncedSearchText = useDebounce(searchText, 250);
 
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    searchSubject.next(e.target.value);
-  };
+  useEffect(() => {
+    if (debouncedSearchText && searchFormProps.onFinish) {
+      searchFormProps.onFinish();
+    }
+  }, [debouncedSearchText]);
+
+  const handleSearchInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+    },
+    [],
+  );
 
   // Render
   return (
@@ -177,8 +188,11 @@ export const TableWrapper = forwardRef(function TableWrapper<
           </Button>
           {customActions && (
             <CustomActions
+              isDisabled={isDisabled}
               displayText="Custom Actions"
               actions={CUSTOM_CHARGING_STATION_ACTIONS}
+              exclusionList={EXCLUDED_FROM_MULTI_SELECT}
+              data={dataWithKeys[0] as unknown as ChargingStation}
             />
           )}
         </div>

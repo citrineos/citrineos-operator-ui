@@ -23,8 +23,8 @@ import {
   INSTALLED_CERTIFICATE_GET_QUERY,
   INSTALLED_CERTIFICATE_LIST_QUERY,
 } from '../../pages/installed-certificates/queries';
-import { CustomAction } from '../../components/custom-actions';
 import { MessageConfirmation } from '../MessageConfirmation';
+import { CustomAction } from '@interfaces';
 
 enum DeleteCertificateDataProps {
   installedCertificate = 'installedCertificate',

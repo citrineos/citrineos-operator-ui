@@ -23,17 +23,19 @@ export interface CustomAction<T> {
   label: string;
   isVisible?: (arg?: T) => boolean;
   execOrRender: (
+    arg: T,
     setLoading: (loading: boolean) => void,
     dispatch: Dispatch,
-    arg?: T,
   ) => void | React.ReactNode;
 }
 
 export interface CustomActionsProps<T> {
-  actions?: CustomAction<T>[];
-  data?: T;
+  data: T;
+  isDisabled?: boolean;
   showInline?: boolean;
   displayText?: string;
+  exclusionList?: string[];
+  actions?: CustomAction<T>[];
 }
 
 export interface FieldSelectOption {

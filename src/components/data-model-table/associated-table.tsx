@@ -5,7 +5,7 @@ import { Constructable } from '@util/Constructable';
 import { plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import { useTable, useTableProps } from '@refinedev/antd';
-import { CustomAction } from '../custom-actions';
+import { CustomAction } from '@interfaces';
 
 export interface AssociatedTableProps<AssociatedModel> {
   associatedRecordClass: Constructable<AssociatedModel>; // record class

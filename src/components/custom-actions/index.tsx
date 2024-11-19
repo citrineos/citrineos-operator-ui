@@ -27,10 +27,12 @@ import { useDispatch } from 'react-redux';
 import { CustomActionsProps } from '@interfaces';
 
 export const CustomActions = <T,>({
-  actions = [],
   data,
-  showInline = false,
+  actions = [],
   displayText = '',
+  isDisabled = false,
+  showInline = false,
+  exclusionList = [],
 }: CustomActionsProps<T>): React.ReactElement | null => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -71,12 +73,13 @@ export const CustomActions = <T,>({
   const items = useMemo(
     () =>
       actions
+        .filter((action) => !exclusionList?.includes(action.label))
         .filter((action) => (action.isVisible ? action.isVisible(data) : true))
         .map((action, index) => ({
           key: index.toString(),
           label: action.label,
           onClick: () => {
-            const result = action.execOrRender(setLoading, dispatch, data);
+            const result = action.execOrRender(data, setLoading, dispatch);
             if (React.isValidElement(result)) {
               setDrawerContent(result);
               setDrawerTitle(action.label);
@@ -84,7 +87,7 @@ export const CustomActions = <T,>({
             }
           },
         })),
-    [actions, data, dispatch],
+    [actions, data, dispatch, exclusionList],
   );
 
   const onDrawerClose = () => {
@@ -121,6 +124,7 @@ export const CustomActions = <T,>({
           <Button
             size="small"
             icon={<MoreOutlined />}
+            disabled={isDisabled}
             data-testid="custom-action-dropdown-button"
             type={displayText ? 'primary' : 'default'}
             style={displayText ? { marginLeft: 5 } : undefined}

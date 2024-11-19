@@ -1,6 +1,5 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
-import { CustomAction } from '../components/custom-actions';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
@@ -47,6 +46,7 @@ import {
 } from './delete-station-network-profiles';
 import { DeleteCertificate } from './delete-certificate';
 import { ChangeAvailabilityProps } from './change-availability/model';
+import { CustomAction } from '@interfaces';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -86,7 +86,7 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
       ([label, Component]) =>
         ({
           label,
-          execOrRender: (_setLoading, dispatch, station: ChargingStation) => {
+          execOrRender: (station: ChargingStation, setLoading, dispatch) => {
             dispatch(
               setSelectedChargingStation({
                 selectedChargingStation: JSON.stringify(
@@ -102,4 +102,11 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
 
 export const ADMIN_CHARGING_STATION_ACTIONS: string[] = [
   'Update Auth Password',
+];
+
+export const EXCLUDED_FROM_MULTI_SELECT: string[] = [
+  'Remote Stop',
+  'Certificate Signed',
+  'Delete Certificate',
+  'Get Transaction Status',
 ];

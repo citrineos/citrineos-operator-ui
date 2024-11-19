@@ -3,7 +3,7 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { BOOTS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { Boots } from '../../graphql/schema.types';
-import { CustomAction } from '../../components/custom-actions';
+import { CustomAction } from '@interfaces';
 
 export const BOOTS_COLUMNS = (
   withActions: boolean,

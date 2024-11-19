@@ -21,10 +21,10 @@ import { Evse } from '../../pages/evses/Evse';
 import { FieldCustomActions } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
-import { CustomAction } from '../../components/custom-actions';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { ChargingStationProps } from '../../pages/charging-stations/ChargingStationProps';
 import { EvseProps } from '../../pages/evses/EvseProps';
+import { CustomAction } from '@interfaces';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',

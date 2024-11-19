@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { AutoComplete, Button, Collapse, Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { useTable } from '@refinedev/antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { plainToInstance } from 'class-transformer';
 import { FaChargingStation } from 'react-icons/fa';
 
+import '../../style.scss';
 import { ResourceType } from '../../resource-type';
 import { GenericParameterizedView, GenericView } from '../../components/view';
 import { IDataModelListProps } from '../../components';
@@ -17,8 +16,6 @@ import {
 } from '../../message';
 import { ChargingStation } from './ChargingStation';
 import { ChargingStationProps } from './ChargingStationProps';
-import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
-import { RootState } from '../../redux/store';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { CustomActions } from '../../components/custom-actions';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
@@ -29,69 +26,32 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
-import { ChargingStationsListQuery } from '../../graphql/types';
-import { useDebounce } from '../../hooks/useDebounce';
 import { GenericViewState, SelectionType } from '@enums';
+import { ChargingStationsListQuery } from '../../graphql/types';
+import { useDebounce, useColorMode, useSelectedChargingStation } from '@hooks';
+import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 
 const { Panel } = Collapse;
 const { Sider, Content } = Layout;
 
-const styles = {
-  layout: { minHeight: '100vh' },
-  sidebar: { overflow: 'auto', height: '100vh' },
-  sidebarHeader: {
-    display: 'flex',
-    padding: '0 5px',
-    marginBottom: '15px',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  searchInput: { width: '100%', marginBottom: '15px' },
-};
-
 export const ChargingStationsView: React.FC = React.memo(() => {
+  const [colorMode] = useColorMode();
+  const station = useSelectedChargingStation();
   const [collapsed, setCollapsed] = useState(true);
   const [searchValue, setSearchValue] = useState('');
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
-
-  const selectedChargingStation = useSelector((state: RootState) =>
-    getSelectedChargingStation()(state),
-  );
-
-  const station = useMemo(
-    () =>
-      plainToInstance(
-        ChargingStation,
-        Array.isArray(selectedChargingStation)
-          ? selectedChargingStation
-          : [selectedChargingStation],
-      )[0],
-    [selectedChargingStation],
-  );
 
   const filteredActions = useMemo(() => {
-    if (searchValue === undefined) return CUSTOM_CHARGING_STATION_ACTIONS;
-    return CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
-      (action.label?.toLowerCase() || '').includes(searchValue.toLowerCase()),
-    );
+    return searchValue
+      ? CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
+          action.label?.toLowerCase().includes(searchValue.toLowerCase()),
+        )
+      : CUSTOM_CHARGING_STATION_ACTIONS;
   }, [searchValue]);
 
-  useEffect(() => {
-    const storedColorMode = localStorage.getItem('colorMode');
-    if (storedColorMode === 'light' || storedColorMode === 'dark') {
-      setColorMode(storedColorMode);
-    }
-  }, []);
-
-  const toggleSidebar = () => setCollapsed((prev) => !prev);
-
-  const handleSearch = useDebounce((value: string) => {
-    setSearchValue(value);
-  }, 300);
+  useDebounce(searchValue, 300);
 
   return (
-    <Layout style={styles.layout}>
+    <Layout className="layout">
       <Content>
         <GenericView
           dtoClass={ChargingStation}
@@ -106,14 +66,14 @@ export const ChargingStationsView: React.FC = React.memo(() => {
         width={280}
         collapsible
         trigger={null}
-        theme={colorMode}
         collapsedWidth={60}
         collapsed={collapsed}
-        style={styles.sidebar}
+        className="sidebar"
+        theme={colorMode as 'light' | 'dark' | undefined}
       >
-        <div style={styles.sidebarHeader}>
+        <div className="sidebarHeader">
           {!collapsed && <h1>Actions</h1>}
-          <Button type="text" onClick={toggleSidebar}>
+          <Button type="text" onClick={() => setCollapsed(!collapsed)}>
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </Button>
         </div>
@@ -122,8 +82,8 @@ export const ChargingStationsView: React.FC = React.memo(() => {
           allowClear
           placeholder="Search actions"
           value={searchValue}
-          onChange={handleSearch}
-          style={styles.searchInput}
+          onChange={setSearchValue}
+          className="searchInput"
         />
         <Collapse>
           <Panel key="1" header={!collapsed && 'OCPP Request'}>
@@ -153,30 +113,42 @@ export const ChargingStationsView: React.FC = React.memo(() => {
 
 export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
   (props) => {
-    useTable<ChargingStationsListQuery>({
-      resource: ResourceType.CHARGING_STATIONS,
-      sorters: DEFAULT_SORTERS,
-      filters: props.filters,
-      metaData: { gqlQuery: CHARGING_STATIONS_LIST_QUERY },
-    });
+    const { tableProps, searchFormProps, setSorters, setCurrent, setPageSize } =
+      useTable<ChargingStationsListQuery>({
+        resource: ResourceType.CHARGING_STATIONS,
+        sorters: DEFAULT_SORTERS,
+        filters: props.filters,
+        metaData: { gqlQuery: CHARGING_STATIONS_LIST_QUERY },
+      });
 
-    const [chargingStations, setSelectedChargingStations] = useState<
+    const [_chargingStations, setSelectedChargingStations] = useState<
       ChargingStation[]
     >([]);
 
-    const selectionChange = useCallback((selected: ChargingStation[]) => {
-      setSelectedChargingStations((prev) => [...prev, ...selected]);
-    }, []);
-
-    useEffect(() => {
-      console.log('chargingStations', chargingStations);
-    }, [chargingStations]);
+    const rowSelection = useMemo(
+      () => ({
+        onChange: (
+          _selectedRowKeys: React.Key[],
+          selectedRows: ChargingStation[],
+        ) => {
+          setSelectedChargingStations(selectedRows);
+        },
+      }),
+      [],
+    );
 
     return (
       <GenericDataTable
         dtoClass={ChargingStation}
         selectable={SelectionType.MULTIPLE}
-        onSelectionChange={selectionChange}
+        useTableProps={{
+          tableProps,
+          searchFormProps,
+          setSorters,
+          setCurrent,
+          setPageSize,
+          rowSelection,
+        }}
         customActions={CUSTOM_CHARGING_STATION_ACTIONS}
         fieldAnnotations={{
           [ChargingStationProps.evses]: {
@@ -216,11 +188,11 @@ export const renderAssociatedStationId = (record: {
       initialContent={record.stationId}
       expandedContent={
         <GenericParameterizedView
-          resourceType={ResourceType.CHARGING_STATIONS}
           id={record.stationId}
-          state={GenericViewState.SHOW}
           dtoClass={ChargingStation}
+          state={GenericViewState.SHOW}
           gqlQuery={CHARGING_STATIONS_GET_QUERY}
+          resourceType={ResourceType.CHARGING_STATIONS}
         />
       }
       viewTitle={`Charging Station linked with ID ${record.id}`}

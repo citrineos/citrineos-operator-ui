@@ -26,10 +26,10 @@ import {
   CertificateSigned,
   CertificateSignedProps,
 } from '../certificate-signed';
-import { CustomAction } from '../../components/custom-actions';
 import { ChargingStations } from '../../graphql/schema.types';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { ChangeAvailabilityProps } from '../change-availability/model';
+import { CustomAction } from '@interfaces';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;

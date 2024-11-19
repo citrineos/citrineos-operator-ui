@@ -136,3 +136,25 @@ $small-padding: var(--ant-padding-xxs) var(--ant-padding-xs);
     }
   }
 }
+
+.layout {
+  min-height: 100vh;
+}
+
+.sidebar {
+  overflow: auto;
+  height: 100vh;
+}
+
+.sidebar-header {
+  display: flex;
+  padding: 0 5px;
+  margin-bottom: 15px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-input {
+  width: 100%;
+  margin-bottom: 15px;
+}

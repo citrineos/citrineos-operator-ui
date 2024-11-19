@@ -19,6 +19,7 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
+      "@hooks": ["src/hooks"],
       "@util/*": ["src/util/*"],
       "@enums": ["src/model/enums"],
       "@interfaces": ["src/model/interfaces"]
