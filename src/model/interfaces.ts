@@ -19,6 +19,14 @@ import { Unknowns } from '../components/form/state/unknowns';
 import { MouseEventHandler } from 'react';
 import { DocumentNode } from 'graphql';
 
+export interface ChargingStations {
+  id: string;
+  isOnline: boolean;
+  locationId: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface CustomAction<T> {
   label: string;
   isVisible?: (arg?: T) => boolean;
@@ -31,7 +39,6 @@ export interface CustomAction<T> {
 
 export interface CustomActionsProps<T> {
   data: T;
-  isDisabled?: boolean;
   showInline?: boolean;
   displayText?: string;
   exclusionList?: string[];

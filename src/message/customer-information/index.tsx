@@ -6,22 +6,22 @@ import {
   CustomerInformationRequest,
   CustomerPayload,
   GetCustomerInformationDataProps,
-  GetCustomerProps,
 } from '../../model/CustomerInformation';
 import { NEW_IDENTIFIER } from '@util/consts';
+import { useSelectedChargingStationIds } from '@hooks';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 
-export const CustomerInformation: React.FC<GetCustomerProps> = ({
-  station,
-}) => {
+export const CustomerInformation: React.FC = () => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = {
     form,
   };
 
-  const getCustomersRequest = new CustomerInformationRequest();
   const idToken = new IdToken();
+  const station = useSelectedChargingStationIds();
+  const getCustomersRequest = new CustomerInformationRequest();
+
   idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
   getCustomersRequest[GetCustomerInformationDataProps.clear] = false;
   getCustomersRequest[GetCustomerInformationDataProps.report] = false;
@@ -30,7 +30,7 @@ export const CustomerInformation: React.FC<GetCustomerProps> = ({
   const handleSubmit = async (plainValues: any) => {
     const payload = CustomerPayload(plainValues);
     await triggerMessageAndHandleResponse({
-      url: `/reporting/customerInformation?identifier=${station.id}&tenantId=1`,
+      url: `/reporting/customerInformation?identifier=${station}&tenantId=1`,
       responseClass: CustomerInformationRequest,
       data: payload,
       responseSuccessCheck: (response: CustomerInformationRequest) =>

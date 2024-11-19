@@ -35,7 +35,6 @@ import {
 } from './get-transaction-status';
 import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
 import { instanceToPlain } from 'class-transformer';
-import { GetCustomerProps } from '../model/CustomerInformation';
 import {
   UpdateAuthPassword,
   UpdateAuthPasswordProps,
@@ -55,7 +54,7 @@ const chargingStationActionMap: {
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
   'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
-  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
+  'Customer Information': CustomerInformation as React.FC<any>,
   'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
   'Delete Station Network Profiles':
     DeleteStationNetworkProfiles as React.FC<DeleteStationNetworkProfilesProps>,

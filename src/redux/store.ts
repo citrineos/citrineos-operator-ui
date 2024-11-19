@@ -10,7 +10,16 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['counter/addModelsToStorage'],
+        // Ignore these action types
+        ignoredActions: ['selectedChargingStation/setChargingStations'],
+        // Ignore these field paths in all actions
+        ignoredActionPaths: [
+          'meta.arg',
+          'payload.createdAt',
+          'payload.updatedAt',
+        ],
+        // Ignore these paths in the state
+        ignoredPaths: ['selectedChargingStationSlice.chargingStations'],
       },
     }),
 });

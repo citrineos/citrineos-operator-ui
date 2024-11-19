@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button, Drawer, Dropdown, Menu, Spin } from 'antd';
 import {
   ClearOutlined,
@@ -25,22 +25,28 @@ import {
 } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { CustomActionsProps } from '@interfaces';
+import { useSelectedChargingStationCount } from '@hooks';
 
 export const CustomActions = <T,>({
   data,
   actions = [],
   displayText = '',
-  isDisabled = false,
   showInline = false,
   exclusionList = [],
 }: CustomActionsProps<T>): React.ReactElement | null => {
+  const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('Details');
+  const selectedChargingStationCount = useSelectedChargingStationCount(0);
   const [drawerContent, setDrawerContent] = useState<React.ReactNode | null>(
     null,
   );
-  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setIsDisabled(selectedChargingStationCount);
+  }, [selectedChargingStationCount]);
 
   const iconMap: { [key: string]: React.ReactNode } = useMemo(
     () => ({

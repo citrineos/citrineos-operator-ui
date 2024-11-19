@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { AutoComplete, Button, Collapse, Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
 import { useTable } from '@refinedev/antd';
@@ -29,6 +30,7 @@ import {
 import { GenericViewState, SelectionType } from '@enums';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { useDebounce, useColorMode, useSelectedChargingStation } from '@hooks';
+import { setChargingStations } from '../../redux/selectedChargingStationSlice';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 
 const { Panel } = Collapse;
@@ -36,9 +38,9 @@ const { Sider, Content } = Layout;
 
 export const ChargingStationsView: React.FC = React.memo(() => {
   const [colorMode] = useColorMode();
-  const station = useSelectedChargingStation();
   const [collapsed, setCollapsed] = useState(true);
   const [searchValue, setSearchValue] = useState('');
+  const station = useSelectedChargingStation(0) as ChargingStation;
 
   const filteredActions = useMemo(() => {
     return searchValue
@@ -113,6 +115,7 @@ export const ChargingStationsView: React.FC = React.memo(() => {
 
 export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
   (props) => {
+    const dispatch = useDispatch();
     const { tableProps, searchFormProps, setSorters, setCurrent, setPageSize } =
       useTable<ChargingStationsListQuery>({
         resource: ResourceType.CHARGING_STATIONS,
@@ -132,6 +135,7 @@ export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
           selectedRows: ChargingStation[],
         ) => {
           setSelectedChargingStations(selectedRows);
+          dispatch(setChargingStations(selectedRows));
         },
       }),
       [],

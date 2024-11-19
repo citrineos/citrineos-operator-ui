@@ -14,10 +14,10 @@ import { Col, Form, Input, Row, Table, Button } from 'antd';
 import isEqual from 'lodash.isequal';
 import { plainToInstance } from 'class-transformer';
 
+import { useDebounce } from '@hooks';
 import { SelectionType } from '@enums';
 import { CustomActions } from '../custom-actions';
 import { generateSearchFilters } from '@util/tables';
-import { useDebounce } from '../../hooks/useDebounce';
 import {
   CUSTOM_CHARGING_STATION_ACTIONS,
   EXCLUDED_FROM_MULTI_SELECT,
@@ -44,8 +44,6 @@ export const TableWrapper = forwardRef(function TableWrapper<
     customActions,
     handleCreate,
   } = props;
-
-  const [isDisabled, setIsDisabled] = useState(true);
 
   // Memoized Searchable Keys
   const searchableKeys = useMemo(() => getSearchableKeys(dtoClass), [dtoClass]);
@@ -118,7 +116,6 @@ export const TableWrapper = forwardRef(function TableWrapper<
     return {
       selectedRowKeys: externalTableProps?.rowSelection?.selectedRowKeys || [],
       onChange: (selectedRowKeys: React.Key[], selectedRows: Model[]) => {
-        setIsDisabled(selectedRows.length <= 0);
         onSelectionChange?.(selectedRows);
       },
       getCheckboxProps: (_record: Model) => ({
@@ -188,7 +185,6 @@ export const TableWrapper = forwardRef(function TableWrapper<
           </Button>
           {customActions && (
             <CustomActions
-              isDisabled={isDisabled}
               displayText="Custom Actions"
               actions={CUSTOM_CHARGING_STATION_ACTIONS}
               exclusionList={EXCLUDED_FROM_MULTI_SELECT}
