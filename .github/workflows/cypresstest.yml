@@ -35,3 +35,13 @@ jobs:
         with:
           start: npm run dev
           browser: chrome
+            # Save screenshots as test artifacts
+            # https://github.com/actions/upload-artifact
+      - uses: actions/upload-artifact@v4
+          # there might be no screenshots created when:
+        # - there are no test failures
+        # so only upload screenshots if previous step has failed
+        if: failure()
+        with:
+          name: screenshots
+          path: cypress/screenshots
