@@ -11,7 +11,6 @@ import {
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NetworkConnectionProfileType } from '../model/NetworkConnectionProfileType';
 import { MessageConfirmation } from '../MessageConfirmation';
@@ -25,29 +24,14 @@ import {
   SERVER_NETWORK_PROFILE_LIST_QUERY,
 } from '../../pages/server-network-profiles/queries';
 import { NEW_IDENTIFIER } from '@util/consts';
-
-// enum SetNetworkProfileDataProps {}
-// customData = 'customData', // todo
-
-// export class SetNetworkProfileData {
-// todo
-// @Type(() => CustomDataType)
-// @ValidateNested()
-// customData?: CustomDataType;
-// }
+import { useSelectedChargingStationIds } from '@hooks';
 
 enum SetNetworkProfileRequestProps {
-  // customData = 'customData', // todo
   configurationSlot = 'configurationSlot',
   connectionData = 'connectionData',
 }
 
 export class SetNetworkProfileRequest {
-  // todo
-  // @Type(() => CustomDataType)
-  // @ValidateNested()
-  // customData?: CustomDataType;
-
   @IsInt()
   @IsNotEmpty()
   configurationSlot!: number;
@@ -59,11 +43,6 @@ export class SetNetworkProfileRequest {
 }
 
 export class SetNetworkProfileResponse {
-  // todo
-  // @Type(() => CustomDataType)
-  // @ValidateNested()
-  // customData?: CustomDataType;
-
   @IsEnum(SetNetworkProfileStatusEnumType)
   @IsNotEmpty()
   status!: SetNetworkProfileStatusEnumType;
@@ -99,22 +78,15 @@ export class SetNetworkProfileData {
   setNetworkProfileRequest!: SetNetworkProfileRequest;
 }
 
-export interface SetNetworkProfileProps {
-  station: ChargingStation;
-}
-
-export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
-  station,
-}) => {
+export const SetNetworkProfile: React.FC = () => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
-  const setNetworkProfileData = new SetNetworkProfileData();
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
   const serverNetworkProfile = new ServerNetworkProfile();
-  serverNetworkProfile[ServerNetworkProfileProps.id] = NEW_IDENTIFIER;
+  const setNetworkProfileData = new SetNetworkProfileData();
   const setNetworkProfileRequest = new SetNetworkProfileRequest();
+
+  serverNetworkProfile[ServerNetworkProfileProps.id] = NEW_IDENTIFIER;
   setNetworkProfileRequest[SetNetworkProfileRequestProps.connectionData] =
     new NetworkConnectionProfileType();
   setNetworkProfileData[SetNetworkProfileDataProps.websocketServerConfig] =
@@ -124,7 +96,7 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
 
   const handleSubmit = async (plainValues: any) => {
     const classInstance = plainToInstance(SetNetworkProfileData, plainValues);
-    let url = `/configuration/setNetworkProfile?identifier=${station.id}&tenantId=1`;
+    let url = `/configuration/setNetworkProfile?identifier=${stationIds}&tenantId=1`;
     if (classInstance.websocketServerConfig) {
       url =
         url +
@@ -142,10 +114,10 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
   return (
     <GenericForm
       formProps={formProps}
-      dtoClass={SetNetworkProfileData}
       onFinish={handleSubmit}
-      initialValues={setNetworkProfileData}
+      dtoClass={SetNetworkProfileData}
       parentRecord={setNetworkProfileData}
+      initialValues={setNetworkProfileData}
     />
   );
 };

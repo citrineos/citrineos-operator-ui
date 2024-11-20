@@ -3,7 +3,6 @@ import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../util';
 import { Evse } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '@util/consts';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GenericForm } from '../../components/form';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { Type } from 'class-transformer';
@@ -13,6 +12,7 @@ import { getSelectedChargingStation } from '../../redux/selectedChargingStationS
 import { Form, notification } from 'antd';
 import { EVSE_LIST_QUERY } from '../../pages/evses/queries';
 import { EvseProps } from '../../pages/evses/EvseProps';
+import { useSelectedChargingStationIds } from '@hooks';
 
 enum UnlockConnectorFormProps {
   evse = 'evse',
@@ -55,24 +55,12 @@ export class UnlockConnectorRequest {
   @IsNumber()
   @IsNotEmpty()
   connectorId!: number;
-
-  // @Type(() => CustomDataType)
-  // @ValidateNested()
-  // customData?: CustomDataType;
 }
 
-export interface UnlockConnectorProps {
-  station: ChargingStation;
-}
-
-export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
-  station,
-}) => {
+export const UnlockConnector: React.FC = () => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
   const unlockConnectorForm = new UnlockConnectorForm();
 
   const handleSubmit = async () => {
@@ -95,7 +83,7 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
       connectorId: plainEvse[EvseProps.connectorId],
     };
     await triggerMessageAndHandleResponse({
-      url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
+      url: `/evdriver/unlockConnector?identifier=${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>
@@ -106,8 +94,8 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
   return (
     <GenericForm
       formProps={formProps}
-      dtoClass={UnlockConnectorForm}
       onFinish={handleSubmit}
+      dtoClass={UnlockConnectorForm}
       parentRecord={unlockConnectorForm}
       initialValues={unlockConnectorForm}
     />

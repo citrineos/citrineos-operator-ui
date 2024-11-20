@@ -2,7 +2,6 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ResetEnumType } from '@citrineos/base';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
 import { GenericForm } from '../../components/form';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
@@ -13,15 +12,12 @@ import { triggerMessageAndHandleResponse } from '../util';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { EvseProps } from '../../pages/evses/EvseProps';
+import { useSelectedChargingStationIds } from '@hooks';
 
 enum ResetDataProps {
   evse = 'evse',
   type = 'type',
   evseId = 'evseId',
-}
-
-export interface ResetChargingStationProps {
-  station: ChargingStation;
 }
 
 class ResetData {
@@ -53,15 +49,12 @@ class ResetData {
   // customData?: CustomDataType | null;
 }
 
-export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
-  station,
-}) => {
+export const ResetChargingStation: React.FC = () => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
+  const formProps = { form };
   const resetData = new ResetData();
+  const stationIds = useSelectedChargingStationIds();
+
   resetData[ResetDataProps.evse] = new Evse();
   resetData[ResetDataProps.evse][EvseProps.databaseId] =
     NEW_IDENTIFIER as unknown as number;
@@ -70,7 +63,7 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
     const data = { type: request.type, evseId: request.evse?.id };
 
     await triggerMessageAndHandleResponse({
-      url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
+      url: `/configuration/reset?identifier=${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>
@@ -80,8 +73,8 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
 
   return (
     <GenericForm
-      formProps={formProps}
       dtoClass={ResetData}
+      formProps={formProps}
       onFinish={handleSubmit}
       parentRecord={resetData}
       initialValues={resetData}

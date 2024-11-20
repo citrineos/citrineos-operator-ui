@@ -17,25 +17,10 @@ import { formatPem, showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
 import { BaseRestClient } from '@util/BaseRestClient';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { MessageConfirmation } from '../MessageConfirmation';
-
-enum _InstallCertificateDataProps {
-  certificate = 'certificate',
-  certificateType = 'certificateType',
-}
+import { useSelectedChargingStationIds } from '@hooks';
 
 class InstallCertificateData {
-  // @GqlAssociation({
-  //   parentIdFieldName: InstallCertificateDataProps.certificate,
-  //   associatedIdFieldName: CertificateProps.id,
-  //   gqlQuery: CERTIFICATES_GET_QUERY,
-  //   gqlListQuery: CERTIFICATES_LIST_QUERY,
-  // })
-  // @Type(() => Certificate)
-  // @IsNotEmpty()
-  // certificate!: Certificate | null;
-
   @IsString()
   @Length(0, 5500)
   @IsNotEmpty()
@@ -77,23 +62,11 @@ export class RootCertificateRequest {
   callbackUrl?: string;
 }
 
-export interface InstallCertificateProps {
-  station: ChargingStation;
-}
-
-export const InstallCertificate: React.FC<InstallCertificateProps> = ({
-  station,
-}) => {
+export const InstallCertificate: React.FC = () => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
   const installCertificateData = new InstallCertificateData();
-  // const installCertificate = new Certificate();
-  // installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
-  // installCertificateData[InstallCertificateDataProps.certificate] =
-  //   installCertificate;
 
   const [_parentRecord, _setParentRecord] = useState<any>(
     installCertificateData,
@@ -105,23 +78,6 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
       InstallCertificateData,
       plainValues,
     );
-    // const certificate: Certificate =
-    //   data[InstallCertificateDataProps.certificate]!;
-    // const rootCertificateRequest = new RootCertificateRequest();
-    // rootCertificateRequest.stationId = station.id;
-    // rootCertificateRequest.certificateType = data.certificateType;
-    // rootCertificateRequest.tenantId = '1';
-    // rootCertificateRequest.fileId = certificate.certificateFileId!;
-
-    // try {
-    //   const client = new BaseRestClient();
-    //   client.setDataBaseUrl();
-    //   await client.put(
-    //     `/certificates/rootCertificate`,
-    //     InstallCertificateResponse,
-    //     {},
-    //     rootCertificateRequest,
-    //   );
 
     try {
       const pemString = formatPem(data.certificate);
@@ -131,7 +87,7 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
       data.certificate = pemString;
       const client = new BaseRestClient();
       await client.post(
-        `/certificates/installCertificate?identifier=${station.id}&tenantId=1`,
+        `/certificates/installCertificate?identifier=${stationIds}&tenantId=1`,
         MessageConfirmation,
         {},
         data,
@@ -149,8 +105,8 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
       <h4>Install Certificate</h4>
       <GenericForm
         formProps={formProps}
-        dtoClass={InstallCertificateData}
         onFinish={handleSubmit}
+        dtoClass={InstallCertificateData}
         parentRecord={installCertificateData}
         initialValues={installCertificateData}
       />

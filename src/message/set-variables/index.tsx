@@ -11,7 +11,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { AttributeEnumType } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { triggerMessageAndHandleResponse } from '../util';
@@ -32,20 +31,22 @@ import {
   VARIABLE_LIST_BY_COMPONENT_QUERY,
   VARIABLE_LIST_QUERY,
 } from '../../pages/variable-attributes/variables/queries';
+import { useSelectedChargingStationIds } from '@hooks';
 
 enum SetVariablesDataProps {
-  component = 'component',
-  variable = 'variable',
   value = 'value',
+  variable = 'variable',
+  component = 'component',
   attributeType = 'attributeType',
 }
 
 const SetVariablesRequestCustomConstructor = () => {
   const variable = new Variable();
   const component = new Component();
+  const setVariablesData = new SetVariablesData();
+
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  const setVariablesData = new SetVariablesData();
   setVariablesData[SetVariablesDataProps.component] = component;
   setVariablesData[SetVariablesDataProps.variable] = variable;
   return setVariablesData;
@@ -115,15 +116,10 @@ class SetVariablesRequest {
   setVariableData!: SetVariablesData[];
 }
 
-export interface SetVariablesProps {
-  station: ChargingStation;
-}
-
-export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
+export const SetVariables: React.FC = () => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
 
   const handleSubmit = async (plainValues: Partial<SetVariablesRequest>) => {
     const plainList = plainValues[SetVariablesRequestProps.setVariableData];
@@ -146,7 +142,7 @@ export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
       );
       const payload = { setVariableData: data };
       await triggerMessageAndHandleResponse({
-        url: `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
+        url: `/monitoring/setVariables?identifier=${stationIds}&tenantId=1`,
         responseClass: MessageConfirmation,
         data: payload,
         responseSuccessCheck: (response: MessageConfirmation) =>
@@ -163,8 +159,8 @@ export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
   return (
     <GenericForm
       formProps={formProps}
-      dtoClass={SetVariablesRequest}
       onFinish={handleSubmit}
+      dtoClass={SetVariablesRequest}
       parentRecord={setVariablesRequest}
       initialValues={setVariablesRequest}
     />

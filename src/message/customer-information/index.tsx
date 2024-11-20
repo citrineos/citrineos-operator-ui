@@ -3,8 +3,8 @@ import { Form } from 'antd';
 import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../util';
 import {
-  CustomerInformationRequest,
   CustomerPayload,
+  CustomerInformationRequest,
   GetCustomerInformationDataProps,
 } from '../../model/CustomerInformation';
 import { NEW_IDENTIFIER } from '@util/consts';
@@ -19,7 +19,7 @@ export const CustomerInformation: React.FC = () => {
   };
 
   const idToken = new IdToken();
-  const station = useSelectedChargingStationIds();
+  const stationIds = useSelectedChargingStationIds();
   const getCustomersRequest = new CustomerInformationRequest();
 
   idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
@@ -30,7 +30,7 @@ export const CustomerInformation: React.FC = () => {
   const handleSubmit = async (plainValues: any) => {
     const payload = CustomerPayload(plainValues);
     await triggerMessageAndHandleResponse({
-      url: `/reporting/customerInformation?identifier=${station}&tenantId=1`,
+      url: `/reporting/customerInformation?identifier=${stationIds}&tenantId=1`,
       responseClass: CustomerInformationRequest,
       data: payload,
       responseSuccessCheck: (response: CustomerInformationRequest) =>

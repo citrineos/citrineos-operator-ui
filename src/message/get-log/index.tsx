@@ -3,29 +3,25 @@ import { Form, notification, Spin } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GetLogRequest, GetLogRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { LogEnumType } from '@citrineos/base';
+import { useSelectedChargingStationIds } from '@hooks';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
-export interface GetLogProps {
-  station: ChargingStation;
-}
-
-export const GetLog: React.FC<GetLogProps> = ({ station }) => {
+export const GetLog: React.FC = () => {
   const formRef = useRef();
+  const apiUrl = useApiUrl();
   const [form] = Form.useForm();
   const formProps = { form };
-
-  const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
+  const stationIds = useSelectedChargingStationIds();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const apiUrl = useApiUrl();
   const {
     data: requestIdResponse,
     isLoading: isLoadingRequestId,
@@ -42,7 +38,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       variables: {
-        stationId: station.id,
+        stationId: stationIds,
         type: 'getLog',
       },
     },
@@ -74,7 +70,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
       setLoading(true);
       const client = new BaseRestClient();
       const response = await client.post(
-        `/reporting/getLog?identifier=${station.id}&tenantId=1`,
+        `/reporting/getLog?identifier=${stationIds}&tenantId=1`,
         MessageConfirmation,
         {},
         request,

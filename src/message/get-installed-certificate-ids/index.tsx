@@ -6,20 +6,14 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { GetInstalledCertificateIdsRequest } from './model';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { useSelectedChargingStationIds } from '@hooks';
 
-export interface GetInstalledCertificateIdsProps {
-  station: ChargingStation;
-}
-
-export const GetInstalledCertificateIds: React.FC<
-  GetInstalledCertificateIdsProps
-> = ({ station }) => {
+export const GetInstalledCertificateIds: React.FC = () => {
   const formRef = useRef();
   const [formProps] = Form.useForm();
-
-  const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
+  const stationIds = useSelectedChargingStationIds();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const isRequestValid = (request: GetInstalledCertificateIdsRequest) => {
     const errors = validateSync(request);
@@ -53,7 +47,7 @@ export const GetInstalledCertificateIds: React.FC<
       setLoading(true);
       const client = new BaseRestClient();
       const response = await client.post(
-        `/certificates/getInstalledCertificateIds?identifier=${station.id}&tenantId=1`,
+        `/certificates/getInstalledCertificateIds?identifier=${stationIds}&tenantId=1`,
         MessageConfirmation,
         {},
         request,
@@ -88,12 +82,12 @@ export const GetInstalledCertificateIds: React.FC<
 
   return (
     <GenericForm
-      ref={formRef as any}
-      dtoClass={GetInstalledCertificateIdsRequest}
-      formProps={formProps}
       onFinish={onFinish}
-      onValuesChange={onValuesChange}
+      ref={formRef as any}
+      formProps={formProps}
       submitDisabled={!valid}
+      onValuesChange={onValuesChange}
+      dtoClass={GetInstalledCertificateIdsRequest}
     />
   );
 };

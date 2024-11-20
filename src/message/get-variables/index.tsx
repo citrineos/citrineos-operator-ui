@@ -14,7 +14,6 @@ import {
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 
@@ -42,27 +41,29 @@ import {
   VARIABLE_GET_QUERY,
   VARIABLE_LIST_BY_COMPONENT_QUERY,
 } from '../../pages/variable-attributes/variables/queries';
+import { useSelectedChargingStationIds } from '@hooks';
 
 enum GetVariablesDataProps {
-  // customData = 'customData', // todo
-  component = 'component',
-  componentInstance = 'componentInstance',
-  variable = 'variable',
-  variableInstance = 'variableInstance',
   evse = 'evse',
+  variable = 'variable',
+  component = 'component',
   attributeType = 'attributeType',
+  variableInstance = 'variableInstance',
+  componentInstance = 'componentInstance',
 }
 
 const GetVariablesDataCustomConstructor = () => {
+  const evse = new Evse();
   const variable = new Variable();
   const component = new Component();
-  const evse = new Evse();
+  const getVariablesData = new GetVariablesData();
+
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  const getVariablesData = new GetVariablesData();
-  getVariablesData[GetVariablesDataProps.component] = component;
-  getVariablesData[GetVariablesDataProps.variable] = variable;
+
   getVariablesData[GetVariablesDataProps.evse] = evse;
+  getVariablesData[GetVariablesDataProps.variable] = variable;
+  getVariablesData[GetVariablesDataProps.component] = component;
   return getVariablesData;
 };
 
@@ -215,18 +216,13 @@ export class GetVariablesResponse {
   getVariableResult!: GetVariableResultType[];
 }
 
-export interface GetVariablesProps {
-  station: ChargingStation;
-}
-
-export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
+export const GetVariables: React.FC = () => {
   const formRef = useRef();
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
   const getVariablesRequest = new GetVariablesRequest();
+
   getVariablesRequest[GetVariablesRequestProps.getVariableData] = [
     GetVariablesDataCustomConstructor(),
   ];
@@ -239,8 +235,9 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       ].map((item: GetVariablesData) => {
         if (item && item[GetVariablesDataProps.evse]) {
           const evse: Evse = item[GetVariablesDataProps.evse]!;
-          const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
+          const component: Component = item[GetVariablesDataProps.component]!;
+
           let evsePayload: any = undefined;
           if (evse[EvseProps.databaseId]) {
             evsePayload = {
@@ -248,9 +245,11 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
               // customData: null // todo
             };
           }
+
           if (evsePayload && evse[EvseProps.connectorId]) {
             evsePayload.connectorId = evse[EvseProps.connectorId];
           }
+
           const data: any = {
             component: {
               name: component[ComponentProps.name],
@@ -265,6 +264,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
             attributeType: item[GetVariablesDataProps.attributeType],
             // customData: null // todo
           };
+
           if (evsePayload) {
             data.component.evse = evsePayload;
           }
@@ -276,7 +276,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       // customData: null // todo
     };
     await triggerMessageAndHandleResponse({
-      url: `/monitoring/getVariables?identifier=${station.id}&tenantId=1`,
+      url: `/monitoring/getVariables?identifier=${stationIds}&tenantId=1`,
       responseClass: GetVariablesResponse,
       data: getVariablesRequest,
       responseSuccessCheck: (response: GetVariablesResponse) => !!response,
@@ -287,8 +287,8 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
     <GenericForm
       ref={formRef as any}
       formProps={formProps}
-      dtoClass={GetVariablesRequest}
       onFinish={handleSubmit}
+      dtoClass={GetVariablesRequest}
       initialValues={getVariablesRequest}
       parentRecord={getVariablesRequest}
     />

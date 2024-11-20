@@ -19,17 +19,17 @@ import {
 } from '../queries';
 import { Evse } from '../../pages/evses/Evse';
 import { FieldCustomActions } from '@util/decorators/FieldCustomActions';
-import { useSelector } from 'react-redux';
-import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { ChargingStationProps } from '../../pages/charging-stations/ChargingStationProps';
 import { EvseProps } from '../../pages/evses/EvseProps';
 import { CustomAction } from '@interfaces';
+import { useSelectedChargingStationIds } from '@hooks';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 enum TriggerMessageRequestProps {
+  evse = 'evse',
   customData = 'customData',
   chargingStation = 'chargingStation',
-  evse = 'evse',
   requestedMessage = 'requestedMessage',
 }
 
@@ -89,7 +89,6 @@ export class TriggerMessageRequest {
 }
 
 export interface TriggerMessageProps {
-  station?: ChargingStation;
   evse?: Evse;
 }
 
@@ -103,23 +102,10 @@ const TriggerMessageRequestWithoutStation = createClassWithoutProperty(
   TriggerMessageRequestProps.chargingStation,
 );
 
-export const TriggerMessage: React.FC<TriggerMessageProps> = ({
-  station,
-  evse,
-}) => {
+export const TriggerMessage: React.FC<TriggerMessageProps> = ({ evse }) => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
-  const selectedChargingStation =
-    useSelector(getSelectedChargingStation()) || {};
-
-  const stationId = selectedChargingStation
-    ? selectedChargingStation.id
-    : station
-      ? station.id
-      : undefined;
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
@@ -139,7 +125,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
-    : stationId
+    : stationIds
       ? TriggerMessageRequestWithoutStation
       : TriggerMessageRequest;
   const parentRecord = evse
@@ -167,7 +153,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     }
 
     await triggerMessageAndHandleResponse({
-      url: `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
+      url: `/configuration/triggerMessage?identifier=${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>
@@ -177,8 +163,8 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   return (
     <GenericForm
-      formProps={formProps}
       dtoClass={dtoClass}
+      formProps={formProps}
       onFinish={handleSubmit}
       parentRecord={parentRecord}
       initialValues={parentRecord}
