@@ -38,7 +38,7 @@ export const GetLog: React.FC = () => {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       variables: {
-        stationId: stationIds,
+        stationIds: stationIds,
         type: 'getLog',
       },
     },
@@ -112,14 +112,14 @@ export const GetLog: React.FC = () => {
 
   return (
     <GenericForm
-      ref={formRef as any}
-      dtoClass={GetLogRequest}
-      formProps={formProps}
       onFinish={onFinish}
-      initialValues={getLogRequest}
-      parentRecord={getLogRequest}
-      onValuesChange={onValuesChange}
+      ref={formRef as any}
+      formProps={formProps}
       submitDisabled={!valid}
+      dtoClass={GetLogRequest}
+      parentRecord={getLogRequest}
+      initialValues={getLogRequest}
+      onValuesChange={onValuesChange}
     />
   );
 };

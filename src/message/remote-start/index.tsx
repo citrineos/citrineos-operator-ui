@@ -42,7 +42,7 @@ export const RemoteStart: React.FC = () => {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       variables: {
-        stationId: stationIds,
+        stationIds: stationIds,
         type: 'remoteStartId',
       },
     },
