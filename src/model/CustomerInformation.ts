@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { CustomDataType } from './CustomData';
 import { IdTokenProps, IdToken } from '../pages/id-tokens/id-token';
-import { GqlAssociation } from '../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';
 import {
@@ -49,8 +49,8 @@ export class CustomerInformationRequest {
     },
   })
   @Type(() => IdToken)
-  @IsNotEmpty()
-  idToken!: IdToken | null;
+  @IsOptional()
+  idToken?: IdToken | null;
 
   @IsString()
   @MinLength(1)
@@ -98,14 +98,18 @@ export const CustomerPayload = (plainValues: Record<string, any>) => {
         );
     }
   }
-
-  return {
+  const payload: any = {
     requestId: plainValues.requestId,
     report: report ?? false,
     clear: clear ?? false,
     customData: customData,
     customerCertificate: customerCertificate,
-    idToken: finalIdToken,
     customerIdentifier,
   };
+
+  if (finalIdToken) {
+    payload.idToken = finalIdToken;
+  }
+
+  return payload;
 };

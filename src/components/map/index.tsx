@@ -120,7 +120,6 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
         bounds.extend(new maps.LatLng(marker.lat, marker.lng));
       });
       map.fitBounds(bounds);
-      map.setZoom(zoom);
     } catch (error) {
       console.error('Error creating bounds or fitting map:', error);
     }

@@ -4,42 +4,27 @@ import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { Constructable } from '../../util/Constructable';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
-import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
-} from '../../util/decorators/PrimaryKeyFieldName';
-import { GenericDataTable, SelectionType } from './editable';
+} from '@util/decorators/PrimaryKeyFieldName';
+import { GenericDataTable } from './editable';
 import { ExpandableColumn } from './expandable-column';
-import { NEW_IDENTIFIER } from '../../util/consts';
-import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { getSearchableKeys } from '@util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
-import { CustomAction } from '../custom-actions';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getSelectedAssociatedItems,
   setSelectedAssociatedItems,
-} from '../../redux/selectionSlice';
-import { LABEL_FIELD } from '../../util/decorators/LabelField';
-import { generateSearchFilters } from '../../util/tables';
+} from '../../redux/associationSelectionSlice';
+import { LABEL_FIELD } from '@util/decorators/LabelField';
+import { generateSearchFilters } from '@util/tables';
 import GenericTag from '../tag';
 import { SelectedAssociatedItems } from './selected-associated-items';
-import { FieldPath } from '../form/state/fieldpath';
-
-export interface AssociationSelectionProps<ParentModel, AssociatedModel>
-  extends GqlAssociationProps {
-  fieldPath: FieldPath;
-  parentRecord: ParentModel;
-  associatedRecordClass: Constructable<AssociatedModel>;
-  value?: AssociatedModel;
-  onChange?: (value: AssociatedModel[]) => void;
-  selectable?: SelectionType | null;
-  gqlQueryVariables?: any;
-  customActions?: CustomAction<any>[];
-  form: any;
-}
+import { AssociationSelectionProps } from '@interfaces';
+import { SelectionType } from '@enums';
 
 export const AssociationSelection = <
   ParentModel,

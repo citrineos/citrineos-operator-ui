@@ -5,12 +5,12 @@ import { ResetEnumType } from '@citrineos/base';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
 import { GenericForm } from '../../components/form';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Evse } from '../../pages/evses/Evse';
 import { triggerMessageAndHandleResponse } from '../util';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { EvseProps } from '../../pages/evses/EvseProps';
 

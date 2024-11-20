@@ -1,12 +1,12 @@
 import { IsString, IsInt, IsEnum } from 'class-validator';
-import { BaseModel } from '../../util/BaseModel';
+import { BaseModel } from '@util/BaseModel';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import {
   CHARGING_STATION_SEQUENCES_LIST_QUERY,
   CHARGING_STATION_SEQUENCES_GET_QUERY,

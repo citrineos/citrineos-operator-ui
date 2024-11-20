@@ -8,7 +8,7 @@ import {
   GetCustomerInformationDataProps,
   GetCustomerProps,
 } from '../../model/CustomerInformation';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 
 export const CustomerInformation: React.FC<GetCustomerProps> = ({

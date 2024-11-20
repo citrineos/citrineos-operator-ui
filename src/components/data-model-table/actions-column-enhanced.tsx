@@ -1,40 +1,19 @@
 import { Alert, Button, Col, Row } from 'antd';
-import { CustomAction, CustomActions } from '../custom-actions';
-import React, { MouseEventHandler } from 'react';
+import { CustomActions } from '../custom-actions';
+import React from 'react';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
 import { EditButton, ShowButton } from '@refinedev/antd';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DeleteButton } from '../custom-actions/delete';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
-} from '../../util/decorators/PrimaryKeyFieldName';
+} from '@util/decorators/PrimaryKeyFieldName';
 import { plainToInstance } from 'class-transformer';
-import { CLASS_GQL_DELETE_MUTATION } from '../../util/decorators/ClassGqlDeleteMutation';
-
-export enum ColumnAction {
-  DELETE = 'DELETE',
-  EDIT = 'EDIT',
-  SHOW = 'SHOW',
-  SAVE = 'SAVE',
-  CANCEL = 'CANCEL',
-}
-
-export interface IActionsColumnEnhancedProps {
-  record: any;
-  dtoClass: any; // todo type
-  actions: ColumnAction[];
-  customActions?: CustomAction<any>[];
-  onEdit?: (record: any) => void;
-  onCancel?: MouseEventHandler<any>; // todo type
-  onSave?: (record: any) => void; // todo type
-  onDeleteSuccess?: () => void;
-}
-
-export interface CancelButtonProps {
-  onCancel?: MouseEventHandler<HTMLElement>;
-}
+import { CLASS_GQL_DELETE_MUTATION } from '@util/decorators/ClassGqlDeleteMutation';
+import { CancelButtonProps, IActionsColumnEnhancedProps } from '@interfaces';
+import { ColumnAction } from '@enums';
 
 export const CancelButton = ({ onCancel }: CancelButtonProps) => {
   return (

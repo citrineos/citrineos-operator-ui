@@ -1,6 +1,6 @@
 import { HttpMethod } from '@citrineos/base';
-import { BaseRestClient } from '../util/BaseRestClient';
-import { Constructable } from '../util/Constructable';
+import { BaseRestClient } from '@util/BaseRestClient';
+import { Constructable } from '@util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 
@@ -9,6 +9,9 @@ export const showSucces = (payload?: string) => {
     message: 'Success',
     description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
     placement: 'topRight',
+    props: {
+      'data-testid': 'success-notification',
+    },
   });
 };
 
@@ -17,6 +20,9 @@ export const showError = (msg: string) => {
     message: 'Request Failed',
     description: msg,
     placement: 'topRight',
+    props: {
+      'data-testid': 'error-notification',
+    } as any,
   });
 };
 

@@ -1,6 +1,6 @@
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Tariffs } from '../../graphql/schema.types';
-import { BaseModel } from '../../util/BaseModel';
+import { BaseModel } from '@util/BaseModel';
 
 export enum Currency {
   USD = 'USD',

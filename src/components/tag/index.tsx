@@ -1,19 +1,6 @@
 import React from 'react';
 import { Tag } from 'antd';
-
-export enum DefaultColors {
-  MAGENTA = 'magenta',
-  RED = 'red',
-  VOLCANO = 'volcano',
-  ORANGE = 'orange',
-  GOLD = 'gold',
-  LIME = 'lime',
-  GREEN = 'green',
-  CYAN = 'cyan',
-  BLUE = 'blue',
-  GEEKBLUE = 'geekblue',
-  PURPLE = 'purple',
-}
+import { DefaultColors } from '@enums';
 
 const getColorForIndex = (index: number, customColors?: string[]) => {
   const colors =

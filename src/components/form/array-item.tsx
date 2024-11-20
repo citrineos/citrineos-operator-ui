@@ -1,28 +1,10 @@
 import React from 'react';
-import { Button, Form, FormListFieldData } from 'antd';
+import { Button, Form } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-import { FieldSchema, FieldType, renderField } from './index';
+import { renderField } from './index';
 import { useSelector } from 'react-redux';
-import { FieldPath } from './state/fieldpath';
-import { FieldAnnotations } from '../data-model-table/editable';
-
-export interface ArrayItemProps {
-  fieldPath: FieldPath;
-  field: FormListFieldData;
-  fieldIdx: number;
-  schema: FieldSchema;
-  hideLabels: boolean;
-  disabled: boolean;
-  visibleOptionalFields: any;
-  enableOptionalField: any;
-  toggleOptionalField: any;
-  unknowns: any;
-  modifyUnknowns: any;
-  form: any;
-  parentRecord: any;
-  remove: any;
-  fieldAnnotations?: FieldAnnotations;
-}
+import { ArrayItemProps, FieldSchema } from '@interfaces';
+import { FieldType } from '@enums';
 
 export const ArrayItem: React.FC<ArrayItemProps> = (props: ArrayItemProps) => {
   const {

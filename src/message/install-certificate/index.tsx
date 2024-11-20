@@ -16,7 +16,7 @@ import {
 import { formatPem, showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import { BaseRestClient } from '@util/BaseRestClient';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { MessageConfirmation } from '../MessageConfirmation';
 

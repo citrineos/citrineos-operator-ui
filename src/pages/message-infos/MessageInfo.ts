@@ -13,7 +13,7 @@ import {
   MessagePriorityEnumType,
   MessageStateEnumType,
 } from '@citrineos/base';
-import { TransformDate } from '../../util/TransformDate';
+import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';
 import { CustomDataType } from '../../model/CustomData';
 

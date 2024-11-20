@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import * as path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -14,4 +15,11 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      '@util': path.resolve(__dirname, 'src/util'),
+      '@enums': path.resolve(__dirname, 'src/model/enums'),
+      '@interfaces': path.resolve(__dirname, 'src/model/interfaces'),
+    },
+  },
 });

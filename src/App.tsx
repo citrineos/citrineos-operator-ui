@@ -23,7 +23,13 @@ import routerBindings, {
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { Header } from './components';
 import { ColorModeContextProvider } from './contexts/color-mode';
 import {
@@ -94,6 +100,10 @@ import {
   resources as variableMonitoringsResources,
   routes as VariableMonitoringsRoutes,
 } from './pages/variable-monitorings';
+import {
+  resources as variableAttributesResources,
+  routes as VariableAttributesRoutes,
+} from './pages/variable-attributes';
 import { routes as HomeRoutes } from './pages/home';
 import React from 'react';
 import { MdOutlineSecurity } from 'react-icons/md';
@@ -179,12 +189,15 @@ const resources = [
   ...chargingProfilesResources,
   ...messageInfosResources,
   ...variableMonitoringsResources,
+  ...variableAttributesResources,
   ...certificatesResources,
   ...reservationsResources,
   ...evsesResources,
   ...installedCertificatesResources,
   ...serverNetworkProfilesResources,
 ].sort((a, b) => a.name.localeCompare(b.name));
+
+const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
 
 function App() {
   return (
@@ -211,9 +224,10 @@ function App() {
                         src={CitrineOSPng}
                         alt="icon"
                         style={{ height: '48px', margin: '-8px -8px' }}
+                        data-testid="citrine-os-icon"
                       />
                     ),
-                    text: 'Citrine OS',
+                    text: `Citrine OS ${CITRINEOS_VERSION}`,
                   },
                 }}
               >
@@ -228,6 +242,7 @@ function App() {
                       </ThemedLayoutV2>
                     }
                   >
+                    <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route index path="/home/*" element={<HomeRoutes />} />
                     <Route
                       element={<NavigateToResource resource="Authorizations" />}
@@ -289,6 +304,10 @@ function App() {
                     <Route
                       path="/variable-monitorings/*"
                       element={<VariableMonitoringsRoutes />}
+                    />
+                    <Route
+                      path="/variable-attributes/*"
+                      element={<VariableAttributesRoutes />}
                     />
                     <Route
                       path="/certificates/*"

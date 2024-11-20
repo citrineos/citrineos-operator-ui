@@ -5,8 +5,8 @@ import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
 import { triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import { NEW_IDENTIFIER } from '@util/consts';
 import {
   Transaction,
   TransactionProps,

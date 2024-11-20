@@ -9,16 +9,16 @@ import {
   createClassWithoutProperty,
   triggerMessageAndHandleResponse,
 } from '../util';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   GET_CHARGING_STATION_LIST_FOR_EVSE,
   GET_EVSE_LIST_FOR_STATION,
   GET_EVSES_FOR_STATION,
 } from '../queries';
 import { Evse } from '../../pages/evses/Evse';
-import { FieldCustomActions } from '../../util/decorators/FieldCustomActions';
+import { FieldCustomActions } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { CustomAction } from '../../components/custom-actions';
@@ -160,8 +160,10 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       data.evse = {
         id: evse[EvseProps.id],
         // customData: todo,
-        connectorId: evse[EvseProps.connectorId],
       };
+      if (evse[EvseProps.connectorId]) {
+        data.evse.connectorId = evse[EvseProps.connectorId];
+      }
     }
 
     await triggerMessageAndHandleResponse({

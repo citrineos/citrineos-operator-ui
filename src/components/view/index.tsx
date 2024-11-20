@@ -8,41 +8,19 @@ import {
   RefreshButton,
   Show,
   useForm,
-  UseFormReturnType,
 } from '@refinedev/antd';
-import { GenericForm, GenericProps } from '../form';
+import { GenericForm } from '../form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GetFields, GetVariables } from '@refinedev/hasura';
 import { HttpError } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { CustomAction, CustomActions } from '../custom-actions';
-import { ResourceType } from '../../resource-type';
+import { CustomActions } from '../custom-actions';
 import dayjs from 'dayjs';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { useDispatch } from 'react-redux';
 import { setSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
-
-export enum GenericViewState {
-  SHOW = 'show',
-  EDIT = 'edit',
-  CREATE = 'create',
-}
-
-export interface GenericParameterizedViewProps extends GenericViewProps {
-  state: GenericViewState;
-  id?: string | number | null;
-  resourceType?: ResourceType;
-  hideListButton?: boolean;
-  useFormProps?: UseFormReturnType<any>;
-}
-
-export interface GenericViewProps extends GenericProps {
-  gqlQuery: any;
-  editMutation?: any;
-  createMutation?: any;
-  deleteMutation?: any;
-  customActions?: CustomAction<any>[];
-}
+import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
+import { GenericViewState } from '@enums';
 
 export const GenericView = (props: GenericViewProps) => {
   const {

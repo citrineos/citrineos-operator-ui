@@ -12,8 +12,8 @@ import {
   SetVariableResultType,
 } from '@citrineos/base';
 import { Boots } from '../../graphql/schema.types';
-import { TransformDate } from '../../util/TransformDate';
-import { BaseModel } from '../../util/BaseModel';
+import { TransformDate } from '@util/TransformDate';
+import { BaseModel } from '@util/BaseModel';
 
 export class Boot extends BaseModel {
   @IsString()

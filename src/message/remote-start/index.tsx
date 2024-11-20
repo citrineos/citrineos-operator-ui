@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Form, notification, Spin } from 'antd';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import { BaseRestClient } from '@util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -11,7 +11,7 @@ import {
 } from './model';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { Evse } from '../../pages/evses/Evse';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';

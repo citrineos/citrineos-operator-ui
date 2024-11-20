@@ -2,16 +2,16 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { instanceToPlain } from 'class-transformer';
 
-interface SelectionState {
+interface AssociationSelectionState {
   models: { [key: string]: any };
 }
 
-const initialState: SelectionState = {
+const initialState: AssociationSelectionState = {
   models: {},
 };
 
-const selectedAssociatedItems = createSlice({
-  name: 'selectedAssociatedItems',
+const associationSelectionSlice = createSlice({
+  name: 'associationSelection',
   initialState,
   reducers: {
     setSelectedAssociatedItems: (
@@ -30,5 +30,5 @@ export const getSelectedAssociatedItems = (storageKey: string) =>
     (models) => (models[storageKey] ? JSON.parse(models[storageKey]) : []),
   );
 
-export const { setSelectedAssociatedItems } = selectedAssociatedItems.actions;
-export default selectedAssociatedItems.reducer;
+export const { setSelectedAssociatedItems } = associationSelectionSlice.actions;
+export default associationSelectionSlice.reducer;

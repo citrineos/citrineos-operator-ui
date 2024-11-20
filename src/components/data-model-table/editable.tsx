@@ -7,21 +7,14 @@ import React, {
 } from 'react';
 import { Alert, Button, Form, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  extractSchema,
-  FieldSchema,
-  FieldType,
-  getClassTransformerType,
-  renderField,
-} from '../form';
+import { extractSchema, getClassTransformerType, renderField } from '../form';
 import { StatusIcon } from '../status-icon';
 import GenericTag from '../tag';
 import { TruncateDisplay } from '../truncate-display';
 import { TimestampDisplay } from '../timestamp-display';
-import { Constructable } from '../../util/Constructable';
 import { plainToInstance } from 'class-transformer';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
-import { CLASS_GQL_LIST_QUERY } from '../../util/decorators/ClassGqlListQuery';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
+import { CLASS_GQL_LIST_QUERY } from '@util/decorators/ClassGqlListQuery';
 import { useForm } from '@refinedev/antd';
 import {
   DataProvider,
@@ -32,53 +25,42 @@ import {
 import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
-} from '../../util/decorators/PrimaryKeyFieldName';
+} from '@util/decorators/PrimaryKeyFieldName';
 import { GetFields, GetVariables } from '@refinedev/hasura';
-import { CLASS_GQL_EDIT_MUTATION } from '../../util/decorators/ClassGqlEditMutation';
+import { CLASS_GQL_EDIT_MUTATION } from '@util/decorators/ClassGqlEditMutation';
 import {
   CLASS_GQL_CREATE_MUTATION,
   MutationAndGetVariables,
-} from '../../util/decorators/ClassGqlCreateMutation';
+} from '@util/decorators/ClassGqlCreateMutation';
 import { CustomAction } from '../custom-actions';
 import { FieldPath } from '../form/state/fieldpath';
 import { AssociationSelection } from './association-selection';
-import { ActionsColumnEnhanced, ColumnAction } from './actions-column-enhanced';
+import { ActionsColumnEnhanced } from './actions-column-enhanced';
 import { Unknowns, UnknownsActions } from '../form/state/unknowns';
 import { Flags } from '../form/state/flags';
 import {
   getAssociatedFields,
   GQL_ASSOCIATION,
   GqlAssociationProps,
-} from '../../util/decorators/GqlAssociation';
-import { TableWrapper, TableWrapperRef } from './table-wrapper';
-import { NEW_IDENTIFIER } from '../../util/consts';
+} from '@util/decorators/GqlAssociation';
+import { TableWrapper } from './table-wrapper';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { hasOwnProperty } from '../../message/util';
-import { CLASS_CUSTOM_ACTIONS } from '../../util/decorators/ClassCustomActions';
+import { CLASS_CUSTOM_ACTIONS } from '@util/decorators/ClassCustomActions';
 import { useSelector } from 'react-redux';
 import { ArrayField } from '../form/array-field';
-import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
+import { CLASS_CUSTOM_CONSTRUCTOR } from '@util/decorators/ClassCustomConstructor';
 import NestedObjectField from '../form/nested-object-field';
 import { DocumentNode } from 'graphql';
-import { HIDDEN_WHEN, IsHiddenCheck } from '../../util/decorators/HiddenWhen';
-
-export interface RenderViewContentProps {
-  field: FieldSchema;
-  preFieldPath?: FieldPath;
-  value: any;
-  record: any;
-  hideLabels?: boolean;
-  disabled: boolean;
-  parentRecord: any;
-  form: any;
-  setHasChanges?: any;
-  visibleOptionalFields?: Flags;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  modifyUnknowns?: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-}
+import { HIDDEN_WHEN, IsHiddenCheck } from '@util/decorators/HiddenWhen';
+import {
+  FieldSchema,
+  GenericDataTableProps,
+  RenderEditableCellProps,
+  RenderViewContentProps,
+  TableWrapperRef,
+} from '@interfaces';
+import { ColumnAction, FieldType } from '@enums';
 
 export const renderViewContent = (props: RenderViewContentProps) => {
   const {
@@ -165,47 +147,6 @@ export const renderViewContent = (props: RenderViewContentProps) => {
       );
   }
 };
-
-export enum SelectionType {
-  SINGLE = 'single',
-  MULTIPLE = 'multiple',
-}
-
-export interface FieldAnnotations {
-  [key: string]: {
-    customActions?: CustomAction<any>[];
-    gqlAssociationProps?: GqlAssociationProps;
-  };
-}
-
-export interface GenericDataTableProps {
-  // todo make generic / typed
-  dtoClass: Constructable<any>;
-  selectable?: SelectionType | null;
-  filters?: any;
-  useTableProps?: any;
-  onSelectionChange?: (selectedRows: any[]) => void;
-  editable?: boolean;
-  customActions?: CustomAction<any>[];
-  fieldAnnotations?: FieldAnnotations;
-}
-
-export interface RenderEditableCellProps {
-  field: FieldSchema;
-  preFieldPath?: FieldPath;
-  hideLabels?: boolean;
-  disabled: boolean;
-  parentRecord: any;
-  form?: any;
-  setHasChanges: any;
-  visibleOptionalFields?: Flags;
-  enableOptionalField?: (path: FieldPath) => void;
-  toggleOptionalField?: (path: FieldPath) => void;
-  unknowns?: Unknowns;
-  modifyUnknowns?: any;
-  useSelector: any;
-  fieldAnnotations?: FieldAnnotations;
-}
 
 // todo add generic types
 export const GenericDataTable: React.FC<GenericDataTableProps> = (

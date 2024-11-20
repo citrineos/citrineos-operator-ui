@@ -23,9 +23,9 @@ import {
 } from '@citrineos/base';
 import { Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
-import { TransformDate } from '../../util/TransformDate';
+import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Evse } from '../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../queries';
 import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
