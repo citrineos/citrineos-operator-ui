@@ -9,10 +9,10 @@ import {
 import { OperationalStatusEnumType } from '@citrineos/base';
 
 import { NEW_IDENTIFIER } from '@util/consts';
+import { getSelectedChargingStation } from '@redux';
 import { EvseProps } from '../../pages/evses/EvseProps';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
-import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 
 export enum ChangeAvailabilityRequestProps {
   evse = 'evse',
@@ -31,6 +31,7 @@ export class ChangeAvailabilityRequest {
       query: GET_EVSE_LIST_FOR_STATION,
       getQueryVariables: (_: ChangeAvailabilityRequest, selector: any) => {
         const station = selector(getSelectedChargingStation()) || {};
+
         return {
           stationId: station.id,
         };

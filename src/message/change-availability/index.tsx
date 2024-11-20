@@ -56,11 +56,11 @@ export const ChangeAvailability: React.FC = () => {
   return (
     <GenericForm
       ref={formRef}
-      dtoClass={ChangeAvailabilityRequest}
       formProps={formProps}
       onFinish={handleSubmit}
-      initialValues={changeAvailabilityRequest}
+      dtoClass={ChangeAvailabilityRequest}
       parentRecord={changeAvailabilityRequest}
+      initialValues={changeAvailabilityRequest}
     />
   );
 };

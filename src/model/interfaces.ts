@@ -1,6 +1,10 @@
-import { FormInstance, FormListFieldData, TableProps } from 'antd';
-import { UseFormReturnType } from '@refinedev/antd';
 import type { Dispatch } from 'redux';
+import { DocumentNode } from 'graphql';
+import { MouseEventHandler } from 'react';
+import { isDefined } from 'class-validator';
+import { UseFormReturnType } from '@refinedev/antd';
+import { FormInstance, FormListFieldData, TableProps } from 'antd';
+
 import { ResourceType } from '../resource-type';
 import {
   ColumnAction,
@@ -10,14 +14,12 @@ import {
   SelectionType,
   SelectMode,
 } from './enums';
-import { isDefined } from 'class-validator';
 import { Constructable } from '@util/Constructable';
-import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
-import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
-import { MouseEventHandler } from 'react';
-import { DocumentNode } from 'graphql';
+import { FieldPath } from '../components/form/state/fieldpath';
+import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
+import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 
 export interface ChargingStations {
   id: string;
@@ -25,6 +27,10 @@ export interface ChargingStations {
   locationId: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface SelectedChargingStationState {
+  chargingStations: Map<string, ChargingStation>;
 }
 
 export interface CustomAction<T> {

@@ -24,11 +24,10 @@ import {
   GetTransactionStatus,
   GetTransactionStatusProps,
 } from './get-transaction-status';
-import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
-import { instanceToPlain } from 'class-transformer';
 import { UpdateAuthPassword } from './update-auth-password';
 import { DeleteStationNetworkProfiles } from './delete-station-network-profiles';
 import { CustomAction } from '@interfaces';
+import { addSelectedChargingStation } from '@redux';
 import {
   DeleteCertificate,
   DeleteCertificateProps,
@@ -68,13 +67,7 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
         ({
           label,
           execOrRender: (station: ChargingStation, _setLoading, dispatch) => {
-            dispatch(
-              setSelectedChargingStation({
-                selectedChargingStation: JSON.stringify(
-                  instanceToPlain(station),
-                ),
-              }),
-            );
+            dispatch(addSelectedChargingStation([station]));
             return <Component station={station} />;
           },
         }) as CustomAction<ChargingStation>,

@@ -25,10 +25,10 @@ import { Sortable } from '@util/decorators/Sortable';
 
 export enum MeterValueProps {
   id = 'id',
+  timestamp = 'timestamp',
+  sampledValue = 'sampledValue',
   transactionEventId = 'transactionEventId',
   transactionDatabaseId = 'transactionDatabaseId',
-  sampledValue = 'sampledValue',
-  timestamp = 'timestamp',
 }
 
 @ClassResourceType(ResourceType.METER_VALUES)
@@ -67,7 +67,4 @@ export class MeterValue extends BaseModel {
   @Sortable()
   @TransformDate()
   timestamp!: Date;
-
-  // todo: handle custom data
-  // customData?: CustomDataType | null;
 }

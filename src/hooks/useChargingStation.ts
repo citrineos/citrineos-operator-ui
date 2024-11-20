@@ -2,48 +2,33 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { plainToInstance } from 'class-transformer';
 
-import { RootState } from '../redux/store';
+import { selectedChargingStation, RootState } from '@redux';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
-import { getChargingStations } from '../redux/selectedChargingStationSlice';
 
 // Selector to extract charging stations from the state
-const selectChargingStations = (state: RootState) => getChargingStations(state);
+const selectChargingStations = (state: RootState) =>
+  selectedChargingStation(state);
 
 // Custom hooks for handling Charging Station
 export function useSelectedChargingStation(index?: number) {
-  const selectedChargingStation = useSelector(selectChargingStations);
+  const selectedChargingStations = useSelector(selectChargingStations);
 
   const station = useMemo(() => {
-    if (!selectedChargingStation) return [];
+    if (!selectedChargingStations) return [];
 
-    return plainToInstance(
-      ChargingStation,
-      Array.isArray(selectedChargingStation)
-        ? selectedChargingStation
-        : [selectedChargingStation],
-    );
-  }, [selectedChargingStation]);
+    return plainToInstance(ChargingStation, [selectedChargingStations]);
+  }, [selectedChargingStations]);
 
   return index !== undefined ? station[index] : station;
 }
 
 export function useSelectedChargingStationIds() {
-  const selectedChargingStation = useSelectedChargingStation();
-  return (
-    Array.isArray(selectedChargingStation)
-      ? selectedChargingStation
-      : [selectedChargingStation]
-  )
-    .map((station) => station.id)
-    .join(',');
+  const selectedChargingStations = useSelector(selectChargingStations);
+  return selectedChargingStations.map((station) => station.id).join(',');
 }
 
 export function useSelectedChargingStationCount(length: number) {
-  const selectedChargingStation = useSelectedChargingStation();
-  return (
-    (Array.isArray(selectedChargingStation)
-      ? selectedChargingStation
-      : [selectedChargingStation]
-    ).length === length
-  );
+  const selectedChargingStations = useSelector(selectChargingStations);
+
+  return selectedChargingStations.length === length;
 }

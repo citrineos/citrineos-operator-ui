@@ -27,10 +27,10 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
+import { addSelectedChargingStation } from '@redux';
 import { GenericViewState, SelectionType } from '@enums';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { useDebounce, useColorMode, useSelectedChargingStation } from '@hooks';
-import { setChargingStations } from '../../redux/selectedChargingStationSlice';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 
 const { Panel } = Collapse;
@@ -135,7 +135,7 @@ export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
           selectedRows: ChargingStation[],
         ) => {
           setSelectedChargingStations(selectedRows);
-          dispatch(setChargingStations(selectedRows));
+          dispatch(addSelectedChargingStation(selectedRows));
         },
       }),
       [],

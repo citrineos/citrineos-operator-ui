@@ -20,6 +20,7 @@
     "baseUrl": ".",
     "paths": {
       "@hooks": ["src/hooks"],
+      "@redux": ["src/redux"],
       "@util/*": ["src/util/*"],
       "@enums": ["src/model/enums"],
       "@interfaces": ["src/model/interfaces"]

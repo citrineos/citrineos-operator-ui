@@ -9,18 +9,19 @@ import {
   Show,
   useForm,
 } from '@refinedev/antd';
+import dayjs from 'dayjs';
 import { GenericForm } from '../form';
+import { useDispatch } from 'react-redux';
+import { HttpError } from '@refinedev/core';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GetFields, GetVariables } from '@refinedev/hasura';
-import { HttpError } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { CustomActions } from '../custom-actions';
-import dayjs from 'dayjs';
-import { NEW_IDENTIFIER } from '@util/consts';
-import { useDispatch } from 'react-redux';
-import { setSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
-import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
+
 import { GenericViewState } from '@enums';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { CustomActions } from '../custom-actions';
+import { addSelectedChargingStation } from '@redux';
+import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
 
 export const GenericView = (props: GenericViewProps) => {
   const {
@@ -75,9 +76,9 @@ export const GenericParameterizedView = (
     hideListButton = true,
     useFormProps,
   } = props;
+  const formRef = useRef();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const formRef = useRef();
   const gqlMutation =
     state === GenericViewState.CREATE ? createMutation : editMutation;
   const gqlDeleteMutation = deleteMutation;
@@ -140,11 +141,7 @@ export const GenericParameterizedView = (
       setParentRecord(instance);
 
       // Set the selectedChargingStationSlice
-      dispatch(
-        setSelectedChargingStation({
-          selectedChargingStation: JSON.stringify(instanceToPlain(instance)),
-        }),
-      );
+      dispatch(addSelectedChargingStation([instance]));
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };
