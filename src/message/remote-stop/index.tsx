@@ -20,21 +20,21 @@ export enum RemoteStopRequestProps {
 }
 
 export class RemoteStopRequest {
-  // @GqlAssociation({
-  //   parentIdFieldName: RemoteStopRequestProps.transaction,
-  //   associatedIdFieldName: TransactionProps.id,
-  //   gqlListQuery: {
-  //     query: GET_ACTIVE_TRANSACTION_LIST_FOR_STATION,
-  //     getQueryVariables: (_: RemoteStopRequest, selector: any) => {
-  //       const station = selector(getSelectedChargingStation()) || {};
-  //       return {
-  //         stationId: station.id,
-  //       };
-  //     },
-  //   },
-  // })
-  // @Type(() => Transaction)
-  // @IsNotEmpty()
+  @GqlAssociation({
+    parentIdFieldName: RemoteStopRequestProps.transaction,
+    associatedIdFieldName: TransactionProps.id,
+    gqlListQuery: {
+      query: GET_ACTIVE_TRANSACTION_LIST_FOR_STATION,
+      getQueryVariables: (_: RemoteStopRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
+    },
+  })
+  @Type(() => Transaction)
+  @IsNotEmpty()
   transaction!: Transaction | null;
 }
 
