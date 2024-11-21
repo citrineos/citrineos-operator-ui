@@ -4,22 +4,28 @@ import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GetBaseReportRequest, GetBaseReportRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { ReportBaseEnumType } from '@citrineos/base';
-import { useSelectedChargingStationIds } from '@hooks';
 
-export const GetBaseReport: React.FC = () => {
+export interface GetBaseReportProps {
+  station: ChargingStation;
+}
+
+export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
   const formRef = useRef();
-  const apiUrl = useApiUrl();
   const [form] = Form.useForm();
-  const formProps = { form };
-  const [valid, setValid] = useState<boolean>(true);
-  const stationIds = useSelectedChargingStationIds();
-  const [loading, setLoading] = useState<boolean>(false);
+  const formProps = {
+    form,
+  };
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [valid, setValid] = useState<boolean>(true);
+
+  const apiUrl = useApiUrl();
   const {
     data: requestIdResponse,
     isLoading: isLoadingRequestId,
@@ -36,7 +42,7 @@ export const GetBaseReport: React.FC = () => {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       variables: {
-        stationIds: stationIds,
+        stationId: station.id,
         type: 'getBaseReport',
       },
     },
@@ -68,7 +74,7 @@ export const GetBaseReport: React.FC = () => {
       setLoading(true);
       const client = new BaseRestClient();
       const response = await client.post(
-        `/reporting/getBaseReport?identifier=${stationIds}&tenantId=1`,
+        `/reporting/getBaseReport?identifier=${station.id}&tenantId=1`,
         MessageConfirmation,
         {},
         request,

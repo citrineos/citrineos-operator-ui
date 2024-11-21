@@ -53,7 +53,7 @@ export const ResetChargingStation: React.FC = () => {
   const [form] = Form.useForm();
   const formProps = { form };
   const resetData = new ResetData();
-  const stationIds = useSelectedChargingStationIds();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   resetData[ResetDataProps.evse] = new Evse();
   resetData[ResetDataProps.evse][EvseProps.databaseId] =
@@ -63,7 +63,7 @@ export const ResetChargingStation: React.FC = () => {
     const data = { type: request.type, evseId: request.evse?.id };
 
     await triggerMessageAndHandleResponse({
-      url: `/configuration/reset?identifier=${stationIds}&tenantId=1`,
+      url: `/configuration/reset=${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>

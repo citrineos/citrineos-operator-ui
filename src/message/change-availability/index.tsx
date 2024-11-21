@@ -16,7 +16,7 @@ export const ChangeAvailability: React.FC = () => {
   const [form] = Form.useForm();
   const formProps = { form };
 
-  const stationIds = useSelectedChargingStationIds();
+  const stationIds = useSelectedChargingStationIds('identifier=');
   const changeAvailabilityRequest = new ChangeAvailabilityRequest();
 
   const handleSubmit = async () => {
@@ -45,7 +45,7 @@ export const ChangeAvailability: React.FC = () => {
     }
 
     await triggerMessageAndHandleResponse({
-      url: `/configuration/changeAvailability?identifier=${stationIds}&tenantId=1`,
+      url: `/configuration/changeAvailability?${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>

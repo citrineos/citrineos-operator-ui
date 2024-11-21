@@ -65,8 +65,8 @@ export class RootCertificateRequest {
 export const InstallCertificate: React.FC = () => {
   const [form] = Form.useForm();
   const formProps = { form };
-  const stationIds = useSelectedChargingStationIds();
   const installCertificateData = new InstallCertificateData();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   const [_parentRecord, _setParentRecord] = useState<any>(
     installCertificateData,
@@ -87,7 +87,7 @@ export const InstallCertificate: React.FC = () => {
       data.certificate = pemString;
       const client = new BaseRestClient();
       await client.post(
-        `/certificates/installCertificate?identifier=${stationIds}&tenantId=1`,
+        `/certificates/installCertificate?${stationIds}&tenantId=1`,
         MessageConfirmation,
         {},
         data,

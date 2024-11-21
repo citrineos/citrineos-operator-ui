@@ -183,8 +183,8 @@ export const DeleteCertificate: React.FC<DeleteCertificateProps> = ({
       <h4>Delete Certificate</h4>
       <GenericForm
         formProps={formProps}
-        onFinish={handleSubmit}
         dtoClass={DeleteCertificateData}
+        onFinish={handleSubmit}
         parentRecord={deleteCertificateData}
         initialValues={deleteCertificateData}
       />

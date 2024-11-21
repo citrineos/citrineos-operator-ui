@@ -1,8 +1,12 @@
+import { enableMapSet } from 'immer';
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from './store';
 import { SelectedChargingStationState } from '@interfaces';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
+
+// Enable the MapSet plugin for Immer
+enableMapSet();
 
 const initialState: SelectedChargingStationState = {
   chargingStations: new Map(),
@@ -18,11 +22,24 @@ const selectedChargingStationSlice = createSlice({
      */
     setSelectedChargingStations: (
       state,
-      action: PayloadAction<ChargingStation[]>,
+      action: PayloadAction<{
+        stations: ChargingStation[];
+        appendData?: boolean;
+      }>,
     ) => {
-      state.chargingStations = new Map(
-        action.payload.map((station) => [station.id, station]),
-      );
+      const { stations, appendData } = action.payload;
+      const append = appendData ?? false;
+      if (append) {
+        stations.forEach((station) => {
+          if (!state.chargingStations.has(station.id)) {
+            state.chargingStations.set(station.id, station);
+          }
+        });
+      } else {
+        state.chargingStations = new Map(
+          stations.map((station) => [station.id, station]),
+        );
+      }
     },
   },
 });
@@ -30,7 +47,9 @@ const selectedChargingStationSlice = createSlice({
 // Memoized selector to get an array of ChargingStation from the Map
 export const selectedChargingStation = createSelector(
   (state: RootState) => state.selectedChargingStationSlice.chargingStations,
-  (chargingStations) => Array.from(chargingStations.values()),
+  (chargingStations) => {
+    return Array.from(chargingStations.values());
+  },
 );
 
 export const getSelectedChargingStation = () =>

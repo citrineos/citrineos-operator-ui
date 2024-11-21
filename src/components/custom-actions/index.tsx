@@ -25,7 +25,6 @@ import {
 } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { CustomActionsProps } from '@interfaces';
-import { useSelectedChargingStationCount } from '@hooks';
 
 export const CustomActions = <T,>({
   data,
@@ -37,16 +36,10 @@ export const CustomActions = <T,>({
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('Details');
-  const selectedChargingStationCount = useSelectedChargingStationCount(0);
   const [drawerContent, setDrawerContent] = useState<React.ReactNode | null>(
     null,
   );
-
-  useEffect(() => {
-    setIsDisabled(selectedChargingStationCount);
-  }, [selectedChargingStationCount]);
 
   const iconMap: { [key: string]: React.ReactNode } = useMemo(
     () => ({
@@ -130,7 +123,6 @@ export const CustomActions = <T,>({
           <Button
             size="small"
             icon={<MoreOutlined />}
-            disabled={isDisabled}
             data-testid="custom-action-dropdown-button"
             type={displayText ? 'primary' : 'default'}
             style={displayText ? { marginLeft: 5 } : undefined}

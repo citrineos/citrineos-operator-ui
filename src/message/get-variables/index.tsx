@@ -220,8 +220,8 @@ export const GetVariables: React.FC = () => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = { form };
-  const stationIds = useSelectedChargingStationIds();
   const getVariablesRequest = new GetVariablesRequest();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   getVariablesRequest[GetVariablesRequestProps.getVariableData] = [
     GetVariablesDataCustomConstructor(),
@@ -276,7 +276,7 @@ export const GetVariables: React.FC = () => {
       // customData: null // todo
     };
     await triggerMessageAndHandleResponse({
-      url: `/monitoring/getVariables?identifier=${stationIds}&tenantId=1`,
+      url: `/monitoring/getVariables?${stationIds}&tenantId=1`,
       responseClass: GetVariablesResponse,
       data: getVariablesRequest,
       responseSuccessCheck: (response: GetVariablesResponse) => !!response,

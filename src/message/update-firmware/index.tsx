@@ -3,24 +3,27 @@ import { Form, notification, Spin } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
 import { useApiUrl, useCustom } from '@refinedev/core';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { UpdateFirmwareRequest, UpdateFirmwareRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 import { formatPem, readFileContent } from '../util';
-import { useSelectedChargingStationIds } from '@hooks';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
-export const UpdateFirmware: React.FC = () => {
+export interface UpdateFirmwareProps {
+  station: ChargingStation;
+}
+
+export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   const formRef = useRef();
-  const apiUrl = useApiUrl();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const stationIds = useSelectedChargingStationIds();
   const [isFormValid, setIsFormValid] = useState(false);
 
+  const apiUrl = useApiUrl();
   const { data: requestIdResponse, isLoading: isRequestIdLoading } = useCustom({
     url: `${apiUrl}`,
     method: 'post',
@@ -28,7 +31,7 @@ export const UpdateFirmware: React.FC = () => {
     meta: {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-      variables: { stationId: stationIds, type: 'updateFirmware' },
+      variables: { stationId: station.id, type: 'updateFirmware' },
     },
   });
 
@@ -116,7 +119,7 @@ export const UpdateFirmware: React.FC = () => {
 
         const client = new BaseRestClient();
         const response = await client.post(
-          `/configuration/updateFirmware?identifier=${stationIds}&tenantId=1`,
+          `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
           MessageConfirmation,
           {},
           request,
@@ -142,7 +145,7 @@ export const UpdateFirmware: React.FC = () => {
         setLoading(false);
       }
     },
-    [getSigningCertificate, stationIds],
+    [getSigningCertificate, station.id],
   );
 
   if (loading || isRequestIdLoading) return <Spin />;

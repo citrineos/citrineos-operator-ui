@@ -119,7 +119,7 @@ class SetVariablesRequest {
 export const SetVariables: React.FC = () => {
   const [form] = Form.useForm();
   const formProps = { form };
-  const stationIds = useSelectedChargingStationIds();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   const handleSubmit = async (plainValues: Partial<SetVariablesRequest>) => {
     const plainList = plainValues[SetVariablesRequestProps.setVariableData];
@@ -142,7 +142,7 @@ export const SetVariables: React.FC = () => {
       );
       const payload = { setVariableData: data };
       await triggerMessageAndHandleResponse({
-        url: `/monitoring/setVariables?identifier=${stationIds}&tenantId=1`,
+        url: `/monitoring/setVariables?${stationIds}&tenantId=1`,
         responseClass: MessageConfirmation,
         data: payload,
         responseSuccessCheck: (response: MessageConfirmation) =>

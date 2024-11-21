@@ -24,13 +24,13 @@ export const ClearCache: React.FC = () => {
   };
 
   const clearCacheRequest = new ClearCacheRequest();
-  const stationIds = useSelectedChargingStationIds();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
     const classInstance = plainToInstance(ClearCacheRequest, plainValues);
     await triggerMessageAndHandleResponse({
-      url: `/evdriver/clearCache?identifier=${stationIds}&tenantId=1`,
+      url: `/evdriver/clearCache?${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: classInstance,
       responseSuccessCheck: (response: MessageConfirmation) =>

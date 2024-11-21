@@ -105,9 +105,9 @@ const TriggerMessageRequestWithoutStation = createClassWithoutProperty(
 export const TriggerMessage: React.FC<TriggerMessageProps> = ({ evse }) => {
   const [form] = Form.useForm();
   const formProps = { form };
-  const stationIds = useSelectedChargingStationIds();
-
   const triggerMessageRequest = new TriggerMessageRequest();
+  const stationIds = useSelectedChargingStationIds('identifier=');
+
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
   triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
     NEW_IDENTIFIER as unknown as number;
@@ -153,7 +153,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ evse }) => {
     }
 
     await triggerMessageAndHandleResponse({
-      url: `/configuration/triggerMessage?identifier=${stationIds}&tenantId=1`,
+      url: `/configuration/triggerMessage?${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>

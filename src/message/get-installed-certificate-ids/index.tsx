@@ -12,8 +12,8 @@ export const GetInstalledCertificateIds: React.FC = () => {
   const formRef = useRef();
   const [formProps] = Form.useForm();
   const [valid, setValid] = useState<boolean>(true);
-  const stationIds = useSelectedChargingStationIds();
   const [loading, setLoading] = useState<boolean>(false);
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   const isRequestValid = (request: GetInstalledCertificateIdsRequest) => {
     const errors = validateSync(request);
@@ -47,7 +47,7 @@ export const GetInstalledCertificateIds: React.FC = () => {
       setLoading(true);
       const client = new BaseRestClient();
       const response = await client.post(
-        `/certificates/getInstalledCertificateIds?identifier=${stationIds}&tenantId=1`,
+        `/certificates/getInstalledCertificateIds=${stationIds}&tenantId=1`,
         MessageConfirmation,
         {},
         request,

@@ -124,7 +124,7 @@ export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
         metaData: { gqlQuery: CHARGING_STATIONS_LIST_QUERY },
       });
 
-    const [_chargingStations, setLocalSelectedChargingStations] = useState<
+    const [_chargingStations, setChargingStations] = useState<
       ChargingStation[]
     >([]);
 
@@ -134,8 +134,13 @@ export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
           _selectedRowKeys: React.Key[],
           selectedRows: ChargingStation[],
         ) => {
-          setLocalSelectedChargingStations(selectedRows);
-          dispatch(setSelectedChargingStations(selectedRows));
+          setChargingStations(selectedRows);
+          dispatch(
+            setSelectedChargingStations({
+              appendData: false,
+              stations: selectedRows,
+            }),
+          );
         },
       }),
       [],

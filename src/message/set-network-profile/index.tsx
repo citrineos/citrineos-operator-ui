@@ -81,10 +81,10 @@ export class SetNetworkProfileData {
 export const SetNetworkProfile: React.FC = () => {
   const [form] = Form.useForm();
   const formProps = { form };
-  const stationIds = useSelectedChargingStationIds();
   const serverNetworkProfile = new ServerNetworkProfile();
   const setNetworkProfileData = new SetNetworkProfileData();
   const setNetworkProfileRequest = new SetNetworkProfileRequest();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   serverNetworkProfile[ServerNetworkProfileProps.id] = NEW_IDENTIFIER;
   setNetworkProfileRequest[SetNetworkProfileRequestProps.connectionData] =
@@ -96,7 +96,7 @@ export const SetNetworkProfile: React.FC = () => {
 
   const handleSubmit = async (plainValues: any) => {
     const classInstance = plainToInstance(SetNetworkProfileData, plainValues);
-    let url = `/configuration/setNetworkProfile?identifier=${stationIds}&tenantId=1`;
+    let url = `/configuration/setNetworkProfile?${stationIds}&tenantId=1`;
     if (classInstance.websocketServerConfig) {
       url =
         url +

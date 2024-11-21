@@ -141,7 +141,12 @@ export const GenericParameterizedView = (
       setParentRecord(instance);
 
       // Set the selectedChargingStationSlice
-      dispatch(setSelectedChargingStations([instance]));
+      dispatch(
+        setSelectedChargingStations({
+          appendData: false,
+          stations: [instance],
+        }),
+      );
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };

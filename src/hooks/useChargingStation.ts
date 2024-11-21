@@ -22,13 +22,14 @@ export function useSelectedChargingStation(index?: number) {
   return index !== undefined ? station[index] : station;
 }
 
-export function useSelectedChargingStationIds() {
+export function useSelectedChargingStationIds(label?: string) {
   const selectedChargingStations = useSelector(selectChargingStations);
-  return selectedChargingStations.map((station) => station.id).join(',');
+  return selectedChargingStations
+    .map((station) => (label ? `${label}${station.id}` : station.id))
+    .join(',');
 }
 
 export function useSelectedChargingStationCount(length: number) {
   const selectedChargingStations = useSelector(selectChargingStations);
-
   return selectedChargingStations.length === length;
 }

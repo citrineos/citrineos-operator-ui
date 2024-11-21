@@ -19,8 +19,8 @@ export const CustomerInformation: React.FC = () => {
   };
 
   const idToken = new IdToken();
-  const stationIds = useSelectedChargingStationIds();
   const getCustomersRequest = new CustomerInformationRequest();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
   getCustomersRequest[GetCustomerInformationDataProps.clear] = false;
@@ -30,7 +30,7 @@ export const CustomerInformation: React.FC = () => {
   const handleSubmit = async (plainValues: any) => {
     const payload = CustomerPayload(plainValues);
     await triggerMessageAndHandleResponse({
-      url: `/reporting/customerInformation?identifier=${stationIds}&tenantId=1`,
+      url: `/reporting/customerInformation?${stationIds}&tenantId=1`,
       responseClass: CustomerInformationRequest,
       data: payload,
       responseSuccessCheck: (response: CustomerInformationRequest) =>

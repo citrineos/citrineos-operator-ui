@@ -60,8 +60,8 @@ export class UnlockConnectorRequest {
 export const UnlockConnector: React.FC = () => {
   const [form] = Form.useForm();
   const formProps = { form };
-  const stationIds = useSelectedChargingStationIds();
   const unlockConnectorForm = new UnlockConnectorForm();
+  const stationIds = useSelectedChargingStationIds('identifier=');
 
   const handleSubmit = async () => {
     const plainValues = await form.validateFields();
@@ -83,7 +83,7 @@ export const UnlockConnector: React.FC = () => {
       connectorId: plainEvse[EvseProps.connectorId],
     };
     await triggerMessageAndHandleResponse({
-      url: `/evdriver/unlockConnector?identifier=${stationIds}&tenantId=1`,
+      url: `/evdriver/unlockConnector?${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>
