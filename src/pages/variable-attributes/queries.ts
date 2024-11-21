@@ -50,9 +50,9 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
   }
 `;
 
-export const VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY = gql`
+export const VARIABLE_ATTRIBUTE_LIST_FOR_STATION_QUERY = gql`
   query VariableAttributeListByEvse(
-    $evseDatabaseId: Int!
+    $stationId: String!
     $offset: Int
     $limit: Int
     $order_by: [VariableAttributes_order_by!] = {}
@@ -62,7 +62,7 @@ export const VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: { evseDatabaseId: { _eq: $evseDatabaseId }, _and: $where }
+      where: { stationId: { _eq: $stationId }, _and: $where }
     ) {
       id
       stationId
@@ -94,7 +94,7 @@ export const VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY = gql`
       }
     }
     VariableAttributes_aggregate(
-      where: { evseDatabaseId: { _eq: $evseDatabaseId }, _and: $where }
+      where: { stationId: { _eq: $stationId }, _and: $where }
     ) {
       aggregate {
         count

@@ -13,18 +13,20 @@ import { GenericDataTable } from './editable';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { getSearchableKeys } from '@util/decorators/Searcheable';
-import { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getSelectedAssociatedItems,
   setSelectedAssociatedItems,
 } from '../../redux/associationSelectionSlice';
 import { LABEL_FIELD } from '@util/decorators/LabelField';
-import { generateSearchFilters } from '@util/tables';
 import GenericTag from '../tag';
 import { SelectedAssociatedItems } from './selected-associated-items';
 import { AssociationSelectionProps } from '@interfaces';
 import { SelectionType } from '@enums';
+import { CrudFilters } from '@refinedev/core';
+import { generateSearchFilters } from '@util/tables';
+import { getAssociatedFields } from '@util/decorators/GqlAssociation';
+import { getClassTransformerType } from '../form';
 
 export const AssociationSelection = <
   ParentModel,
@@ -161,10 +163,24 @@ export const AssociationSelection = <
     [associatedRecordResourceType, meta],
   );
 
-  const searchableKeys = useMemo(
-    () => getSearchableKeys(associatedRecordClass),
-    [associatedRecordClass],
-  );
+  const searchableKeys = useMemo(() => {
+    const associatedRecordInstance = plainToInstance(associatedRecordClass, {});
+    const classSearchableKeys = [...getSearchableKeys(associatedRecordClass)];
+    const associatedNestedFields = getAssociatedFields(associatedRecordClass);
+    for (const associatedNestedField of associatedNestedFields) {
+      const associatedNestedClass = getClassTransformerType(
+        associatedRecordInstance,
+        associatedNestedField,
+      );
+      const associatedSearchableKeys = getSearchableKeys(associatedNestedClass);
+      for (const associatedSearchableKey of associatedSearchableKeys) {
+        classSearchableKeys.push(
+          `${associatedNestedClass.name.replace(/\d+/g, '')}.${associatedSearchableKey}`,
+        );
+      }
+    }
+    return classSearchableKeys;
+  }, [associatedRecordClass]);
 
   const {
     tableProps,

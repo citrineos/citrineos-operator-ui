@@ -1,58 +1,39 @@
 import React, { useState } from 'react';
 import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-  ValidateNested,
-} from 'class-validator';
-import {
-  InstallCertificateStatusEnumType,
-  InstallCertificateUseEnumType,
-} from '@citrineos/base';
-import { formatPem, showError, showSucces } from '../util';
-import { StatusInfoType } from '../model/StatusInfoType';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { HttpMethod, InstallCertificateUseEnumType } from '@citrineos/base';
+import { triggerMessageAndHandleResponse } from '../util';
 import { GenericForm } from '../../components/form';
-import { BaseRestClient } from '@util/BaseRestClient';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { MessageConfirmation } from '../MessageConfirmation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import {
+  Certificate,
+  CertificateProps,
+} from '../../pages/certificates/Certificate';
+import { CERTIFICATES_LIST_QUERY } from '../../pages/certificates/queries';
+import { NEW_IDENTIFIER } from '@util/consts';
 
-enum _InstallCertificateDataProps {
+enum InstallCertificateDataProps {
   certificate = 'certificate',
   certificateType = 'certificateType',
 }
 
 class InstallCertificateData {
-  // @GqlAssociation({
-  //   parentIdFieldName: InstallCertificateDataProps.certificate,
-  //   associatedIdFieldName: CertificateProps.id,
-  //   gqlQuery: CERTIFICATES_GET_QUERY,
-  //   gqlListQuery: CERTIFICATES_LIST_QUERY,
-  // })
-  // @Type(() => Certificate)
-  // @IsNotEmpty()
-  // certificate!: Certificate | null;
-
-  @IsString()
-  @Length(0, 5500)
+  @GqlAssociation({
+    parentIdFieldName: InstallCertificateDataProps.certificate,
+    associatedIdFieldName: CertificateProps.id,
+    gqlListQuery: {
+      query: CERTIFICATES_LIST_QUERY,
+    },
+  })
+  @Type(() => Certificate)
   @IsNotEmpty()
-  certificate!: string;
+  certificate!: Certificate | null;
 
   @IsEnum(InstallCertificateUseEnumType)
   certificateType!: InstallCertificateUseEnumType;
-}
-
-export class InstallCertificateResponse {
-  @IsEnum(InstallCertificateStatusEnumType)
-  status!: InstallCertificateStatusEnumType;
-
-  @Type(() => StatusInfoType)
-  @ValidateNested()
-  @IsOptional()
-  statusInfo?: StatusInfoType;
 }
 
 export class RootCertificateRequest {
@@ -90,10 +71,10 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   };
 
   const installCertificateData = new InstallCertificateData();
-  // const installCertificate = new Certificate();
-  // installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
-  // installCertificateData[InstallCertificateDataProps.certificate] =
-  //   installCertificate;
+  const installCertificate = new Certificate();
+  installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
+  installCertificateData[InstallCertificateDataProps.certificate] =
+    installCertificate;
 
   const [_parentRecord, _setParentRecord] = useState<any>(
     installCertificateData,
@@ -105,48 +86,26 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
       InstallCertificateData,
       plainValues,
     );
-    // const certificate: Certificate =
-    //   data[InstallCertificateDataProps.certificate]!;
-    // const rootCertificateRequest = new RootCertificateRequest();
-    // rootCertificateRequest.stationId = station.id;
-    // rootCertificateRequest.certificateType = data.certificateType;
-    // rootCertificateRequest.tenantId = '1';
-    // rootCertificateRequest.fileId = certificate.certificateFileId!;
+    const certificate: Certificate =
+      data[InstallCertificateDataProps.certificate]!;
+    const rootCertificateRequest = new RootCertificateRequest();
+    rootCertificateRequest.stationId = station.id;
+    rootCertificateRequest.certificateType = data.certificateType;
+    rootCertificateRequest.tenantId = '1';
+    rootCertificateRequest.fileId = certificate.certificateFileId!;
 
-    // try {
-    //   const client = new BaseRestClient();
-    //   client.setDataBaseUrl();
-    //   await client.put(
-    //     `/certificates/rootCertificate`,
-    //     InstallCertificateResponse,
-    //     {},
-    //     rootCertificateRequest,
-    //   );
-
-    try {
-      const pemString = formatPem(data.certificate);
-      if (pemString == null) {
-        throw new Error('Incorrectly formatted PEM');
-      }
-      data.certificate = pemString;
-      const client = new BaseRestClient();
-      await client.post(
-        `/certificates/installCertificate?identifier=${station.id}&tenantId=1`,
-        MessageConfirmation,
-        {},
-        data,
-      );
-      showSucces();
-    } catch (error: any) {
-      showError(
-        'The set variables request failed with message: ' + error.message,
-      );
-    }
+    await triggerMessageAndHandleResponse({
+      url: `/certificates/rootCertificate?identifier=${station.id}&tenantId=1`,
+      method: HttpMethod.Put,
+      isDataUrl: true,
+      responseClass: MessageConfirmation,
+      responseSuccessCheck: (response: MessageConfirmation) => response.success,
+      data: rootCertificateRequest,
+    });
   };
 
   return (
     <>
-      <h4>Install Certificate</h4>
       <GenericForm
         formProps={formProps}
         dtoClass={InstallCertificateData}

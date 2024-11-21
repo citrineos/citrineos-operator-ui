@@ -36,6 +36,7 @@ import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '@util/BaseModel';
 import { LabelField } from '@util/decorators/LabelField';
+import { Searchable } from '@util/decorators/Searcheable';
 
 export enum VariableAttributeProps {
   id = 'id',
@@ -65,6 +66,7 @@ export class VariableAttribute extends BaseModel {
   id!: number;
 
   @IsString()
+  @Searchable()
   stationId!: string;
 
   @IsOptional()

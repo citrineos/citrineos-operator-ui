@@ -1,4 +1,10 @@
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
@@ -27,16 +33,13 @@ import {
   StatusNotificationProps,
 } from '../status-notifications/StatusNotification';
 import {
-  STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from '../status-notifications/queries';
 import { Evse } from '../evses/Evse';
 import {
   GET_EVSE_LIST_FOR_STATION,
-  GET_EVSES_FOR_STATION,
   GET_TRANSACTION_LIST_FOR_STATION,
-  GET_TRANSACTIONS_FOR_STATION,
 } from '../../message/queries';
 import { Transaction, TransactionProps } from '../transactions/Transaction';
 import { ChargingStationProps } from './ChargingStationProps';
@@ -47,6 +50,24 @@ import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor'
 import { NEW_IDENTIFIER } from '@util/consts';
 import { EvseProps } from '../evses/EvseProps';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
+import {
+  InstalledCertificate,
+  InstalledCertificateProps,
+} from '../installed-certificates/InstalledCertificate';
+import {
+  INSTALLED_CERTIFICATE_LIST_FOR_STATION_QUERY,
+  INSTALLED_CERTIFICATE_LIST_QUERY,
+} from '../installed-certificates/queries';
+import {
+  VariableAttribute,
+  VariableAttributeProps,
+} from '../variable-attributes/VariableAttributes';
+import { FieldLabel } from '@util/decorators/FieldLabel';
+import {
+  VARIABLE_ATTRIBUTE_GET_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_FOR_STATION_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_QUERY,
+} from '../variable-attributes/queries';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -89,9 +110,6 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: StatusNotificationProps.stationId,
-    gqlQuery: {
-      query: STATUS_NOTIFICATIONS_GET_QUERY,
-    },
     gqlListQuery: {
       query: STATUS_NOTIFICATIONS_LIST_QUERY,
     },
@@ -110,9 +128,6 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: EvseProps.id,
-    gqlQuery: {
-      query: GET_EVSES_FOR_STATION,
-    },
     gqlListQuery: {
       query: EVSE_LIST_QUERY,
     },
@@ -131,9 +146,6 @@ export class ChargingStation extends BaseModel {
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
     associatedIdFieldName: TransactionProps.transactionId,
-    gqlQuery: {
-      query: GET_TRANSACTIONS_FOR_STATION,
-    },
     gqlListQuery: {
       query: TRANSACTION_LIST_QUERY,
     },
@@ -149,6 +161,47 @@ export class ChargingStation extends BaseModel {
   })
   @Type(() => Transaction)
   transactions?: Transaction[];
+
+  @IsArray()
+  @IsOptional()
+  @GqlAssociation({
+    parentIdFieldName: ChargingStationProps.id,
+    associatedIdFieldName: InstalledCertificateProps.id,
+    gqlListQuery: {
+      query: INSTALLED_CERTIFICATE_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
+      query: INSTALLED_CERTIFICATE_LIST_FOR_STATION_QUERY,
+      getQueryVariables: (station: ChargingStation) => ({
+        stationId: station.id,
+      }),
+    },
+  })
+  @Type(() => InstalledCertificate)
+  installedCertificates?: InstalledCertificate[];
+
+  @IsArray()
+  @Type(() => VariableAttribute)
+  @ValidateNested({ each: true })
+  @FieldLabel('Device Model')
+  @GqlAssociation({
+    parentIdFieldName: ChargingStationProps.id,
+    associatedIdFieldName: VariableAttributeProps.stationId,
+    hasNewAssociatedIdsVariable: true,
+    gqlQuery: {
+      query: VARIABLE_ATTRIBUTE_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: VARIABLE_ATTRIBUTE_LIST_QUERY,
+    },
+    gqlListSelectedQuery: {
+      query: VARIABLE_ATTRIBUTE_LIST_FOR_STATION_QUERY,
+      getQueryVariables: (station: ChargingStation) => ({
+        [VariableAttributeProps.stationId]: station.id,
+      }),
+    },
+  })
+  VariableAttributes?: VariableAttribute[];
 
   constructor(data?: ChargingStation) {
     super();
