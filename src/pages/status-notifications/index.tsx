@@ -67,7 +67,6 @@ export const resources = [
     list: '/status-notifications',
     create: '/status-notifications/new',
     show: '/status-notifications/:id',
-    edit: '/status-notifications/:id/edit',
     meta: {
       canDelete: true,
     },

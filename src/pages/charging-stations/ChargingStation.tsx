@@ -46,6 +46,7 @@ import { Searchable } from '@util/decorators/Searcheable';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { EvseProps } from '../evses/EvseProps';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -142,6 +143,9 @@ export class ChargingStation extends BaseModel {
         stationId: station.id,
       }),
     },
+  })
+  @HiddenWhen((record) => {
+    return record;
   })
   @Type(() => Transaction)
   transactions?: Transaction[];

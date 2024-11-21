@@ -30,7 +30,7 @@ export const TransactionView: React.FC = () => {
 };
 
 export const TransactionList = () => {
-  return <GenericDataTable dtoClass={Transaction} />;
+  return <GenericDataTable dtoClass={Transaction} editable={false} />;
 };
 
 export const routes: React.FC = () => {
@@ -48,7 +48,6 @@ export const resources = [
     list: '/transactions',
     create: '/transactions/new',
     show: '/transactions/:id',
-    edit: '/transactions/:id/edit',
     meta: {
       canDelete: true,
     },

@@ -26,7 +26,7 @@ export const MeterValueView: React.FC = () => {
 };
 
 export const MeterValueList = (_props: IDataModelListProps) => {
-  return <GenericDataTable dtoClass={MeterValue} />;
+  return <GenericDataTable dtoClass={MeterValue} editable={false} />;
 };
 
 export const routes: React.FC = () => {
@@ -44,7 +44,6 @@ export const resources = [
     list: '/meter-values',
     create: '/meter-values/new',
     show: '/meter-values/:id',
-    edit: '/meter-values/:id/edit',
     meta: {
       canDelete: true,
     },

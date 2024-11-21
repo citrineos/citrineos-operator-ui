@@ -76,7 +76,6 @@ import {
 } from './pages/tariffs';
 import {
   SecurityEventsCreate,
-  SecurityEventsEdit,
   SecurityEventsList,
   SecurityEventsShow,
 } from './pages/security-events';
@@ -263,7 +262,6 @@ function App() {
                     <Route path="/security-events">
                       <Route index element={<SecurityEventsList />} />
                       <Route path="create" element={<SecurityEventsCreate />} />
-                      <Route path="edit/:id" element={<SecurityEventsEdit />} />
                       <Route path="show/:id" element={<SecurityEventsShow />} />
                     </Route>
                     <Route path="/boots/*" element={<BootsRoutes />} />

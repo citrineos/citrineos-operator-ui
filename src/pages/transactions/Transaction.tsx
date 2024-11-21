@@ -126,6 +126,9 @@ export class Transaction {
       }),
     },
   })
+  @HiddenWhen((record) => {
+    return record;
+  })
   events?: TransactionEvent[];
 
   @Searchable()
