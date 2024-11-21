@@ -116,7 +116,8 @@ export const AssociationSelection = <
           (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
       (!!value &&
         ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-          (value as any)[parentIdFieldName] === NEW_IDENTIFIER));
+          (value as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
+      (!value && (parentRecord as any)[parentIdFieldName] === null);
     setNew(newVal);
   }, [parentRecord, primaryKeyFieldName, parentIdFieldName, value]);
 
