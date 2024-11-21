@@ -11,7 +11,7 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types
-        ignoredActions: ['selectedChargingStation/addSelectedChargingStation'],
+        ignoredActions: ['selectedChargingStation/setSelectedChargingStations'],
         // Ignore these field paths in all actions
         ignoredActionPaths: [
           'meta.arg',

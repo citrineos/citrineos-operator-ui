@@ -16,7 +16,7 @@ const selectedChargingStationSlice = createSlice({
      * Adds or updates selected charging stations in the state.
      * Converts an array of ChargingStation into a Map for efficient lookups.
      */
-    addSelectedChargingStation: (
+    setSelectedChargingStations: (
       state,
       action: PayloadAction<ChargingStation[]>,
     ) => {
@@ -39,7 +39,7 @@ export const getSelectedChargingStation = () =>
     (chargingStations) => Array.from(chargingStations.values()),
   );
 
-export const { addSelectedChargingStation } =
+export const { setSelectedChargingStations } =
   selectedChargingStationSlice.actions;
 
 export default selectedChargingStationSlice.reducer;

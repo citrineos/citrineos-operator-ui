@@ -27,7 +27,7 @@ import {
 import { UpdateAuthPassword } from './update-auth-password';
 import { DeleteStationNetworkProfiles } from './delete-station-network-profiles';
 import { CustomAction } from '@interfaces';
-import { addSelectedChargingStation } from '@redux';
+import { setSelectedChargingStations } from '@redux';
 import {
   DeleteCertificate,
   DeleteCertificateProps,
@@ -67,7 +67,7 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
         ({
           label,
           execOrRender: (station: ChargingStation, _setLoading, dispatch) => {
-            dispatch(addSelectedChargingStation([station]));
+            dispatch(setSelectedChargingStations([station]));
             return <Component station={station} />;
           },
         }) as CustomAction<ChargingStation>,

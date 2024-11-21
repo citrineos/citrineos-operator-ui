@@ -20,7 +20,7 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { GenericViewState } from '@enums';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { CustomActions } from '../custom-actions';
-import { addSelectedChargingStation } from '@redux';
+import { setSelectedChargingStations } from '@redux';
 import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
 
 export const GenericView = (props: GenericViewProps) => {
@@ -141,7 +141,7 @@ export const GenericParameterizedView = (
       setParentRecord(instance);
 
       // Set the selectedChargingStationSlice
-      dispatch(addSelectedChargingStation([instance]));
+      dispatch(setSelectedChargingStations([instance]));
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };

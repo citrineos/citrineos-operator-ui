@@ -27,7 +27,7 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { addSelectedChargingStation } from '@redux';
+import { setSelectedChargingStations } from '@redux';
 import { GenericViewState, SelectionType } from '@enums';
 import { ChargingStationsListQuery } from '../../graphql/types';
 import { useDebounce, useColorMode, useSelectedChargingStation } from '@hooks';
@@ -124,7 +124,7 @@ export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
         metaData: { gqlQuery: CHARGING_STATIONS_LIST_QUERY },
       });
 
-    const [_chargingStations, setSelectedChargingStations] = useState<
+    const [_chargingStations, setLocalSelectedChargingStations] = useState<
       ChargingStation[]
     >([]);
 
@@ -134,8 +134,8 @@ export const ChargingStationsList: React.FC<IDataModelListProps> = React.memo(
           _selectedRowKeys: React.Key[],
           selectedRows: ChargingStation[],
         ) => {
-          setSelectedChargingStations(selectedRows);
-          dispatch(addSelectedChargingStation(selectedRows));
+          setLocalSelectedChargingStations(selectedRows);
+          dispatch(setSelectedChargingStations(selectedRows));
         },
       }),
       [],
