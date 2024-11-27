@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -12,6 +13,7 @@ import { TransformDate } from '@util/TransformDate';
 import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { Form, Input } from 'antd';
 import React from 'react'; // Necessary for JSX in decorators
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 export enum LogParametersTypeProps {
   remoteLocation = 'remoteLocation',
@@ -24,6 +26,13 @@ export class LogParametersType {
   // @IsOptional()
   // customData?: CustomDataType | null;
 
+  @IsBoolean()
+  @IsOptional()
+  useCustomRemoteLocation?: boolean;
+
+  @HiddenWhen((record: any) => {
+    return !record.useCustomRemoteLocation;
+  })
   @IsNotEmpty()
   @IsUrl({ require_tld: false })
   @CustomFormRender(() => {

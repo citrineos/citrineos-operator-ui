@@ -24,6 +24,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
+  const [remoteLocationURL, setRemoteLocationURL] = useState<string>('');
 
   const apiUrl = useApiUrl();
   const {
@@ -104,13 +105,41 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
     }
   };
 
+  const getRemoteLocation = async () => {
+    try {
+      setLoading(true);
+      const client = new BaseRestClient();
+      client.setDataBaseUrl();
+      const response = await client.get(
+        `/certificates/fileURL`,
+        MessageConfirmation,
+        {},
+      );
+      setRemoteLocationURL((response as unknown as string) ?? ('' as string));
+    } catch (error: any) {
+      const msg = `Could not perform get log, got error: ${error.message}`;
+      console.error(msg, error);
+      notification.error({
+        message: 'Error',
+        description: msg,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (remoteLocationURL === '')
+    setRemoteLocationURL(
+      (getRemoteLocation() as unknown as string) ?? ('' as string),
+    );
+
   if (loading || isLoadingRequestId) return <Spin />;
 
   const getLogRequest = new GetLogRequest();
   getLogRequest[GetLogRequestProps.requestId] =
     requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   getLogRequest[GetLogRequestProps.log] = {
-    remoteLocation: `${DIRECTUS_URL}/files`,
+    remoteLocation: remoteLocationURL,
   } as any; // Type assertion if necessary
   getLogRequest[GetLogRequestProps.logType] = LogEnumType.DiagnosticsLog;
 
