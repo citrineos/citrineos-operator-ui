@@ -1,13 +1,13 @@
 {
-  "name": "citrineos-refine",
-  "version": "0.1.0",
+  "name": "citrineos-operator-ui",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "dependencies": {
     "@ant-design/icons": "^5.3.2",
     "@babel/plugin-proposal-decorators": "^7.24.7",
     "@babel/plugin-proposal-explicit-resource-management": "^7.24.7",
-    "@citrineos/base": "1.4.3",
+    "@citrineos/base": "^1.5.0",
     "@reduxjs/toolkit": "^2.2.8",
     "@refinedev/antd": "^5.43.0",
     "@refinedev/cli": "^2.16.21",
