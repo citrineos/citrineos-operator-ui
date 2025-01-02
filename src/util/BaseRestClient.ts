@@ -18,14 +18,15 @@ export class MissingRequiredParamException extends Error {
 // TODO can we use typed-rest-client here else axios in CORE?
 export class BaseRestClient {
   private axiosInstance!: AxiosInstance;
-  private _baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
+  private _baseUrl: string;
 
   constructor(dataBaseUrl = false) {
     if (dataBaseUrl) {
-      this.setDataBaseUrl();
+      this._baseUrl = `${CITRINE_CORE_URL}/data/`
     } else {
-      this.initAxiosInstance();
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/`
     }
+    this.initAxiosInstance();
   }
 
   get baseUrl(): string {
@@ -34,11 +35,6 @@ export class BaseRestClient {
 
   set baseUrl(value: string) {
     this._baseUrl = value;
-    this.initAxiosInstance();
-  }
-
-  setDataBaseUrl() {
-    this._baseUrl = this._baseUrl.replace('ocpp', 'data');
     this.initAxiosInstance();
   }
 

@@ -1,3 +1,4 @@
+import './telemetry';
 import { Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import CitrineOSPng from '/Citrine_OS_Logo.png';
@@ -104,7 +105,7 @@ import {
   routes as VariableAttributesRoutes,
 } from './pages/variable-attributes';
 import { routes as HomeRoutes } from './pages/home';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineSecurity } from 'react-icons/md';
 import {
   resources as messageInfosResources,
@@ -132,6 +133,10 @@ import {
 } from './pages/server-network-profiles';
 import { theme } from './theme';
 import { MainMenu } from './components/main-menu';
+import { TelemetryConsentModal, checkTelemetryConsent, saveTelemetryConsent } from "./util/TelemetryConsentModal";
+import * as dotenv from 'dotenv';
+
+// dotenv.config();
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
@@ -198,13 +203,46 @@ const resources = [
 
 const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
 
-function App() {
+export default function App() {
+
+  // `undefined` means we haven’t read the config yet
+  // or that no consent is saved.
+  const [telemetryConsent, setTelemetryConsent] = useState<boolean | undefined>();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+      // On app start, try to read an existing consent
+      const existingConsent = checkTelemetryConsent();
+      if (existingConsent === undefined) {
+          // No consent found => show modal
+          setIsModalVisible(true);
+      } else {
+          // Found consent => store it in state
+          setTelemetryConsent(existingConsent);
+      }
+  }, []);
+
+  /**
+   * Handle user’s choice:
+   */
+  const handleModalDecision = (agreed: boolean) => {
+      saveTelemetryConsent(agreed);
+      setTelemetryConsent(agreed);
+      setIsModalVisible(false);
+  };
+
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
             <ConfigProvider theme={theme}>
+
+              <TelemetryConsentModal
+                    visible={isModalVisible}
+                    onDecision={handleModalDecision}
+              />
+
               <Refine
                 dataProvider={hasuraDataProvider}
                 liveProvider={liveProvider(webSocketClient)}
@@ -339,5 +377,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;
