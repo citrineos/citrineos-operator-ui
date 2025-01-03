@@ -45,7 +45,7 @@ export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
     if (
       classInstance &&
       classInstance[UpdateAuthPasswordRequestProps.password] &&
-      classInstance[UpdateAuthPasswordRequestProps.setOnCharger]
+      classInstance[UpdateAuthPasswordRequestProps.setOnCharger] !== null
     ) {
       data = {
         password: classInstance[UpdateAuthPasswordRequestProps.password],
