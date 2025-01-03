@@ -1,6 +1,7 @@
 FROM refinedev/node:18
+WORKDIR /app/refine
 COPY . .
 RUN npm i && npm run build
 RUN npm install -g serve
-RUN cd ./dist
+WORKDIR /app/refine/dist
 CMD ["serve"]
