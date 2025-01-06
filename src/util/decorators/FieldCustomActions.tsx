@@ -1,4 +1,4 @@
-import { CustomAction } from '../../components/custom-actions';
+import { CustomAction } from '@interfaces';
 
 export const FIELD_CUSTOM_ACTIONS = 'fieldCustomActions';
 

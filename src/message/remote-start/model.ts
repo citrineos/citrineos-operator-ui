@@ -141,11 +141,11 @@ export class ChargingProfileType {
 }
 
 export enum RequestStartTransactionRequestProps {
-  remoteStartId = 'remoteStartId',
-  idToken = 'idToken',
   evse = 'evse',
+  idToken = 'idToken',
   customData = 'customData',
   groupIdToken = 'groupIdToken',
+  remoteStartId = 'remoteStartId',
   chargingProfile = 'chargingProfile',
 }
 

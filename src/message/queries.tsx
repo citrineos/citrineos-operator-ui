@@ -2,7 +2,7 @@ import { gql } from 'graphql-tag';
 
 export const GET_EVSE_LIST_FOR_STATION = gql`
   query GetEvseListForStation(
-    $stationId: String!
+    $stationIds: [String!]!
     $where: Evses_bool_exp = {}
     $order_by: [Evses_order_by!] = {}
     $offset: Int
@@ -10,7 +10,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
   ) {
     Evses(
       where: {
-        VariableAttributes: { stationId: { _eq: $stationId } }
+        VariableAttributes: { stationId: { _in: $stationId } }
         _and: [$where]
       }
       order_by: $order_by
@@ -25,7 +25,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
     }
     Evses_aggregate(
       where: {
-        VariableAttributes: { stationId: { _eq: $stationId } }
+        VariableAttributes: { stationId: { _in: $stationId } }
         _and: [$where]
       }
     ) {

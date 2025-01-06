@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import { CustomDataType } from './CustomData';
 import { IdTokenProps, IdToken } from '../pages/id-tokens/id-token';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';
 import {
   IsBoolean,
@@ -16,10 +15,6 @@ import {
 } from 'class-validator';
 
 const ID_TOKEN_FIELD = 'idToken';
-
-export interface GetCustomerProps {
-  station: ChargingStation;
-}
 
 export class CustomerInformationRequest {
   @IsInt()

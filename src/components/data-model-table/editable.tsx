@@ -5,8 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Alert, Button, Form, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Alert, Form, Modal } from 'antd';
 import { extractSchema, getClassTransformerType, renderField } from '../form';
 import { StatusIcon } from '../status-icon';
 import GenericTag from '../tag';
@@ -32,7 +31,6 @@ import {
   CLASS_GQL_CREATE_MUTATION,
   MutationAndGetVariables,
 } from '@util/decorators/ClassGqlCreateMutation';
-import { CustomAction } from '../custom-actions';
 import { FieldPath } from '../form/state/fieldpath';
 import { AssociationSelection } from './association-selection';
 import { ActionsColumnEnhanced } from './actions-column-enhanced';
@@ -54,6 +52,7 @@ import NestedObjectField from '../form/nested-object-field';
 import { DocumentNode } from 'graphql';
 import { HIDDEN_WHEN, IsHiddenCheck } from '@util/decorators/HiddenWhen';
 import {
+  CustomAction,
   FieldSchema,
   GenericDataTableProps,
   RenderEditableCellProps,
@@ -154,13 +153,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 ) => {
   const {
     dtoClass,
-    selectable = null,
-    filters = null,
-    useTableProps: useTableProps = null,
-    onSelectionChange,
-    editable = true,
     customActions,
+    filters = null,
+    editable = true,
     fieldAnnotations,
+    selectable = null,
+    onSelectionChange,
+    useTableProps: useTableProps = null,
   } = props;
 
   const getDataProvider = useDataProvider();
@@ -579,6 +578,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         </>
       );
     }
+
     if (field.type === FieldType.nestedObject && field.gqlAssociationProps) {
       let gqlAssociationProps;
       if (
@@ -629,6 +629,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         </div>
       );
     }
+
     return renderField({
       schema: field,
       preFieldPath: FieldPath.empty(),
@@ -765,16 +766,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       component={false}
       onValuesChange={() => setHasChanges(true)}
     >
-      <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-          disabled={!!editingRecord}
-        >
-          Create
-        </Button>
-      </div>
       <TableWrapper
         ref={tableWrapperRef}
         selectable={selectable}
@@ -787,6 +778,8 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         filters={filters}
         dtoResourceType={dtoResourceType}
         dtoGqlListQuery={dtoGqlListQuery}
+        customActions={customActions}
+        handleCreate={handleCreate}
       />
     </Form>
   );

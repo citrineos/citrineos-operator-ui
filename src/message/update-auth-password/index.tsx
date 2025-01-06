@@ -1,19 +1,15 @@
 import { plainToInstance } from 'class-transformer';
-import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { IsNotEmpty } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { Form } from 'antd';
+import { useSelectedChargingStationIds } from '@hooks';
 import { triggerMessageAndHandleResponse } from '../util';
 import { MessageConfirmation } from '../MessageConfirmation';
 
-export interface UpdateAuthPasswordProps {
-  station: ChargingStation;
-}
-
 enum UpdateAuthPasswordRequestProps {
   password = 'password',
-  setOnCharger = 'setOnCharger',
   stationId = 'stationId',
+  setOnCharger = 'setOnCharger',
 }
 
 export class UpdateAuthPasswordRequest {
@@ -24,14 +20,10 @@ export class UpdateAuthPasswordRequest {
   setOnCharger!: boolean | null;
 }
 
-export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
-  station,
-}) => {
+export const UpdateAuthPassword: React.FC = () => {
   const [form] = Form.useForm();
-  const formProps = {
-    form,
-  };
-
+  const formProps = { form };
+  const stationIds = useSelectedChargingStationIds();
   const updateAuthPasswordRequest = new UpdateAuthPasswordRequest();
 
   const handleSubmit = async (plainValues: any) => {
@@ -51,7 +43,7 @@ export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
         password: classInstance[UpdateAuthPasswordRequestProps.password],
         setOnCharger:
           classInstance[UpdateAuthPasswordRequestProps.setOnCharger],
-        stationId: station.id,
+        stationId: stationIds,
       };
     }
     await triggerMessageAndHandleResponse({
@@ -67,10 +59,10 @@ export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
   return (
     <GenericForm
       formProps={formProps}
-      dtoClass={UpdateAuthPasswordRequest}
       onFinish={handleSubmit}
-      initialValues={updateAuthPasswordRequest}
+      dtoClass={UpdateAuthPasswordRequest}
       parentRecord={updateAuthPasswordRequest}
+      initialValues={updateAuthPasswordRequest}
     />
   );
 };

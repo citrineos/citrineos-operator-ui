@@ -1,31 +1,21 @@
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
-import { CustomAction } from '../components/custom-actions';
-import { SetVariables, SetVariablesProps } from './set-variables';
+import { SetVariables } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
 import { GetBaseReport, GetBaseReportProps } from './get-base-report';
-import { ClearCache, ClearCacheProps } from './clear-cache';
+import { ClearCache } from './clear-cache';
 import { ChangeAvailability } from './change-availability';
 import { GetLog, GetLogProps } from './get-log';
 import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
-import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
+import { UnlockConnector } from './unlock-connector';
 import React from 'react';
-import { GetVariables, GetVariablesProps } from './get-variables';
+import { GetVariables } from './get-variables';
 import { CustomerInformation } from './customer-information';
-import { ResetChargingStation, ResetChargingStationProps } from './reset';
+import { ResetChargingStation } from './reset';
 import { RemoteStart, RemoteStartProps } from './remote-start';
-import {
-  InstallCertificate,
-  InstallCertificateProps,
-} from './install-certificate';
-import {
-  GetInstalledCertificateIds,
-  GetInstalledCertificateIdsProps,
-} from './get-installed-certificate-ids';
-import {
-  SetNetworkProfile,
-  SetNetworkProfileProps,
-} from './set-network-profile';
+import { InstallCertificate } from './install-certificate';
+import { GetInstalledCertificateIds } from './get-installed-certificate-ids';
+import { SetNetworkProfile } from './set-network-profile';
 import {
   CertificateSigned,
   CertificateSignedProps,
@@ -34,50 +24,40 @@ import {
   GetTransactionStatus,
   GetTransactionStatusProps,
 } from './get-transaction-status';
-import { setSelectedChargingStation } from '../redux/selectedChargingStationSlice';
-import { instanceToPlain } from 'class-transformer';
-import { GetCustomerProps } from '../model/CustomerInformation';
+import { UpdateAuthPassword } from './update-auth-password';
+import { DeleteStationNetworkProfiles } from './delete-station-network-profiles';
+import { CustomAction } from '@interfaces';
+import { setSelectedChargingStations } from '@redux';
 import {
-  UpdateAuthPassword,
-  UpdateAuthPasswordProps,
-} from './update-auth-password';
-import {
-  DeleteStationNetworkProfiles,
-  DeleteStationNetworkProfilesProps,
-} from './delete-station-network-profiles';
-import { DeleteCertificate } from './delete-certificate';
-import { ChangeAvailabilityProps } from './change-availability/model';
+  DeleteCertificate,
+  DeleteCertificateProps,
+} from './delete-certificate';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
 } = {
   'Certificate Signed': CertificateSigned as React.FC<CertificateSignedProps>,
-  'Change Availability':
-    ChangeAvailability as React.FC<ChangeAvailabilityProps>,
-  'Clear Cache': ClearCache as React.FC<ClearCacheProps>,
-  'Customer Information': CustomerInformation as React.FC<GetCustomerProps>,
-  'Delete Certificate': DeleteCertificate as React.FC<InstallCertificateProps>,
-  'Delete Station Network Profiles':
-    DeleteStationNetworkProfiles as React.FC<DeleteStationNetworkProfilesProps>,
+  'Change Availability': ChangeAvailability as React.FC,
+  'Clear Cache': ClearCache as React.FC,
+  'Customer Information': CustomerInformation as React.FC,
+  'Delete Certificate': DeleteCertificate as React.FC<DeleteCertificateProps>,
+  'Delete Station Network Profiles': DeleteStationNetworkProfiles as React.FC,
   'Get Base Report': GetBaseReport as React.FC<GetBaseReportProps>,
-  'Get Installed Certificate IDs':
-    GetInstalledCertificateIds as React.FC<GetInstalledCertificateIdsProps>,
+  'Get Installed Certificate IDs': GetInstalledCertificateIds as React.FC,
   'Get Log': GetLog as React.FC<GetLogProps>,
   'Get Transaction Status':
     GetTransactionStatus as React.FC<GetTransactionStatusProps>,
-  'Get Variables': GetVariables as React.FC<GetVariablesProps>,
-  'Install Certificate':
-    InstallCertificate as React.FC<InstallCertificateProps>,
+  'Get Variables': GetVariables as React.FC,
+  'Install Certificate': InstallCertificate as React.FC,
   'Remote Start': RemoteStart as React.FC<RemoteStartProps>,
   'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
-  Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
-  'Set Network Profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
-  'Set Variables': SetVariables as React.FC<SetVariablesProps>,
+  Reset: ResetChargingStation as React.FC,
+  'Set Network Profile': SetNetworkProfile as React.FC,
+  'Set Variables': SetVariables as React.FC,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
-  'Unlock Connector': UnlockConnector as React.FC<UnlockConnectorProps>,
+  'Unlock Connector': UnlockConnector as React.FC,
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
-  'Update Auth Password':
-    UpdateAuthPassword as React.FC<UpdateAuthPasswordProps>,
+  'Update Auth Password': UpdateAuthPassword as React.FC,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
@@ -88,10 +68,9 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
           label,
           execOrRender: (station: ChargingStation, _setLoading, dispatch) => {
             dispatch(
-              setSelectedChargingStation({
-                selectedChargingStation: JSON.stringify(
-                  instanceToPlain(station),
-                ),
+              setSelectedChargingStations({
+                appendData: true,
+                stations: [station],
               }),
             );
             return <Component station={station} />;
@@ -102,4 +81,15 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
 
 export const ADMIN_CHARGING_STATION_ACTIONS: string[] = [
   'Update Auth Password',
+];
+
+export const EXCLUDED_FROM_MULTI_SELECT: string[] = [
+  'Get Log',
+  'Remote Stop',
+  'Remote Start',
+  'Get Base Report',
+  'Update Firmware',
+  'Certificate Signed',
+  'Delete Certificate',
+  'Get Transaction Status',
 ];

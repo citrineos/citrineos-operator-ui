@@ -5,19 +5,18 @@ import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../util';
 import { MessageConfirmation } from '../MessageConfirmation';
 import {
-  ChangeAvailabilityProps,
   ChangeAvailabilityRequest,
   ChangeAvailabilityRequestProps,
 } from './model';
+import { useSelectedChargingStationIds } from '@hooks';
 import { EvseProps } from '../../pages/evses/EvseProps';
 
-export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
-  station,
-}) => {
+export const ChangeAvailability: React.FC = () => {
   const formRef = useRef();
   const [form] = Form.useForm();
   const formProps = { form };
 
+  const stationIds = useSelectedChargingStationIds('identifier=');
   const changeAvailabilityRequest = new ChangeAvailabilityRequest();
 
   const handleSubmit = async () => {
@@ -46,7 +45,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     }
 
     await triggerMessageAndHandleResponse({
-      url: `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
+      url: `/configuration/changeAvailability?${stationIds}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
       responseSuccessCheck: (response: MessageConfirmation) =>
@@ -57,11 +56,11 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   return (
     <GenericForm
       ref={formRef}
-      dtoClass={ChangeAvailabilityRequest}
       formProps={formProps}
       onFinish={handleSubmit}
-      initialValues={changeAvailabilityRequest}
+      dtoClass={ChangeAvailabilityRequest}
       parentRecord={changeAvailabilityRequest}
+      initialValues={changeAvailabilityRequest}
     />
   );
 };
