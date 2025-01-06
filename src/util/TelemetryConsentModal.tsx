@@ -1,11 +1,9 @@
 import React from "react";
 import { Modal, Button } from "antd";
-import * as path from 'path';
-import * as fs from 'fs';
-import * as dotenv from 'dotenv';
+import { BaseRestClient } from "./BaseRestClient";
 
-const ENV_FILE_PATH = path.resolve(__dirname, '../.env');
-const TELEMETRY_CONSENT_KEY = 'VITE_TELEMETRY_CONSENT';
+const TELEMETRY_CONSENT_KEY = 'TELEMETRY_CONSENT';
+const client = new BaseRestClient(true);
 
 interface TelemetryConsentModalProps {
     /** Whether the modal is visible */
@@ -14,22 +12,17 @@ interface TelemetryConsentModalProps {
     onDecision: (agreed: boolean) => void;
 }
 
-export function checkTelemetryConsent(): boolean | undefined {
-  const telemetryConsent = process.env[TELEMETRY_CONSENT_KEY];
-  if (telemetryConsent == null) {
+export async function checkTelemetryConsent(): Promise<Boolean | undefined> {
+  const telemetryConsent = await client.getRaw(`/ocpprouter/userPreferences?key=${TELEMETRY_CONSENT_KEY}`, {});
+  if (telemetryConsent.data == null) {
     return undefined;
   } else {
-    return JSON.parse(telemetryConsent);
+    return telemetryConsent.data as Boolean;
   }
 }
 
 export function saveTelemetryConsent(telemetryConsent: boolean): void {
-    if (fs.existsSync(ENV_FILE_PATH)) {
-        fs.appendFileSync(ENV_FILE_PATH, `\n${TELEMETRY_CONSENT_KEY}=${telemetryConsent}`);
-        // dotenv.config();
-    } else {
-        console.log('No .env file found... telemetry consent will be asked again on next start.');
-    }
+    client.put(`/ocpprouter/userPreferences?key=${TELEMETRY_CONSENT_KEY}&value=${telemetryConsent}`, Boolean, {}, undefined);
 }
 
 /**

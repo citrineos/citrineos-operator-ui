@@ -1,29 +1,50 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 
-const resource = new Resource({
+let isTelemetryEnabled = false; // tracks whether we've initialized telemetry
+let requestCount: any | null = null;
+
+export function initTelemetry() {
+  if (isTelemetryEnabled) {
+    return; // Already initialized; do nothing
+  }
+
+  const resource = new Resource({
     [ATTR_SERVICE_NAME]: 'citrineos-operator-ui'
   });
   
-const metricsExporter = new OTLPMetricExporter({
-  // URL of the OTel Collector or backend
-  url: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT || 'http://otel-collector:4317'
-});
+  const metricExporter = new OTLPMetricExporter({
+    url: import.meta.env.VITE_METRICS_URL,
+  });
+  
+  const metricReader = new PeriodicExportingMetricReader({
+    exporter: metricExporter,
+    exportIntervalMillis: 5000, // Adjust interval as needed
+  });
+  
+  // Create a MeterProvider with a custom resource to identify this service
+  const meterProvider = new MeterProvider({
+    resource: resource,
+    readers: [metricReader],
+  });
+  
+  // Retrieve a Meter instance
+  const meter = meterProvider.getMeter('citrineos-operator-ui');
+  
+  // Create a counter instrument
+  requestCount = meter.createCounter('requests_count', {
+    description: 'Number of requests made',
+  });
 
-const metricReader = new PeriodicExportingMetricReader({
-    exporter: metricsExporter,
-    exportIntervalMillis: 3000
-});
+  isTelemetryEnabled = true;
+}
 
-const sdk = new NodeSDK({
-  resource: resource,
-  metricReader: metricReader,
-  instrumentations: [getNodeAutoInstrumentations()]
-});
-
-// Start the SDK before your application
-sdk.start();
+export function incrementRequestCount(attributes: Record<string, string> = {}) {
+  if (!isTelemetryEnabled || !requestCount) {
+    // Telemetry is disabled or not yet initialized.
+    return;
+  }
+  requestCount.add(1, attributes);
+}

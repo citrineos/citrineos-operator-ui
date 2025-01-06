@@ -1,7 +1,6 @@
 import './telemetry';
 import { Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
-import CitrineOSPng from '/Citrine_OS_Logo.png';
 import './style.scss';
 
 import {
@@ -133,13 +132,16 @@ import {
 } from './pages/server-network-profiles';
 import { theme } from './theme';
 import { MainMenu } from './components/main-menu';
-import { TelemetryConsentModal, checkTelemetryConsent, saveTelemetryConsent } from "./util/TelemetryConsentModal";
-import * as dotenv from 'dotenv';
-
-// dotenv.config();
+import {
+  TelemetryConsentModal,
+  checkTelemetryConsent,
+  saveTelemetryConsent,
+} from './util/TelemetryConsentModal';
+import { initTelemetry } from './telemetry';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
+const LOGO_URL = import.meta.env.VITE_LOGO_URL;
 
 const client = new GraphQLClient(API_URL, {
   headers: {
@@ -204,31 +206,36 @@ const resources = [
 const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
 
 export default function App() {
-
   // `undefined` means we haven’t read the config yet
   // or that no consent is saved.
-  const [telemetryConsent, setTelemetryConsent] = useState<boolean | undefined>();
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
+    const telemetryConsentModalInitialization = async () => {
       // On app start, try to read an existing consent
-      const existingConsent = checkTelemetryConsent();
-      if (existingConsent === undefined) {
-          // No consent found => show modal
-          setIsModalVisible(true);
+      const existingConsent = await checkTelemetryConsent();
+      if (existingConsent == null) {
+        // No consent found => show modal
+        setIsModalVisible(true);
       } else {
-          // Found consent => store it in state
-          setTelemetryConsent(existingConsent);
+        if (existingConsent.valueOf()) {
+          initTelemetry();
+        }
       }
+    };
+    telemetryConsentModalInitialization();
   }, []);
 
   /**
    * Handle user’s choice:
    */
   const handleModalDecision = (agreed: boolean) => {
-      saveTelemetryConsent(agreed);
-      setTelemetryConsent(agreed);
-      setIsModalVisible(false);
+    saveTelemetryConsent(agreed);
+    setIsModalVisible(false);
+    if (agreed) {
+      initTelemetry();
+    }
   };
 
   return (
@@ -237,10 +244,9 @@ export default function App() {
         <ColorModeContextProvider>
           <AntdApp>
             <ConfigProvider theme={theme}>
-
               <TelemetryConsentModal
-                    visible={isModalVisible}
-                    onDecision={handleModalDecision}
+                visible={isModalVisible}
+                onDecision={handleModalDecision}
               />
 
               <Refine
@@ -258,7 +264,7 @@ export default function App() {
                   title: {
                     icon: (
                       <img
-                        src={CitrineOSPng}
+                        src={LOGO_URL}
                         alt="icon"
                         style={{ height: '48px', margin: '-8px -8px' }}
                         data-testid="citrine-os-icon"
