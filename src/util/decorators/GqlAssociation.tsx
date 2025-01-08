@@ -5,7 +5,7 @@ export interface QueryWithVariableGetter {
   /**
    * Grapql query
    */
-  query: any;
+  query: any | ((record: any, useSelector: any) => any);
   /**
    * Set a method to generate the query variables using the parent record
    * @param record

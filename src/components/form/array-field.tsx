@@ -36,9 +36,27 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
     if (disabled) {
-      const gqlQuery = schema.gqlAssociationProps.gqlListSelectedQuery;
+      let gqlQuery: any | ((parentRecord: any) => any) =
+        schema.gqlAssociationProps.gqlListSelectedQuery;
       const getGqlQueryVariables = gqlQuery?.getQueryVariables;
       let gqlQueryVariables = undefined;
+
+      // Getting record
+      let record;
+      try {
+        record = form.getFieldValue(fieldPath.pop().keyPath);
+      } catch (_e: any) {
+        // ignore
+      }
+      if (!record) {
+        record = parentRecord;
+      }
+      // Setting query value
+      const gqlDocumentQuery =
+        typeof gqlQuery?.query === 'function'
+          ? gqlQuery?.query(record, useSelector)
+          : gqlQuery?.query;
+
       if (getGqlQueryVariables) {
         gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
       }
@@ -48,7 +66,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
             expandedContent={
               <AssociatedTable
                 associatedRecordClass={schema.dtoClass!}
-                gqlQuery={gqlQuery?.query}
+                gqlQuery={gqlDocumentQuery}
                 gqlQueryVariables={gqlQueryVariables}
                 customActions={schema.customActions}
               />
@@ -58,19 +76,28 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
         </Form.Item>
       );
     } else {
-      const gqlQuery = schema.gqlAssociationProps.gqlListQuery;
+      const gqlQuery: any | ((parentRecord: any) => any) =
+        schema.gqlAssociationProps.gqlListQuery;
       const getGqlQueryVariables = gqlQuery?.getQueryVariables;
       let gqlQueryVariables = undefined;
+
+      // Getting record
+      let record;
+      try {
+        record = form.getFieldValue(fieldPath.pop().keyPath);
+      } catch (_e: any) {
+        // ignore
+      }
+      if (!record) {
+        record = parentRecord;
+      }
+      // Setting query value
+      const gqlDocumentQuery =
+        typeof gqlQuery?.query === 'function'
+          ? gqlQuery?.query(record, useSelector)
+          : gqlQuery?.query;
+
       if (getGqlQueryVariables) {
-        let record;
-        try {
-          record = form.getFieldValue(fieldPath.pop().keyPath);
-        } catch (_e: any) {
-          // ignore
-        }
-        if (!record) {
-          record = parentRecord;
-        }
         gqlQueryVariables = getGqlQueryVariables(record, useSelector);
       }
       return (
@@ -81,7 +108,7 @@ export const ArrayField: React.FC<ArrayFieldProps> = (
               selectable={SelectionType.MULTIPLE}
               parentIdFieldName={parentIdFieldName!}
               associatedIdFieldName={associatedIdFieldName!}
-              gqlQuery={gqlQuery?.query}
+              gqlQuery={gqlDocumentQuery}
               gqlQueryVariables={gqlQueryVariables}
               parentRecord={parentRecord}
               associatedRecordClass={schema.dtoClass!}

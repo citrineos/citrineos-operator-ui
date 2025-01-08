@@ -29,20 +29,35 @@ export const NestedObjectField: (
     const parentIdFieldName = schema.gqlAssociationProps.parentIdFieldName;
     const associatedIdFieldName =
       schema.gqlAssociationProps.associatedIdFieldName;
-    const gqlQuery = schema.gqlAssociationProps.gqlQuery;
-    const gqlListQuery = schema.gqlAssociationProps.gqlListQuery;
+    let gqlQuery: any | ((parentRecord: any) => any) =
+      schema.gqlAssociationProps.gqlQuery;
+    let gqlListQuery: any | ((parentRecord: any) => any) =
+      schema.gqlAssociationProps.gqlListQuery;
     const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
     let gqlQueryVariables = undefined;
+
+    // Getting record
+    let record;
+    try {
+      record = form.getFieldValue(fieldPath.pop().keyPath);
+    } catch (_e: any) {
+      // ignore
+    }
+    if (!record) {
+      record = parentRecord;
+    }
+
+    // Setting query value
+    const gqlDocumentQuery =
+      typeof gqlQuery?.query === 'function'
+        ? gqlQuery?.query(record, useSelector)
+        : gqlQuery?.query;
+    const gqlDocumentListQuery =
+      typeof gqlListQuery?.query === 'function'
+        ? gqlListQuery?.query(record, useSelector)
+        : gqlListQuery?.query;
+
     if (getGqlQueryVariables) {
-      let record;
-      try {
-        record = form.getFieldValue(fieldPath.pop().keyPath);
-      } catch (_e: any) {
-        // ignore
-      }
-      if (!record) {
-        record = parentRecord;
-      }
       gqlQueryVariables = getGqlQueryVariables(record, useSelector);
     }
     if (disabled) {
@@ -52,8 +67,8 @@ export const NestedObjectField: (
           associatedRecordClass={schema.dtoClass!}
           parentIdFieldName={parentIdFieldName!}
           associatedIdFieldName={associatedIdFieldName!}
-          gqlQuery={gqlQuery?.query}
-          gqlListQuery={gqlListQuery?.query}
+          gqlQuery={gqlDocumentQuery}
+          gqlListQuery={gqlDocumentListQuery}
         />
       );
     } else {
@@ -77,7 +92,7 @@ export const NestedObjectField: (
               fieldPath={fieldPath}
               parentIdFieldName={parentIdFieldName!}
               associatedIdFieldName={associatedIdFieldName!}
-              gqlQuery={gqlListQuery?.query}
+              gqlQuery={gqlDocumentListQuery}
               gqlQueryVariables={gqlQueryVariables}
               parentRecord={parentRecord}
               associatedRecordClass={schema.dtoClass!}
