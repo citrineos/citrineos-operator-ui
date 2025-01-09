@@ -5,11 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import {
-  AttributeEnumType,
-  DataEnumType,
-  MutabilityEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { Component, ComponentProps } from './components/Component';
@@ -68,19 +64,19 @@ export class VariableAttribute extends BaseModel {
   stationId!: string;
 
   @IsOptional()
-  @IsEnum(AttributeEnumType)
-  type?: AttributeEnumType | null;
+  @IsEnum(OCPP2_0_1.AttributeEnumType)
+  type?: OCPP2_0_1.AttributeEnumType | null;
 
-  @IsEnum(DataEnumType)
-  dataType!: DataEnumType;
+  @IsEnum(OCPP2_0_1.DataEnumType)
+  dataType!: OCPP2_0_1.DataEnumType;
 
   @IsOptional()
   @IsString()
   value?: string | null;
 
   @IsOptional()
-  @IsEnum(MutabilityEnumType)
-  mutability?: MutabilityEnumType | null;
+  @IsEnum(OCPP2_0_1.MutabilityEnumType)
+  mutability?: OCPP2_0_1.MutabilityEnumType | null;
 
   @IsBoolean()
   persistent!: boolean;

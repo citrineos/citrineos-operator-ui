@@ -7,7 +7,7 @@ import { renderAssociatedStationId } from '../charging-stations';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';
-import { ConnectorEnumType, ReserveNowStatusEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { StatusIcon } from '../../components/status-icon';
 import { DefaultColors } from '@enums';
 
@@ -43,8 +43,8 @@ export const RESERVATIONS_COLUMNS = (
       render: ((_: any, record: Reservations) => {
         return (
           <GenericTag
-            enumValue={record.connectorType as ConnectorEnumType}
-            enumType={ConnectorEnumType}
+            enumValue={record.connectorType as OCPP2_0_1.ConnectorEnumType}
+            enumType={OCPP2_0_1.ConnectorEnumType}
           />
         );
       }) as any,
@@ -55,8 +55,10 @@ export const RESERVATIONS_COLUMNS = (
       render: ((_: any, record: Reservations) => {
         return (
           <GenericTag
-            enumValue={record.reserveStatus as ReserveNowStatusEnumType}
-            enumType={ReserveNowStatusEnumType}
+            enumValue={
+              record.reserveStatus as OCPP2_0_1.ReserveNowStatusEnumType
+            }
+            enumType={OCPP2_0_1.ReserveNowStatusEnumType}
             colorMap={{
               Accepted: DefaultColors.GREEN,
               Faulted: DefaultColors.RED,

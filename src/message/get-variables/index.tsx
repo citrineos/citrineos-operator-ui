@@ -1,4 +1,4 @@
-import { AttributeEnumType, GetVariableStatusEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import React, { useRef } from 'react';
 import { Form } from 'antd';
 import {
@@ -144,9 +144,9 @@ export class GetVariablesData {
   @IsOptional()
   evse?: Evse | null;
 
-  @IsEnum(AttributeEnumType)
+  @IsEnum(OCPP2_0_1.AttributeEnumType)
   @IsOptional()
-  attributeType?: AttributeEnumType | null;
+  attributeType?: OCPP2_0_1.AttributeEnumType | null;
 }
 
 enum GetVariablesRequestProps {
@@ -177,13 +177,13 @@ export class GetVariableResultType {
   @IsOptional()
   attributeStatusInfo?: StatusInfoType;
 
-  @IsEnum(GetVariableStatusEnumType)
+  @IsEnum(OCPP2_0_1.GetVariableStatusEnumType)
   @IsOptional()
-  attributeStatus!: GetVariableStatusEnumType;
+  attributeStatus!: OCPP2_0_1.GetVariableStatusEnumType;
 
-  @IsEnum(AttributeEnumType)
+  @IsEnum(OCPP2_0_1.AttributeEnumType)
   @IsOptional()
-  attributeType?: AttributeEnumType;
+  attributeType?: OCPP2_0_1.AttributeEnumType;
 
   @MaxLength(2500)
   @IsString()

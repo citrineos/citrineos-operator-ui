@@ -6,7 +6,7 @@ import { MessageInfos } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { ChargingStationsList } from '../charging-stations';
-import { MessagePriorityEnumType, MessageStateEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
@@ -66,8 +66,8 @@ export const MESSAGE_INFOS_COLUMNS = (
       render: ((_: any, record: MessageInfos) => {
         return (
           <GenericTag
-            enumValue={record.priority as MessagePriorityEnumType}
-            enumType={MessagePriorityEnumType}
+            enumValue={record.priority as OCPP2_0_1.MessagePriorityEnumType}
+            enumType={OCPP2_0_1.MessagePriorityEnumType}
             colorMap={{
               AlwaysFront: DefaultColors.GEEKBLUE,
               InFront: DefaultColors.BLUE,
@@ -83,8 +83,8 @@ export const MESSAGE_INFOS_COLUMNS = (
       render: ((_: any, record: MessageInfos) => {
         return (
           <GenericTag
-            enumValue={record.state as MessageStateEnumType}
-            enumType={MessageStateEnumType}
+            enumValue={record.state as OCPP2_0_1.MessageStateEnumType}
+            enumType={OCPP2_0_1.MessageStateEnumType}
             colorMap={{
               Charging: DefaultColors.GREEN,
               Faulted: DefaultColors.RED,

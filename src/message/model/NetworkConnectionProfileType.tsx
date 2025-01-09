@@ -8,11 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ApnType } from './ApnType';
-import {
-  OCPPInterfaceEnumType,
-  OCPPTransportEnumType,
-  OCPPVersionEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { VpnType } from './VpnType';
 import { Type } from 'class-transformer';
 
@@ -28,13 +24,13 @@ export class NetworkConnectionProfileType {
   @IsOptional()
   apn?: ApnType;
 
-  @IsEnum(OCPPVersionEnumType)
+  @IsEnum(OCPP2_0_1.OCPPVersionEnumType)
   @IsNotEmpty()
-  ocppVersion!: OCPPVersionEnumType;
+  ocppVersion!: OCPP2_0_1.OCPPVersionEnumType;
 
-  @IsEnum(OCPPTransportEnumType)
+  @IsEnum(OCPP2_0_1.OCPPTransportEnumType)
   @IsNotEmpty()
-  ocppTransport!: OCPPTransportEnumType;
+  ocppTransport!: OCPP2_0_1.OCPPTransportEnumType;
 
   @MaxLength(512)
   @IsUrl({ require_tld: false })
@@ -49,9 +45,9 @@ export class NetworkConnectionProfileType {
   @IsNotEmpty()
   securityProfile!: number;
 
-  @IsEnum(OCPPInterfaceEnumType)
+  @IsEnum(OCPP2_0_1.OCPPInterfaceEnumType)
   @IsNotEmpty()
-  ocppInterface!: OCPPInterfaceEnumType;
+  ocppInterface!: OCPP2_0_1.OCPPInterfaceEnumType;
 
   @Type(() => VpnType)
   @ValidateNested()

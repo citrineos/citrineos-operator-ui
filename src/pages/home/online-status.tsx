@@ -9,10 +9,7 @@ import { ChargingStation } from '../charging-stations/ChargingStation';
 import { Evse } from '../evses/Evse';
 import { plainToInstance } from 'class-transformer';
 import { Alert, Spin } from 'antd';
-import {
-  ChargingStateEnumType,
-  ConnectorStatusEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 
 class ChargingStationWithLatestStatusNotificationsAndTransactions extends ChargingStation {
   Evses!: { Evse: Evse }[];
@@ -67,10 +64,10 @@ const getOnlineStatusCountsForStation = (
         const connectorStatus =
           latestStatusNotificationForEvse.StatusNotification.connectorStatus;
         switch (connectorStatus) {
-          case ConnectorStatusEnumType.Available:
+          case OCPP2_0_1.ConnectorStatusEnumType.Available:
             counts.available++;
             break;
-          case ConnectorStatusEnumType.Occupied: {
+          case OCPP2_0_1.ConnectorStatusEnumType.Occupied: {
             const activeTransaction = chargingStation.Transactions.find(
               (transaction) =>
                 transaction.Transaction.evseDatabaseId === evse.databaseId,
@@ -81,7 +78,7 @@ const getOnlineStatusCountsForStation = (
               activeTransaction.Transaction.isActive
             ) {
               const chargingState = activeTransaction.Transaction.chargingState;
-              if (chargingState === ChargingStateEnumType.Charging) {
+              if (chargingState === OCPP2_0_1.ChargingStateEnumType.Charging) {
                 counts.charging++;
               } else {
                 counts.chargingSuspended++;
@@ -89,13 +86,13 @@ const getOnlineStatusCountsForStation = (
             }
             break;
           }
-          case ConnectorStatusEnumType.Faulted:
+          case OCPP2_0_1.ConnectorStatusEnumType.Faulted:
             counts.faulted++;
             break;
-          case ConnectorStatusEnumType.Unavailable:
+          case OCPP2_0_1.ConnectorStatusEnumType.Unavailable:
             counts.unavailable++;
             break;
-          case ConnectorStatusEnumType.Reserved:
+          case OCPP2_0_1.ConnectorStatusEnumType.Reserved:
           default:
             // no handling
             break;
