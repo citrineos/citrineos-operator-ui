@@ -16,6 +16,7 @@ import {
 } from './queries';
 import { MESSAGE_INFOS_COLUMNS } from './table-config';
 import { MessageInfos } from '../../graphql/schema.types';
+import { IoInformationCircleSharp } from 'react-icons/io5';
 
 export const MessageInfosView: React.FC = () => {
   return (
@@ -67,5 +68,6 @@ export const resources = [
     meta: {
       canDelete: true,
     },
+    icon: <IoInformationCircleSharp />,
   },
 ];
