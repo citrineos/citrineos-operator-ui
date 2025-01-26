@@ -7,6 +7,7 @@ let isTelemetryEnabled = false; // tracks whether we've initialized telemetry
 let requestCount: any | null = null;
 
 export function initTelemetry() {
+  console.log('Initializing telemetry... ', isTelemetryEnabled);
   if (isTelemetryEnabled) {
     return; // Already initialized; do nothing
   }
@@ -14,14 +15,14 @@ export function initTelemetry() {
   const resource = new Resource({
     [ATTR_SERVICE_NAME]: 'citrineos-operator-ui'
   });
-  
+  console.log('Url: ', import.meta.env.VITE_METRICS_URL);
   const metricExporter = new OTLPMetricExporter({
     url: import.meta.env.VITE_METRICS_URL,
   });
   
   const metricReader = new PeriodicExportingMetricReader({
     exporter: metricExporter,
-    exportIntervalMillis: 5000, // Adjust interval as needed
+    exportIntervalMillis: 60000, // Adjust interval as needed
   });
   
   // Create a MeterProvider with a custom resource to identify this service
@@ -42,6 +43,7 @@ export function initTelemetry() {
 }
 
 export function incrementRequestCount(attributes: Record<string, string> = {}) {
+  console.log('Incrementing request count... ', isTelemetryEnabled, requestCount);
   if (!isTelemetryEnabled || !requestCount) {
     // Telemetry is disabled or not yet initialized.
     return;
