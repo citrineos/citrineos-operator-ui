@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { ChargingProfilesListQuery } from '../../graphql/types';
 import { ChargingProfile } from './ChargingProfile';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   CHARGING_PROFILES_CREATE_MUTATION,
