@@ -119,6 +119,7 @@ export const CustomActions = <T,>({
       case 'Remote Stop':
         return <StopOutlined />;
       case 'Reset':
+      case 'Regenerate Existing Certificate':
         return <ReloadOutlined />;
       case 'Set Network Profile':
         return <GlobalOutlined />;
@@ -129,6 +130,7 @@ export const CustomActions = <T,>({
       case 'Unlock Connector':
         return <UnlockOutlined />;
       case 'Update Firmware':
+      case 'Upload Existing Certificate':
         return <CloudUploadOutlined />;
       default:
         return <ThunderboltOutlined />;

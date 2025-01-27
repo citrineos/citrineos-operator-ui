@@ -47,6 +47,14 @@ import {
 } from './delete-station-network-profiles';
 import { DeleteCertificate } from './delete-certificate';
 import { ChangeAvailabilityProps } from './change-availability/model';
+import {
+  UploadExistingCertificate,
+  UploadExistingCertificateProps,
+} from './upload-existing-certificate';
+import {
+  RegenerateCertificateProps,
+  RegenerateExistingCertificate,
+} from './regenerate-existing-certificate';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -78,6 +86,10 @@ const chargingStationActionMap: {
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
   'Update Auth Password':
     UpdateAuthPassword as React.FC<UpdateAuthPasswordProps>,
+  'Upload Existing Certificate':
+    UploadExistingCertificate as React.FC<UploadExistingCertificateProps>,
+  'Regenerate Existing Certificate':
+    RegenerateExistingCertificate as React.FC<RegenerateCertificateProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
@@ -102,4 +114,6 @@ export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
 
 export const ADMIN_CHARGING_STATION_ACTIONS: string[] = [
   'Update Auth Password',
+  'Upload Existing Certificate',
+  'Regenerate Existing Certificate',
 ];
