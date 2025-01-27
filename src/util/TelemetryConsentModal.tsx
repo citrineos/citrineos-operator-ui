@@ -12,28 +12,23 @@ interface TelemetryConsentModalProps {
   onDecision: (agreed: boolean) => void;
 }
 
-export async function checkTelemetryConsent(): Promise<Boolean | undefined> {
-  console.log('Checking telemetry consent');
+export async function checkTelemetryConsent(): Promise<boolean | undefined> {
   const telemetryConsent = await client.getRaw(
     `/ocpprouter/userPreferences?key=${TELEMETRY_CONSENT_KEY}`,
     {},
   );
-  console.log('telemetryConsent ', telemetryConsent);
   try {
     const telemetryConsentData = JSON.parse(telemetryConsent.data as string);
     if (typeof telemetryConsentData === 'boolean') {
-      console.log('Consent found: ', telemetryConsentData);
       return telemetryConsentData;
     }
   } catch (error) {
     // pass
   }
-  console.log('No telemetry consent found');
   return undefined;
 }
 
 export function saveTelemetryConsent(telemetryConsent: boolean): void {
-  console.log('Saving telemetry consent');
   client.put(
     `/ocpprouter/userPreferences?key=${TELEMETRY_CONSENT_KEY}&value=${telemetryConsent}`,
     Boolean,
