@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { VariableMonitoringsListQuery } from '../../graphql/types';
 import { VariableMonitoring } from './VariableMonitoring';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   VARIABLE_MONITORINGS_CREATE_MUTATION,

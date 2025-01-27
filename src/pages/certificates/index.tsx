@@ -6,7 +6,8 @@ import { AiFillSafetyCertificate } from 'react-icons/ai';
 
 import { ResourceType } from '../../resource-type';
 import { GenericView } from '../../components/view';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { GenericForm } from '../../components/form';
 import { triggerMessageAndHandleResponse } from '../../message/util';
 import { useRequestValidator } from '../../util/useRequestValidator';

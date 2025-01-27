@@ -1,7 +1,5 @@
 import { TableColumnsType } from 'antd';
-import {
-  ActionsColumn,
-} from '../../components/data-model-table/actions-column';
+import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { ResourceType } from '../../resource-type';
 import { Certificates } from '../../graphql/schema.types';
 import GenericTag from '../../components/tag';
