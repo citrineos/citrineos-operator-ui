@@ -1,5 +1,3 @@
-import { cy } from 'cypress';
-
 describe('Charging station actions', () => {
   beforeEach(() => {
     cy.clearAllCookies();
@@ -28,45 +26,26 @@ describe('Charging station actions', () => {
       },
     }).as('resetRequest');
 
-    it('Reset charging station immediately', () => {
-      //Mock response to avoid having to connect real charger during test
-      cy.intercept(
-        'POST',
-        /\/configuration\/reset\?identifier=.*&tenantId=1$/,
-        {
-          statusCode: 200,
-          body: {
-            success: true,
-            payload: { message: 'Reset operation successful' },
-          },
-        },
-      ).as('resetRequest');
+    cy.getByData('citrine-os-icon').should(
+      'have.attr',
+      'src',
+      '/Citrine_OS_Logo.png',
+    );
 
-      cy.getByData('citrine-os-icon').should(
-        'have.attr',
-        'src',
-        '/Citrine_OS_Logo.png',
-      );
+    cy.getByData('custom-action-dropdown-button').click();
+    cy.get('.ant-dropdown') // Target the dropdown container
+      .within(() => {
+        cy.get('[role="menuitem"]').contains('Reset').click();
+      });
 
-      cy.getByData('custom-action-dropdown-button').click();
-      cy.get('.ant-dropdown') // Target the dropdown container
-        .within(() => {
-          cy.get('[role="menuitem"]').contains('Reset').click();
-        });
-
-      cy.get('.ant-dropdown') // Target the dropdown container
-        .within(() => {
-          cy.get('[role="menuitem"]').contains('Reset').click();
-        });
-
-      cy.getByData('field-type-input').click();
-      cy.get('.ant-select-dropdown')
-        .should('not.have.class', 'ant-select-dropdown-hidden')
-        .and('be.visible');
-      cy.getByData('field-type-input-option-Immediate')
-        .should('be.visible')
-        .click();
-      cy.getByData('ResetData2-generic-form-submit').click();
+    cy.getByData('field-type-input').click();
+    cy.get('.ant-select-dropdown')
+      .should('not.have.class', 'ant-select-dropdown-hidden')
+      .and('be.visible');
+    cy.getByData('field-type-input-option-Immediate')
+      .should('be.visible')
+      .click();
+    cy.getByData('ResetData2-generic-form-submit').click();
 
     cy.wait('@resetRequest');
     cy.getByData('success-notification').should('be.visible');

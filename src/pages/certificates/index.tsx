@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Drawer, Form } from 'antd';
 import { useTable } from '@refinedev/antd';
@@ -23,12 +23,10 @@ import { Certificate, NewCertificateRequest } from './Certificate';
 import { Certificates } from '../../graphql/schema.types';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import { CertificatesListQuery } from '../../graphql/types';
-import { validateSync } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 
 const BUTTON_TEXT = 'Generate Certificates';
 const DRAWER_TITLE = 'Generate New Certificate';
-const CERTIFICATES_API_URL = '/data/certificates/certificateChain';
+const CERTIFICATES_API_URL = '/certificates/certificateChain';
 
 export const CertificatesView: React.FC = () => (
   <GenericView
@@ -73,6 +71,7 @@ export const CertificatesList: React.FC<IDataModelListProps> = ({
       responseClass: NewCertificateRequest,
       data: plainValues,
       responseSuccessCheck: (res: NewCertificateRequest) => !!res,
+      isDataUrl: true,
     });
     if (response !== undefined && response !== null) handleDrawerClose();
   };

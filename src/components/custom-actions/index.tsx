@@ -162,7 +162,6 @@ export const CustomActions = <T,>({
               type={'default'}
               icon={<MoreOutlined />}
               data-testid="custom-action-dropdown-button"
-              data-testid="custom-action-dropdown-button"
             />
           </Dropdown>
         </>
