@@ -49,6 +49,6 @@ export function incrementRequestCount(attributes: Record<string, string> = {}) {
     // Telemetry is disabled or not yet initialized.
     return;
   }
-  
+
   requestCount.add(1, attributes);
 }
