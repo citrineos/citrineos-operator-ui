@@ -23,9 +23,9 @@ export class BaseRestClient {
 
   constructor(dataBaseUrl = false) {
     if (dataBaseUrl) {
-      this._baseUrl = `${CITRINE_CORE_URL}/data/`
+      this._baseUrl = `${CITRINE_CORE_URL}/data/`;
     } else {
-      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/`
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
     }
     this.initAxiosInstance();
   }

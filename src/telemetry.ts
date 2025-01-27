@@ -1,5 +1,8 @@
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import {
+  MeterProvider,
+  PeriodicExportingMetricReader,
+} from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
@@ -13,27 +16,27 @@ export function initTelemetry() {
   }
 
   const resource = new Resource({
-    [ATTR_SERVICE_NAME]: 'citrineos-operator-ui'
+    [ATTR_SERVICE_NAME]: 'citrineos-operator-ui',
   });
   console.log('Url: ', import.meta.env.VITE_METRICS_URL);
   const metricExporter = new OTLPMetricExporter({
     url: import.meta.env.VITE_METRICS_URL,
   });
-  
+
   const metricReader = new PeriodicExportingMetricReader({
     exporter: metricExporter,
     exportIntervalMillis: 60000, // Adjust interval as needed
   });
-  
+
   // Create a MeterProvider with a custom resource to identify this service
   const meterProvider = new MeterProvider({
     resource: resource,
     readers: [metricReader],
   });
-  
+
   // Retrieve a Meter instance
   const meter = meterProvider.getMeter('citrineos-operator-ui');
-  
+
   // Create a counter instrument
   requestCount = meter.createCounter('requests_count', {
     description: 'Number of requests made',
@@ -43,7 +46,11 @@ export function initTelemetry() {
 }
 
 export function incrementRequestCount(attributes: Record<string, string> = {}) {
-  console.log('Incrementing request count... ', isTelemetryEnabled, requestCount);
+  console.log(
+    'Incrementing request count... ',
+    isTelemetryEnabled,
+    requestCount,
+  );
   if (!isTelemetryEnabled || !requestCount) {
     // Telemetry is disabled or not yet initialized.
     return;

@@ -213,16 +213,16 @@ export default function App() {
 
   useEffect(() => {
     const telemetryConsentModalInitialization = async () => {
-      console.log("telemetryConsentModalInitialization");
+      console.log('telemetryConsentModalInitialization');
       // On app start, try to read an existing consent
       const existingConsent = await checkTelemetryConsent();
-      console.log("existingConsent ", existingConsent);
+      console.log('existingConsent ', existingConsent);
       if (existingConsent == null) {
-        console.log("No consent found");
+        console.log('No consent found');
         // No consent found => show modal
         setIsModalVisible(true);
       } else {
-        console.log("Consent found: ", existingConsent.valueOf());
+        console.log('Consent found: ', existingConsent.valueOf());
         if (existingConsent.valueOf()) {
           initTelemetry();
         }
