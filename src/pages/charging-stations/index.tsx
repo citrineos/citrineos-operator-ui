@@ -13,7 +13,7 @@ import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   CUSTOM_CHARGING_STATION_ACTIONS,
-  CUSTOM_CHARGING_STATION_ADMIN_ACTIONS,
+  ADMIN_CHARGING_STATION_ACTIONS,
 } from '../../message';
 import { ChargingStation } from './ChargingStation';
 import { ChargingStationProps } from './ChargingStationProps';
@@ -38,14 +38,11 @@ const { Panel } = Collapse;
 const { Sider, Content } = Layout;
 
 export const ChargingStationsView: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [searchValue, setSearchValue] = useState('');
-  const [filteredChargingStationActions, setFilteredChargingStationActions] =
-    useState(CUSTOM_CHARGING_STATION_ACTIONS);
-  const [
-    filteredChargingStationAdminActions,
-    setFilteredChargingStationAdminActions,
-  ] = useState(CUSTOM_CHARGING_STATION_ADMIN_ACTIONS);
+  const [filteredActions, setFilteredActions] = useState(
+    CUSTOM_CHARGING_STATION_ACTIONS,
+  );
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
 
   const selectedChargingStation = useSelector((state: RootState) =>
@@ -70,13 +67,8 @@ export const ChargingStationsView: React.FC = () => {
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
-    setFilteredChargingStationActions(
+    setFilteredActions(
       CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
-        action.label.toLowerCase().includes(value.toLowerCase()),
-      ),
-    );
-    setFilteredChargingStationAdminActions(
-      CUSTOM_CHARGING_STATION_ADMIN_ACTIONS.filter((action) =>
         action.label.toLowerCase().includes(value.toLowerCase()),
       ),
     );
@@ -138,7 +130,10 @@ export const ChargingStationsView: React.FC = () => {
               <CustomActions
                 showInline
                 data={station}
-                actions={filteredChargingStationActions}
+                actions={filteredActions.filter(
+                  (action) =>
+                    !ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+                )}
               />
             </Panel>
             <Panel
@@ -149,7 +144,9 @@ export const ChargingStationsView: React.FC = () => {
               <CustomActions
                 showInline
                 data={station}
-                actions={filteredChargingStationAdminActions}
+                actions={filteredActions.filter((action) =>
+                  ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+                )}
               />
             </Panel>
           </Collapse>

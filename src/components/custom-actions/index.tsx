@@ -1,12 +1,33 @@
 import React, { useState } from 'react';
 import { Button, Drawer, Dropdown, Menu, MenuProps, Spin } from 'antd';
-import { MoreOutlined } from '@ant-design/icons';
+import {
+  ClearOutlined,
+  CloudUploadOutlined,
+  DeleteOutlined,
+  FieldTimeOutlined,
+  FileAddOutlined,
+  FileSearchOutlined,
+  FileTextOutlined,
+  GlobalOutlined,
+  IdcardOutlined,
+  MessageOutlined,
+  MoreOutlined,
+  PlayCircleOutlined,
+  ProfileOutlined,
+  ReloadOutlined,
+  SafetyCertificateOutlined,
+  SettingOutlined,
+  StopOutlined,
+  SyncOutlined,
+  ThunderboltOutlined,
+  UnlockOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
 export interface CustomAction<T> {
   label: string;
-  icon?: React.ReactNode;
   isVisible?: (arg: T) => boolean;
   execOrRender: (
     arg: T,
@@ -56,7 +77,6 @@ export const CustomActions = <T,>({
     .map((action, index) => {
       return {
         key: index.toString(),
-        icon: action.icon,
         label: action.label,
         onClick: () => handleMenuClick(action),
       };
@@ -70,6 +90,51 @@ export const CustomActions = <T,>({
     return <Spin />;
   }
 
+  const getIcon = (label: string) => {
+    switch (label) {
+      case 'Certificate Signed':
+        return <SafetyCertificateOutlined />;
+      case 'Change Availability':
+        return <SyncOutlined />;
+      case 'Clear Cache':
+        return <ClearOutlined />;
+      case 'Customer Information':
+        return <UserOutlined />;
+      case 'Delete Certificate':
+        return <DeleteOutlined />;
+      case 'Get Base Report':
+        return <FileTextOutlined />;
+      case 'Get Installed Certificate IDs':
+        return <IdcardOutlined />;
+      case 'Get Log':
+        return <FileSearchOutlined />;
+      case 'Get Transaction Status':
+        return <FieldTimeOutlined />;
+      case 'Get Variables':
+        return <ProfileOutlined />;
+      case 'Install Certificate':
+        return <FileAddOutlined />;
+      case 'Remote Start':
+        return <PlayCircleOutlined />;
+      case 'Remote Stop':
+        return <StopOutlined />;
+      case 'Reset':
+        return <ReloadOutlined />;
+      case 'Set Network Profile':
+        return <GlobalOutlined />;
+      case 'Set Variables':
+        return <SettingOutlined />;
+      case 'Trigger Message':
+        return <MessageOutlined />;
+      case 'Unlock Connector':
+        return <UnlockOutlined />;
+      case 'Update Firmware':
+        return <CloudUploadOutlined />;
+      default:
+        return <ThunderboltOutlined />;
+    }
+  };
+
   return (
     <>
       {showInline ? (
@@ -79,7 +144,7 @@ export const CustomActions = <T,>({
               return (
                 <Menu.Item
                   key={item.key}
-                  icon={item.icon}
+                  icon={getIcon(item.label)}
                   onClick={item.onClick}
                   data-testid="custom-action-dropdown-menu-item"
                 >

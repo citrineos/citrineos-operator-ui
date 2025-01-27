@@ -391,36 +391,4 @@ export const CUSTOM_CHARGING_STATION_ADMIN_ACTIONS: CustomAction<ChargingStation
         return <UpdateAuthPassword station={station} />;
       },
     },
-    {
-      label: 'Upload Existing Certificate',
-      icon: <CloudUploadOutlined />,
-      execOrRender: (
-        station: ChargingStation,
-        _setLoading: any,
-        dispatch: any,
-      ) => {
-        dispatch(
-          setSelectedChargingStation({
-            selectedChargingStation: JSON.stringify(instanceToPlain(station)),
-          }),
-        );
-        return <UploadExistingCertificate station={station} />;
-      },
-    },
-    {
-      label: 'Regenerate Existing Certificate',
-      icon: <ReloadOutlined />,
-      execOrRender: (
-        station: ChargingStation,
-        _setLoading: any,
-        dispatch: any,
-      ) => {
-        dispatch(
-          setSelectedChargingStation({
-            selectedChargingStation: JSON.stringify(instanceToPlain(station)),
-          }),
-        );
-        return <RegenerateExistingCertificate station={station} />;
-      },
-    },
   ].sort((a, b) => a.label.localeCompare(b.label));

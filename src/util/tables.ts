@@ -17,10 +17,5 @@ export function generateSearchFilters(
     });
   }
 
-  return [
-    {
-      operator: 'or',
-      value: result,
-    },
-  ] as any;
+  return result as any;
 }
