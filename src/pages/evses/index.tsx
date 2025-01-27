@@ -12,6 +12,7 @@ import {
 import { Evse } from './Evse';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
+import { BsFillInboxesFill } from 'react-icons/bs';
 
 export const EvseView: React.FC = () => {
   return (
@@ -57,5 +58,6 @@ export const resources = [
     meta: {
       canDelete: true,
     },
+    icon: <BsFillInboxesFill />,
   },
 ];
