@@ -1,6 +1,6 @@
 import { AiFillDatabase } from 'react-icons/ai';
 import { Route, Routes } from 'react-router-dom';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { GenericView } from '../../components/view';
 import { ResourceType } from '../../resource-type';
 import { ChargingStationSequence } from './ChargingStationSequence';

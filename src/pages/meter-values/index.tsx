@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { MeterValue } from './MeterValue';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import {
   METER_VALUE_CREATE_MUTATION,
   METER_VALUE_DELETE_MUTATION,

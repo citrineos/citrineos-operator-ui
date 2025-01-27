@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { StatusNotificationsListQuery } from '../../graphql/types';
 import { StatusNotification } from './StatusNotification';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   STATUS_NOTIFICATIONS_CREATE_MUTATION,
