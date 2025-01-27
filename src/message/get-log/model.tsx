@@ -8,8 +8,8 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { LogEnumType } from '@citrineos/base';
-import { TransformDate } from '../../util/TransformDate';
-import { CustomFormRender } from '../../util/decorators/CustomFormRender';
+import { TransformDate } from '@util/TransformDate';
+import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { Form, Input } from 'antd';
 import React from 'react'; // Necessary for JSX in decorators
 

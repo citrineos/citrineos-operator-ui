@@ -1,16 +1,16 @@
 import { TableColumnsType } from 'antd';
 import {
   ActionsColumn,
-  ColumnAction,
 } from '../../components/data-model-table/actions-column';
 import { ResourceType } from '../../resource-type';
 import { Certificates } from '../../graphql/schema.types';
-import GenericTag, { DefaultColors } from '../../components/tag';
+import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { CustomAction } from '../../components/custom-actions';
+import { ColumnAction, DefaultColors } from '@enums';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,
@@ -124,6 +124,7 @@ export const CERTIFICATES_COLUMNS = (
         <ActionsColumn
           record={record}
           actions={[{ type: ColumnAction.SHOW }]}
+          customActions={_customActions}
         />
       ),
     });

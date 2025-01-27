@@ -1,6 +1,6 @@
 import { HttpMethod } from '@citrineos/base';
-import { BaseRestClient } from '../util/BaseRestClient';
-import { Constructable } from '../util/Constructable';
+import { BaseRestClient } from '@util/BaseRestClient';
+import { Constructable } from '@util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 

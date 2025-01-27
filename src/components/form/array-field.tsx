@@ -5,11 +5,11 @@ import React from 'react';
 import { ArrayItem } from './array-item';
 import { ExpandableColumn } from '../data-model-table/expandable-column';
 import { AssociatedTable } from '../data-model-table/associated-table';
-import { getProperty } from '../../util/objects';
+import { getProperty } from '@util/objects';
 import GenericTag from '../tag';
-import { ArrayFieldProps } from '../../model/interfaces';
-import { renderLabel } from '../../util/renderUtil';
-import { SelectionType } from '../../model/enums';
+import { ArrayFieldProps } from '@interfaces';
+import { renderLabel } from '@util/renderUtil';
+import { SelectionType } from '@enums';
 
 export const ArrayField: React.FC<ArrayFieldProps> = (
   props: ArrayFieldProps,

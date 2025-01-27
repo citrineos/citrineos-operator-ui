@@ -14,16 +14,16 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import './style.scss';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { defaultMetadataStorage } from '../../util/DefaultMetadataStorage';
-import { isDefined, isNullOrUndefined } from '../../util/assertion';
-import { IS_DATE } from '../../util/TransformDate';
-import { FIELD_LABEL } from '../../util/decorators/FieldLabel';
+import { defaultMetadataStorage } from '@util/DefaultMetadataStorage';
+import { isDefined, isNullOrUndefined } from '@util/assertion';
+import { IS_DATE } from '@util/TransformDate';
+import { FIELD_LABEL } from '@util/decorators/FieldLabel';
 import {
   GQL_ASSOCIATION,
   GqlAssociationProps,
-} from '../../util/decorators/GqlAssociation';
+} from '@util/decorators/GqlAssociation';
 
-import { getProperty, omitProperties } from '../../util/objects';
+import { getProperty, omitProperties } from '@util/objects';
 import { Flags } from './state/flags';
 import {
   SupportedUnknownType,
@@ -31,24 +31,34 @@ import {
   Unknowns,
   UnknownsActions,
 } from './state/unknowns';
+
 import { FieldPath } from './state/fieldpath';
-import { CUSTOM_FORM_RENDER } from '../../util/decorators/CustomFormRender';
-import { CLASS_CUSTOM_CONSTRUCTOR } from '../../util/decorators/ClassCustomConstructor';
-import { isSortable } from '../../util/decorators/Sortable';
+import { CUSTOM_FORM_RENDER } from '@util/decorators/CustomFormRender';
+import { CLASS_CUSTOM_CONSTRUCTOR } from '@util/decorators/ClassCustomConstructor';
+import { isSortable } from '@util/decorators/Sortable';
 import { NestedObjectField } from './nested-object-field';
 import { ArrayField } from './array-field';
-import { SUPPORTED_FILE_FORMATS } from '../../util/decorators/SupportedFileFormats';
-import { FIELD_CUSTOM_ACTIONS } from '../../util/decorators/FieldCustomActions';
+import { SUPPORTED_FILE_FORMATS } from '@util/decorators/SupportedFileFormats';
+import { FIELD_CUSTOM_ACTIONS } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
-import { HIDDEN_WHEN } from '../../util/decorators/HiddenWhen';
+import { HIDDEN_WHEN } from '@util/decorators/HiddenWhen';
+
 import {
   renderLabel,
   renderOptionalToggle,
   renderUnknownProperty,
   renderUploadField,
 } from '../../util/renderUtil';
-import { FieldAnnotations, FieldSchema, FieldSchemaKeys, FieldSelectOption, GenericFormProps, isDynamicFieldSchema, RenderFieldProps } from '../../model/interfaces';
-import { FieldType, ReflectType, SelectMode } from '../../model/enums';
+import {
+  FieldAnnotations,
+  FieldSchema,
+  FieldSchemaKeys,
+  FieldSelectOption,
+  GenericFormProps,
+  isDynamicFieldSchema,
+  RenderFieldProps,
+} from '@interfaces';
+import { FieldType, ReflectType, SelectMode } from '@enums';
 
 export const getReflectTypeFromString = (type: string): ReflectType => {
   switch (type) {

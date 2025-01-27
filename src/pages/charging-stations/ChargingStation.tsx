@@ -1,12 +1,12 @@
 import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   CHARGING_STATIONS_CREATE_MUTATION,
   CHARGING_STATIONS_DELETE_MUTATION,
@@ -14,8 +14,8 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { BaseModel } from '../../util/BaseModel';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { BaseModel } from '@util/BaseModel';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { Location, LocationProps } from '../locations/Location';
 import {
@@ -42,10 +42,11 @@ import { Transaction, TransactionProps } from '../transactions/Transaction';
 import { ChargingStationProps } from './ChargingStationProps';
 import { TRANSACTION_LIST_QUERY } from '../transactions/queries';
 import { EVSE_LIST_QUERY } from '../evses/queries';
-import { Searchable } from '../../util/decorators/Searcheable';
-import { ClassCustomConstructor } from '../../util/decorators/ClassCustomConstructor';
-import { NEW_IDENTIFIER } from '../../util/consts';
+import { Searchable } from '@util/decorators/Searcheable';
+import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
+import { NEW_IDENTIFIER } from '@util/consts';
 import { EvseProps } from '../evses/EvseProps';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -142,6 +143,9 @@ export class ChargingStation extends BaseModel {
         stationId: station.id,
       }),
     },
+  })
+  @HiddenWhen((record) => {
+    return record;
   })
   @Type(() => Transaction)
   transactions?: Transaction[];

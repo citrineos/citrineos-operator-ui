@@ -1,5 +1,5 @@
 import { IsString, MinLength } from 'class-validator';
-import { UnknownPropertiesType } from '../util/unknowns';
+import { UnknownPropertiesType } from '@util/unknowns';
 
 export class CustomDataType {
   @IsString()

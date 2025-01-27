@@ -5,14 +5,14 @@ import {
   IsNotEmpty,
   ValidateNested,
 } from 'class-validator';
-import { BaseModel } from '../../util/BaseModel';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { BaseModel } from '@util/BaseModel';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ResourceType } from '../../resource-type';
 import {
   AUTHORIZATIONS_CREATE_MUTATION,
@@ -22,7 +22,7 @@ import {
   AUTHORIZATIONS_SHOW_QUERY,
 } from './queries';
 import { Type } from 'class-transformer';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { IdToken, IdTokenProps } from '../id-tokens/id-token';
 import {
   ID_TOKENS_LIST_QUERY,
@@ -36,19 +36,7 @@ import {
   ID_TOKEN_INFOS_LIST_QUERY,
   ID_TOKEN_INFOS_SHOW_QUERY,
 } from '../id-tokens-infos/queries';
-
-export enum AllowedConnectorTypes {
-  Type1 = 'Type 1',
-  Type2 = 'Type 2',
-  CCS = 'CCS',
-  CHAdeMO = 'CHAdeMO',
-}
-
-export enum DisallowedEvseIdPrefixes {
-  EVSE1 = 'EVSE 1',
-  EVSE2 = 'EVSE 2',
-  EVSE3 = 'EVSE 3',
-}
+import { AllowedConnectorTypes, DisallowedEvseIdPrefixes } from '@enums';
 
 export enum AuthorizationsProps {
   id = 'id',

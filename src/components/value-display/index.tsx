@@ -1,14 +1,7 @@
 import React from 'react';
 import { Popover, Tag } from 'antd';
-import { DefaultColors } from '../tag';
-
-interface ValueDisplayProps {
-  value: number | null | undefined;
-  precision?: number; // Number of decimal places to round to
-  prefix?: string; // Text to display before the value
-  suffix?: string; // Text to display after the value
-  color?: DefaultColors; // Color of the Tag
-}
+import { DefaultColors } from '@enums';
+import { ValueDisplayProps } from '@interfaces';
 
 export const ValueDisplay: React.FC<ValueDisplayProps> = ({
   value,

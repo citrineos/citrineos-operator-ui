@@ -4,27 +4,27 @@ import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTable, useTableProps } from '@refinedev/antd';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import {
   FieldNameAndIsEditable,
   PRIMARY_KEY_FIELD_NAME,
-} from '../../util/decorators/PrimaryKeyFieldName';
+} from '@util/decorators/PrimaryKeyFieldName';
 import { GenericDataTable } from './editable';
 import { ExpandableColumn } from './expandable-column';
-import { NEW_IDENTIFIER } from '../../util/consts';
-import { getSearchableKeys } from '../../util/decorators/Searcheable';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { getSearchableKeys } from '@util/decorators/Searcheable';
 import { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getSelectedAssociatedItems,
   setSelectedAssociatedItems,
 } from '../../redux/associationSelectionSlice';
-import { LABEL_FIELD } from '../../util/decorators/LabelField';
-import { generateSearchFilters } from '../../util/tables';
+import { LABEL_FIELD } from '@util/decorators/LabelField';
+import { generateSearchFilters } from '@util/tables';
 import GenericTag from '../tag';
 import { SelectedAssociatedItems } from './selected-associated-items';
-import { AssociationSelectionProps } from '../../model/interfaces';
-import { SelectionType } from '../../model/enums';
+import { AssociationSelectionProps } from '@interfaces';
+import { SelectionType } from '@enums';
 
 export const AssociationSelection = <
   ParentModel,
@@ -116,7 +116,8 @@ export const AssociationSelection = <
           (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
       (!!value &&
         ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-          (value as any)[parentIdFieldName] === NEW_IDENTIFIER));
+          (value as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
+      (!value && (parentRecord as any)[parentIdFieldName] === null);
     setNew(newVal);
   }, [parentRecord, primaryKeyFieldName, parentIdFieldName, value]);
 

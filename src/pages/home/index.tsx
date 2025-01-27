@@ -11,7 +11,7 @@ export const Home = () => {
       <h2>Dashboard</h2>
       <Row
         style={{
-          height: '20vh',
+          height: '40vh',
           paddingBottom: '50px',
         }}
       >

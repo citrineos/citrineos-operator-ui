@@ -1,16 +1,16 @@
 import { IsArray, IsInt, IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TransformDate } from '../../util/TransformDate';
+import { TransformDate } from '@util/TransformDate';
 import { SampledValue } from './SampledValue';
-import { BaseModel } from '../../util/BaseModel';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { BaseModel } from '@util/BaseModel';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   METER_VALUE_CREATE_MUTATION,
   METER_VALUE_DELETE_MUTATION,
@@ -18,10 +18,10 @@ import {
   METER_VALUE_GET_QUERY,
   METER_VALUE_LIST_QUERY,
 } from './queries';
-import { CustomFormRender } from '../../util/decorators/CustomFormRender';
+import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { SampledValuesListView } from './sampled-value';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { Sortable } from '../../util/decorators/Sortable';
+import { Sortable } from '@util/decorators/Sortable';
 
 export enum MeterValueProps {
   id = 'id',
@@ -37,7 +37,7 @@ export enum MeterValueProps {
 @ClassGqlCreateMutation(METER_VALUE_CREATE_MUTATION)
 @ClassGqlEditMutation(METER_VALUE_EDIT_MUTATION)
 @ClassGqlDeleteMutation(METER_VALUE_DELETE_MUTATION)
-@PrimaryKeyFieldName(MeterValueProps.transactionDatabaseId)
+@PrimaryKeyFieldName(MeterValueProps.id)
 export class MeterValue extends BaseModel {
   @IsInt()
   id!: number;

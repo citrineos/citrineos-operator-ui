@@ -13,16 +13,16 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { TransformDate } from '../../util/TransformDate';
-import { BaseModel } from '../../util/BaseModel';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { TransformDate } from '@util/TransformDate';
+import { BaseModel } from '@util/BaseModel';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   TRANSACTION_EVENT_CREATE_MUTATION,
   TRANSACTION_EVENT_DELETE_MUTATION,
@@ -32,13 +32,13 @@ import {
 } from './queries';
 import { MeterValue, MeterValueProps } from '../meter-values/MeterValue';
 import { Type } from 'class-transformer';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   GET_METER_VALUES_FOR_TRANSACTION_EVENT,
   METER_VALUE_GET_QUERY,
   METER_VALUE_LIST_QUERY,
 } from '../meter-values/queries';
-import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 export enum TransactionEventProps {
   id = 'id',
@@ -90,6 +90,9 @@ export class TransactionEvent extends BaseModel {
   @IsArray()
   @Type(() => MeterValue)
   @ValidateNested({ each: true })
+  @HiddenWhen((record) => {
+    return record;
+  })
   @GqlAssociation({
     parentIdFieldName: TransactionEventProps.id,
     associatedIdFieldName: MeterValueProps.transactionEventId,

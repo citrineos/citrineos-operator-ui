@@ -12,13 +12,13 @@ import {
 } from 'antd';
 import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { FieldSchema } from '../model/interfaces';
+import { FieldSchema } from '@interfaces';
 import { FieldPath } from '../components/form/state/fieldpath';
 import {
   SupportedUnknownType,
   UnknownEntry,
 } from '../components/form/state/unknowns';
-import { FieldType } from '../model/enums';
+import { FieldType } from '@enums';
 
 export const renderUnknownValueField = (
   type: SupportedUnknownType,

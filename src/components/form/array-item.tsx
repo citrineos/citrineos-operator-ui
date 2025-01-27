@@ -3,8 +3,8 @@ import { Button, Form } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import { renderField } from './index';
 import { useSelector } from 'react-redux';
-import { ArrayItemProps, FieldSchema } from '../../model/interfaces';
-import { FieldType } from '../../model/enums';
+import { ArrayItemProps, FieldSchema } from '@interfaces';
+import { FieldType } from '@enums';
 
 export const ArrayItem: React.FC<ArrayItemProps> = (props: ArrayItemProps) => {
   const {

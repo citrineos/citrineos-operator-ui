@@ -3,23 +3,34 @@ import { UseFormReturnType } from '@refinedev/antd';
 import { CustomAction } from '../components/custom-actions';
 import { ResourceType } from '../resource-type';
 import {
+  ColumnAction,
+  DefaultColors,
   FieldType,
   GenericViewState,
   SelectionType,
   SelectMode,
 } from './enums';
 import { isDefined } from 'class-validator';
-import { Constructable } from '../util/Constructable';
-import { GqlAssociationProps } from '../util/decorators/GqlAssociation';
+import { Constructable } from '@util/Constructable';
+import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
 import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
 import { AnyObject } from 'antd/es/_util/type';
 import { BaseRecord } from '@refinedev/core';
+import { MouseEventHandler } from 'react';
+import { DocumentNode } from 'graphql';
 
 export interface FieldSelectOption {
   label: string;
   value: string;
+}
+
+export interface IDDisplayProps {
+  id: string;
+  startLength?: number; // Number of characters to show from the start
+  endLength?: number; // Number of characters to show from the end
+  color?: DefaultColors; // Color of the Tag
 }
 
 export interface AssociationSelectionProps<ParentModel, AssociatedModel>
@@ -265,4 +276,46 @@ export interface IDataModelListProps {
   hideActions?: boolean;
   parentView?: ResourceType;
   viewMode?: 'table' | 'map';
+}
+
+export interface IActionsColumnEnhancedProps {
+  record: any;
+  dtoClass: any; // todo type
+  actions: ColumnAction[];
+  customActions?: CustomAction<any>[];
+  onEdit?: (record: any) => void;
+  onCancel?: MouseEventHandler<any>; // todo type
+  onSave?: (record: any) => void; // todo type
+  onDeleteSuccess?: () => void;
+}
+
+export interface CancelButtonProps {
+  onCancel?: MouseEventHandler<HTMLElement>;
+}
+
+export interface IActionsColumnProps {
+  record: any;
+  idField?: string;
+  gqlDeleteMutation?: DocumentNode;
+  actions?: ColumnActionProps[];
+  customActions?: CustomAction<any>[];
+}
+
+export interface ColumnActionProps {
+  type: ColumnAction;
+  override?: any; // Override the component that is already mapped in ColumnActionDefaultElements
+}
+
+export interface AssociatedViewProps<ParentModel, AssociatedModel>
+  extends GqlAssociationProps {
+  parentRecord: ParentModel; // record
+  associatedRecordClass: Constructable<AssociatedModel>; // record class
+}
+
+export interface ValueDisplayProps {
+  value: number | null | undefined;
+  precision?: number; // Number of decimal places to round to
+  prefix?: string; // Text to display before the value
+  suffix?: string; // Text to display after the value
+  color?: DefaultColors; // Color of the Tag
 }

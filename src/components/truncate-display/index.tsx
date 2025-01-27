@@ -1,13 +1,7 @@
 import React from 'react';
 import { Popover, Tag } from 'antd';
-import { DefaultColors } from '../tag';
-
-interface IDDisplayProps {
-  id: string;
-  startLength?: number; // Number of characters to show from the start
-  endLength?: number; // Number of characters to show from the end
-  color?: DefaultColors; // Color of the Tag
-}
+import { IDDisplayProps } from '@interfaces';
+import { DefaultColors } from '@enums';
 
 export const TruncateDisplay: React.FC<IDDisplayProps> = ({
   id,

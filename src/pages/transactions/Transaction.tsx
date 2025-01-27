@@ -9,14 +9,14 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   TRANSACTION_CREATE_MUTATION,
   TRANSACTION_DELETE_MUTATION,
@@ -25,8 +25,8 @@ import {
   TRANSACTION_LIST_QUERY,
 } from './queries';
 import { Type } from 'class-transformer';
-import { FieldLabel } from '../../util/decorators/FieldLabel';
-import { GqlAssociation } from '../../util/decorators/GqlAssociation';
+import { FieldLabel } from '@util/decorators/FieldLabel';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   TransactionEvent,
   TransactionEventProps,
@@ -36,15 +36,15 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from '../transaction-events/queries';
-import { TransformDate } from '../../util/TransformDate';
-import { ClassCustomActions } from '../../util/decorators/ClassCustomActions';
+import { TransformDate } from '@util/TransformDate';
+import { ClassCustomActions } from '@util/decorators/ClassCustomActions';
 import { requestStopTransaction } from '../../message/remote-stop';
-import { CustomFormRender } from '../../util/decorators/CustomFormRender';
+import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { ValueDisplay } from '../../components/value-display';
 import React from 'react';
-import { Searchable } from '../../util/decorators/Searcheable';
-import { Sortable } from '../../util/decorators/Sortable';
-import { HiddenWhen } from '../../util/decorators/HiddenWhen';
+import { Searchable } from '@util/decorators/Searcheable';
+import { Sortable } from '@util/decorators/Sortable';
+import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
 export enum TransactionProps {
   id = 'id',
@@ -125,6 +125,9 @@ export class Transaction {
         transactionDatabaseId: transaction.id,
       }),
     },
+  })
+  @HiddenWhen((record) => {
+    return record;
   })
   events?: TransactionEvent[];
 
