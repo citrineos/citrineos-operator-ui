@@ -1,4 +1,2 @@
 export { Header } from './header';
-export {
-  DataModelTable,
-} from './data-model-table';
+export { DataModelTable } from './data-model-table';
