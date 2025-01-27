@@ -9,7 +9,7 @@ import { FaChargingStation } from 'react-icons/fa';
 
 import { ResourceType } from '../../resource-type';
 import { GenericParameterizedView, GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   CUSTOM_CHARGING_STATION_ACTIONS,

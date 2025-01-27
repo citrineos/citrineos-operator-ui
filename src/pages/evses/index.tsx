@@ -2,7 +2,7 @@ import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import {
   EVSE_CREATE_MUTATION,
   EVSE_DELETE_MUTATION,

@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { ReservationsListQuery } from '../../graphql/types';
 import { Reservation } from './Reservation';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   RESERVATIONS_CREATE_MUTATION,
