@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BaseModel } from '@util/BaseModel';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
@@ -15,6 +15,13 @@ import {
   INSTALLED_CERTIFICATE_GET_QUERY,
   INSTALLED_CERTIFICATE_LIST_QUERY,
 } from './queries';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import { Type } from 'class-transformer';
+import { Certificate, CertificateProps } from '../certificates/Certificate';
+import {
+  CERTIFICATES_GET_QUERY,
+  CERTIFICATES_LIST_QUERY,
+} from '../certificates/queries';
 
 export enum InstalledCertificateProps {
   id = 'id',
@@ -24,6 +31,7 @@ export enum InstalledCertificateProps {
   issuerKeyHash = 'issuerKeyHash',
   serialNumber = 'serialNumber',
   certificateType = 'certificateType',
+  certificateId = 'certificateId',
 }
 
 @ClassResourceType(ResourceType.INSTALLED_CERTIFICATES)
@@ -61,4 +69,18 @@ export class InstalledCertificate extends BaseModel {
   @IsString()
   @IsNotEmpty()
   certificateType!: string;
+
+  @GqlAssociation({
+    parentIdFieldName: InstalledCertificateProps.certificateId,
+    associatedIdFieldName: CertificateProps.id,
+    gqlQuery: {
+      query: CERTIFICATES_GET_QUERY,
+    },
+    gqlListQuery: {
+      query: CERTIFICATES_LIST_QUERY,
+    },
+  })
+  @Type(() => Certificate)
+  @IsOptional()
+  certificateId?: Certificate | null;
 }

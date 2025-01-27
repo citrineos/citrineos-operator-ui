@@ -1,10 +1,6 @@
-import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
-
-import { Type } from 'class-transformer';
-import { FieldLabel } from '@util/decorators/FieldLabel';
+import { IsNumber, IsOptional } from 'class-validator';
 import { ResourceType } from '../../resource-type';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { GqlAssociation } from '@util/decorators/GqlAssociation';
 
 import {
   EVSE_CREATE_MUTATION,
@@ -21,15 +17,6 @@ import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { BaseModel } from '@util/BaseModel';
 import { EvseProps } from './EvseProps';
-import {
-  VariableAttribute,
-  VariableAttributeProps,
-} from '../variable-attributes/VariableAttributes';
-import {
-  VARIABLE_ATTRIBUTE_GET_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_QUERY,
-} from '../variable-attributes/queries';
 
 @ClassResourceType(ResourceType.EVSES)
 @ClassGqlListQuery(EVSE_LIST_QUERY)
@@ -54,29 +41,6 @@ export class Evse extends BaseModel {
   customData: CustomDataType | null = null;
   */
 
-  @IsArray()
-  @Type(() => VariableAttribute)
-  @ValidateNested({ each: true })
-  @FieldLabel('Device Model')
-  @GqlAssociation({
-    parentIdFieldName: EvseProps.databaseId,
-    associatedIdFieldName: VariableAttributeProps.evseDatabaseId,
-    hasNewAssociatedIdsVariable: true,
-    gqlQuery: {
-      query: VARIABLE_ATTRIBUTE_GET_QUERY,
-    },
-    gqlListQuery: {
-      query: VARIABLE_ATTRIBUTE_LIST_QUERY,
-    },
-    gqlListSelectedQuery: {
-      query: VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-      getQueryVariables: (evse: Evse) => ({
-        [VariableAttributeProps.evseDatabaseId]: evse.databaseId,
-      }),
-    },
-  })
-  VariableAttributes?: VariableAttribute[];
-
   constructor(data?: Partial<Evse>) {
     super();
     if (data) {
@@ -84,7 +48,6 @@ export class Evse extends BaseModel {
         [EvseProps.databaseId]: data.databaseId,
         [EvseProps.id]: data.id,
         [EvseProps.connectorId]: data.connectorId,
-        [EvseProps.VariableAttributes]: data.VariableAttributes,
       });
     }
   }

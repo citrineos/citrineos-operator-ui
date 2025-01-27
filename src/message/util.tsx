@@ -55,6 +55,9 @@ export const triggerMessageAndHandleResponse = async <T,>({
       case HttpMethod.Post:
         response = await client.post(url, responseClass, {}, data);
         break;
+      case HttpMethod.Put:
+        response = await client.put(url, responseClass, {}, data);
+        break;
       case HttpMethod.Delete:
         response = await client.del(url, responseClass, {});
         break;

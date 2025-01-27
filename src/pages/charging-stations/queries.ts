@@ -1,4 +1,5 @@
 import { gql } from 'graphql-tag';
+import { INSTALLED_CERTIFICATE_QUERY_FIELDS } from '../installed-certificates/queries';
 
 export const CHARGING_STATIONS_LIST_QUERY = gql`
   query ChargingStationsList(
@@ -24,6 +25,9 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         connectorStatus
         createdAt
         updatedAt
+      }
+      InstalledCertificates {
+          ${INSTALLED_CERTIFICATE_QUERY_FIELDS}
       }
       createdAt
       updatedAt
