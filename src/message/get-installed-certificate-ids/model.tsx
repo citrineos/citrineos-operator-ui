@@ -2,7 +2,7 @@ import { IsEnum, IsOptional, ValidateNested } from 'class-validator';
 import { GetCertificateIdUseEnumType } from '@citrineos/base';
 import { Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
-import { CustomFormRender } from '../../util/decorators/CustomFormRender';
+import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { Form, Select } from 'antd';
 import React from 'react';
 
@@ -31,5 +31,5 @@ export class GetInstalledCertificateIdsRequest {
   @IsOptional()
   @ValidateNested()
   @Type(() => CustomDataType)
-  customData: CustomDataType | null = null;
+  customData?: CustomDataType | null;
 }

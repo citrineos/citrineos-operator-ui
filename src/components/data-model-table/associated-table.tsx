@@ -1,30 +1,24 @@
 import { Alert } from 'antd';
 import { GenericDataTable } from './editable';
 import React from 'react';
-import { Constructable } from '../../util/Constructable';
+import { Constructable } from '@util/Constructable';
 import { plainToInstance } from 'class-transformer';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
-import { GqlAssociationProps } from '../../util/decorators/GqlAssociation';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
+import { useTable, useTableProps } from '@refinedev/antd';
+import { CustomAction } from '../custom-actions';
 
-export interface AssociatedTableProps<ParentModel, AssociatedModel>
-  extends GqlAssociationProps {
-  parentRecord: ParentModel; // record
+export interface AssociatedTableProps<AssociatedModel> {
   associatedRecordClass: Constructable<AssociatedModel>; // record class
+  gqlQuery: any;
+  gqlQueryVariables?: any;
+  customActions?: CustomAction<any>[];
 }
 
-export const AssociatedTable = <
-  ParentModel,
-  AssociatedModel,
-  GetQuery extends Record<any, any>,
->(
-  props: AssociatedTableProps<ParentModel, AssociatedModel>,
+export const AssociatedTable = <AssociatedModel,>(
+  props: AssociatedTableProps<AssociatedModel>,
 ) => {
-  const {
-    parentRecord,
-    associatedRecordClass,
-    parentIdFieldName,
-    associatedIdFieldName,
-  } = props;
+  const { associatedRecordClass, gqlQuery, gqlQueryVariables, customActions } =
+    props;
 
   const associatedRecordClassInstance = plainToInstance(
     associatedRecordClass,
@@ -32,8 +26,42 @@ export const AssociatedTable = <
   );
   const associatedRecordResourceType = Reflect.getMetadata(
     CLASS_RESOURCE_TYPE,
-    associatedRecordClassInstance as Object,
+    associatedRecordClassInstance as object,
   );
+
+  const meta: any = {
+    gqlQuery,
+  };
+
+  if (gqlQueryVariables) {
+    meta.gqlVariables = gqlQueryVariables;
+  }
+
+  const tableOptions: useTableProps<any, any, unknown, any> = {
+    resource: associatedRecordResourceType,
+    sorters: {
+      initial: [
+        {
+          field: 'updatedAt',
+          order: 'desc',
+        },
+      ],
+    },
+    filters: [] as any,
+    meta,
+  };
+
+  const {
+    tableProps,
+    tableQuery: _queryResult,
+    searchFormProps,
+    setSorters,
+    setCurrent,
+    setPageSize,
+  } = useTable<any>({
+    ...tableOptions,
+  });
+
   if (!associatedRecordResourceType) {
     return (
       <Alert
@@ -42,17 +70,19 @@ export const AssociatedTable = <
       />
     );
   }
-  const filters = {
-    permanent: [
-      {
-        field: associatedIdFieldName,
-        operator: 'eq',
-        value: (parentRecord as any)[parentIdFieldName],
-      },
-    ],
-  };
 
   return (
-    <GenericDataTable dtoClass={associatedRecordClass} filters={filters} />
+    <GenericDataTable
+      dtoClass={associatedRecordClass}
+      useTableProps={{
+        tableProps,
+        searchFormProps,
+        setSorters,
+        setCurrent,
+        setPageSize,
+      }}
+      customActions={customActions}
+      editable={false}
+    />
   );
 };

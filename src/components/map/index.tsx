@@ -1,6 +1,7 @@
 import React, { MouseEventHandler, useState } from 'react';
 import GoogleMapReact from 'google-map-react';
 import './style.scss';
+import { MarkerIcon } from './markert-icon';
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -12,6 +13,7 @@ export interface MarkerProps {
   onClick?: MouseEventHandler<any> | undefined;
   isSelected?: boolean;
   zoom?: number;
+  color?: string;
 }
 
 export interface MapProps {
@@ -21,14 +23,13 @@ export interface MapProps {
 }
 
 const MapMarker: React.FC<MarkerProps> = ({
-  identifier,
+  identifier: _identifier,
   content,
   onClick,
   isSelected,
   zoom = 10,
+  color = 'red',
 }) => {
-  const markerIcon = isSelected ? '/selected.png' : '/online.png';
-
   // Adjust marker size based on zoom level - larger when zoomed in, smaller when zoomed out
   const baseSize = 30; // Base size for the marker
   const markerSize = baseSize * (zoom / 10); // Adjust size based on zoom
@@ -37,19 +38,19 @@ const MapMarker: React.FC<MarkerProps> = ({
     <div
       onClick={onClick}
       style={{
+        color,
         cursor: 'pointer',
         position: 'absolute',
         transform: `translate(-50%, -100%)`, // Adjust for anchor offset
         textAlign: 'center',
       }}
     >
-      <img
-        src={markerIcon}
-        alt="marker"
+      <MarkerIcon
         style={{
           width: `${markerSize}px`,
-          height: `${(markerSize * 153) / 116}px`,
-        }} // Maintain aspect ratio
+          height: `${markerSize}px`,
+        }}
+        fillColor={isSelected ? 'purple' : color}
       />
       {content && <div className="map-marker-content">{content}</div>}
     </div>
@@ -81,9 +82,8 @@ const MapMarker: React.FC<MarkerProps> = ({
  * - Click Handling: When a marker is clicked, the map pans to center on the marker and zooms in by 3 levels
  *   (up to a maximum zoom level of 20). The selected marker's content (if provided) is displayed above the marker.
  * - Automatic Map Bounds: On initial load, the map automatically adjusts its bounds to include all markers within view.
- * - Responsive Marker Icons: Markers use two different icons based on their selection state:
- *   - selected.png for selected markers.
- *   - online.png for non-selected markers.
+ * - Responsive Marker Icons: Markers use two different icons colors based on their selection state, and MarkerIcon is
+ *   used to render the svg and apply appropriate fill color.
  *   These icons are expected to be located in the /public directory.
  * - Zoom Level Tracking: The component tracks the current zoom level and adjusts marker sizes accordingly.
  *   The zoom level updates dynamically as the user interacts with the map.
@@ -103,7 +103,7 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
       mapInstance.panTo({ lat, lng });
 
       // Zoom in on the marker
-      let newZoom = Math.min(currentZoom + 3, 10); // Zoom in by 3 levels, with a max of 20
+      const newZoom = Math.min(currentZoom + 3, 10); // Zoom in by 3 levels, with a max of 20
       mapInstance.setZoom(newZoom);
       setCurrentZoom(newZoom);
 
@@ -120,7 +120,6 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
         bounds.extend(new maps.LatLng(marker.lat, marker.lng));
       });
       map.fitBounds(bounds);
-      map.setZoom(zoom);
     } catch (error) {
       console.error('Error creating bounds or fitting map:', error);
     }
@@ -136,6 +135,7 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
         onClick: () => {},
         isSelected: true,
         zoom,
+        color: 'red',
       },
     ];
   }
@@ -151,6 +151,7 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
       >
         {markers.map((marker) => (
           <MapMarker
+            color={marker.color}
             key={marker.identifier}
             lat={marker.lat}
             lng={marker.lng}

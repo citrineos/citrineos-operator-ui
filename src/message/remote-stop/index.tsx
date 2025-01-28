@@ -1,121 +1,91 @@
-import React, { useEffect, useState } from 'react';
-import { ChargingStation } from './ChargingStation';
-import { Button, Form, notification, Select, Spin } from 'antd';
-import { GET_ACTIVE_TRANSACTIONS } from './queries';
-import { useCustom } from '@refinedev/core';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import React from 'react';
+import { Form } from 'antd';
 import { MessageConfirmation } from '../MessageConfirmation';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { triggerMessageAndHandleResponse } from '../util';
+import { GET_ACTIVE_TRANSACTION_LIST_FOR_STATION } from '../queries';
+import { plainToInstance, Type } from 'class-transformer';
+import { GenericForm } from '../../components/form';
+import {
+  Transaction,
+  TransactionProps,
+} from '../../pages/transactions/Transaction';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { IsNotEmpty } from 'class-validator';
 
-const GRAPHQL_ENDPOINT_URL = import.meta.env.VITE_API_URL;
+export enum RemoteStopRequestProps {
+  transaction = 'transaction',
+}
+
+export class RemoteStopRequest {
+  @GqlAssociation({
+    parentIdFieldName: RemoteStopRequestProps.transaction,
+    associatedIdFieldName: TransactionProps.id,
+    gqlListQuery: {
+      query: GET_ACTIVE_TRANSACTION_LIST_FOR_STATION,
+      getQueryVariables: (_: RemoteStopRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        return {
+          stationId: station.id,
+        };
+      },
+    },
+  })
+  @Type(() => Transaction)
+  @IsNotEmpty()
+  transaction!: Transaction | null;
+}
 
 export interface RemoteStopProps {
   station: ChargingStation;
 }
 
-export const RemoteStop: React.FC<RemoteStopProps> = ({ station }) => {
-  const [selectedTransaction, setSelectedTransaction] = useState<
-    string | undefined
-  >(undefined);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const { data, isLoading, isError } = useCustom<any>({
-    url: GRAPHQL_ENDPOINT_URL,
-    method: 'post',
-    config: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-    meta: {
-      operation: 'GetActiveTransactions',
-      gqlQuery: GET_ACTIVE_TRANSACTIONS,
-      variables: {
-        stationId: station.id,
-      },
-    },
+export const requestStopTransaction = async (
+  stationId: string,
+  transactionId: string,
+  setLoading?: (loading: boolean) => void,
+) => {
+  await triggerMessageAndHandleResponse({
+    url: `/evdriver/requestStopTransaction?identifier=${stationId}&tenantId=1`,
+    responseClass: MessageConfirmation,
+    data: { transactionId },
+    responseSuccessCheck: (response: MessageConfirmation) =>
+      response && response.success,
+    setLoading,
   });
+};
 
-  useEffect(() => {
-    if (data?.data?.Transactions.length === 1) {
-      setSelectedTransaction(data.data.Transactions[0].transactionId);
-    }
-  }, [data]);
-
-  const requestStopTransaction = async (transactionId: string) => {
-    try {
-      setLoading(true);
-      const payload = { transactionId };
-      const client = new BaseRestClient();
-      const response = await client.post(
-        `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=1`,
-        MessageConfirmation,
-        {},
-        payload,
-      );
-
-      if (response && response.success) {
-        notification.success({
-          message: 'Success',
-          description: 'The stop transaction request was successful.',
-          placement: 'topRight',
-        });
-      } else {
-        notification.error({
-          message: 'Request Failed',
-          description:
-            'The stop transaction request did not receive a successful response.',
-          placement: 'topRight',
-        });
-      }
-    } catch (error: any) {
-      const msg = `Could not perform request stop transaction, got error: ${error.message}`;
-      console.error(msg, error);
-      notification.error({
-        message: 'Error',
-        description: msg,
-        placement: 'topRight',
-      });
-    } finally {
-      setLoading(false);
-    }
+export const RemoteStop: React.FC<RemoteStopProps> = ({ station }) => {
+  const [form] = Form.useForm();
+  const formProps = {
+    form,
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (plainValues: any) => {
+    const remoteStopRequest = plainToInstance(RemoteStopRequest, plainValues);
+    const selectedTransaction = remoteStopRequest.transaction;
     if (selectedTransaction) {
-      requestStopTransaction(selectedTransaction);
+      await requestStopTransaction(
+        station.id,
+        selectedTransaction.transactionId,
+      );
     }
   };
 
-  if (isLoading || loading) return <Spin />;
-  if (isError) return <p>Error loading transactions</p>;
+  const remoteStopRequest = new RemoteStopRequest();
+  const transaction = new Transaction();
+  transaction.id = NEW_IDENTIFIER as unknown as number;
+  remoteStopRequest[RemoteStopRequestProps.transaction] = transaction;
 
   return (
-    <Form layout="vertical" onFinish={handleSubmit}>
-      <Form.Item label="Active Transactions">
-        <Select
-          value={selectedTransaction}
-          onChange={setSelectedTransaction}
-          placeholder="Select a transaction"
-        >
-          {data?.data?.Transactions.map((transaction: any) => (
-            <Select.Option
-              key={transaction.id}
-              value={transaction.transactionId}
-            >
-              {transaction.transactionId}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={!selectedTransaction}
-        >
-          Request Stop
-        </Button>
-      </Form.Item>
-    </Form>
+    <GenericForm
+      formProps={formProps}
+      dtoClass={RemoteStopRequest}
+      onFinish={handleSubmit}
+      initialValues={remoteStopRequest}
+      parentRecord={remoteStopRequest}
+    />
   );
 };

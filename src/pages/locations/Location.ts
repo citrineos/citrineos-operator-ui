@@ -1,15 +1,15 @@
 import { IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { GeoPoint, IsGeoPoint } from '../../util/GeoPoint';
-import { ToClass, ToPlain } from '../../util/Transformers';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { GeoPoint, IsGeoPoint } from '@util/GeoPoint';
+import { ToClass, ToPlain } from '@util/Transformers';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   LOCATIONS_CREATE_MUTATION,
   LOCATIONS_DELETE_MUTATION,
@@ -60,11 +60,11 @@ export class Location {
 
   @IsGeoPoint()
   @Type(() => GeoPoint)
-  @ToPlain<GeoPoint>((value) => value.json)
+  @ToPlain<GeoPoint>((value) => (value ? value.json : value))
   @ToClass<GeoPoint>(GeoPoint.parse)
   coordinates!: GeoPoint;
 
-  constructor(data: Location) {
+  constructor(data?: Location) {
     if (data) {
       Object.assign(this, {
         [LocationProps.id]: data.id,

@@ -54,13 +54,30 @@ export const EVSE_LIST_QUERY = gql`
 `;
 
 export const EVSE_GET_QUERY = gql`
-  query GetEvseById($databaseId: Int!) {
-    Evses_by_pk(databaseId: $databaseId) {
+  query GetEvseById($id: Int!) {
+    Evses_by_pk(databaseId: $id) {
       databaseId
       id
       connectorId
       createdAt
       updatedAt
+
+      # Join the VariableAttributes for this EVSE
+      VariableAttributes {
+        id
+        stationId
+        type
+        dataType
+        value
+        mutability
+        persistent
+        constant
+        variableId
+        componentId
+        evseDatabaseId
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

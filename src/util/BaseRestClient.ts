@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Constructable } from './Constructable';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
+import { incrementRequestCount } from '../telemetry';
 
 const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
 
@@ -18,9 +19,14 @@ export class MissingRequiredParamException extends Error {
 // TODO can we use typed-rest-client here else axios in CORE?
 export class BaseRestClient {
   private axiosInstance!: AxiosInstance;
-  private _baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
+  private _baseUrl: string;
 
-  constructor() {
+  constructor(dataBaseUrl = false) {
+    if (dataBaseUrl) {
+      this._baseUrl = `${CITRINE_CORE_URL}/data/`;
+    } else {
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
+    }
     this.initAxiosInstance();
   }
 
@@ -54,6 +60,7 @@ export class BaseRestClient {
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
+    incrementRequestCount({ url: url });
     return this.axiosInstance.get<T>(url, config!);
   }
 
@@ -62,6 +69,7 @@ export class BaseRestClient {
     clazz: Constructable<T>,
     config: AxiosRequestConfig,
   ): Promise<T> {
+    incrementRequestCount({ path: path });
     return this.getRaw<T>(path, config).then((response) =>
       this.handleResponse(clazz, response),
     );
@@ -71,6 +79,7 @@ export class BaseRestClient {
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
+    incrementRequestCount({ url: url });
     return this.axiosInstance.delete<T>(url, config!);
   }
 
@@ -79,6 +88,7 @@ export class BaseRestClient {
     clazz: Constructable<T>,
     config: AxiosRequestConfig,
   ): Promise<T> {
+    incrementRequestCount({ path: path });
     return this.delRaw<T>(path, config).then((response) =>
       this.handleResponse(clazz, response),
     );
@@ -89,6 +99,7 @@ export class BaseRestClient {
     body: any,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
+    incrementRequestCount({ url: url });
     return this.axiosInstance.post<T>(url, body, config!);
   }
 
@@ -98,6 +109,7 @@ export class BaseRestClient {
     config: AxiosRequestConfig,
     body: any,
   ): Promise<T> {
+    incrementRequestCount({ path: path });
     return this.postRaw<T>(path, body, config).then((response) =>
       this.handleResponse(clazz, response),
     );
@@ -108,6 +120,7 @@ export class BaseRestClient {
     body: any,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
+    incrementRequestCount({ url: url });
     return this.axiosInstance.patch<T>(url, body, config!);
   }
 
@@ -117,6 +130,7 @@ export class BaseRestClient {
     config: AxiosRequestConfig,
     body: any,
   ): Promise<T> {
+    incrementRequestCount({ path: path });
     return this.patchRaw<T>(path, body, config).then((response) =>
       this.handleResponse(clazz, response),
     );
@@ -127,6 +141,7 @@ export class BaseRestClient {
     body: any,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
+    incrementRequestCount({ url: url });
     return this.axiosInstance.put<T>(url, body, config!);
   }
 
@@ -136,6 +151,7 @@ export class BaseRestClient {
     config: AxiosRequestConfig,
     body: any,
   ): Promise<T> {
+    incrementRequestCount({ path: path });
     return this.putRaw<T>(path, body, config).then((response) =>
       this.handleResponse(clazz, response),
     );

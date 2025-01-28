@@ -14,7 +14,7 @@ import {
   ReserveNowStatusEnumType,
 } from '@citrineos/base';
 import { CustomDataType } from '../../model/CustomData';
-import { TransformDate } from '../../util/TransformDate';
+import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';
 
 export class AdditionalInfoType {

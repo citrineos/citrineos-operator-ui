@@ -11,6 +11,7 @@ export interface IExpandableColumnProps {
   multipleNested?: boolean;
   useInitialContentAsButton?: boolean;
   forceRender?: boolean; // force render components in drawer
+  onExpanded?: () => Promise<void>;
 }
 
 export const ExpandableColumn = ({
@@ -20,11 +21,16 @@ export const ExpandableColumn = ({
   multipleNested = false,
   useInitialContentAsButton = false,
   forceRender = false,
+  onExpanded,
 }: IExpandableColumnProps) => {
   const [showDrawer, setShowDrawer] = useState(false);
 
   const onViewButtonClick = () => {
-    setShowDrawer(true);
+    if (onExpanded) {
+      onExpanded().then(() => setShowDrawer(true));
+    } else {
+      setShowDrawer(true);
+    }
   };
 
   const onDrawerClose = () => {

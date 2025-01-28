@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -8,25 +7,14 @@ import React, {
 } from 'react';
 import { Alert, Button, Form, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  extractSchema,
-  FieldSchema,
-  FieldType,
-  getClassTransformerType,
-  renderField,
-} from '../form';
+import { extractSchema, getClassTransformerType, renderField } from '../form';
 import { StatusIcon } from '../status-icon';
 import GenericTag from '../tag';
 import { TruncateDisplay } from '../truncate-display';
 import { TimestampDisplay } from '../timestamp-display';
-import { ExpandableColumn } from './expandable-column';
-import { AssociatedTable } from './associated-table';
-import { AssociatedView } from './associated-view';
-import { Constructable } from '../../util/Constructable';
-import { plainToInstance } from 'class-transformer';
-import { CLASS_RESOURCE_TYPE } from '../../util/decorators/ClassResourceType';
-import { CLASS_GQL_LIST_QUERY } from '../../util/decorators/ClassGqlListQuery';
-import { CLASS_GQL_DELETE_MUTATION } from '../../util/decorators/ClassGqlDeleteMutation';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
+import { CLASS_GQL_LIST_QUERY } from '@util/decorators/ClassGqlListQuery';
 import { useForm } from '@refinedev/antd';
 import {
   DataProvider,
@@ -34,83 +22,120 @@ import {
   useCustomMutation,
   useDataProvider,
 } from '@refinedev/core';
-import { PRIMARY_KEY_FIELD_NAME } from '../../util/decorators/PrimaryKeyFieldName';
+import {
+  FieldNameAndIsEditable,
+  PRIMARY_KEY_FIELD_NAME,
+} from '@util/decorators/PrimaryKeyFieldName';
 import { GetFields, GetVariables } from '@refinedev/hasura';
-import { CLASS_GQL_EDIT_MUTATION } from '../../util/decorators/ClassGqlEditMutation';
-import { CLASS_GQL_GET_QUERY } from '../../util/decorators/ClassGqlGetQuery';
-import { CLASS_GQL_CREATE_MUTATION } from '../../util/decorators/ClassGqlCreateMutation';
-import { ColorModeContext } from '../../contexts/color-mode';
+import { CLASS_GQL_EDIT_MUTATION } from '@util/decorators/ClassGqlEditMutation';
+import {
+  CLASS_GQL_CREATE_MUTATION,
+  MutationAndGetVariables,
+} from '@util/decorators/ClassGqlCreateMutation';
 import { CustomAction } from '../custom-actions';
 import { FieldPath } from '../form/state/fieldpath';
 import { AssociationSelection } from './association-selection';
-import { ActionsColumnEnhanced, ColumnAction } from './actions-column-enhanced';
+import { ActionsColumnEnhanced } from './actions-column-enhanced';
 import { Unknowns, UnknownsActions } from '../form/state/unknowns';
 import { Flags } from '../form/state/flags';
-import { EvseProps } from '../../pages/evses/Evse';
 import {
+  getAssociatedFields,
   GQL_ASSOCIATION,
   GqlAssociationProps,
-} from '../../util/decorators/GqlAssociation';
-import { TableWrapper, TableWrapperRef } from './table-wrapper';
-import { NEW_IDENTIFIER } from '../../util/consts';
+} from '@util/decorators/GqlAssociation';
+import { TableWrapper } from './table-wrapper';
+import { NEW_IDENTIFIER } from '@util/consts';
+import { hasOwnProperty } from '../../message/util';
+import { CLASS_CUSTOM_ACTIONS } from '@util/decorators/ClassCustomActions';
+import { useSelector } from 'react-redux';
+import { ArrayField } from '../form/array-field';
+import { CLASS_CUSTOM_CONSTRUCTOR } from '@util/decorators/ClassCustomConstructor';
+import NestedObjectField from '../form/nested-object-field';
+import { DocumentNode } from 'graphql';
+import { HIDDEN_WHEN, IsHiddenCheck } from '@util/decorators/HiddenWhen';
+import {
+  FieldSchema,
+  GenericDataTableProps,
+  RenderEditableCellProps,
+  RenderViewContentProps,
+  TableWrapperRef,
+} from '@interfaces';
+import { ColumnAction, FieldType } from '@enums';
 
-const renderViewContent = (
-  field: FieldSchema,
-  _value: any, // todo may not be needed, seems that `render()` in the columns that are passed to table doesnt include a valid value?
-  record: any, // todo type
-  editable = false,
-) => {
-  let value = record[field.name];
+export const renderViewContent = (props: RenderViewContentProps) => {
+  const {
+    field,
+    preFieldPath = FieldPath.empty(),
+    value: _value,
+    record,
+    hideLabels,
+    disabled: _disabled,
+    parentRecord,
+    form,
+    setHasChanges,
+    visibleOptionalFields,
+    enableOptionalField,
+    toggleOptionalField,
+    unknowns,
+    modifyUnknowns,
+    useSelector,
+    fieldAnnotations,
+  } = props;
+
+  const fieldPath = preFieldPath.with(field.name);
+  const value = record[field.name];
   const fieldType = field.type;
   const fieldOptions = field.options;
-  let parentIdFieldName, associatedIdFieldName, gqlQuery, gqlListQuery;
-  if (field.gqlAssociationProps) {
-    parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
-    associatedIdFieldName = field.gqlAssociationProps.associatedIdFieldName;
-    gqlQuery = field.gqlAssociationProps.gqlQuery;
-    gqlListQuery = field.gqlAssociationProps.gqlListQuery;
+
+  if (field.type === FieldType.customRender && field.customRender) {
+    return field.customRender(record);
   }
   switch (fieldType) {
     case FieldType.boolean:
       return <StatusIcon value={value} />;
-    case FieldType.select:
+    case FieldType.select: {
       const selectedOption = fieldOptions?.find(
         (option: any) => option.value === value,
       );
       return <GenericTag stringValue={selectedOption?.label || value} />;
+    }
     case FieldType.datetime:
       return <TimestampDisplay isoTimestamp={value} />;
     case FieldType.nestedObject:
       return (
-        <>
-          <AssociatedView
-            parentRecord={record}
-            associatedRecordClass={field.dtoClass!}
-            parentIdFieldName={parentIdFieldName!}
-            associatedIdFieldName={associatedIdFieldName!}
-            gqlQuery={gqlQuery}
-            gqlListQuery={gqlListQuery}
-            // editable={editable} todo do we want to have associated detail view show in editable state?
-          />
-        </>
+        <NestedObjectField
+          fieldPath={fieldPath}
+          schema={field}
+          hideLabels={true}
+          disabled={true}
+          visibleOptionalFields={visibleOptionalFields}
+          enableOptionalField={enableOptionalField}
+          toggleOptionalField={toggleOptionalField}
+          unknowns={unknowns}
+          modifyUnknowns={modifyUnknowns}
+          form={form}
+          parentRecord={parentRecord}
+          useSelector={useSelector}
+        />
       );
     case FieldType.array:
-      if (!field.gqlAssociationProps) {
-        return 'Error: No gqlAssociationProps provided when rendering GenericDataTable';
-      }
-
       return (
-        <ExpandableColumn
-          expandedContent={
-            <AssociatedTable
-              parentRecord={record}
-              associatedRecordClass={field.dtoClass!}
-              parentIdFieldName={parentIdFieldName!}
-              associatedIdFieldName={associatedIdFieldName!}
-              gqlQuery={gqlQuery}
-            />
-          }
-          viewTitle={`Associated Table: ${field.dtoClass?.name}`}
+        <ArrayField
+          fieldPath={fieldPath}
+          schema={field}
+          hideLabels={hideLabels}
+          disabled={true}
+          visibleOptionalFields={visibleOptionalFields}
+          enableOptionalField={enableOptionalField}
+          toggleOptionalField={toggleOptionalField}
+          unknowns={unknowns}
+          modifyUnknowns={modifyUnknowns}
+          form={form}
+          parentRecord={parentRecord}
+          useSelector={useSelector}
+          fieldAnnotations={fieldAnnotations}
+          setHasChanges={setHasChanges}
+          isInTable={true}
         />
       );
     case FieldType.input:
@@ -123,23 +148,6 @@ const renderViewContent = (
   }
 };
 
-export enum SelectionType {
-  SINGLE = 'single',
-  MULTIPLE = 'multiple',
-}
-
-export interface GenericDataTableProps {
-  // todo make generic / typed
-  gqlDeleteMutation?: any;
-  dtoClass: Constructable<any>;
-  filters?: any;
-  selectable?: SelectionType | null;
-  tableProps?: any;
-  onSelectionChange?: (selectedRows: any[]) => void;
-  editable?: boolean;
-  customActions?: CustomAction<any>[];
-}
-
 // todo add generic types
 export const GenericDataTable: React.FC<GenericDataTableProps> = (
   props: GenericDataTableProps,
@@ -148,147 +156,51 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     dtoClass,
     selectable = null,
     filters = null,
-    tableProps: passedTableProps = null,
+    useTableProps: useTableProps = null,
     onSelectionChange,
-    editable: passedEditable,
+    editable = true,
     customActions,
+    fieldAnnotations,
   } = props;
-
-  let editable = false;
 
   const getDataProvider = useDataProvider();
   const dataProvider: DataProvider = getDataProvider();
-  if (!dataProvider) {
-    return (
-      <Alert
-        message="Error: GenericDataTable cannot find DataProvider"
-        type="error"
-      />
-    );
-  }
-
-  if (!passedEditable) {
-    const { mode } = useContext(ColorModeContext);
-
-    const isDarkMode = mode === 'dark';
-    editable = isDarkMode;
-  }
 
   const dtoClassInstance = useMemo(() => {
     return plainToInstance(dtoClass, {});
   }, [dtoClass]);
 
-  const dtoResourceType = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_RESOURCE_TYPE,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find ResourceType for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const dtoResourceType = Reflect.getMetadata(
+    CLASS_RESOURCE_TYPE,
+    dtoClassInstance,
+  );
 
-  const dtoGqlListQuery = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_LIST_QUERY,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlListQuery for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const dtoGqlListQuery = Reflect.getMetadata(
+    CLASS_GQL_LIST_QUERY,
+    dtoClassInstance,
+  );
 
-  const dtoGqlGetQuery = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_GET_QUERY,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlGetQuery for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const dtoGqlCreateMutation: MutationAndGetVariables = Reflect.getMetadata(
+    CLASS_GQL_CREATE_MUTATION,
+    dtoClassInstance,
+  );
 
-  const dtoGqlCreateMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_CREATE_MUTATION,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlCreateMutation for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const classCustomConstructor = Reflect.getMetadata(
+    CLASS_CUSTOM_CONSTRUCTOR,
+    dtoClassInstance,
+  );
 
-  const dtoGqlEditMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_EDIT_MUTATION,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlEditMutation for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const primaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable =
+    Reflect.getMetadata(PRIMARY_KEY_FIELD_NAME, dtoClassInstance as object);
 
-  const dtoGqlDeleteMutation = useMemo(() => {
-    let result = Reflect.getMetadata(
-      CLASS_GQL_DELETE_MUTATION,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find GqlDeleteMutation for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const primaryKeyFieldName = primaryKeyFieldNameAndIsEditable.fieldName;
+  const primaryKeyFieldEditable =
+    primaryKeyFieldNameAndIsEditable.editableDuringCreate;
 
-  const primaryKeyFieldName = useMemo(() => {
-    let result = Reflect.getMetadata(
-      PRIMARY_KEY_FIELD_NAME,
-      dtoClassInstance as Object,
-    );
-    if (!result) {
-      return (
-        <Alert
-          message="Error: GenericDataTable cannot find primaryKeyFieldName for dtoClass"
-          type="error"
-        />
-      );
-    }
-    return result;
-  }, [dtoClassInstance]);
+  const classCustomActions = Reflect.getMetadata(
+    CLASS_CUSTOM_ACTIONS,
+    dtoClassInstance as object,
+  );
 
   const tableWrapperRef = useRef<TableWrapperRef<any>>(null);
 
@@ -298,6 +210,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   const [unknowns, setUnknowns] = useState<Unknowns>(Unknowns.empty());
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [editingRecord, setEditingRecord] = useState<any | null>(null);
+  const [editingNewRecord, setEditingNewRecord] = useState<boolean>(false);
 
   const {
     form,
@@ -316,11 +229,11 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     } else {
       form.resetFields(); // Reset form when editing ends
     }
-  }, [editingRecord, form, primaryKeyFieldName]);
+  }, [editingRecord, form]);
 
   const schema: FieldSchema[] = useMemo(
-    () => extractSchema(dtoClass),
-    [dtoClass],
+    () => extractSchema(dtoClass, fieldAnnotations),
+    [dtoClass, fieldAnnotations],
   );
 
   const onEdit = useCallback(
@@ -333,11 +246,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             setHasChanges(false);
             form.setFieldsValue({ ...record });
             setEditingRecord(record);
+            setEditingNewRecord(false);
           },
         });
       } else {
         form.setFieldsValue({ ...record });
         setEditingRecord(record);
+        setEditingNewRecord(false);
       }
     },
     [hasChanges],
@@ -346,10 +261,13 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   const handleCreate = useCallback(() => {
     if (editingRecord) return; // Prevent multiple creations/editing
 
-    const newRecord = {
-      [primaryKeyFieldName]: NEW_IDENTIFIER, // Unique key for the new record
-      [EvseProps.customData]: {}, // todo real custom data
-    };
+    const newRecord = classCustomConstructor
+      ? classCustomConstructor()
+      : {
+          [primaryKeyFieldName]: primaryKeyFieldEditable
+            ? undefined
+            : NEW_IDENTIFIER, // Unique key for the new record
+        };
 
     if (
       filters &&
@@ -362,6 +280,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 
     tableWrapperRef.current?.addRecordToTable(newRecord);
     setEditingRecord(newRecord as any);
+    setEditingNewRecord(true);
   }, [editingRecord, primaryKeyFieldName]);
 
   const {
@@ -386,8 +305,47 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       });
       setHasChanges(false);
       setEditingRecord(null);
+      setEditingNewRecord(false);
     }
   }, [mutationData, mutationError]);
+
+  const getVariables = (valuesClass: any, associatedFields: Set<string>) => {
+    let vars;
+    if (dtoGqlCreateMutation.getVariables) {
+      vars = dtoGqlCreateMutation.getVariables(valuesClass);
+    } else {
+      const record = structuredClone(instanceToPlain(valuesClass));
+      if (associatedFields && associatedFields.size > 0) {
+        for (const associatedField of associatedFields) {
+          const associatedClass = getClassTransformerType(
+            valuesClass,
+            associatedField,
+          );
+          const associatedInstance: any = plainToInstance(associatedClass, {});
+          const associatedPrimaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable =
+            Reflect.getMetadata(PRIMARY_KEY_FIELD_NAME, associatedInstance);
+          const associatedPrimaryKeyFieldName =
+            associatedPrimaryKeyFieldNameAndIsEditable.fieldName;
+          if (
+            record[associatedField] &&
+            typeof record[associatedField] === 'object'
+          ) {
+            if (
+              record[associatedField][associatedPrimaryKeyFieldName] ===
+              NEW_IDENTIFIER
+            ) {
+              delete record[associatedField];
+            } else {
+              record[associatedField] =
+                record[associatedField][associatedPrimaryKeyFieldName];
+            }
+          }
+        }
+      }
+      vars = record;
+    }
+    return vars;
+  };
 
   const handleSave = useCallback(async () => {
     const plainValues = await form.validateFields();
@@ -395,39 +353,23 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     const valuesClass: any = plainToInstance(dtoClass, plainValues);
     delete valuesClass['customData']; // todo real custom data
 
-    let associatedIdFieldName;
-    // prepare data
-    Object.keys(valuesClass).forEach((key) => {
-      const value = valuesClass[key];
-      const classTransformerType = getClassTransformerType(valuesClass, key);
-      const gqlAssociationProps: GqlAssociationProps = Reflect.getMetadata(
-        GQL_ASSOCIATION,
-        valuesClass,
-        key,
-      );
-      if (gqlAssociationProps && classTransformerType) {
-        associatedIdFieldName = key;
-      }
-    });
-
-    if (valuesClass.hasOwnProperty('createdAt') && !valuesClass.createdAt) {
+    if (hasOwnProperty(valuesClass, 'createdAt') && !valuesClass.createdAt) {
       valuesClass.createdAt = new Date().toISOString();
     }
     valuesClass.updatedAt = new Date().toISOString();
-
-    if (
-      !!editingRecord &&
-      editingRecord[primaryKeyFieldName] === NEW_IDENTIFIER
-    ) {
+    const associatedFields = getAssociatedFields(dtoClass);
+    if (editingRecord && editingNewRecord) {
       // Handle create operation
       try {
+        if (editingNewRecord && !primaryKeyFieldEditable) {
+          delete valuesClass[primaryKeyFieldName];
+        }
+        const vars = getVariables(valuesClass, associatedFields);
         const response = await (dataProvider as any).create({
           resource: dtoResourceType,
-          variables: {
-            ...valuesClass,
-          },
+          variables: vars,
           meta: {
-            gqlMutation: dtoGqlCreateMutation,
+            gqlMutation: dtoGqlCreateMutation.mutation,
           },
         });
 
@@ -446,6 +388,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
 
         setHasChanges(false);
         setEditingRecord(null);
+        setEditingNewRecord(false);
       } catch (error: any) {
         console.error('Create failed:', error);
         Modal.error({
@@ -456,34 +399,52 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     } else {
       const id = valuesClass[primaryKeyFieldName];
       try {
-        const dtoGqlEditMutation = Reflect.getMetadata(
+        const dtoGqlEditMutation: DocumentNode = Reflect.getMetadata(
           CLASS_GQL_EDIT_MUTATION,
           valuesClass,
         );
 
         console.log(`Saving values for id: ${id}`, valuesClass);
-        let meta: any = {
+        const meta: any = {
           gqlMutation: dtoGqlEditMutation,
         };
-        if (associatedIdFieldName) {
-          (meta as any).variables = {
-            id: id,
-            object: {
-              ...valuesClass,
-              [associatedIdFieldName]: undefined,
-            },
-            newAssociatedIds: valuesClass[associatedIdFieldName].map(
-              (item: any) => {
-                const primaryKeyFieldName = Reflect.getMetadata(
-                  PRIMARY_KEY_FIELD_NAME,
-                  valuesClass,
-                );
-                return item[primaryKeyFieldName] || item.id;
-              },
-            ),
+
+        if (associatedFields && associatedFields.size > 0) {
+          for (const associatedField of associatedFields) {
+            const gqlAssociation: GqlAssociationProps = Reflect.getMetadata(
+              GQL_ASSOCIATION,
+              valuesClass,
+              associatedField,
+            );
+            if (gqlAssociation && gqlAssociation.hasNewAssociatedIdsVariable) {
+              meta.variables = {
+                id: id,
+                object: {
+                  ...instanceToPlain(valuesClass),
+                  [associatedField]: undefined,
+                },
+                newAssociatedIds: valuesClass[associatedField].map(
+                  (item: any) => {
+                    const primaryKeyFieldNameAndIsEditable: FieldNameAndIsEditable =
+                      Reflect.getMetadata(PRIMARY_KEY_FIELD_NAME, valuesClass);
+                    const primaryKeyFieldName =
+                      primaryKeyFieldNameAndIsEditable.fieldName;
+                    return item[primaryKeyFieldName] || item.id;
+                  },
+                ),
+              };
+              break;
+            }
+          }
+        }
+        if (!meta.variables) {
+          const vars = getVariables(valuesClass, associatedFields);
+          meta.variables = {
+            id: editingRecord[primaryKeyFieldName],
+            object: vars,
           };
         }
-        await mutate({
+        mutate({
           meta,
         } as any);
       } catch (error: any) {
@@ -494,7 +455,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         });
       }
     }
-  }, [form, formProps]);
+  }, [form, formProps, editingRecord]);
 
   const handleRowSave = useCallback(
     (_record: any) => {
@@ -504,10 +465,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
   );
 
   const cancel = useCallback(() => {
-    if (
-      !!editingRecord &&
-      editingRecord[primaryKeyFieldName] === NEW_IDENTIFIER
-    ) {
+    if (editingRecord && editingNewRecord) {
       tableWrapperRef.current?.removeNewRow();
     } else {
       // Handle cancelling edit on existing record
@@ -515,6 +473,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       form.resetFields();
     }
     setEditingRecord(null);
+    setEditingNewRecord(false);
   }, [editingRecord, form, primaryKeyFieldName]);
 
   const onDeleteSuccess = () => {
@@ -538,20 +497,157 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     [setUnknowns],
   );
 
-  // Handle loading and error states
-  // if (queryResult?.isLoading) {
-  //   return <Spin />;
-  // }
-  //
-  // if (queryResult?.isError) {
-  //   return (
-  //     <Alert
-  //       message="Error loading data"
-  //       description={queryResult.error?.message}
-  //       type="error"
-  //     />
-  //   );
-  // }
+  const renderActionsColumn = (
+    record: any,
+    editingRecord: any,
+    primaryKeyFieldName: any,
+    editable: boolean,
+    onEdit: ((record: any) => void) | undefined,
+    handleRowSave: (_record: any) => void,
+    cancel: () => void,
+    onDeleteSuccess: () => void,
+    customActions: CustomAction<any>[] | undefined,
+    classCustomActions: any,
+  ) => {
+    const isCurrentlyEditing =
+      editingRecord &&
+      record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
+    const actions = !isCurrentlyEditing
+      ? editable
+        ? [ColumnAction.EDIT, ColumnAction.DELETE, ColumnAction.SHOW]
+        : [ColumnAction.SHOW, ColumnAction.DELETE]
+      : [ColumnAction.SAVE, ColumnAction.CANCEL, ColumnAction.DELETE];
+
+    return (
+      <ActionsColumnEnhanced
+        record={record}
+        dtoClass={dtoClass}
+        onEdit={
+          editable && !isCurrentlyEditing && !editingNewRecord
+            ? onEdit
+            : undefined
+        }
+        onSave={isCurrentlyEditing ? handleRowSave : undefined}
+        onCancel={isCurrentlyEditing ? cancel : undefined}
+        onDeleteSuccess={onDeleteSuccess}
+        actions={actions}
+        customActions={customActions || classCustomActions}
+      />
+    );
+  };
+
+  const renderEditableCell = (props: RenderEditableCellProps) => {
+    const {
+      field,
+      preFieldPath = FieldPath.empty(),
+      hideLabels,
+      disabled,
+      parentRecord,
+      form,
+      setHasChanges,
+      visibleOptionalFields,
+      enableOptionalField,
+      toggleOptionalField,
+      unknowns,
+      modifyUnknowns,
+      useSelector,
+      fieldAnnotations,
+    } = props;
+
+    const fieldPath = preFieldPath.with(field.name);
+
+    if (field.type === FieldType.array) {
+      return (
+        <>
+          <ArrayField
+            fieldPath={fieldPath}
+            schema={field}
+            hideLabels={hideLabels}
+            disabled={disabled}
+            visibleOptionalFields={visibleOptionalFields}
+            enableOptionalField={enableOptionalField}
+            toggleOptionalField={toggleOptionalField}
+            unknowns={unknowns}
+            modifyUnknowns={modifyUnknowns}
+            form={form}
+            parentRecord={parentRecord}
+            useSelector={useSelector}
+            fieldAnnotations={fieldAnnotations}
+            setHasChanges={setHasChanges}
+            isInTable={true}
+          />
+        </>
+      );
+    }
+    if (field.type === FieldType.nestedObject && field.gqlAssociationProps) {
+      let gqlAssociationProps;
+      if (
+        fieldAnnotations &&
+        fieldAnnotations[field.name]?.gqlAssociationProps
+      ) {
+        gqlAssociationProps = fieldAnnotations[field.name]?.gqlAssociationProps;
+      } else if (field.gqlAssociationProps) {
+        gqlAssociationProps = field.gqlAssociationProps;
+      }
+      if (!gqlAssociationProps) {
+        return <Alert message="Missing gqlAssociationProps" type="error" />;
+      }
+      const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
+      const associatedIdFieldName = gqlAssociationProps.associatedIdFieldName;
+      const gqlListQuery = gqlAssociationProps.gqlListQuery;
+      const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
+      let gqlQueryVariables = undefined;
+      if (getGqlQueryVariables) {
+        gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
+      }
+      return (
+        <div className="editable-cell">
+          <Form.Item name={fieldPath.namePath}>
+            <AssociationSelection
+              fieldPath={fieldPath}
+              parentIdFieldName={parentIdFieldName!}
+              associatedIdFieldName={associatedIdFieldName!}
+              gqlQuery={gqlListQuery?.query}
+              parentRecord={parentRecord}
+              associatedRecordClass={field.dtoClass!}
+              value={form.getFieldValue(fieldPath.namePath)}
+              gqlQueryVariables={gqlQueryVariables}
+              form={form}
+              onChange={(newValues: any[]) => {
+                form.setFieldValue(fieldPath.namePath, newValues[0]);
+                setHasChanges(true);
+              }}
+              customActions={
+                fieldAnnotations &&
+                fieldAnnotations[field.name] &&
+                fieldAnnotations[field.name].customActions
+                  ? fieldAnnotations![field.name].customActions
+                  : field.customActions
+              }
+            />
+          </Form.Item>
+        </div>
+      );
+    }
+    return renderField({
+      schema: field,
+      preFieldPath: FieldPath.empty(),
+      disabled:
+        parentRecord[primaryKeyFieldName] === NEW_IDENTIFIER &&
+        field.name === primaryKeyFieldName &&
+        !primaryKeyFieldEditable,
+      visibleOptionalFields: visibleOptionalFields,
+      hideLabels: true,
+      enableOptionalField: enableOptionalField,
+      toggleOptionalField: toggleOptionalField,
+      unknowns: unknowns,
+      modifyUnknowns: modifyUnknowns,
+      form,
+      parentRecord,
+      useSelector,
+      fieldAnnotations,
+    });
+  };
 
   const columns: FieldSchema[] = useMemo(() => {
     const actionsColumn = {
@@ -559,133 +655,109 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       dataIndex: 'actions',
       fixed: 'left' as const,
       className: 'actions-column',
-      render: (_: any, record: any) => {
-        const isCurrentlyEditing =
-          editingRecord &&
-          record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
-        let actions;
-        actions = !isCurrentlyEditing
-          ? editable
-            ? [ColumnAction.EDIT, ColumnAction.DELETE]
-            : [ColumnAction.SHOW, ColumnAction.DELETE]
-          : [ColumnAction.SAVE, ColumnAction.CANCEL, ColumnAction.DELETE];
-        return (
-          <ActionsColumnEnhanced
-            record={record}
-            dtoClass={dtoClass}
-            onEdit={
-              editable &&
-              !isCurrentlyEditing &&
-              record[primaryKeyFieldName] !== NEW_IDENTIFIER
-                ? onEdit
-                : undefined
-            }
-            onSave={isCurrentlyEditing ? handleRowSave : undefined}
-            onCancel={isCurrentlyEditing ? cancel : undefined}
-            onDeleteSuccess={onDeleteSuccess}
-            actions={actions}
-            customActions={customActions}
-          />
-        );
-      },
+      render: (_: any, record: any) =>
+        renderActionsColumn(
+          record,
+          editingRecord,
+          primaryKeyFieldName,
+          editable,
+          onEdit,
+          handleRowSave,
+          cancel,
+          onDeleteSuccess,
+          customActions,
+          classCustomActions,
+        ),
     } as any;
 
-    return [
-      actionsColumn,
-      ...schema.map((field: FieldSchema) => ({
+    const columnsArray: any[] = [actionsColumn];
+    for (const field of schema) {
+      const isHiddenCheck: IsHiddenCheck = Reflect.getMetadata(
+        HIDDEN_WHEN,
+        field.parentInstance as any,
+        field.name,
+      );
+
+      if (isHiddenCheck && isHiddenCheck(editingRecord)) {
+        continue;
+      }
+
+      columnsArray.push({
         title: field.label,
         dataIndex: primaryKeyFieldName,
+        sorter: field.sorter,
         editable: true,
         render: (value: any, record: any) => {
           const isCurrentlyEditing =
             editingRecord &&
             record[primaryKeyFieldName] === editingRecord[primaryKeyFieldName];
           if (isCurrentlyEditing) {
-            if (field.type === FieldType.array) {
-              let parentIdFieldName, associatedIdFieldName, gqlListQuery;
-              if (field.gqlAssociationProps) {
-                parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
-                associatedIdFieldName =
-                  field.gqlAssociationProps.associatedIdFieldName;
-                gqlListQuery = field.gqlAssociationProps.gqlListQuery;
-              }
-              return (
-                <div className="editable-cell">
-                  <Form.Item name={field.name}>
-                    <AssociationSelection
-                      selectable={SelectionType.MULTIPLE}
-                      parentIdFieldName={parentIdFieldName!}
-                      associatedIdFieldName={associatedIdFieldName!}
-                      gqlQuery={gqlListQuery}
-                      parentRecord={record}
-                      associatedRecordClass={field.dtoClass!}
-                      value={form.getFieldValue(field.name)}
-                      onChange={(newValues: any[]) => {
-                        form.setFieldsValue({
-                          [field.name]: newValues,
-                        });
-                        setHasChanges(true);
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              );
-            }
-            if (field.type === FieldType.nestedObject) {
-              let parentIdFieldName, associatedIdFieldName, gqlListQuery;
-              if (field.gqlAssociationProps) {
-                parentIdFieldName = field.gqlAssociationProps.parentIdFieldName;
-                associatedIdFieldName =
-                  field.gqlAssociationProps.associatedIdFieldName;
-                gqlListQuery = field.gqlAssociationProps.gqlListQuery;
-              }
-              return (
-                <div className="editable-cell">
-                  <Form.Item name={field.name}>
-                    <AssociationSelection
-                      parentIdFieldName={parentIdFieldName!}
-                      associatedIdFieldName={associatedIdFieldName!}
-                      gqlQuery={gqlListQuery}
-                      parentRecord={record}
-                      associatedRecordClass={field.dtoClass!}
-                      value={form.getFieldValue(field.name)}
-                      onChange={(newValues: any[]) => {
-                        form.setFieldsValue({
-                          [field.name]: newValues[0],
-                        });
-                        setHasChanges(true);
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              );
-            }
-
-            return renderField({
-              schema: field,
-              preFieldPath: FieldPath.empty(),
-              disabled:
-                record[primaryKeyFieldName] === NEW_IDENTIFIER &&
-                field.name === primaryKeyFieldName,
-              visibleOptionalFields: visibleOptionalFields,
-              hideLabels: true,
-              enableOptionalField: enableOptionalField,
-              toggleOptionalField: toggleOptionalField,
-              unknowns: unknowns,
-              modifyUnknowns: modifyUnknowns,
-              form,
+            return renderEditableCell({
+              field,
+              hideLabels: false,
+              disabled: false,
               parentRecord: record,
+              form,
+              setHasChanges,
+              visibleOptionalFields,
+              enableOptionalField,
+              toggleOptionalField,
+              unknowns,
+              modifyUnknowns,
+              useSelector,
+              fieldAnnotations,
             });
           }
           return (
             <div className="editable-cell">
-              {renderViewContent(field, value, record)}
+              {renderViewContent({
+                field,
+                value,
+                record,
+                hideLabels: false,
+                disabled: false,
+                parentRecord: record,
+                form,
+                setHasChanges,
+                visibleOptionalFields,
+                enableOptionalField,
+                toggleOptionalField,
+                unknowns,
+                modifyUnknowns,
+                useSelector,
+                fieldAnnotations,
+              })}
             </div>
           );
         },
-      })),
-    ];
+      });
+    }
+    return columnsArray;
   }, [schema, editingRecord, visibleOptionalFields]) as FieldSchema[];
+
+  const missingItems: string[] = [];
+  const itemsToCheck = [
+    { name: 'dtoResourceType', value: dtoResourceType },
+    { name: 'dtoGqlListQuery', value: dtoGqlListQuery },
+    { name: 'dtoGqlCreateMutation', value: dtoGqlCreateMutation },
+    { name: 'primaryKeyFieldName', value: primaryKeyFieldName },
+    { name: 'dataProvider', value: dataProvider },
+  ];
+
+  for (let i = 0; i < itemsToCheck.length; i++) {
+    if (!itemsToCheck[i].value) {
+      missingItems.push(itemsToCheck[i].name);
+    }
+  }
+
+  if (missingItems.length > 0) {
+    return (
+      <Alert
+        message={`Error: GenericDataTable cannot find ${missingItems.join(', ')}`}
+        type="error"
+      />
+    );
+  }
 
   return (
     <Form
@@ -704,13 +776,14 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         </Button>
       </div>
       <TableWrapper
+        ref={tableWrapperRef}
         selectable={selectable}
         onSelectionChange={onSelectionChange}
         primaryKeyFieldName={primaryKeyFieldName}
         columns={columns}
         editingRecord={editingRecord}
         dtoClass={dtoClass}
-        tableProps={passedTableProps}
+        useTableProps={useTableProps}
         filters={filters}
         dtoResourceType={dtoResourceType}
         dtoGqlListQuery={dtoGqlListQuery}

@@ -1,13 +1,16 @@
 {
-  "name": "citrineos-refine",
-  "version": "0.1.0",
+  "name": "citrineos-operator-ui",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "dependencies": {
     "@ant-design/icons": "^5.3.2",
     "@babel/plugin-proposal-decorators": "^7.24.7",
     "@babel/plugin-proposal-explicit-resource-management": "^7.24.7",
-    "@citrineos/base": "1.5.0",
+    "@citrineos/base": "~1.5.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.57.0",
+    "@opentelemetry/sdk-metrics": "^1.30.0",
+    "@reduxjs/toolkit": "^2.2.8",
     "@refinedev/antd": "^5.43.0",
     "@refinedev/cli": "^2.16.21",
     "@refinedev/core": "^4.47.1",
@@ -15,6 +18,7 @@
     "@refinedev/hasura": "^6.4.12",
     "@refinedev/kbar": "^1.3.6",
     "@refinedev/react-router-v6": "^4.5.5",
+    "@types/react-redux": "^7.1.34",
     "@uiw/react-md-editor": "^3.19.5",
     "axios": "^1.7.7",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
@@ -32,11 +36,17 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-icons": "^5.3.0",
+    "react-redux": "^9.1.2",
     "react-router-dom": "^6.8.1",
-    "reflect-metadata": "^0.2.2"
+    "react-syntax-highlighter": "^15.6.1",
+    "recharts": "^2.13.0",
+    "redux": "^5.0.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.0",
+    "@eslint/compat": "^1.2.0",
+    "@eslint/js": "^9.12.0",
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/import-types-preset": "^3.0.0",
     "@graphql-codegen/typescript": "^4.0.9",
@@ -47,18 +57,25 @@
     "@types/node": "^18.16.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react": "^4.0.0",
     "cross-env": "^7.0.3",
+    "cypress": "^13.15.0",
     "dotenv-cli": "^7.4.2",
-    "eslint": "^8.38.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-cypress": "^4.0.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "sass": "^1.77.8",
     "typescript": "^5.4.2",
-    "typescript-eslint": "^8.2.0",
-    "vite": "^4.3.1"
+    "typescript-eslint": "^8.9.0",
+    "vite": "^4.3.1",
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "scripts": {
     "lint": "npx eslint ./",
@@ -75,7 +92,8 @@
     "fi": "npm run fresh && npm install",
     "clean-tsbuildinfo": "find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -exec rm -f {} +",
     "clean-dist": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} +",
-    "clean": "npm run clean-dist && npm run clean-tsbuildinfo"
+    "clean": "npm run clean-dist && npm run clean-tsbuildinfo",
+    "cy:open": "cypress open"
   },
   "browserslist": {
     "production": [

@@ -1,53 +1,59 @@
 @font-face {
   font-family: 'Roobert';
-  src: url('/fonts/Roobert-Light.woff2') format('woff2'),
-  url('/fonts/Roobert-Light.woff') format('woff'),
-  url('/fonts/Roobert-Light.ttf') format('truetype');
+  src:
+    url('/fonts/Roobert-Light.woff2') format('woff2'),
+    url('/fonts/Roobert-Light.woff') format('woff'),
+    url('/fonts/Roobert-Light.ttf') format('truetype');
   font-weight: 300; /* Light */
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Roobert';
-  src: url('/fonts/Roobert-Medium.woff2') format('woff2'),
-  url('/fonts/Roobert-Medium.woff') format('woff'),
-  url('/fonts/Roobert-Medium.ttf') format('truetype');
+  src:
+    url('/fonts/Roobert-Medium.woff2') format('woff2'),
+    url('/fonts/Roobert-Medium.woff') format('woff'),
+    url('/fonts/Roobert-Medium.ttf') format('truetype');
   font-weight: 500; /* Medium */
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Roobert';
-  src: url('/fonts/Roobert-Regular.woff2') format('woff2'),
-  url('/fonts/Roobert-Regular.woff') format('woff'),
-  url('/fonts/Roobert-Regular.ttf') format('truetype');
+  src:
+    url('/fonts/Roobert-Regular.woff2') format('woff2'),
+    url('/fonts/Roobert-Regular.woff') format('woff'),
+    url('/fonts/Roobert-Regular.ttf') format('truetype');
   font-weight: 400; /* Regular */
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Roobert';
-  src: url('/fonts/Roobert-SemiBold.woff2') format('woff2'),
-  url('/fonts/Roobert-SemiBold.woff') format('woff'),
-  url('/fonts/Roobert-SemiBold.ttf') format('truetype');
+  src:
+    url('/fonts/Roobert-SemiBold.woff2') format('woff2'),
+    url('/fonts/Roobert-SemiBold.woff') format('woff'),
+    url('/fonts/Roobert-SemiBold.ttf') format('truetype');
   font-weight: 600; /* SemiBold */
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Roobert';
-  src: url('/fonts/Roobert-Bold.woff') format('woff'),
-  url('/fonts/Roobert-Bold.woff2') format('woff2'),
-  url('/fonts/Roobert-Bold.ttf') format('truetype');
+  src:
+    url('/fonts/Roobert-Bold.woff') format('woff'),
+    url('/fonts/Roobert-Bold.woff2') format('woff2'),
+    url('/fonts/Roobert-Bold.ttf') format('truetype');
   font-weight: 700; /* Bold */
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Roobert';
-  src: url('/fonts/Roobert-Heavy.woff') format('woff'),
-  url('/fonts/Roobert-Heavy.woff2') format('woff2'),
-  url('/fonts/Roobert-Heavy.ttf') format('truetype');
+  src:
+    url('/fonts/Roobert-Heavy.woff') format('woff'),
+    url('/fonts/Roobert-Heavy.woff2') format('woff2'),
+    url('/fonts/Roobert-Heavy.ttf') format('truetype');
   font-weight: 800; /* Heavy */
   font-style: normal;
 }
@@ -87,16 +93,16 @@ main {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 0 var(--ant-padding-xs) 0 0!important;
+    padding: 0 var(--ant-padding-xs) 0 0 !important;
   }
 }
 
 .ant-table-wrapper .ant-table-cell,
-.ant-table-wrapper .ant-table-thead>tr>th,
-.ant-table-wrapper .ant-table-tbody>tr>th,
-.ant-table-wrapper .ant-table-tbody>tr>td,
-.ant-table-wrapper tfoot>tr>th,
-.ant-table-wrapper tfoot>tr>td {
+.ant-table-wrapper .ant-table-thead > tr > th,
+.ant-table-wrapper .ant-table-tbody > tr > th,
+.ant-table-wrapper .ant-table-tbody > tr > td,
+.ant-table-wrapper tfoot > tr > th,
+.ant-table-wrapper tfoot > tr > td {
   padding: var(--ant-padding-xs) var(--ant-padding-xs);
 }
 
@@ -134,7 +140,9 @@ main {
 .button-grow-enter-active {
   transform: scale(1);
   opacity: 1;
-  transition: transform 300ms ease, opacity 300ms ease;
+  transition:
+    transform 300ms ease,
+    opacity 300ms ease;
 }
 
 .button-grow-exit {
@@ -145,5 +153,20 @@ main {
 .button-grow-exit-active {
   transform: scale(0.9);
   opacity: 0;
-  transition: transform 300ms ease, opacity 300ms ease;
+  transition:
+    transform 300ms ease,
+    opacity 300ms ease;
+}
+
+.chart-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 400px;
+  background: var(--ant-color-primary-bg);
+  margin: var(--ant-margin-xs);
+
+  text {
+    fill: var(--ant-color-text-base);
+  }
 }

@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { TariffListQuery } from '../../graphql/types';
 import { Tariff } from './Tariff';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   TARIFF_CREATE_MUTATION,

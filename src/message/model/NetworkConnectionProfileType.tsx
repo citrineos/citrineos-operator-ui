@@ -3,7 +3,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
-  IsString,
+  IsUrl,
   MaxLength,
   ValidateNested,
 } from 'class-validator';
@@ -37,7 +37,7 @@ export class NetworkConnectionProfileType {
   ocppTransport!: OCPPTransportEnumType;
 
   @MaxLength(512)
-  @IsString()
+  @IsUrl({ require_tld: false })
   @IsNotEmpty()
   ocppCsmsUrl!: string;
 

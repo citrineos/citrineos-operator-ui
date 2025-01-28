@@ -1,35 +1,48 @@
-import { ChargingStation } from '../remote-stop/ChargingStation';
 import React, { useState } from 'react';
-import { Button, Form, Upload, UploadFile } from 'antd';
+import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
+  Length,
   ValidateNested,
 } from 'class-validator';
 import {
   InstallCertificateStatusEnumType,
   InstallCertificateUseEnumType,
 } from '@citrineos/base';
-import { triggerMessageAndHandleResponse } from '../util';
+import { formatPem, showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
-import { getSchemaForInstanceAndKey, renderField } from '../../components/form';
-import { FieldPath } from '../../components/form/state/fieldpath';
-import { UploadOutlined } from '@ant-design/icons';
+import { GenericForm } from '../../components/form';
+import { BaseRestClient } from '@util/BaseRestClient';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import { MessageConfirmation } from '../MessageConfirmation';
 
-enum InstallCertificateRequestProps {
-  certificateType = 'certificateType',
+enum _InstallCertificateDataProps {
   certificate = 'certificate',
+  certificateType = 'certificateType',
 }
 
-class InstallCertificateRequest {
-  @IsEnum(InstallCertificateUseEnumType)
-  @IsNotEmpty()
-  certificateType!: InstallCertificateUseEnumType;
+class InstallCertificateData {
+  // @GqlAssociation({
+  //   parentIdFieldName: InstallCertificateDataProps.certificate,
+  //   associatedIdFieldName: CertificateProps.id,
+  //   gqlQuery: CERTIFICATES_GET_QUERY,
+  //   gqlListQuery: CERTIFICATES_LIST_QUERY,
+  // })
+  // @Type(() => Certificate)
+  // @IsNotEmpty()
+  // certificate!: Certificate | null;
 
-  @Type(() => File)
-  certificate!: File;
+  @IsString()
+  @Length(0, 5500)
+  @IsNotEmpty()
+  certificate!: string;
+
+  @IsEnum(InstallCertificateUseEnumType)
+  certificateType!: InstallCertificateUseEnumType;
 }
 
 export class InstallCertificateResponse {
@@ -42,6 +55,28 @@ export class InstallCertificateResponse {
   statusInfo?: StatusInfoType;
 }
 
+export class RootCertificateRequest {
+  @IsString()
+  @IsNotEmpty()
+  stationId!: string;
+
+  @IsEnum(InstallCertificateUseEnumType)
+  @IsNotEmpty()
+  certificateType!: InstallCertificateUseEnumType;
+
+  @IsString()
+  @IsNotEmpty()
+  tenantId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  fileId!: string;
+
+  @IsString()
+  @IsOptional()
+  callbackUrl?: string;
+}
+
 export interface InstallCertificateProps {
   station: ChargingStation;
 }
@@ -50,93 +85,75 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
   station,
 }) => {
   const [form] = Form.useForm();
-  const [file, setFile] = useState<UploadFile | null>(null);
-
-  const handleSubmit = async () => {
-    try {
-      const plainValues = await form.validateFields();
-      const fileContent = await readFileContent(file);
-      const payload = {
-        certificateType: plainValues.certificateType,
-        certificate: fileContent,
-      };
-
-      await triggerMessageAndHandleResponse(
-        `/certificates/installCertificate?identifier=${station.id}&tenantId=1`,
-        InstallCertificateResponse,
-        payload,
-        (response: InstallCertificateResponse) =>
-          response &&
-          response.status &&
-          response.status === InstallCertificateStatusEnumType.Accepted,
-      );
-    } catch (error) {
-      console.error('Error during submission:', error);
-    }
+  const formProps = {
+    form,
   };
 
-  const handleFileChange = (info: any) => {
-    const uploadedFile = info.fileList[0];
-    if (uploadedFile) {
-      setFile(uploadedFile);
-    } else {
-      setFile(null);
-    }
-  };
+  const installCertificateData = new InstallCertificateData();
+  // const installCertificate = new Certificate();
+  // installCertificate[CertificateProps.id] = NEW_IDENTIFIER as unknown as number;
+  // installCertificateData[InstallCertificateDataProps.certificate] =
+  //   installCertificate;
 
-  const readFileContent = (file: UploadFile | null): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        return resolve('');
-      }
-
-      const fileReader = new FileReader();
-      fileReader.onload = (event) => {
-        const text = event.target?.result as string;
-        resolve(text);
-      };
-      fileReader.onerror = (error) => reject(error);
-
-      fileReader.readAsText(file.originFileObj as Blob);
-    });
-  };
-
-  const instance = plainToInstance(InstallCertificateRequest, {});
-  const fieldSchema = getSchemaForInstanceAndKey(
-    instance,
-    InstallCertificateRequestProps.certificateType,
-    [InstallCertificateRequestProps.certificateType],
+  const [_parentRecord, _setParentRecord] = useState<any>(
+    installCertificateData,
   );
 
-  const enumField = renderField({
-    schema: fieldSchema,
-    preFieldPath: FieldPath.empty(),
-    disabled: false,
-  });
+  const handleSubmit = async () => {
+    const plainValues = await form.validateFields();
+    const data: InstallCertificateData = plainToInstance(
+      InstallCertificateData,
+      plainValues,
+    );
+    // const certificate: Certificate =
+    //   data[InstallCertificateDataProps.certificate]!;
+    // const rootCertificateRequest = new RootCertificateRequest();
+    // rootCertificateRequest.stationId = station.id;
+    // rootCertificateRequest.certificateType = data.certificateType;
+    // rootCertificateRequest.tenantId = '1';
+    // rootCertificateRequest.fileId = certificate.certificateFileId!;
+
+    // try {
+    //   const isDataUrl = true;
+    //   const client = new BaseRestClient(isDataUrl);
+    //   await client.put(
+    //     `/certificates/rootCertificate`,
+    //     InstallCertificateResponse,
+    //     {},
+    //     rootCertificateRequest,
+    //   );
+
+    try {
+      const pemString = formatPem(data.certificate);
+      if (pemString == null) {
+        throw new Error('Incorrectly formatted PEM');
+      }
+      data.certificate = pemString;
+      const client = new BaseRestClient();
+      await client.post(
+        `/certificates/installCertificate?identifier=${station.id}&tenantId=1`,
+        MessageConfirmation,
+        {},
+        data,
+      );
+      showSucces();
+    } catch (error: any) {
+      showError(
+        'The set variables request failed with message: ' + error.message,
+      );
+    }
+  };
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      {enumField}
-      <Form.Item
-        label={InstallCertificateRequestProps.certificate}
-        name={InstallCertificateRequestProps.certificate}
-        rules={[{ required: true, message: 'Please upload a certificate!' }]}
-      >
-        <Upload
-          name={'file'}
-          maxCount={1}
-          accept=".pem,.id"
-          onChange={handleFileChange}
-          beforeUpload={() => false}
-        >
-          <Button icon={<UploadOutlined />}>Click to Upload</Button>
-        </Upload>
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Set Variables
-        </Button>
-      </Form.Item>
-    </Form>
+    <>
+      <h4>Install Certificate</h4>
+      <GenericForm
+        formProps={formProps}
+        dtoClass={InstallCertificateData}
+        onFinish={handleSubmit}
+        parentRecord={installCertificateData}
+        initialValues={installCertificateData}
+      />
+    </>
   );
 };

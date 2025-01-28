@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
-import {notification, Spin} from 'antd';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import { Form, notification, Spin } from 'antd';
+import { BaseRestClient } from '@util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { GetInstalledCertificateIdsRequest } from './model';
-import {ChargingStation} from "../../pages/charging-stations/ChargingStation";
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 
 export interface GetInstalledCertificateIdsProps {
   station: ChargingStation;
@@ -16,6 +16,7 @@ export const GetInstalledCertificateIds: React.FC<
   GetInstalledCertificateIdsProps
 > = ({ station }) => {
   const formRef = useRef();
+  const [formProps] = Form.useForm();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
@@ -89,6 +90,7 @@ export const GetInstalledCertificateIds: React.FC<
     <GenericForm
       ref={formRef as any}
       dtoClass={GetInstalledCertificateIdsRequest}
+      formProps={formProps}
       onFinish={onFinish}
       onValuesChange={onValuesChange}
       submitDisabled={!valid}

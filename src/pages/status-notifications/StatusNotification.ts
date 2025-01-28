@@ -1,13 +1,13 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
 import { ConnectorStatusEnumType } from '@citrineos/base';
-import { ClassResourceType } from '../../util/decorators/ClassResourceType';
+import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
-import { ClassGqlListQuery } from '../../util/decorators/ClassGqlListQuery';
-import { ClassGqlGetQuery } from '../../util/decorators/ClassGqlGetQuery';
-import { ClassGqlCreateMutation } from '../../util/decorators/ClassGqlCreateMutation';
-import { ClassGqlEditMutation } from '../../util/decorators/ClassGqlEditMutation';
-import { ClassGqlDeleteMutation } from '../../util/decorators/ClassGqlDeleteMutation';
-import { PrimaryKeyFieldName } from '../../util/decorators/PrimaryKeyFieldName';
+import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
+import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
+import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
+import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
+import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
+import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
   STATUS_NOTIFICATIONS_CREATE_MUTATION,
   STATUS_NOTIFICATIONS_DELETE_MUTATION,

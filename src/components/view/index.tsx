@@ -1,45 +1,26 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Create,
   DeleteButton,
   Edit,
+  EditButton,
   ListButton,
   RefreshButton,
   Show,
   useForm,
-  UseFormReturnType,
 } from '@refinedev/antd';
-import { GenericForm, GenericProps } from '../form';
+import { GenericForm } from '../form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GetFields, GetVariables } from '@refinedev/hasura';
 import { HttpError } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { CustomAction, CustomActions } from '../custom-actions';
-import { ResourceType } from '../../resource-type';
+import { CustomActions } from '../custom-actions';
 import dayjs from 'dayjs';
-import { NEW_IDENTIFIER } from '../../util/consts';
-
-export enum GenericViewState {
-  SHOW = 'show',
-  EDIT = 'edit',
-  CREATE = 'create',
-}
-
-export interface GenericParameterizedViewProps extends GenericViewProps {
-  state: GenericViewState;
-  id?: string | number | null;
-  resourceType?: ResourceType;
-  hideListButton?: boolean;
-  useFormProps?: UseFormReturnType<any>;
-}
-
-export interface GenericViewProps extends GenericProps {
-  gqlQuery: any;
-  editMutation?: any;
-  createMutation?: any;
-  deleteMutation?: any;
-  customActions?: CustomAction<any>[];
-}
+import { NEW_IDENTIFIER } from '@util/consts';
+import { useDispatch } from 'react-redux';
+import { setSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
+import { GenericViewState } from '@enums';
 
 export const GenericView = (props: GenericViewProps) => {
   const {
@@ -94,14 +75,13 @@ export const GenericParameterizedView = (
     hideListButton = true,
     useFormProps,
   } = props;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const formRef = useRef();
   const gqlMutation =
     state === GenericViewState.CREATE ? createMutation : editMutation;
   const gqlDeleteMutation = deleteMutation;
-  if (useFormProps) {
-  }
-  let obj = {
+  const obj = {
     id,
     queryOptions: {
       enabled: state !== GenericViewState.CREATE,
@@ -111,13 +91,34 @@ export const GenericParameterizedView = (
       gqlMutation,
     },
   } as any;
+
   if (resourceType) {
     obj.resource = resourceType;
   }
-  const { formProps, saveButtonProps, queryResult, formLoading, form } =
-    // useFormProps
-    //   ? useFormProps
-    useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
+  const [parentRecord, setParentRecord] = useState<any>(
+    plainToInstance(dtoClass, {}),
+  );
+
+  const {
+    formProps: defaultFormProps,
+    saveButtonProps: defaultSaveButtonProps,
+    queryResult: defaultQueryResult,
+    formLoading: defaultFormLoading,
+    form: defaultForm,
+  } = useForm<GetFields<any>, HttpError, GetVariables<any>>(obj);
+
+  const formProps = useFormProps ? useFormProps.formProps : defaultFormProps;
+  const _saveButtonProps = useFormProps
+    ? useFormProps.saveButtonProps
+    : defaultSaveButtonProps;
+  const queryResult = useFormProps
+    ? useFormProps.queryResult
+    : defaultQueryResult;
+  const formLoading = useFormProps
+    ? useFormProps.formLoading
+    : defaultFormLoading;
+  const _form = useFormProps ? useFormProps.form : defaultForm;
+
   let WrapperComponent;
   switch (state) {
     case GenericViewState.CREATE:
@@ -136,12 +137,20 @@ export const GenericParameterizedView = (
       const instance = plainToInstance(dtoClass, queryResult.data.data, {
         excludeExtraneousValues: false,
       });
+      setParentRecord(instance);
+
+      // Set the selectedChargingStationSlice
+      dispatch(
+        setSelectedChargingStation({
+          selectedChargingStation: JSON.stringify(instanceToPlain(instance)),
+        }),
+      );
       (formRef.current as any).setFieldsValues(instance as any);
     }
   };
 
   const getValuesFromInput = (input: any) => {
-    for (let property of Object.keys(input)) {
+    for (const property of Object.keys(input)) {
       if (input[property] && input[property].$isDayjsObject) {
         input[property] = dayjs(input[property]).toISOString();
       }
@@ -155,12 +164,11 @@ export const GenericParameterizedView = (
 
   const onFinish = (input: any) => {
     const values = getValuesFromInput(input);
+    const timestamp = new Date().toISOString();
     formProps.onFinish?.({
       ...values,
-      ...(state === GenericViewState.CREATE
-        ? { createdAt: new Date().toISOString() }
-        : {}),
-      updatedAt: new Date().toISOString(),
+      ...(state === GenericViewState.CREATE ? { createdAt: timestamp } : {}),
+      updatedAt: timestamp,
     } as any);
   };
 
@@ -179,6 +187,13 @@ export const GenericParameterizedView = (
               />
             )}
             {!hideListButton && <ListButton resource={resourceType} />}
+            {state === GenericViewState.SHOW && (
+              <EditButton
+                onClick={() => {
+                  navigate('./edit');
+                }}
+              />
+            )}
             {state !== GenericViewState.CREATE && (
               <RefreshButton onClick={() => queryResult?.refetch()} />
             )}
@@ -200,6 +215,7 @@ export const GenericParameterizedView = (
         ref={formRef as any}
         formProps={formProps}
         dtoClass={dtoClass}
+        parentRecord={parentRecord}
         overrides={overrides}
         onFinish={onFinish}
         disabled={state === GenericViewState.SHOW}

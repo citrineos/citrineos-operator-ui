@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '../../../util/assertion';
+import { isNullOrUndefined } from '@util/assertion';
 import { FieldPath } from './fieldpath';
 
 export type SupportedUnknownType = 'string' | 'number' | 'boolean';

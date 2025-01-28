@@ -1,16 +1,28 @@
-import { ResourceType } from '../../resource-type';
+import React, { useEffect, useState } from 'react';
+import { AutoComplete, Button, Collapse, Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
-import React from 'react';
-import {
-  GenericParameterizedView,
-  GenericView,
-  GenericViewState,
-} from '../../components/view';
+import { useSelector } from 'react-redux';
 import { useTable } from '@refinedev/antd';
-import { ChargingStationsListQuery } from '../../graphql/types';
-import { ChargingStation } from './ChargingStation';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { plainToInstance } from 'class-transformer';
+import { FaChargingStation } from 'react-icons/fa';
+
+import { ResourceType } from '../../resource-type';
+import { GenericParameterizedView, GenericView } from '../../components/view';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
+import {
+  CUSTOM_CHARGING_STATION_ACTIONS,
+  ADMIN_CHARGING_STATION_ACTIONS,
+} from '../../message';
+import { ChargingStation } from './ChargingStation';
+import { ChargingStationProps } from './ChargingStationProps';
+import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { RootState } from '../../redux/store';
+import { GenericDataTable } from '../../components/data-model-table/editable';
+import { CustomActions } from '../../components/custom-actions';
+import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
+
 import {
   CHARGING_STATIONS_CREATE_MUTATION,
   CHARGING_STATIONS_DELETE_MUTATION,
@@ -18,28 +30,134 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { CHARGING_STATIONS_COLUMNS } from './table-config';
-import { ChargingStations } from '../../graphql/schema.types';
-import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { FaChargingStation } from 'react-icons/fa';
-import { GenericDataTable } from '../../components/data-model-table/editable';
-import { CUSTOM_CHARGING_STATION_ACTIONS } from '../../message';
+import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
+import { ChargingStationsListQuery } from '../../graphql/types';
+import { GenericViewState } from '../../model/enums';
+
+const { Panel } = Collapse;
+const { Sider, Content } = Layout;
 
 export const ChargingStationsView: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredActions, setFilteredActions] = useState(
+    CUSTOM_CHARGING_STATION_ACTIONS,
+  );
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
+
+  const selectedChargingStation = useSelector((state: RootState) =>
+    getSelectedChargingStation()(state),
+  );
+
+  const station: ChargingStation = plainToInstance(
+    ChargingStation,
+    Array.isArray(selectedChargingStation)
+      ? selectedChargingStation
+      : [selectedChargingStation],
+  )[0];
+
+  useEffect(() => {
+    const storedColorMode = localStorage.getItem('colorMode');
+    if (storedColorMode === 'light' || storedColorMode === 'dark') {
+      setColorMode(storedColorMode);
+    }
+  }, []);
+
+  const toggleSidebar = () => setCollapsed(!collapsed);
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value);
+    setFilteredActions(
+      CUSTOM_CHARGING_STATION_ACTIONS.filter((action) =>
+        action.label.toLowerCase().includes(value.toLowerCase()),
+      ),
+    );
+  };
+
   return (
-    <GenericView
-      dtoClass={ChargingStation}
-      gqlQuery={CHARGING_STATIONS_GET_QUERY}
-      editMutation={CHARGING_STATIONS_EDIT_MUTATION}
-      createMutation={CHARGING_STATIONS_CREATE_MUTATION}
-      deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
-      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-    />
+    <Layout style={{ minHeight: '100vh' }}>
+      <Layout>
+        <Content>
+          <GenericView
+            dtoClass={ChargingStation}
+            gqlQuery={CHARGING_STATIONS_GET_QUERY}
+            editMutation={CHARGING_STATIONS_EDIT_MUTATION}
+            createMutation={CHARGING_STATIONS_CREATE_MUTATION}
+            deleteMutation={CHARGING_STATIONS_DELETE_MUTATION}
+            customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+          />
+        </Content>
+        <Sider
+          width={280}
+          collapsible
+          trigger={null}
+          theme={colorMode}
+          collapsedWidth={60}
+          collapsed={collapsed}
+          style={{ overflow: 'auto', height: '100vh' }}
+        >
+          <span
+            style={{
+              display: 'flex',
+              padding: '0 5px',
+              marginBottom: '15px',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            {!collapsed && <h1>Actions</h1>}
+            <Button type="text" onClick={toggleSidebar}>
+              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            </Button>
+          </span>
+
+          <AutoComplete
+            size="large"
+            allowClear
+            value={searchValue}
+            onChange={handleSearch}
+            placeholder="Search actions"
+            onClear={() => handleSearch('')}
+            style={{ width: '100%', marginBottom: '15px' }}
+          />
+
+          <Collapse>
+            <Panel
+              key="1"
+              collapsible="header"
+              header={!collapsed && 'OCPP Request'}
+            >
+              <CustomActions
+                showInline
+                data={station}
+                actions={filteredActions.filter(
+                  (action) =>
+                    !ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+                )}
+              />
+            </Panel>
+            <Panel
+              key="2"
+              collapsible="header"
+              header={!collapsed && 'Admin Actions'}
+            >
+              <CustomActions
+                showInline
+                data={station}
+                actions={filteredActions.filter((action) =>
+                  ADMIN_CHARGING_STATION_ACTIONS.includes(action.label),
+                )}
+              />
+            </Panel>
+          </Collapse>
+        </Sider>
+      </Layout>
+    </Layout>
   );
 };
 
 export const ChargingStationsList = (props: IDataModelListProps) => {
-  const { tableProps } = useTable<ChargingStationsListQuery>({
+  const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
     resource: ResourceType.CHARGING_STATIONS,
     sorters: DEFAULT_SORTERS,
     filters: props.filters,
@@ -49,21 +167,15 @@ export const ChargingStationsList = (props: IDataModelListProps) => {
   });
 
   return (
-    <>
-      <DataModelTable<ChargingStations, ChargingStationsListQuery>
-        tableProps={tableProps}
-        columns={CHARGING_STATIONS_COLUMNS(
-          !props.hideActions,
-          props.parentView,
-          CUSTOM_CHARGING_STATION_ACTIONS,
-        )}
-        hideCreateButton={props.hideCreateButton}
-      />
-      <GenericDataTable
-        dtoClass={ChargingStation}
-        customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-      />
-    </>
+    <GenericDataTable
+      dtoClass={ChargingStation}
+      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
+      fieldAnnotations={{
+        [ChargingStationProps.evses]: {
+          customActions: [TriggerMessageForEvseCustomAction],
+        },
+      }}
+    />
   );
 };
 
@@ -92,30 +204,23 @@ export const resources = [
 
 export const renderAssociatedStationId = (
   _: any,
-  record: {
-    stationId: string;
-    [key: string]: any;
-  },
+  record: { stationId: string; [key: string]: any },
 ) => {
-  if (!record?.stationId) {
-    return '';
-  }
-  const stationId = record.stationId;
-  return (
+  return record?.stationId ? (
     <ExpandableColumn
-      initialContent={stationId}
+      initialContent={record.stationId}
       expandedContent={
-        <>
-          <GenericParameterizedView
-            resourceType={ResourceType.CHARGING_STATIONS}
-            id={stationId}
-            state={GenericViewState.SHOW}
-            dtoClass={ChargingStation}
-            gqlQuery={CHARGING_STATIONS_GET_QUERY}
-          />
-        </>
+        <GenericParameterizedView
+          resourceType={ResourceType.CHARGING_STATIONS}
+          id={record.stationId}
+          state={GenericViewState.SHOW}
+          dtoClass={ChargingStation}
+          gqlQuery={CHARGING_STATIONS_GET_QUERY}
+        />
       }
       viewTitle={`Charging Station linked with ID ${record.id}`}
     />
+  ) : (
+    ''
   );
 };

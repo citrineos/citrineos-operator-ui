@@ -1,15 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { notification, Spin } from 'antd';
-import { GET_EVSES_FOR_STATION } from './queries';
-import { useCustom } from '@refinedev/core';
-import { BaseRestClient } from '../../util/BaseRestClient';
+import React, { useRef, useState } from 'react';
+import { Form, notification, Spin } from 'antd';
+import { BaseRestClient } from '@util/BaseRestClient';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { FieldType, GenericForm } from '../../components/form';
-import { RequestStartTransactionRequest } from './model';
+import { GenericForm } from '../../components/form';
+import {
+  RequestStartTransactionRequest,
+  RequestStartTransactionRequestProps,
+} from './model';
+import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { Evse } from '../../pages/evses/Evse';
-import {ChargingStation} from "../../pages/charging-stations/ChargingStation";
+import { NEW_IDENTIFIER } from '@util/consts';
+import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
+import { useApiUrl, useCustom } from '@refinedev/core';
+import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+import { EvseProps } from '../../pages/evses/EvseProps';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -17,17 +23,21 @@ export interface RemoteStartProps {
 
 export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
   const formRef = useRef();
+  const [form] = Form.useForm();
+  const formProps = {
+    form,
+  };
 
   const [loading, setLoading] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
-  const [overrides, setOverrides] = useState<any>({});
 
+  const apiUrl = useApiUrl();
   const {
-    data: evsesResponse,
-    isLoading: isLoadingEvses,
-    isError: isErrorLoadingEvses,
+    data: requestIdResponse,
+    isLoading: isLoadingRequestId,
+    // isError: isErrorLoadingRequestId,
   } = useCustom<any>({
-    url: 'http://localhost:8090/v1/graphql',
+    url: `${apiUrl}`,
     method: 'post',
     config: {
       headers: {
@@ -35,35 +45,14 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       },
     },
     meta: {
-      operation: 'GetEvses',
-      gqlQuery: GET_EVSES_FOR_STATION,
+      operation: 'ChargingStationSequencesGet',
+      gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       variables: {
         stationId: station.id,
+        type: 'remoteStartId',
       },
     },
   });
-
-  useEffect(() => {
-    setOverrides((prev: any) => {
-      const options = (evsesResponse?.data?.Evses || []).map((evse: Evse) => ({
-        label: evse.id,
-        value: evse.id,
-      }));
-
-      return {
-        ...prev,
-        evseId: {
-          label: 'EVSE ID',
-          name: 'evseId',
-          type: FieldType.select,
-          isRequired: false,
-          selectMode: undefined,
-          selectValues: undefined,
-          options: options,
-        },
-      };
-    });
-  }, [evsesResponse]);
 
   const isRequestValid = (request: RequestStartTransactionRequest) => {
     const errors = validateSync(request);
@@ -82,7 +71,19 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       excludeExtraneousValues: false,
     });
     if (isRequestValid(request)) {
-      requestStartTransaction(request);
+      (request as any).evseId =
+        request[RequestStartTransactionRequestProps.evse]![EvseProps.id];
+      delete (request as any)[RequestStartTransactionRequestProps.evse];
+      request[RequestStartTransactionRequestProps.idToken] = {
+        idToken:
+          request[RequestStartTransactionRequestProps.idToken]![
+            IdTokenProps.idToken
+          ],
+        type: request[RequestStartTransactionRequestProps.idToken]![
+          IdTokenProps.type
+        ],
+      } as any;
+      requestStartTransaction(request).then();
     }
   };
 
@@ -123,16 +124,30 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
     }
   };
 
-  if (isLoadingEvses || loading) return <Spin />;
-  if (isErrorLoadingEvses) return <p>Error loading EVSEs</p>;
+  if (loading || isLoadingRequestId) return <Spin />;
+
+  const requestStartTransactionRequest = new RequestStartTransactionRequest();
+  requestStartTransactionRequest[
+    RequestStartTransactionRequestProps.remoteStartId
+  ] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
+  const evse = new Evse();
+  const idToken = new IdToken();
+  evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;
+  idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
+  requestStartTransactionRequest[RequestStartTransactionRequestProps.evse] =
+    evse;
+  requestStartTransactionRequest[RequestStartTransactionRequestProps.idToken] =
+    idToken;
 
   return (
     <GenericForm
       ref={formRef as any}
       dtoClass={RequestStartTransactionRequest}
+      formProps={formProps}
       onFinish={onFinish}
+      initialValues={requestStartTransactionRequest}
+      parentRecord={requestStartTransactionRequest}
       onValuesChange={onValuesChange}
-      overrides={overrides}
       submitDisabled={!valid}
     />
   );

@@ -1,8 +1,11 @@
 import react from '@vitejs/plugin-react';
+import * as path from 'path';
 import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   plugins: [
+    nodePolyfills(),
     react({
       babel: {
         plugins: [
@@ -14,4 +17,11 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      '@util': path.resolve(__dirname, 'src/util'),
+      '@enums': path.resolve(__dirname, 'src/model/enums'),
+      '@interfaces': path.resolve(__dirname, 'src/model/interfaces'),
+    },
+  },
 });
