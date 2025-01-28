@@ -1,7 +1,8 @@
 ![CitrineOS Logo](public/logo_white.png#gh-dark-mode-only)
 ![CitrineOS Logo](public/logo_black.png#gh-light-mode-only)
+<div align="center">
 <img src="public/OCPP_201_Logo_core_and_advanced_security.png" alt="CitrineOS Certification Logo" width="200" height="100" />
-
+</div>
 
 # Welcome to CitrineOS
 
