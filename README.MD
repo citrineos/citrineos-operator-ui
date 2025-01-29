@@ -50,20 +50,29 @@ hasura metadata export
 
 In order to function, CitrineOS's Postgres database must already be running! See [citrineos-core](https://github.com/citrineos/citrineos-core).
 
-### Running the development server (After starting citrineos-core):
+### Running with Docker
+
+If you are running Citrine Core in Docker, Operator UI can be started by simply running:
+
+```bash
+docker compose up -d
+```
+
+
+### Running Operator UI Refine service via NPM
+
+Operator UI will attempt to get @citrineos/base dependency from the citrineos-core folder. First ensure that 
+
+```bash
+npm run build
+```
+
+has been run in Core for the depenendency to be available. Then run:
 
 ```bash
     docker compose up -d graphql-engine data-connector-agent
     npm run dev
 ```
-
-Do not simply run:
-
-```bash
-    docker compose up -d
-```
-
-As this will break with the current prerelease setup.
 
 ## Usage
 
