@@ -61,18 +61,41 @@ docker compose up -d
 
 ### Running Operator UI Refine service via NPM
 
-Operator UI will attempt to get @citrineos/base dependency from the citrineos-core folder. First ensure that 
+For development convenience, Operator UI is configured with a workspace in `package.json`:
+
+```json
+"workspaces": [
+  "../citrineos-core/00_Base"
+]
+```
+
+and this will attempt to get `@citrineos/base` dependency from the `citrineos-core` folder if it is in same parent directory.
+If that is the case, then you may need to run:
 
 ```bash
 npm run build
 ```
 
-has been run in Core for the depenendency to be available. Then run:
+in the `citrineos-core` directory, to ensure that the dependency to be available for Operator UI. Otherwise, you can
+skip the step to build `citrineos-core` and move on to installing Operator UI:
 
 ```bash
-    docker compose up -d graphql-engine data-connector-agent
-    npm run dev
+npm install
 ```
+
+Now, you can run:
+
+```bash
+docker compose up -d graphql-engine data-connector-agent
+```
+
+to start the Hasura Engine and Data Connector containers in Docker and then run:
+
+```bash
+npm run dev
+```
+
+to start Operator UI via npm.
 
 ## Usage
 
