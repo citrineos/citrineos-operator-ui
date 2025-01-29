@@ -13,6 +13,62 @@ charging infrastructure.
 
 This is the repository for the Operator User Interface and associated tooling.
 
+## Available Scripts
+
+In order to function, CitrineOS's Postgres database must already be running! See [citrineos-core](https://github.com/citrineos/citrineos-core).
+
+### Running with Docker
+
+If you are running Citrine Core in Docker, Operator UI can be started by simply running:
+
+```bash
+docker compose up -d
+```
+
+
+### Running Operator UI Refine service via NPM
+
+For development convenience, Operator UI is configured with a workspace in `package.json`:
+
+```json
+"workspaces": [
+  "../citrineos-core/00_Base"
+]
+```
+
+and this will attempt to get `@citrineos/base` dependency from the `citrineos-core` folder if it is in same parent directory.
+If that is the case, then you may need to run:
+
+```bash
+npm run build
+```
+
+in the `citrineos-core` directory, to ensure that the dependency to be available for Operator UI. Otherwise, you can
+skip the step to build `citrineos-core` and move on to installing Operator UI:
+
+```bash
+npm install
+```
+
+Now, you can run:
+
+```bash
+docker compose up -d graphql-engine data-connector-agent
+```
+
+to start the Hasura Engine and Data Connector containers in Docker and then run:
+
+```bash
+npm run dev
+```
+
+to start Operator UI via npm.
+
+## Usage
+
+Operator UI is at localhost:5173 if using development server, otherwise it is at localhost:3000.
+The Hasura console is at localhost:8090.
+
 ## Hasura Metadata
 
 In order for Hasura to track the existing Citrine tables and relationships, this repository comes with Hasura metadata already exported into the `hasura-metadata` folder.
@@ -45,30 +101,6 @@ hasura metadata export
 
 - Find the exported files in the `graphql-engine` container's files in the metadata filepath `<name of project i.e. citrine>/metadata` and pull that metadata backup onto your local machine
 - Copy the contents of the copied `metadata` folder into the `hasura-metadata` folder in this repository
-
-## Available Scripts
-
-In order to function, CitrineOS's Postgres database must already be running! See [citrineos-core](https://github.com/citrineos/citrineos-core).
-
-### Running the development server (After starting citrineos-core):
-
-```bash
-    docker compose up -d graphql-engine data-connector-agent
-    npm run dev
-```
-
-Do not simply run:
-
-```bash
-    docker compose up -d
-```
-
-As this will break with the current prerelease setup.
-
-## Usage
-
-Operator UI is at localhost:5173 if using development server, otherwise it is at localhost:3000.
-The Hasura console is at localhost:8090.
 
 ## Learn More
 
