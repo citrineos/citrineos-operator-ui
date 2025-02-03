@@ -2,7 +2,7 @@ import React from 'react';
 import { Form } from 'antd';
 import { plainToInstance, Type } from 'class-transformer';
 import { CustomDataType } from '../../model/CustomData';
-import { MessageTriggerEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { GenericForm } from '../../components/form';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import {
@@ -79,9 +79,9 @@ export class TriggerMessageRequest {
   @IsNotEmpty()
   evse!: Evse | null;
 
-  @IsEnum(MessageTriggerEnumType)
+  @IsEnum(OCPP2_0_1.MessageTriggerEnumType)
   @IsNotEmpty()
-  requestedMessage!: MessageTriggerEnumType;
+  requestedMessage!: OCPP2_0_1.MessageTriggerEnumType;
 
   @Type(() => CustomDataType)
   @ValidateNested()

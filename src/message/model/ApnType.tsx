@@ -7,7 +7,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { APNAuthenticationEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 
 export class ApnType {
   // todo
@@ -44,7 +44,7 @@ export class ApnType {
   @IsOptional()
   useOnlyPreferredNetwork?: boolean;
 
-  @IsEnum(APNAuthenticationEnumType)
+  @IsEnum(OCPP2_0_1.APNAuthenticationEnumType)
   @IsNotEmpty()
-  apnAuthentication!: APNAuthenticationEnumType;
+  apnAuthentication!: OCPP2_0_1.APNAuthenticationEnumType;
 }

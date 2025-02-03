@@ -7,10 +7,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import {
-  CertificateSignedStatusEnumType,
-  CertificateSigningUseEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { readFileContent, triggerMessageAndHandleResponse } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
@@ -29,9 +26,9 @@ class CertificateSignedRequest {
   // @IsOptional()
   // customData?: CustomDataType;
 
-  @IsEnum(CertificateSigningUseEnumType)
+  @IsEnum(OCPP2_0_1.CertificateSigningUseEnumType)
   @IsOptional()
-  certificateType?: CertificateSigningUseEnumType;
+  certificateType?: OCPP2_0_1.CertificateSigningUseEnumType;
 
   @SupportedFileFormats(['.pem', '.id'])
   @Type(() => File)
@@ -46,8 +43,8 @@ export class CertificateSignedResponse {
   // @IsOptional()
   // customData?: CustomDataType;
 
-  @IsEnum(CertificateSignedStatusEnumType)
-  status!: CertificateSignedStatusEnumType;
+  @IsEnum(OCPP2_0_1.CertificateSignedStatusEnumType)
+  status!: OCPP2_0_1.CertificateSignedStatusEnumType;
 
   @Type(() => StatusInfoType)
   @ValidateNested()
@@ -84,7 +81,8 @@ export const CertificateSigned: React.FC<CertificateSignedProps> = ({
         responseSuccessCheck: (response: CertificateSignedResponse) =>
           response &&
           response.status &&
-          response.status === CertificateSignedStatusEnumType.Accepted,
+          response.status ===
+            OCPP2_0_1.CertificateSignedStatusEnumType.Accepted,
       });
     } catch (error) {
       console.error('Error during submission:', error);

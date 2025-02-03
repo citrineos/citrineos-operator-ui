@@ -7,7 +7,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { LogEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { TransformDate } from '@util/TransformDate';
 import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { Form, Input } from 'antd';
@@ -73,8 +73,8 @@ export class GetLogRequest {
   @IsNotEmpty()
   log!: LogParametersType;
 
-  @IsEnum(LogEnumType)
-  logType!: LogEnumType;
+  @IsEnum(OCPP2_0_1.LogEnumType)
+  logType!: OCPP2_0_1.LogEnumType;
 
   @IsInt()
   @IsNotEmpty()

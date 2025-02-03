@@ -7,10 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import {
-  RegistrationStatusEnumType,
-  SetVariableResultType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { Boots } from '../../graphql/schema.types';
 import { TransformDate } from '@util/TransformDate';
 import { BaseModel } from '@util/BaseModel';
@@ -31,8 +28,8 @@ export class Boot extends BaseModel {
   @IsOptional()
   bootRetryInterval?: number;
 
-  @IsEnum(RegistrationStatusEnumType)
-  status!: RegistrationStatusEnumType;
+  @IsEnum(OCPP2_0_1.RegistrationStatusEnumType)
+  status!: OCPP2_0_1.RegistrationStatusEnumType;
 
   // @Type(() => StatusInfoType)
   // statusInfo?: StatusInfoType; // todo
@@ -44,7 +41,7 @@ export class Boot extends BaseModel {
   @IsArray()
   @ValidateNested({ each: true })
   // @Type(() => SetVariableResultType)
-  variablesRejectedOnLastBoot!: SetVariableResultType[];
+  variablesRejectedOnLastBoot!: OCPP2_0_1.SetVariableResultType[];
 
   @IsBoolean()
   @IsOptional()
@@ -57,7 +54,7 @@ export class Boot extends BaseModel {
       this.lastBootTime = data.lastBootTime;
       this.heartbeatInterval = data.heartbeatInterval as number;
       this.bootRetryInterval = data.bootRetryInterval as number;
-      this.status = data.status as RegistrationStatusEnumType;
+      this.status = data.status as OCPP2_0_1.RegistrationStatusEnumType;
       this.getBaseReportOnPending = data.getBaseReportOnPending as boolean;
       this.variablesRejectedOnLastBoot = data.variablesRejectedOnLastBoot;
       this.bootWithRejectedVariables =

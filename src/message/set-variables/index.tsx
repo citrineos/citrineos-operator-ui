@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { AttributeEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { triggerMessageAndHandleResponse } from '../util';
 import { GenericForm } from '../../components/form';
@@ -98,8 +98,8 @@ class SetVariablesData {
   @IsString()
   value!: string;
 
-  @IsEnum(AttributeEnumType)
-  attributeType!: AttributeEnumType;
+  @IsEnum(OCPP2_0_1.AttributeEnumType)
+  attributeType!: OCPP2_0_1.AttributeEnumType;
 }
 
 enum SetVariablesRequestProps {
