@@ -9,10 +9,7 @@ import {
   Length,
   ValidateNested,
 } from 'class-validator';
-import {
-  InstallCertificateStatusEnumType,
-  InstallCertificateUseEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { formatPem, showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
@@ -41,13 +38,13 @@ class InstallCertificateData {
   @IsNotEmpty()
   certificate!: string;
 
-  @IsEnum(InstallCertificateUseEnumType)
-  certificateType!: InstallCertificateUseEnumType;
+  @IsEnum(OCPP2_0_1.InstallCertificateUseEnumType)
+  certificateType!: OCPP2_0_1.InstallCertificateUseEnumType;
 }
 
 export class InstallCertificateResponse {
-  @IsEnum(InstallCertificateStatusEnumType)
-  status!: InstallCertificateStatusEnumType;
+  @IsEnum(OCPP2_0_1.InstallCertificateStatusEnumType)
+  status!: OCPP2_0_1.InstallCertificateStatusEnumType;
 
   @Type(() => StatusInfoType)
   @ValidateNested()
@@ -60,9 +57,9 @@ export class RootCertificateRequest {
   @IsNotEmpty()
   stationId!: string;
 
-  @IsEnum(InstallCertificateUseEnumType)
+  @IsEnum(OCPP2_0_1.InstallCertificateUseEnumType)
   @IsNotEmpty()
-  certificateType!: InstallCertificateUseEnumType;
+  certificateType!: OCPP2_0_1.InstallCertificateUseEnumType;
 
   @IsString()
   @IsNotEmpty()
@@ -114,8 +111,8 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
     // rootCertificateRequest.fileId = certificate.certificateFileId!;
 
     // try {
-    //   const client = new BaseRestClient();
-    //   client.setDataBaseUrl();
+    //   const isDataUrl = true;
+    //   const client = new BaseRestClient(isDataUrl);
     //   await client.put(
     //     `/certificates/rootCertificate`,
     //     InstallCertificateResponse,

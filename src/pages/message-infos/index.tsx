@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { MessageInfosListQuery } from '../../graphql/types';
 import { MessageInfo } from './MessageInfo';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   MESSAGE_INFOS_CREATE_MUTATION,
@@ -16,6 +17,7 @@ import {
 } from './queries';
 import { MESSAGE_INFOS_COLUMNS } from './table-config';
 import { MessageInfos } from '../../graphql/schema.types';
+import { IoInformationCircleSharp } from 'react-icons/io5';
 
 export const MessageInfosView: React.FC = () => {
   return (
@@ -67,5 +69,6 @@ export const resources = [
     meta: {
       canDelete: true,
     },
+    icon: <IoInformationCircleSharp />,
   },
 ];

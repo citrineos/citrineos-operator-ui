@@ -1,6 +1,6 @@
 import React from 'react';
 import { GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { ServerNetworkProfile } from './ServerNetworkProfile';
 import {

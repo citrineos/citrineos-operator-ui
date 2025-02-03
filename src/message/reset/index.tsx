@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../MessageConfirmation';
-import { ResetEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../queries';
 import { GenericForm } from '../../components/form';
@@ -45,8 +45,8 @@ class ResetData {
   @IsNotEmpty()
   evse!: Evse | null;
 
-  @IsEnum(ResetEnumType)
-  type!: ResetEnumType;
+  @IsEnum(OCPP2_0_1.ResetEnumType)
+  type!: OCPP2_0_1.ResetEnumType;
 
   // @Type(() => CustomDataType)
   // @IsOptional()

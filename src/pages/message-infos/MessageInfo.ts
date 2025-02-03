@@ -8,18 +8,14 @@ import {
   IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  MessageFormatEnumType,
-  MessagePriorityEnumType,
-  MessageStateEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';
 import { CustomDataType } from '../../model/CustomData';
 
 export class MessageContentType {
-  @IsEnum(MessageFormatEnumType)
-  format!: MessageFormatEnumType;
+  @IsEnum(OCPP2_0_1.MessageFormatEnumType)
+  format!: OCPP2_0_1.MessageFormatEnumType;
 
   @IsString()
   content!: string;
@@ -43,12 +39,12 @@ export class MessageInfo {
   @IsString()
   stationId!: string;
 
-  @IsEnum(MessagePriorityEnumType)
-  priority!: MessagePriorityEnumType;
+  @IsEnum(OCPP2_0_1.MessagePriorityEnumType)
+  priority!: OCPP2_0_1.MessagePriorityEnumType;
 
-  @IsEnum(MessageStateEnumType)
+  @IsEnum(OCPP2_0_1.MessageStateEnumType)
   @IsOptional()
-  state: MessageStateEnumType | null = null;
+  state: OCPP2_0_1.MessageStateEnumType | null = null;
 
   @Type(() => Date)
   @IsDate()

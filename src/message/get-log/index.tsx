@@ -8,7 +8,7 @@ import { GetLogRequest, GetLogRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
-import { LogEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
@@ -112,7 +112,8 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
   getLogRequest[GetLogRequestProps.log] = {
     remoteLocation: `${DIRECTUS_URL}/files`,
   } as any; // Type assertion if necessary
-  getLogRequest[GetLogRequestProps.logType] = LogEnumType.DiagnosticsLog;
+  getLogRequest[GetLogRequestProps.logType] =
+    OCPP2_0_1.LogEnumType.DiagnosticsLog;
 
   return (
     <GenericForm
