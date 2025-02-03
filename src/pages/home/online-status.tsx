@@ -228,8 +228,6 @@ export const OnlineStatus = () => {
     },
   ];
 
-  console.log('herhee', data, cells);
-
   if (isLoading) {
     return <Spin />;
   }
