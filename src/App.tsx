@@ -1,6 +1,6 @@
+import './telemetry';
 import { Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
-import CitrineOSPng from '/Citrine_OS_Logo.png';
 import './style.scss';
 
 import {
@@ -104,7 +104,7 @@ import {
   routes as VariableAttributesRoutes,
 } from './pages/variable-attributes';
 import { routes as HomeRoutes } from './pages/home';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineSecurity } from 'react-icons/md';
 import {
   resources as messageInfosResources,
@@ -132,9 +132,16 @@ import {
 } from './pages/server-network-profiles';
 import { theme } from './theme';
 import { MainMenu } from './components/main-menu';
+import {
+  TelemetryConsentModal,
+  checkTelemetryConsent,
+  saveTelemetryConsent,
+} from './util/TelemetryConsentModal';
+import { initTelemetry } from './telemetry';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
+const LOGO_URL = import.meta.env.VITE_LOGO_URL;
 
 const client = new GraphQLClient(API_URL, {
   headers: {
@@ -198,13 +205,50 @@ const resources = [
 
 const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
 
-function App() {
+export default function App() {
+  // `undefined` means we haven’t read the config yet
+  // or that no consent is saved.
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    const telemetryConsentModalInitialization = async () => {
+      // On app start, try to read an existing consent
+      const existingConsent = await checkTelemetryConsent();
+      if (existingConsent == null) {
+        // No consent found => show modal
+        setIsModalVisible(true);
+      } else {
+        if (existingConsent) {
+          initTelemetry();
+        }
+      }
+    };
+    telemetryConsentModalInitialization();
+  }, []);
+
+  /**
+   * Handle user’s choice:
+   */
+  const handleModalDecision = (agreed: boolean) => {
+    saveTelemetryConsent(agreed);
+    setIsModalVisible(false);
+    if (agreed) {
+      initTelemetry();
+    }
+  };
+
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
             <ConfigProvider theme={theme}>
+              <TelemetryConsentModal
+                visible={isModalVisible}
+                onDecision={handleModalDecision}
+              />
+
               <Refine
                 dataProvider={hasuraDataProvider}
                 liveProvider={liveProvider(webSocketClient)}
@@ -220,7 +264,7 @@ function App() {
                   title: {
                     icon: (
                       <img
-                        src={CitrineOSPng}
+                        src={LOGO_URL}
                         alt="icon"
                         style={{ height: '48px', margin: '-8px -8px' }}
                         data-testid="citrine-os-icon"
@@ -339,5 +383,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

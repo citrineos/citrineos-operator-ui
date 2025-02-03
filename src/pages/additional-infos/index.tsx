@@ -7,7 +7,7 @@ import {
   ADDITIONAL_INFOS_EDIT_MUTATION,
   ADDITIONAL_INFOS_SHOW_QUERY,
 } from '../../queries/additionalInfo';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { Route, Routes } from 'react-router-dom';
 import { ResourceType } from '../../resource-type';
