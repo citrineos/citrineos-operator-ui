@@ -44,11 +44,6 @@ export enum ReflectType {
   unknownProperties,
 }
 
-export interface FieldSelectOption {
-  label: string;
-  value: string;
-}
-
 export enum SelectionType {
   SINGLE = 'single',
   MULTIPLE = 'multiple',
