@@ -92,7 +92,10 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
 
       <Descriptions.Item label="Phase">
         {sampledValue.phase ? (
-          <GenericTag enumValue={sampledValue.phase} enumType={OCPP2_0_1.PhaseEnumType} />
+          <GenericTag
+            enumValue={sampledValue.phase}
+            enumType={OCPP2_0_1.PhaseEnumType}
+          />
         ) : (
           <Text type="secondary">N/A</Text>
         )}

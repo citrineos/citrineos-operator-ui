@@ -1,6 +1,4 @@
-import {
-  OCPP2_0_1
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import {
   IsEnum,
   IsNumber,
