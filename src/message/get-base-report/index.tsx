@@ -9,7 +9,7 @@ import { GetBaseReportRequest, GetBaseReportRequestProps } from './model';
 import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
-import { ReportBaseEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 
 export interface GetBaseReportProps {
   station: ChargingStation;
@@ -110,7 +110,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
   getBaseReportRequest[GetBaseReportRequestProps.requestId] =
     requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   getBaseReportRequest[GetBaseReportRequestProps.reportBase] =
-    ReportBaseEnumType.FullInventory;
+    OCPP2_0_1.ReportBaseEnumType.FullInventory;
 
   return (
     <GenericForm

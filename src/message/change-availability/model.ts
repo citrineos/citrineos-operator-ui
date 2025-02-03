@@ -6,7 +6,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { OperationalStatusEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
@@ -42,9 +42,9 @@ export class ChangeAvailabilityRequest {
   @IsOptional()
   evse?: Evse | null;
 
-  @IsEnum(OperationalStatusEnumType)
+  @IsEnum(OCPP2_0_1.OperationalStatusEnumType)
   @IsNotEmpty()
-  operationalStatus!: OperationalStatusEnumType;
+  operationalStatus!: OCPP2_0_1.OperationalStatusEnumType;
 
   // todo
   // @Type(() => CustomDataType)

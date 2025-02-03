@@ -5,7 +5,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { VPNEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 
 export class VpnType {
   // todo
@@ -39,7 +39,7 @@ export class VpnType {
   @IsNotEmpty()
   key!: string;
 
-  @IsEnum(VPNEnumType)
+  @IsEnum(OCPP2_0_1.VPNEnumType)
   @IsNotEmpty()
-  type!: VPNEnumType;
+  type!: OCPP2_0_1.VPNEnumType;
 }

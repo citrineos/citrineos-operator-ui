@@ -7,12 +7,7 @@ import {
 } from 'class-validator';
 import TransformDatetime from '@util/TransformDatetime';
 import { Type } from 'class-transformer';
-import {
-  ChargingLimitSourceEnumType,
-  ChargingProfileKindEnumType,
-  ChargingProfilePurposeEnumType,
-  RecurrencyKindEnumType,
-} from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 
 export class ChargingProfile {
   @IsInt()
@@ -24,15 +19,15 @@ export class ChargingProfile {
   @IsString()
   stationId!: string;
 
-  @IsEnum(ChargingProfileKindEnumType)
-  chargingProfileKind!: ChargingProfileKindEnumType;
+  @IsEnum(OCPP2_0_1.ChargingProfileKindEnumType)
+  chargingProfileKind!: OCPP2_0_1.ChargingProfileKindEnumType;
 
-  @IsEnum(ChargingProfilePurposeEnumType)
-  chargingProfilePurpose!: ChargingProfilePurposeEnumType;
+  @IsEnum(OCPP2_0_1.ChargingProfilePurposeEnumType)
+  chargingProfilePurpose!: OCPP2_0_1.ChargingProfilePurposeEnumType;
 
   @IsOptional()
-  @IsEnum(RecurrencyKindEnumType)
-  recurrencyKind?: RecurrencyKindEnumType;
+  @IsEnum(OCPP2_0_1.RecurrencyKindEnumType)
+  recurrencyKind?: OCPP2_0_1.RecurrencyKindEnumType;
 
   @IsInt()
   stackLevel!: number;
@@ -56,8 +51,8 @@ export class ChargingProfile {
   isActive: boolean | null = null;
 
   @IsOptional()
-  @IsEnum(ChargingLimitSourceEnumType)
-  chargingLimitSource: ChargingLimitSourceEnumType | null = null;
+  @IsEnum(OCPP2_0_1.ChargingLimitSourceEnumType)
+  chargingLimitSource: OCPP2_0_1.ChargingLimitSourceEnumType | null = null;
 
   @IsInt()
   @IsOptional()

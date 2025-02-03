@@ -7,7 +7,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { DeleteCertificateStatusEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import { showError, showSucces } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
@@ -47,8 +47,8 @@ class DeleteCertificateData {
 }
 
 export class DeleteCertificateResponse {
-  @IsEnum(DeleteCertificateStatusEnumType)
-  status!: DeleteCertificateStatusEnumType;
+  @IsEnum(OCPP2_0_1.DeleteCertificateStatusEnumType)
+  status!: OCPP2_0_1.DeleteCertificateStatusEnumType;
 
   @Type(() => StatusInfoType)
   @ValidateNested()

@@ -1,4 +1,4 @@
-import { SetNetworkProfileStatusEnumType } from '@citrineos/base';
+import { OCPP2_0_1 } from '@citrineos/base';
 import React from 'react';
 import { Form } from 'antd';
 import {
@@ -64,9 +64,9 @@ export class SetNetworkProfileResponse {
   // @ValidateNested()
   // customData?: CustomDataType;
 
-  @IsEnum(SetNetworkProfileStatusEnumType)
+  @IsEnum(OCPP2_0_1.SetNetworkProfileStatusEnumType)
   @IsNotEmpty()
-  status!: SetNetworkProfileStatusEnumType;
+  status!: OCPP2_0_1.SetNetworkProfileStatusEnumType;
 
   @Type(() => StatusInfoType)
   @ValidateNested()
