@@ -1,6 +1,6 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
 import { BaseDto } from './base';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { StatusNotificationDto } from './status.notification';
 
 export class LatestStatusNotificationDto extends BaseDto {
@@ -15,5 +15,6 @@ export class LatestStatusNotificationDto extends BaseDto {
 
   @IsOptional()
   @Type(() => StatusNotificationDto)
+  @Expose({ name: 'StatusNotification' })
   statusNotification?: StatusNotificationDto;
 }

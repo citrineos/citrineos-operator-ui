@@ -1,5 +1,5 @@
 import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { StatusNotificationDto } from './status.notification';
 import { EvseDto } from './evse';
 import { BaseDto } from './base';
@@ -20,11 +20,13 @@ export class ChargingStationDto extends BaseDto {
   @IsArray()
   @IsOptional()
   @Type(() => StatusNotificationDto)
+  @Expose({ name: 'StatusNotifications' })
   statusNotifications?: StatusNotificationDto[];
 
   @IsArray()
   @IsOptional()
   @Type(() => LatestStatusNotificationDto)
+  @Expose({ name: 'LatestStatusNotifications' })
   latestStatusNotifications?: LatestStatusNotificationDto[];
 
   @IsArray()

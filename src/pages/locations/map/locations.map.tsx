@@ -1,45 +1,40 @@
 import { AutoComplete, Input, Row } from 'antd';
-import { GoogleMapContainer, MarkerProps } from '../../../components/map';
+import { GoogleMapWithMarkers } from '../../../components/map/map.with.markers';
 import React, { useState } from 'react';
 import { LocationDto } from '../../../dtos/location';
 import { LocationMarker } from './location-marker';
 import { useTable } from '@refinedev/antd';
-import { LocationsListQuery } from '../../../graphql/types';
 import { ResourceType } from '../../../resource-type';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { LOCATIONS_LIST_QUERY } from '../queries';
 import { plainToInstance } from 'class-transformer';
 import './style.scss';
+import { MarkerProps } from '../../../components/map/map.marker';
 
-export interface LocationsMapProps {}
-export const LocationsMap: React.FC<LocationsMapProps> = (
-  props: LocationsMapProps,
-) => {
+export const LocationsMap: React.FC = () => {
   const [filteredLocations, setFilteredLocations] = useState<LocationDto[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { tableProps } = useTable<LocationsListQuery>({
+  const { tableProps } = useTable<LocationDto>({
     resource: ResourceType.LOCATIONS,
     sorters: DEFAULT_SORTERS,
     metaData: {
       gqlQuery: LOCATIONS_LIST_QUERY,
     },
+    queryOptions: {
+      select: (data) => ({
+        ...data,
+        data: data.data.map((item) => plainToInstance(LocationDto, item)),
+      }),
+    },
   });
-
-  // convert to class to apply transformations
-  const transformedTableProps = {
-    ...tableProps,
-    dataSource: tableProps.dataSource?.map((item) =>
-      plainToInstance(LocationDto, item),
-    ),
-  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     const lowerCaseQuery = query.toLowerCase();
 
     const filtered =
-      (transformedTableProps.dataSource as unknown as LocationDto[])?.filter(
+      (tableProps.dataSource as unknown as LocationDto[])?.filter(
         (location: LocationDto) =>
           location.chargingStations.some((station) =>
             station.id.includes(lowerCaseQuery),
@@ -53,7 +48,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = (
 
   // Dynamically generate markers from the dataSource
   const markers: MarkerProps[] =
-    transformedTableProps.dataSource?.map(((location: LocationDto) => {
+    tableProps.dataSource?.map(((location: LocationDto) => {
       const allOnline =
         location.chargingStations.length > 0 &&
         location.chargingStations.every((station) => station.isOnline === true);
@@ -107,7 +102,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = (
         </AutoComplete>
       </Row>
       <Row style={{ flex: '1 1 auto' }}>
-        <GoogleMapContainer
+        <GoogleMapWithMarkers
           markers={markers}
           defaultCenter={{ lat: 36.7783, lng: -119.4179 }}
           zoom={6}

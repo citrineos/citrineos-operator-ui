@@ -11,7 +11,7 @@ export const routes: React.FC = () => {
     <Routes>
       <Route index element={<LocationsList />} />
       <Route path="/map" element={<LocationsMap />} />
-      <Route path="/create" element={<LocationsCreate />} />
+      <Route path="/new" element={<LocationsCreate />} />
       <Route path="/:id" element={<LocationsDetail />} />
       <Route path="/:id/edit" element={<LocationsEdit />} />
     </Routes>

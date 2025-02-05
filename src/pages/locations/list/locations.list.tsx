@@ -29,15 +29,13 @@ export const LocationsList = () => {
     metaData: {
       gqlQuery: LOCATIONS_LIST_QUERY,
     },
+    queryOptions: {
+      select: (data) => ({
+        ...data,
+        data: data.data.map((item) => plainToInstance(LocationDto, item)),
+      }),
+    },
   });
-
-  // convert to class to apply transformations
-  const transformedTableProps = {
-    ...tableProps,
-    dataSource: tableProps.dataSource?.map((item) =>
-      plainToInstance(LocationDto, item),
-    ),
-  };
 
   const handleExpandToggle = (record: LocationDto) => {
     setExpandedRowByToggle((prev) =>
@@ -54,7 +52,11 @@ export const LocationsList = () => {
       <Row justify="space-between" align="middle" className="header-row">
         <h2>Locations</h2>
         <Row>
-          <Button type="primary" style={{ marginRight: '20px' }}>
+          <Button
+            type="primary"
+            style={{ marginRight: '20px' }}
+            onClick={() => push('/locations/new')}
+          >
             Add New Location
             <PlusIcon />
           </Button>
@@ -67,7 +69,7 @@ export const LocationsList = () => {
       </Row>
       <Table
         rowKey="id"
-        {...transformedTableProps}
+        {...tableProps}
         showHeader={false}
         expandable={{
           expandIconColumnIndex: -1,
@@ -164,6 +166,7 @@ export const LocationsList = () => {
                   size="small"
                   type="link"
                   recordItemId={record.id}
+                  resource={ResourceType.LOCATIONS}
                   meta={{
                     gqlMutation: LOCATIONS_DELETE_MUTATION,
                   }}

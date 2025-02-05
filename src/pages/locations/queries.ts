@@ -21,18 +21,18 @@ export const LOCATIONS_LIST_QUERY = gql`
       state
       country
       coordinates
-      chargingStations: ChargingStations {
+      ChargingStations {
         id
         isOnline
         createdAt
         updatedAt
-        latestStatusNotifications: LatestStatusNotifications {
+        LatestStatusNotifications {
           id
           stationId
           statusNotificationId
           updatedAt
           createdAt
-          statusNotification: StatusNotification {
+          StatusNotification {
             connectorId
             connectorStatus
             createdAt

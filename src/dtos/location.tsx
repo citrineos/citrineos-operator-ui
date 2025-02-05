@@ -1,6 +1,6 @@
 import { IsArray, IsString } from 'class-validator';
 import { GeoPoint, IsGeoPoint } from '@util/GeoPoint';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ToClass, ToPlain } from '@util/Transformers';
 import { ChargingStationDto } from './charging.station';
 
@@ -34,5 +34,6 @@ export class LocationDto {
 
   @IsArray()
   @Type(() => ChargingStationDto)
+  @Expose({ name: 'ChargingStations' })
   chargingStations!: ChargingStationDto[];
 }
