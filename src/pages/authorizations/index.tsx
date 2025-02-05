@@ -3,8 +3,6 @@ import { GenericView } from '../../components/view';
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { Route, Routes } from 'react-router-dom';
-import { ResourceType } from '../../resource-type';
-import { ContactsOutlined } from '@ant-design/icons';
 import { Authorizations } from './authorizations';
 import {
   AUTHORIZATIONS_CREATE_MUTATION,
@@ -41,17 +39,3 @@ export const routes: React.FC = () => {
     </Routes>
   );
 };
-
-export const resources = [
-  {
-    name: ResourceType.AUTHORIZATIONS,
-    list: '/authorizations',
-    create: '/authorizations/new',
-    edit: '/authorizations/:id/edit',
-    show: '/authorizations/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <ContactsOutlined />,
-  },
-];

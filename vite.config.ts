@@ -19,6 +19,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      '@dtos': path.resolve(__dirname, 'src/dtos'),
       '@util': path.resolve(__dirname, 'src/util'),
       '@enums': path.resolve(__dirname, 'src/model/enums'),
       '@interfaces': path.resolve(__dirname, 'src/model/interfaces'),

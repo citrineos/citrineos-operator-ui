@@ -107,6 +107,7 @@ export interface GenericFormProps extends GenericProps {
 
 export interface GenericViewProps extends GenericProps {
   gqlQuery: any;
+  resourceType?: ResourceType;
   editMutation?: any;
   createMutation?: any;
   deleteMutation?: any;
@@ -280,7 +281,6 @@ export interface IDataModelListProps {
   hideCreateButton?: boolean;
   hideActions?: boolean;
   parentView?: ResourceType;
-  viewMode?: 'table' | 'map';
 }
 
 export interface IActionsColumnEnhancedProps {

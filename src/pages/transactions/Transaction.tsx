@@ -38,7 +38,6 @@ import {
 } from '../transaction-events/queries';
 import { TransformDate } from '@util/TransformDate';
 import { ClassCustomActions } from '@util/decorators/ClassCustomActions';
-import { requestStopTransaction } from '../../message/remote-stop';
 import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { ValueDisplay } from '../../components/value-display';
 import React from 'react';
@@ -73,13 +72,13 @@ export enum TransactionProps {
     label: 'Remote Stop',
     isVisible: (transaction) => transaction[TransactionProps.isActive],
     execOrRender: (transaction: Transaction, setLoading) => {
-      requestStopTransaction(
-        transaction[TransactionProps.stationId],
-        transaction[TransactionProps.transactionId],
-        setLoading,
-      ).then(() => {
-        console.log('Successfully stopped transaction', transaction);
-      });
+      // requestStopTransaction(
+      //   transaction[TransactionProps.stationId],
+      //   transaction[TransactionProps.transactionId],
+      //   setLoading,
+      // ).then(() => {
+      //   console.log('Successfully stopped transaction', transaction);
+      // });
     },
   },
 ])

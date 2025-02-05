@@ -11,7 +11,6 @@ import {
   TRANSACTION_GET_QUERY,
 } from './queries';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { TbTransactionDollar } from 'react-icons/tb';
 import { useCustom } from '@refinedev/core';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { GenericDataTable } from '../../components/data-model-table/editable';
@@ -21,6 +20,7 @@ export const TransactionView: React.FC = () => {
   return (
     <GenericView
       dtoClass={Transaction}
+      resourceType={ResourceType.TRANSACTIONS}
       gqlQuery={TRANSACTION_GET_QUERY}
       editMutation={TRANSACTION_EDIT_MUTATION}
       createMutation={TRANSACTION_CREATE_MUTATION}
@@ -41,19 +41,6 @@ export const routes: React.FC = () => {
     </Routes>
   );
 };
-
-export const resources = [
-  {
-    name: ResourceType.TRANSACTIONS,
-    list: '/transactions',
-    create: '/transactions/new',
-    show: '/transactions/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <TbTransactionDollar />,
-  },
-];
 
 export const renderAssociatedTransactionId = (
   _: any,

@@ -1,0 +1,24 @@
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 24px;
+  height: 130px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  width: 100%;
+}
+
+.switch {
+  align-self: center;
+}
+
+.search, .avatar {
+  width: 24px;
+  margin: 0 20px;
+
+  svg {
+    vertical-align: middle;
+  }
+}

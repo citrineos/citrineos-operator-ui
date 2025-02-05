@@ -9,11 +9,11 @@ import { FaChargingStation } from 'react-icons/fa';
 
 import { ResourceType } from '../../resource-type';
 import { GenericParameterizedView, GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../model/interfaces';
+import { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
-  CUSTOM_CHARGING_STATION_ACTIONS,
   ADMIN_CHARGING_STATION_ACTIONS,
+  CUSTOM_CHARGING_STATION_ACTIONS,
 } from '../../message';
 import { ChargingStation } from './ChargingStation';
 import { ChargingStationProps } from './ChargingStationProps';
@@ -32,7 +32,7 @@ import {
 } from './queries';
 import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
 import { ChargingStationsListQuery } from '../../graphql/types';
-import { GenericViewState } from '../../model/enums';
+import { GenericViewState } from '@enums';
 
 const { Panel } = Collapse;
 const { Sider, Content } = Layout;
@@ -80,6 +80,7 @@ export const ChargingStationsView: React.FC = () => {
         <Content>
           <GenericView
             dtoClass={ChargingStation}
+            resourceType={ResourceType.CHARGING_STATIONS}
             gqlQuery={CHARGING_STATIONS_GET_QUERY}
             editMutation={CHARGING_STATIONS_EDIT_MUTATION}
             createMutation={CHARGING_STATIONS_CREATE_MUTATION}

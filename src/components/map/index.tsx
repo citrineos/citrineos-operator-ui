@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import GoogleMapReact from 'google-map-react';
 import './style.scss';
 import { MarkerIcon } from './markert-icon';
@@ -113,17 +113,20 @@ export const GoogleMapContainer: React.FC<MapProps> = ({
 
   const handleApiLoaded = (map: google.maps.Map, maps: typeof google.maps) => {
     setMapInstance(map);
-
-    try {
-      const bounds = new maps.LatLngBounds();
-      markers.forEach((marker) => {
-        bounds.extend(new maps.LatLng(marker.lat, marker.lng));
-      });
-      map.fitBounds(bounds);
-    } catch (error) {
-      console.error('Error creating bounds or fitting map:', error);
-    }
   };
+
+  useEffect(() => {
+    if (mapInstance && markers.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      console.log('Updated markers in map', markers); // Now always logs latest markers
+
+      markers.forEach((marker) => {
+        bounds.extend(new google.maps.LatLng(marker.lat, marker.lng));
+      });
+
+      mapInstance.fitBounds(bounds);
+    }
+  }, [mapInstance, markers]);
 
   if (!markers || markers.length === 0) {
     markers = [

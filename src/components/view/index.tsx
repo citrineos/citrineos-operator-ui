@@ -25,6 +25,7 @@ import { GenericViewState } from '@enums';
 export const GenericView = (props: GenericViewProps) => {
   const {
     dtoClass,
+    resourceType,
     gqlQuery,
     editMutation,
     createMutation,
@@ -47,6 +48,7 @@ export const GenericView = (props: GenericViewProps) => {
       id={id}
       state={genericViewState}
       dtoClass={dtoClass}
+      resourceType={resourceType}
       overrides={overrides}
       gqlQuery={gqlQuery}
       editMutation={editMutation}
@@ -95,6 +97,7 @@ export const GenericParameterizedView = (
   if (resourceType) {
     obj.resource = resourceType;
   }
+
   const [parentRecord, setParentRecord] = useState<any>(
     plainToInstance(dtoClass, {}),
   );

@@ -1,0 +1,57 @@
+.selected-row{
+  background: var(--ant-table-row-hover-bg);
+  .column-id h4 {
+    color: var(--secondary-color-3);
+  }
+}
+
+.ant-table-expanded-row {
+  .nested {
+    padding: var(--ant-padding-md);
+
+    .ant-table {
+      margin-block: 0 !important;
+      margin-inline: 0 !important;
+    }
+  }
+}
+
+.view-charging-stations {
+  color: var(--secondary-color-3);
+  cursor: pointer;
+}
+
+.arrow {
+  transition: 250ms ease-in-out;
+  &.rotate {
+    transform: rotate(180deg);
+  }
+}
+
+.online {
+  color: var(--ui-color-success);
+}
+
+.offline {
+  color: var(--ui-color-error);
+}
+
+.column-actions {
+  button {
+    margin-left: var(--ant-margin-xs);
+    color: black !important;
+
+    &:hover {
+      color: var(--secondary-color-3) !important;
+    }
+
+    &.ant-btn-color-dangerous:hover {
+      color: var(--ui-color-error) !important;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

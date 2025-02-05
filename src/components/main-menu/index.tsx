@@ -1,45 +1,82 @@
-import { Link, useMenu } from '@refinedev/core';
-import { Menu, Space } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
-import React from 'react';
-import { ThemedSiderV2 } from '@refinedev/antd';
+import { Layout, Menu, Row } from 'antd';
+import { Link } from '@refinedev/core';
+import React, { useState } from 'react';
+import { HomeIcon } from '../icons/home';
+import { LocationIcon } from '../icons/location';
+import { Logo } from '../title';
+import './style.scss';
+import { NotificationIcon } from '../icons/notification';
+import { HelpIcon } from '../icons/help';
+import { ArrowRightIcon } from '../icons/arrow.right';
+import { ArrowLeftIcon } from '../icons/arrow.left';
+import { useNavigate } from 'react-router-dom';
 
-export const MainMenu = (props: any) => {
-  const { menuItems } = useMenu();
+const { Sider } = Layout;
 
-  const customMenuItems = [
+export const MainMenu = () => {
+  const [collapsed, setCollapsed] = useState(true);
+  const navigate = useNavigate();
+
+  const toggleSider = () => {
+    setCollapsed((prev) => !prev);
+  };
+
+  const handleMenuClick = (key: string) => {
+    navigate(key); // ✅ Manually trigger navigation
+  };
+
+  const mainMenuItems = [
     {
-      key: 'home',
-      label: (
-        <Link to="/home">
-          <HomeOutlined
-            style={{ marginRight: 'var(--ant-menu-icon-margin-inline-end)' }}
-          />
-          <Space />
-          Home
-        </Link>
-      ),
+      key: 'overview',
+      label: 'Overview',
+      icon: <HomeIcon />,
+    },
+    {
+      key: 'locations',
+      label: 'Locations',
+      icon: <LocationIcon />,
     },
   ];
 
-  const menuList = menuItems.map((item) => (
-    <Menu.Item key={item.key} icon={item.icon}>
-      <Link to={item.route!}>{item.label}</Link>
-    </Menu.Item>
-  ));
+  const bottomMenuItems = [
+    {
+      key: 'notifications',
+      label: <Link to="/home">Notifications</Link>,
+      icon: <NotificationIcon />,
+    },
+    {
+      key: 'help',
+      label: <Link to="/home">Help</Link>,
+      icon: <HelpIcon />,
+    },
+  ];
 
   return (
-    <ThemedSiderV2
-      {...props}
-      fixed
-      render={() => (
-        <Menu mode="inline">
-          {customMenuItems.map((item) => (
-            <Menu.Item key={item.key}>{item.label}</Menu.Item>
-          ))}
-          {menuList}
-        </Menu>
-      )}
-    />
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={setCollapsed}
+      width={272}
+      trigger={null}
+      className="sider"
+    >
+      <Row style={{ minHeight: '130px' }}>
+        <Logo collapsed={collapsed} />
+      </Row>
+      <Row className="main-menu">
+        <Menu
+          mode="inline"
+          onClick={({ key }) => handleMenuClick(key)}
+          items={mainMenuItems}
+          style={{ width: '100%' }}
+        />
+      </Row>
+      <Row className="bottom-menu">
+        <Menu mode="inline" items={bottomMenuItems} style={{ width: '100%' }} />
+      </Row>
+      <div onClick={toggleSider} className="trigger">
+        {collapsed ? <ArrowRightIcon /> : <ArrowLeftIcon />}
+      </div>
+    </Sider>
   );
 };

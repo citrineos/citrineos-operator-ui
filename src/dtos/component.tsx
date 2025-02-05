@@ -1,0 +1,26 @@
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { BaseDto } from './base';
+
+export class ComponentDto extends BaseDto {
+  @IsNumber()
+  id!: number;
+
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  instance?: string | null;
+
+  @IsNumber()
+  @IsOptional()
+  evseDatabaseId!: number;
+
+  @IsNumber()
+  @IsOptional()
+  evseId?: number;
+
+  @IsNumber()
+  @IsOptional()
+  connectorId?: number;
+}
