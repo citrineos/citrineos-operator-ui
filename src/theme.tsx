@@ -62,6 +62,8 @@ const sharedTheme: ThemeConfig = {
     Table: {
       rowHoverBg: 'rgb(243,245,255)',
       rowExpandedBg: 'rgb(255, 255, 255)',
+      headerBg: 'rgb(243,245,255)',
+      lineHeight: 2.5,
     },
   },
 };

@@ -176,6 +176,7 @@ export const LocationsList = () => {
               <Row
                 className="view-charging-stations"
                 justify="end"
+                align="middle"
                 onClick={() => handleExpandToggle(record)}
               >
                 View All Charging Stations

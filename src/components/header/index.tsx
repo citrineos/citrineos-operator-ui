@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
       case MenuSection.OVERVIEW:
       default:
         return [
-          { key: '/home', label: 'Overview' },
+          { key: '/overview', label: 'Overview' },
           { key: '/locations', label: 'Locations' },
           { key: '/authorizations', label: 'Authorizations' },
           { key: '/transactions', label: 'Sessions' },

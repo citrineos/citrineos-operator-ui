@@ -70,6 +70,53 @@ main {
   padding: var(--ant-padding-xs) var(--ant-padding-xs);
 }
 
+.ant-table {
+  .selected-row{
+    background: var(--ant-table-row-hover-bg);
+    .column-id h4 {
+      color: var(--secondary-color-3);
+    }
+  }
+
+  .ant-table-expanded-row {
+    .nested {
+      padding: var(--ant-padding-md);
+
+      .ant-table {
+        margin-block: 0 !important;
+        margin-inline: 0 !important;
+      }
+    }
+  }
+
+  .arrow {
+    transition: 250ms ease-in-out;
+    &.rotate {
+      transform: rotate(180deg);
+    }
+  }
+
+  .column-actions {
+    button {
+      margin-left: var(--ant-margin-xs);
+      color: black !important;
+
+      &:hover {
+        color: var(--secondary-color-3) !important;
+      }
+
+      &.ant-btn-color-dangerous:hover {
+        color: var(--ui-color-error) !important;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
 .ant-drawer {
   .ant-drawer-body {
     padding: var(--ant-padding-xxs) var(--ant-padding-xs);

@@ -110,6 +110,7 @@ export const LocationsChargignStationsTable = ({
           <Row
             onClick={() => push(`/charging-stations/${record.id}`)}
             className="pointer"
+            align="middle"
           >
             View Station Detail <ArrowRightIcon />
           </Row>

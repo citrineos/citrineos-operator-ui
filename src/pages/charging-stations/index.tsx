@@ -2,24 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { AutoComplete, Button, Collapse, Layout } from 'antd';
 import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useTable } from '@refinedev/antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { plainToInstance } from 'class-transformer';
 import { FaChargingStation } from 'react-icons/fa';
 
 import { ResourceType } from '../../resource-type';
 import { GenericParameterizedView, GenericView } from '../../components/view';
-import { IDataModelListProps } from '@interfaces';
-import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   ADMIN_CHARGING_STATION_ACTIONS,
   CUSTOM_CHARGING_STATION_ACTIONS,
 } from '../../message';
 import { ChargingStation } from './ChargingStation';
-import { ChargingStationProps } from './ChargingStationProps';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { RootState } from '../../redux/store';
-import { GenericDataTable } from '../../components/data-model-table/editable';
 import { CustomActions } from '../../components/custom-actions';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 
@@ -28,11 +23,9 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_EDIT_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
-  CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
-import { ChargingStationsListQuery } from '../../graphql/types';
 import { GenericViewState } from '@enums';
+import { ChargingStationsList } from './list/charging.stations.list';
 
 const { Panel } = Collapse;
 const { Sider, Content } = Layout;
@@ -154,29 +147,6 @@ export const ChargingStationsView: React.FC = () => {
         </Sider>
       </Layout>
     </Layout>
-  );
-};
-
-export const ChargingStationsList = (props: IDataModelListProps) => {
-  const { tableProps: _tableProps } = useTable<ChargingStationsListQuery>({
-    resource: ResourceType.CHARGING_STATIONS,
-    sorters: DEFAULT_SORTERS,
-    filters: props.filters,
-    metaData: {
-      gqlQuery: CHARGING_STATIONS_LIST_QUERY,
-    },
-  });
-
-  return (
-    <GenericDataTable
-      dtoClass={ChargingStation}
-      customActions={CUSTOM_CHARGING_STATION_ACTIONS}
-      fieldAnnotations={{
-        [ChargingStationProps.evses]: {
-          customActions: [TriggerMessageForEvseCustomAction],
-        },
-      }}
-    />
   );
 };
 
