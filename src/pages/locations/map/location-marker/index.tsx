@@ -2,11 +2,11 @@ import React from 'react';
 import { Button } from 'antd';
 import { useNavigation } from '@refinedev/core';
 import './style.scss';
-import { ResourceType } from '../../../resource-type';
-import { Locations } from '../../../graphql/schema.types';
+import { ResourceType } from '../../../../resource-type';
+import { LocationDto } from '../../../../dtos/location';
 
 interface LocationMarkerProps {
-  location: Locations;
+  location: LocationDto;
 }
 
 export const LocationMarker: React.FC<LocationMarkerProps> = ({ location }) => {
