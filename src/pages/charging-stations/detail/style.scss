@@ -1,5 +1,7 @@
-main .content-inner-wrap {
-  padding: 0;
-  border-radius: 0;
-  background-color: transparent;
+main[class*='content-charging-stations-'] {
+  .content-inner-wrap {
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+  }
 }
