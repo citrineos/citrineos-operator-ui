@@ -56,6 +56,17 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       locationId
       createdAt
       updatedAt
+      Location {
+        name
+        address
+        city
+        postalCode
+        state
+        country
+        coordinates
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

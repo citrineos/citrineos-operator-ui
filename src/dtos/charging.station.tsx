@@ -6,6 +6,7 @@ import { BaseDto } from './base';
 import { TransactionDto } from './transaction';
 import { OCPPLogsDto } from './ocpp.logs';
 import { LatestStatusNotificationDto } from './latest.status.notification';
+import { LocationDto } from './location';
 
 export class ChargingStationDto extends BaseDto {
   @IsString()
@@ -43,4 +44,9 @@ export class ChargingStationDto extends BaseDto {
   @IsOptional()
   @Type(() => OCPPLogsDto)
   ocppLogs?: OCPPLogsDto[];
+
+  @IsOptional()
+  @Type(() => LocationDto)
+  @Expose({ name: 'Location' })
+  location?: Partial<LocationDto>;
 }

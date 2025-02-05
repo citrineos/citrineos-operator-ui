@@ -5,11 +5,11 @@ import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { plainToInstance } from 'class-transformer';
 import { PlusIcon } from '../../../components/icons/plus';
 import { useNavigation } from '@refinedev/core';
 import { ChargingStationDto } from '../../../dtos/charging.station';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right';
+import { getPlainToInstanceOptions } from '@util/tables';
 
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
@@ -24,14 +24,7 @@ export const ChargingStationsList = () => {
     metaData: {
       gqlQuery: CHARGING_STATIONS_LIST_QUERY,
     },
-    queryOptions: {
-      select: (data) => ({
-        ...data,
-        data: data.data.map((item) =>
-          plainToInstance(ChargingStationDto, item),
-        ),
-      }),
-    },
+    queryOptions: getPlainToInstanceOptions(ChargingStationDto),
   });
 
   const onSearch: SearchProps['onSearch'] = (value, _e, info) => {

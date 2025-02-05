@@ -11,9 +11,9 @@ import { EditIcon } from '../../../components/icons/edit';
 import { TrashIcon } from '../../../components/icons/trash';
 import { ResourceType } from '../../../resource-type';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { plainToInstance } from 'class-transformer';
 import { PlusIcon } from '../../../components/icons/plus';
 import { useNavigation } from '@refinedev/core';
+import { getPlainToInstanceOptions } from '@util/tables';
 
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
@@ -29,12 +29,7 @@ export const LocationsList = () => {
     metaData: {
       gqlQuery: LOCATIONS_LIST_QUERY,
     },
-    queryOptions: {
-      select: (data) => ({
-        ...data,
-        data: data.data.map((item) => plainToInstance(LocationDto, item)),
-      }),
-    },
+    queryOptions: getPlainToInstanceOptions(LocationDto),
   });
 
   const handleExpandToggle = (record: LocationDto) => {

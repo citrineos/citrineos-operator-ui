@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LOCATIONS_CREATE_MUTATION, LOCATIONS_GET_QUERY } from '../queries';
-import { Button, Col, Form, Input, message, Row, Select } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select, Upload } from 'antd';
 import { useForm } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';
 import { Country, countryStateData } from '../country.state.data';
@@ -11,6 +11,7 @@ import { getSerializedValues } from '@util/middleware';
 import { LocationDto } from '../../../dtos/location';
 import { useNavigation } from '@refinedev/core';
 import { UseFormProps } from '@refinedev/antd/src/hooks/form/useForm';
+import { UploadOutlined } from '@ant-design/icons';
 
 export const LocationsCreate = () => {
   const [states, setStates] = useState<string[]>(countryStateData[Country.USA]);
@@ -211,27 +212,38 @@ export const LocationsCreate = () => {
           </Row>
           <Row style={{ marginTop: '10px' }}>
             <Col>
-              <Button
-                type="default"
-                onClick={handleGeocode}
-                data-testid="geocode-button"
-              >
-                Get Coordinates
-              </Button>
-              <Form.Item>
+              <Row style={{ marginBottom: '20px' }}>
                 <Button
-                  type="primary"
-                  htmlType="submit"
-                  data-testid="locations-create-form-submit"
+                  type="default"
+                  onClick={handleGeocode}
+                  data-testid="geocode-button"
                 >
-                  Submit
+                  Get Coordinates
                 </Button>
-              </Form.Item>
+              </Row>
+              <Row style={{ marginBottom: '10px' }}>
+                <Upload>
+                  <Button icon={<UploadOutlined />}>Upload Image</Button>
+                </Upload>
+              </Row>
+              <Row>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    data-testid="locations-create-form-submit"
+                  >
+                    Submit
+                  </Button>
+                </Form.Item>
+              </Row>
             </Col>
           </Row>
         </Col>
-        <Col span="12">
-          <strong>Please select a location</strong>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <Row>
+            <strong>Please select a location</strong>
+          </Row>
           <MapLocationPicker
             point={
               formProps.form?.getFieldValue(['coordinates', 'latitude']) &&
@@ -246,7 +258,7 @@ export const LocationsCreate = () => {
             zoom={3}
             onLocationSelect={handleLocationSelect}
           />
-        </Col>
+        </div>
       </Row>
     </Form>
   );
