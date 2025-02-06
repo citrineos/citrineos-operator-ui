@@ -5,7 +5,7 @@ import { ResourceType } from '../../resource-type';
 import { MessageInfos } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { ChargingStationsList } from '../charging-stations';
+// import { ChargingStationsList } from '../charging-stations';
 import { MessagePriorityEnumType, MessageStateEnumType } from '@citrineos/base';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
@@ -45,7 +45,8 @@ export const MESSAGE_INFOS_COLUMNS = (
         const filter = DEFAULT_EXPANDED_DATA_FILTER('id', 'eq', stationId);
 
         return (
-          <ExpandableColumn
+          <div></div>
+          /*<ExpandableColumn
             initialContent={stationId}
             expandedContent={
               <ChargingStationsList
@@ -56,7 +57,7 @@ export const MESSAGE_INFOS_COLUMNS = (
               />
             }
             viewTitle={`Charging Station linked to Message Info with ID ${record.databaseId}`}
-          />
+          />*/
         );
       },
     },

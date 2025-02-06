@@ -3,5 +3,36 @@ main[class*='content-charging-stations-'] {
     padding: 0;
     border-radius: 0;
     background-color: transparent;
+    box-shadow: none;
+  }
+
+  .ant-card {
+    box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--ant-margin-xl);
+  }
+}
+
+.image-placeholder {
+  width: 164px;
+  height: 164px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    color: var(--grayscale-color-1);
+  }
+}
+
+.border-left {
+  border-left: 1px solid var(--grayscale-color-6);
+  padding-left: var(--ant-padding-md);
+}
+
+.station-details {
+  table td:nth-child(2) {
+    padding-left: var(--ant-padding-md);
   }
 }

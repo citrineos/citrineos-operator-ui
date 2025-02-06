@@ -65,6 +65,12 @@ const sharedTheme: ThemeConfig = {
       headerBg: 'rgb(243,245,255)',
       lineHeight: 2.5,
     },
+    Tabs: {
+      inkBarColor: 'rgb(255,174,11)',
+      itemActiveColor: 'rgb(255,174,11)',
+      itemHoverColor: 'rgb(255,174,11)',
+      itemSelectedColor: 'rgb(255,174,11)',
+    },
   },
 };
 
