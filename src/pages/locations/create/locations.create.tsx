@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { LOCATIONS_CREATE_MUTATION, LOCATIONS_GET_QUERY } from '../queries';
-import { Button, Col, Form, Input, message, Row, Select, Upload } from 'antd';
-import { useForm } from '@refinedev/antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Row,
+  Select,
+  Upload,
+} from 'antd';
+import { useForm, UseFormProps } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';
 import { Country, countryStateData } from '../country.state.data';
 import { MapLocationPicker } from '../../../components/map/map.location.picker';
@@ -10,11 +20,14 @@ import { geocodeAddress, getAddressComponent } from '@util/geocoding';
 import { getSerializedValues } from '@util/middleware';
 import { LocationDto } from '../../../dtos/location';
 import { useNavigation } from '@refinedev/core';
-import { UseFormProps } from '@refinedev/antd/src/hooks/form/useForm';
 import { UploadOutlined } from '@ant-design/icons';
 
 export const LocationsCreate = () => {
   const [states, setStates] = useState<string[]>(countryStateData[Country.USA]);
+  const [selectedPoint, setSelectedPoint] = useState<GeoPoint | undefined>(
+    undefined,
+  );
+
   const { replace } = useNavigation();
 
   const obj: UseFormProps = {
@@ -44,6 +57,7 @@ export const LocationsCreate = () => {
   };
 
   const handleLocationSelect = (point: GeoPoint) => {
+    setSelectedPoint(point);
     formProps.form?.setFieldsValue({
       coordinates: { latitude: point.latitude, longitude: point.longitude },
     });
@@ -90,6 +104,7 @@ export const LocationsCreate = () => {
         coordinates: { latitude: point.latitude, longitude: point.longitude },
       };
       formProps?.form?.setFieldsValue(addressObj);
+      setSelectedPoint(point);
       message.success('Address geocoded successfully.');
     } catch (error: any) {
       message.error('Error fetching coordinates.');
@@ -196,7 +211,22 @@ export const LocationsCreate = () => {
                 name={['coordinates', 'latitude']}
                 data-testid="latitude"
               >
-                <Input placeholder="Click map or enter manually" />
+                <InputNumber
+                  placeholder="Click map or enter manually"
+                  onChange={(value: number | null) => {
+                    const lat = value;
+                    const lng = parseFloat(
+                      formProps.form?.getFieldValue([
+                        'coordinates',
+                        'longitude',
+                      ]),
+                    );
+
+                    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+                      setSelectedPoint(new GeoPoint(lat, lng));
+                    }
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -206,7 +236,21 @@ export const LocationsCreate = () => {
                 name={['coordinates', 'longitude']}
                 data-testid="longitude"
               >
-                <Input placeholder="Click map or enter manually" />
+                <InputNumber
+                  placeholder="Click map or enter manually"
+                  onChange={(value: number | null) => {
+                    const lat = parseFloat(
+                      formProps.form?.getFieldValue([
+                        'coordinates',
+                        'latitude',
+                      ]),
+                    );
+                    const lng = value;
+                    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+                      setSelectedPoint(new GeoPoint(lat, lng));
+                    }
+                  }}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -245,15 +289,7 @@ export const LocationsCreate = () => {
             <strong>Please select a location</strong>
           </Row>
           <MapLocationPicker
-            point={
-              formProps.form?.getFieldValue(['coordinates', 'latitude']) &&
-              formProps.form?.getFieldValue(['coordinates', 'longitude'])
-                ? new GeoPoint(
-                    formProps.form?.getFieldValue(['coordinates', 'latitude']),
-                    formProps.form?.getFieldValue(['coordinates', 'longitude']),
-                  )
-                : undefined
-            }
+            point={selectedPoint}
             defaultCenter={{ lat: 39.8283, lng: -98.5795 }}
             zoom={3}
             onLocationSelect={handleLocationSelect}
