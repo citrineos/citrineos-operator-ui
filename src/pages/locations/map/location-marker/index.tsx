@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useNavigation } from '@refinedev/core';
 import './style.scss';
 import { ResourceType } from '../../../../resource-type';
-import { LocationDto } from '../../../../dtos/location';
+import { LocationDto } from '../../../../dtos/location.dto';
 
 interface LocationMarkerProps {
   location: LocationDto;

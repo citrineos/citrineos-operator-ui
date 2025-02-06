@@ -41,7 +41,7 @@ import { routes as OverviewRoutes } from './pages/overview';
 import { routes as AuthorizationsRoutes } from './pages/authorizations';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { darkTheme, lightTheme } from './theme';
-import { MainMenu } from './components/main-menu';
+import { MainMenu } from './components/main-menu/main.menu';
 import {
   checkTelemetryConsent,
   saveTelemetryConsent,

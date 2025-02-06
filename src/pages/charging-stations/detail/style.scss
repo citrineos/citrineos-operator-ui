@@ -32,6 +32,8 @@ main[class*='content-charging-stations-'] {
 }
 
 .station-details {
+  padding: var(--ant-padding-md) 0;
+
   table td:nth-child(2) {
     padding-left: var(--ant-padding-md);
   }

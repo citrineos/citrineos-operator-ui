@@ -1,8 +1,8 @@
-import { LocationDto } from '../../../dtos/location';
+import { LocationDto } from '../../../dtos/location.dto';
 import { Row, Table } from 'antd';
 import React from 'react';
-import { ChargingStationDto } from '../../../dtos/charging.station';
-import { ArrowRightIcon } from '../../../components/icons/arrow.right';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
+import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import moment from 'moment';
 import { useNavigation } from '@refinedev/core';
 

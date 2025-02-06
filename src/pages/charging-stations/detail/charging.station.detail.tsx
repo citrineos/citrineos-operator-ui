@@ -1,4 +1,4 @@
-import { ChargingStationDto } from '../../../dtos/charging.station';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import React from 'react';
 import { useOne } from '@refinedev/core';
 import { Button, Card, Flex, Tabs, Typography } from 'antd';
@@ -8,7 +8,7 @@ import { ResourceType } from '../../../resource-type';
 import './style.scss';
 import { EditOutlined } from '@ant-design/icons';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { ChargingStationIcon } from '../../../components/icons/charging.station';
+import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
 
 const { Title, Text } = Typography;
 
@@ -40,7 +40,6 @@ export const ChargingStationDetail: React.FC = () => {
               <ChargingStationIcon width={108} height={108} />
             </div>
           </Flex>
-
           <Flex vertical flex="1 1 auto">
             <Flex>
               <Title level={3}>{station.id || 'Station Name'}</Title>
@@ -132,14 +131,17 @@ export const ChargingStationDetail: React.FC = () => {
                 <Button type="text" icon={<EditOutlined />} />
               </Flex>
             </Flex>
-            <Flex>
-              <Flex gap={16} justify="space-between" align="center">
-                <Flex>
-                  <Button type="primary">Start Transaction</Button>
-                  <Button type="primary" danger style={{ marginLeft: '8px' }}>
-                    Stop Transaction
-                  </Button>
-                  <Button style={{ marginLeft: '8px' }}>Reset</Button>
+            <Flex style={{ marginTop: '32px' }}>
+              <Flex
+                gap={16}
+                justify="space-between"
+                align="center"
+                flex="1 1 auto"
+              >
+                <Flex gap={16} flex="1 1 auto">
+                  <Button className="secondary">Start Transaction</Button>
+                  <Button className="secondary">Stop Transaction</Button>
+                  <Button className="secondary">Reset</Button>
                 </Flex>
                 <Flex>
                   <Text style={{ color: '#5469d4', cursor: 'pointer' }}>

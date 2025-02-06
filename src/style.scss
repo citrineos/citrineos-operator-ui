@@ -66,6 +66,16 @@ main {
   }
 }
 
+button.secondary{
+  background-color: var(--secondary-color-2);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover{
+    background-color: var(--secondary-color-3);
+    color: white;
+  }
+}
+
 .ant-table-wrapper .ant-table-cell,
 .ant-table-wrapper .ant-table-thead > tr > th,
 .ant-table-wrapper .ant-table-tbody > tr > th,

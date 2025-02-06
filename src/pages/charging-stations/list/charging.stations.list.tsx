@@ -5,10 +5,10 @@ import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { PlusIcon } from '../../../components/icons/plus';
+import { PlusIcon } from '../../../components/icons/plus.icon';
 import { useNavigation } from '@refinedev/core';
-import { ChargingStationDto } from '../../../dtos/charging.station';
-import { ArrowRightIcon } from '../../../components/icons/arrow.right';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
+import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { getPlainToInstanceOptions } from '@util/tables';
 
 type SearchProps = GetProps<typeof Input.Search>;

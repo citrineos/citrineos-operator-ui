@@ -1,7 +1,7 @@
 import { AutoComplete, Input, Row } from 'antd';
 import { GoogleMapWithMarkers } from '../../../components/map/map.with.markers';
 import React, { useState } from 'react';
-import { LocationDto } from '../../../dtos/location';
+import { LocationDto } from '../../../dtos/location.dto';
 import { LocationMarker } from './location-marker';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';

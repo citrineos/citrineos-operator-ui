@@ -1,17 +1,17 @@
 import { Button, Col, GetProps, Input, Row, Table } from 'antd';
 import React, { useState } from 'react';
 import { LOCATIONS_DELETE_MUTATION, LOCATIONS_LIST_QUERY } from '../queries';
-import { LocationDto } from '../../../dtos/location';
+import { LocationDto } from '../../../dtos/location.dto';
 import './style.scss';
-import { ArrowDownIcon } from '../../../components/icons/arrow.down';
+import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { LocationsChargignStationsTable } from './locations.charging.stations.table';
 import { DeleteButton, useTable } from '@refinedev/antd';
-import { EyeIcon } from '../../../components/icons/eye';
-import { EditIcon } from '../../../components/icons/edit';
-import { TrashIcon } from '../../../components/icons/trash';
+import { EyeIcon } from '../../../components/icons/eye.icon';
+import { EditIcon } from '../../../components/icons/edit.icon';
+import { TrashIcon } from '../../../components/icons/trash.icon';
 import { ResourceType } from '../../../resource-type';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { PlusIcon } from '../../../components/icons/plus';
+import { PlusIcon } from '../../../components/icons/plus.icon';
 import { useNavigation } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
 

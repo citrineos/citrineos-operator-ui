@@ -28,7 +28,7 @@ const sharedTheme: ThemeConfig = {
   },
   components: {
     Button: {
-      controlHeight: 36,
+      controlHeight: 40,
       colorPrimary: 'rgb(255,174,11)',
       colorPrimaryActive: 'rgb(227,137,0)',
       colorPrimaryHover: 'rgb(227,137,0)',
@@ -36,16 +36,16 @@ const sharedTheme: ThemeConfig = {
       paddingInline: 18,
     },
     Select: {
-      controlHeight: 36,
+      controlHeight: 40,
     },
     Input: {
-      controlHeight: 36,
+      controlHeight: 40,
     },
     InputNumber: {
-      controlHeight: 36,
+      controlHeight: 40,
     },
     DatePicker: {
-      controlHeight: 36,
+      controlHeight: 40,
     },
     Menu: {
       itemSelectedColor: 'rgb(110,135,255)',

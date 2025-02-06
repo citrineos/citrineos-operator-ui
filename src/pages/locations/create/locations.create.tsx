@@ -18,7 +18,7 @@ import { MapLocationPicker } from '../../../components/map/map.location.picker';
 import { GeoPoint } from '@util/GeoPoint';
 import { geocodeAddress, getAddressComponent } from '@util/geocoding';
 import { getSerializedValues } from '@util/middleware';
-import { LocationDto } from '../../../dtos/location';
+import { LocationDto } from '../../../dtos/location.dto';
 import { useNavigation } from '@refinedev/core';
 import { UploadOutlined } from '@ant-design/icons';
 
