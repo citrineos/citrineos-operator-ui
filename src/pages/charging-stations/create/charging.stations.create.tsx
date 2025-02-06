@@ -87,7 +87,6 @@ export const ChargingStationCreate = () => {
     );
     if (selected) {
       const location = JSON.parse(selected.label as string) as LocationDto;
-      setSelectedLocation(location);
       formProps.form?.setFieldsValue({
         locationId: value,
         locationName: `${location.name} - ${location.address}, ${location.city}, ${location.state} ${location.postalCode}`,
