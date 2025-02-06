@@ -1,4 +1,4 @@
-main[class*='content-charging-stations-'] {
+main[class*='content-charging-stations-']:not(.content-charging-stations-new) {
   .content-inner-wrap {
     padding: 0;
     border-radius: 0;

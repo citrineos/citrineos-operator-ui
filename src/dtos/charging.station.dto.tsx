@@ -8,6 +8,18 @@ import { OCPPLogsDto } from './ocpp.logs.dto';
 import { LatestStatusNotificationDto } from './latest.status.notification.dto';
 import { LocationDto } from './location.dto';
 
+export enum ChargingStationDtoProps {
+  id = 'id',
+  isOnline = 'isOnline',
+  locationId = 'locationId',
+  statusNotifications = 'statusNotifications',
+  latestStatusNotifications = 'latestStatusNotifications',
+  evses = 'evses',
+  transactions = 'transactions',
+  ocppLogs = 'ocppLogs',
+  location = 'location',
+}
+
 export class ChargingStationDto extends BaseDto {
   @IsString()
   id!: string;

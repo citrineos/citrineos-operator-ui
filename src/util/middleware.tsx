@@ -11,7 +11,6 @@ export const getValuesFromInput = (
       input[property] = dayjs(input[property]).toISOString();
     }
   }
-  debugger;
   return instanceToPlain(plainToInstance(dtoClass, input));
 };
 

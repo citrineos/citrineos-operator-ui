@@ -4,7 +4,6 @@ import { VARIABLE_MONITORINGS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { VariableMonitorings } from '../../graphql/schema.types';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { renderAssociatedStationId } from '../charging-stations';
 import { MonitorEnumType } from '@citrineos/base';
 import { StatusIcon } from '../../components/status-icon';
 import React from 'react';
@@ -28,7 +27,7 @@ export const VARIABLE_MONITORINGS_COLUMNS = (
     {
       dataIndex: 'stationId',
       title: 'Station ID',
-      render: renderAssociatedStationId as any,
+      // render: renderAssociatedStationId as any,
     },
     {
       dataIndex: 'transaction',

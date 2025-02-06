@@ -3,7 +3,6 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { RESERVATIONS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { Reservations } from '../../graphql/schema.types';
-import { renderAssociatedStationId } from '../charging-stations';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';
@@ -28,7 +27,7 @@ export const RESERVATIONS_COLUMNS = (
     {
       dataIndex: 'stationId',
       title: 'Station ID',
-      render: renderAssociatedStationId as any,
+      // render: renderAssociatedStationId as any,
     },
     {
       dataIndex: 'expiryDateTime',

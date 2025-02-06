@@ -3,8 +3,21 @@ import { GeoPoint, IsGeoPoint } from '@util/GeoPoint';
 import { Expose, Type } from 'class-transformer';
 import { ToClass, ToPlain } from '@util/Transformers';
 import { ChargingStationDto } from './charging.station.dto';
+import { BaseDto } from './base.dto';
 
-export class LocationDto {
+export enum LocationDtoProps {
+  id = 'id',
+  name = 'name',
+  address = 'address',
+  city = 'city',
+  postalCode = 'postalCode',
+  state = 'state',
+  country = 'country',
+  coordinates = 'coordinates',
+  chargingStations = 'chargingStations',
+}
+
+export class LocationDto extends BaseDto {
   @IsString()
   id!: string;
 

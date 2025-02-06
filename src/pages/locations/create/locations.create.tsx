@@ -15,10 +15,10 @@ import { useForm, UseFormProps } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';
 import { Country, countryStateData } from '../country.state.data';
 import { MapLocationPicker } from '../../../components/map/map.location.picker';
-import { GeoPoint } from '@util/GeoPoint';
+import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
 import { geocodeAddress, getAddressComponent } from '@util/geocoding';
 import { getSerializedValues } from '@util/middleware';
-import { LocationDto } from '../../../dtos/location.dto';
+import { LocationDto, LocationDtoProps } from '../../../dtos/location.dto';
 import { useNavigation } from '@refinedev/core';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -43,13 +43,13 @@ export const LocationsCreate = () => {
       gqlQuery: LOCATIONS_GET_QUERY,
       gqlMutation: LOCATIONS_CREATE_MUTATION,
     },
-  } as any;
+  };
 
   const { formProps } = useForm(obj);
 
   const onFinish = (input: any) => {
-    const newLocation: any = getSerializedValues(input, LocationDto);
-    formProps.onFinish?.(newLocation);
+    const newItem: any = getSerializedValues(input, LocationDto);
+    formProps.onFinish?.(newItem);
   };
 
   const handleCountryChange = (value: Country) => {
@@ -78,7 +78,6 @@ export const LocationsCreate = () => {
 
   const handleGeocode = async () => {
     const address = getFullAddress();
-    console.log('address', address);
     if (!address) {
       message.warning('Please enter an address first.');
       return;
@@ -121,42 +120,53 @@ export const LocationsCreate = () => {
       <Row gutter={16}>
         <Col span="12">
           <Form.Item
-            key="name"
+            key={LocationDtoProps.name}
             label="Name"
-            name="name"
-            required={true}
-            data-testid="name"
+            name={LocationDtoProps.name}
+            rules={[
+              { required: true, message: 'Please seelect location name' },
+            ]}
+            data-testid={LocationDtoProps.name}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            key="address"
+            key={LocationDtoProps.address}
             label="Address"
-            name="address"
-            required={true}
-            data-testid="address"
+            name={LocationDtoProps.address}
+            rules={[
+              { required: true, message: 'Please enter location address' },
+            ]}
+            data-testid={LocationDtoProps.address}
           >
             <Input />
           </Form.Item>
           <Row gutter={16}>
             <Col span="12">
               <Form.Item
-                key="city"
+                key={LocationDtoProps.city}
                 label="City"
-                name="city"
-                required={true}
-                data-testid="city"
+                name={LocationDtoProps.city}
+                rules={[
+                  { required: true, message: 'Please enter location city' },
+                ]}
+                data-testid={LocationDtoProps.city}
               >
                 <Input />
               </Form.Item>
             </Col>
             <Col span="12">
               <Form.Item
-                key="postalCode"
+                key={LocationDtoProps.postalCode}
                 label="Postal Code"
-                name="postalCode"
-                required={true}
-                data-testid="postalCode"
+                name={LocationDtoProps.postalCode}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please enter location postal code',
+                  },
+                ]}
+                data-testid={LocationDtoProps.postalCode}
               >
                 <Input />
               </Form.Item>
@@ -165,11 +175,13 @@ export const LocationsCreate = () => {
           <Row gutter={16}>
             <Col span="12">
               <Form.Item
-                key="state"
+                key={LocationDtoProps.state}
                 label="State"
-                name="state"
-                required={true}
-                data-testid="state"
+                name={LocationDtoProps.state}
+                rules={[
+                  { required: true, message: 'Please select location state' },
+                ]}
+                data-testid={LocationDtoProps.state}
               >
                 <Select placeholder="Select a state" allowClear>
                   {states.map((state) => (
@@ -182,12 +194,14 @@ export const LocationsCreate = () => {
             </Col>
             <Col span="12">
               <Form.Item
-                key="country"
+                key={LocationDtoProps.country}
                 label="Country"
-                name="country"
+                name={LocationDtoProps.country}
                 initialValue={Country.USA}
-                required={true}
-                data-testid="country"
+                rules={[
+                  { required: true, message: 'Please select location country' },
+                ]}
+                data-testid={LocationDtoProps.country}
               >
                 <Select
                   placeholder="Select a country"
@@ -207,9 +221,9 @@ export const LocationsCreate = () => {
             <Col span={12}>
               <Form.Item
                 label="Latitude"
-                key="latitude"
-                name={['coordinates', 'latitude']}
-                data-testid="latitude"
+                key={GeoPointProps.latitude}
+                name={[LocationDtoProps.coordinates, GeoPointProps.latitude]}
+                data-testid={GeoPointProps.latitude}
               >
                 <InputNumber
                   placeholder="Click map or enter manually"
@@ -217,8 +231,8 @@ export const LocationsCreate = () => {
                     const lat = value;
                     const lng = parseFloat(
                       formProps.form?.getFieldValue([
-                        'coordinates',
-                        'longitude',
+                        LocationDtoProps.coordinates,
+                        GeoPointProps.longitude,
                       ]),
                     );
 
@@ -232,17 +246,17 @@ export const LocationsCreate = () => {
             <Col span={12}>
               <Form.Item
                 label="Longitude"
-                key="longitude"
-                name={['coordinates', 'longitude']}
-                data-testid="longitude"
+                key={GeoPointProps.longitude}
+                name={[LocationDtoProps.coordinates, GeoPointProps.longitude]}
+                data-testid={GeoPointProps.longitude}
               >
                 <InputNumber
                   placeholder="Click map or enter manually"
                   onChange={(value: number | null) => {
                     const lat = parseFloat(
                       formProps.form?.getFieldValue([
-                        'coordinates',
-                        'latitude',
+                        LocationDtoProps.coordinates,
+                        GeoPointProps.latitude,
                       ]),
                     );
                     const lng = value;

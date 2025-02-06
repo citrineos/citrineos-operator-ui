@@ -2,6 +2,11 @@ import { TransformDate } from '@util/TransformDate';
 import { IsOptional } from 'class-validator';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
 
+export enum BaseDtoProps {
+  updatedAt = 'updatedAt',
+  createdAt = 'createdAt',
+}
+
 export class BaseDto {
   @TransformDate()
   @IsOptional()
