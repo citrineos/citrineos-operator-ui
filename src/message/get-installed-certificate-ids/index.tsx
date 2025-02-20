@@ -7,6 +7,10 @@ import { validateSync } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { GetInstalledCertificateIdsRequest } from './model';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
+import {
+  generateErrorMessageFromResponses,
+  responseSuccessCheck,
+} from '../util';
 
 export interface GetInstalledCertificateIdsProps {
   station: ChargingStation;
@@ -59,7 +63,7 @@ export const GetInstalledCertificateIds: React.FC<
         request,
       );
 
-      if (response && response.success) {
+      if (responseSuccessCheck(response)) {
         notification.success({
           message: 'Success',
           description:
@@ -68,8 +72,7 @@ export const GetInstalledCertificateIds: React.FC<
       } else {
         notification.error({
           message: 'Request Failed',
-          description:
-            'The request to get installed certificate IDs did not receive a successful response.',
+          description: `The request to get installed certificate IDs did not receive a successful response. ${generateErrorMessageFromResponses(response)}`,
         });
       }
     } catch (error: any) {

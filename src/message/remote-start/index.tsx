@@ -16,6 +16,10 @@ import { IdToken, IdTokenProps } from '../../pages/id-tokens/id-token';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
 import { EvseProps } from '../../pages/evses/EvseProps';
+import {
+  generateErrorMessageFromResponses,
+  responseSuccessCheck,
+} from '../util';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -100,7 +104,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
         request,
       );
 
-      if (response && response.success) {
+      if (responseSuccessCheck(response)) {
         notification.success({
           message: 'Success',
           description: 'The start transaction request was successful.',
@@ -108,8 +112,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
       } else {
         notification.error({
           message: 'Request Failed',
-          description:
-            'The start transaction request did not receive a successful response.',
+          description: `The start transaction request did not receive a successful response. ${generateErrorMessageFromResponses(response)}`,
         });
       }
     } catch (error: any) {

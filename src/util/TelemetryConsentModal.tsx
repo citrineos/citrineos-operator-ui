@@ -3,7 +3,7 @@ import { Modal, Button } from 'antd';
 import { BaseRestClient } from './BaseRestClient';
 
 const TELEMETRY_CONSENT_KEY = 'TELEMETRY_CONSENT';
-const client = new BaseRestClient(true);
+const client = new BaseRestClient(null);
 
 interface TelemetryConsentModalProps {
   /** Whether the modal is visible */

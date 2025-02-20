@@ -2,7 +2,7 @@ import React from 'react';
 import { Form } from 'antd';
 import { GenericForm } from '../../components/form';
 import { plainToInstance } from 'class-transformer';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { MessageConfirmation } from '../MessageConfirmation';
 
@@ -36,8 +36,7 @@ export const ClearCache: React.FC<ClearCacheProps> = ({ station }) => {
       url: `/evdriver/clearCache?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: classInstance,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response?.success,
+      responseSuccessCheck,
     });
   };
 

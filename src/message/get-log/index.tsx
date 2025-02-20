@@ -10,6 +10,10 @@ import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { OCPP2_0_1 } from '@citrineos/base';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
+import {
+  generateErrorMessageFromResponses,
+  responseSuccessCheck,
+} from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -80,7 +84,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
         request,
       );
 
-      if (response && response.success) {
+      if (responseSuccessCheck(response)) {
         notification.success({
           message: 'Success',
           description: 'The get log request was successful.',
@@ -88,8 +92,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
       } else {
         notification.error({
           message: 'Request Failed',
-          description:
-            'The get log request did not receive a successful response.',
+          description: `The get log request did not receive a successful response. ${generateErrorMessageFromResponses(response)}`,
         });
       }
     } catch (error: any) {

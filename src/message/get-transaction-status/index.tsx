@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import { IsNotEmpty } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '@util/consts';
@@ -82,8 +82,7 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({
       url: `/transactions/getTransactionStatus?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response && response.success,
+      responseSuccessCheck,
     });
   };
 

@@ -8,7 +8,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { OCPP2_0_1 } from '@citrineos/base';
-import { showError, showSucces } from '../util';
+import {
+  generateErrorMessageFromResponses,
+  responseSuccessCheck,
+  showError,
+  showSuccess,
+} from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
@@ -90,7 +95,7 @@ export const requestDeleteCertificate = async (
       },
     );
 
-    if (response && response.success) {
+    if (responseSuccessCheck(response)) {
       notification.success({
         message: 'Success',
         description: 'The delete certificate request was successful.',
@@ -99,9 +104,7 @@ export const requestDeleteCertificate = async (
     } else {
       notification.error({
         message: 'Request Failed',
-        description:
-          'The delete certificate request did not receive a successful response. Response: ' +
-          JSON.stringify(response),
+        description: `The delete certificate request did not receive a successful response. ${generateErrorMessageFromResponses(response)}`,
         placement: 'topRight',
       });
     }
@@ -168,7 +171,7 @@ export const DeleteCertificate: React.FC<DeleteCertificateProps> = ({
             },
           },
         );
-        showSucces();
+        showSuccess();
       } catch (error: any) {
         showError(
           'The delete certificate request failed with message: ' +

@@ -14,7 +14,7 @@ import { MessageConfirmation } from '../MessageConfirmation';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { OCPP2_0_1 } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { GenericForm } from '../../components/form';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
@@ -149,8 +149,7 @@ export const SetVariables: React.FC<SetVariablesProps> = ({ station }) => {
         url: `/monitoring/setVariables?identifier=${station.id}&tenantId=1`,
         responseClass: MessageConfirmation,
         data: payload,
-        responseSuccessCheck: (response: MessageConfirmation) =>
-          response && response.success,
+        responseSuccessCheck,
       });
     }
   };

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Form } from 'antd';
 import { plainToInstance } from 'class-transformer';
 import { GenericForm } from '../../components/form';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { MessageConfirmation } from '../MessageConfirmation';
 import {
   ChangeAvailabilityProps,
@@ -49,8 +49,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       url: `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response && response.success,
+      responseSuccessCheck,
     });
   };
 

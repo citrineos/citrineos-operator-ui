@@ -72,7 +72,7 @@ export const CertificatesList: React.FC<IDataModelListProps> = ({
       responseClass: NewCertificateRequest,
       data: plainValues,
       responseSuccessCheck: (res: NewCertificateRequest) => !!res,
-      isDataUrl: true,
+      ocppVersion: null,
     });
     if (response !== undefined && response !== null) handleDrawerClose();
   };

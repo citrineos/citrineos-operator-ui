@@ -9,7 +9,12 @@ import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../pages/charging-station-sequences/queries';
-import { formatPem, readFileContent } from '../util';
+import {
+  formatPem,
+  generateErrorMessageFromResponses,
+  readFileContent,
+  responseSuccessCheck,
+} from '../util';
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL;
 
@@ -114,8 +119,8 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
     async (request: UpdateFirmwareRequest) => {
       setLoading(true);
       try {
-        const signingCertificate = await getSigningCertificate(request);
-        request.firmware.signingCertificate = signingCertificate;
+        request.firmware.signingCertificate =
+          await getSigningCertificate(request);
 
         const client = new BaseRestClient();
         const response = await client.post(
@@ -125,7 +130,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
           request,
         );
 
-        if (response && response.success) {
+        if (responseSuccessCheck(response)) {
           notification.success({
             message: 'Success',
             description: 'The update firmware request was successful.',
@@ -133,7 +138,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
         } else {
           notification.error({
             message: 'Request Failed',
-            description: 'The update firmware request was not successful.',
+            description: `The update firmware request was not successful. ${generateErrorMessageFromResponses(response)}`,
           });
         }
       } catch (error) {
