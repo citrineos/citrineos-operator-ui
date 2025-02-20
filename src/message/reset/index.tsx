@@ -9,7 +9,7 @@ import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Evse } from '../../pages/evses/Evse';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
 import { EvseProps } from '../../pages/evses/EvseProps';
@@ -73,8 +73,7 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
       url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response?.success,
+      responseSuccessCheck,
     });
   };
 

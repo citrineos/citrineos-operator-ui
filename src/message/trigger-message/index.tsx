@@ -7,6 +7,7 @@ import { GenericForm } from '../../components/form';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import {
   createClassWithoutProperty,
+  responseSuccessCheck,
   triggerMessageAndHandleResponse,
 } from '../util';
 import { NEW_IDENTIFIER } from '@util/consts';
@@ -170,8 +171,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       url: `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response && response.success,
+      responseSuccessCheck,
     });
   };
 

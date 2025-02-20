@@ -3,7 +3,7 @@ import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { IsNotEmpty } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { Form } from 'antd';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { MessageConfirmation } from '../MessageConfirmation';
 
 export interface UpdateAuthPasswordProps {
@@ -57,10 +57,9 @@ export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
     await triggerMessageAndHandleResponse({
       url: `/configuration/password`,
       responseClass: MessageConfirmation,
-      isDataUrl: true,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response && response.success,
+      ocppVersion: null,
+      responseSuccessCheck,
     });
   };
 

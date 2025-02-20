@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Constructable } from './Constructable';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
+import { OCPPVersion } from '../../../citrineos-core/00_Base';
 
 const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
 
@@ -21,11 +22,11 @@ export class BaseRestClient {
   private axiosInstance!: AxiosInstance;
   private _baseUrl: string;
 
-  constructor(dataBaseUrl = false) {
-    if (dataBaseUrl) {
+  constructor(ocppVersion: OCPPVersion | null = OCPPVersion.OCPP2_0_1) {
+    if (ocppVersion === null) {
       this._baseUrl = `${CITRINE_CORE_URL}/data/`;
     } else {
-      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/2.0.1`;
     }
     this.initAxiosInstance();
   }

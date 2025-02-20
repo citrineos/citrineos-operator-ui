@@ -48,7 +48,7 @@ export const DeleteStationNetworkProfiles: React.FC<
     await triggerMessageAndHandleResponse({
       url: url,
       responseClass: MessageConfirmation,
-      isDataUrl: true,
+      ocppVersion: null,
       data: undefined,
       responseSuccessCheck: () => true,
       method: HttpMethod.Delete,

@@ -2,7 +2,7 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { GET_ACTIVE_TRANSACTION_LIST_FOR_STATION } from '../queries';
 import { plainToInstance, Type } from 'class-transformer';
 import { GenericForm } from '../../components/form';
@@ -51,8 +51,7 @@ export const requestStopTransaction = async (
     url: `/evdriver/requestStopTransaction?identifier=${stationId}&tenantId=1`,
     responseClass: MessageConfirmation,
     data: { transactionId },
-    responseSuccessCheck: (response: MessageConfirmation) =>
-      response && response.success,
+    responseSuccessCheck,
     setLoading,
   });
 };

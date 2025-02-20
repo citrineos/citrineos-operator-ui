@@ -10,6 +10,10 @@ import { validateSync } from 'class-validator';
 import { MessageConfirmation } from '../MessageConfirmation';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { OCPP2_0_1 } from '@citrineos/base';
+import {
+  generateErrorMessageFromResponses,
+  responseSuccessCheck,
+} from '../util';
 
 export interface GetBaseReportProps {
   station: ChargingStation;
@@ -80,7 +84,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
         request,
       );
 
-      if (response && response.success) {
+      if (responseSuccessCheck(response)) {
         notification.success({
           message: 'Success',
           description: 'The get base report request was successful.',
@@ -88,8 +92,7 @@ export const GetBaseReport: React.FC<GetBaseReportProps> = ({ station }) => {
       } else {
         notification.error({
           message: 'Request Failed',
-          description:
-            'The get base report request did not receive a successful response.',
+          description: `The get base report request did not receive a successful response. ${generateErrorMessageFromResponses(response)}`,
         });
       }
     } catch (error: any) {

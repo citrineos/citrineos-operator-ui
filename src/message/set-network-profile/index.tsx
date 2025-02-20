@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { GenericForm } from '../../components/form';
 import { plainToInstance, Type } from 'class-transformer';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NetworkConnectionProfileType } from '../model/NetworkConnectionProfileType';
@@ -134,8 +134,7 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
       url: url,
       responseClass: MessageConfirmation,
       data: classInstance.setNetworkProfileRequest,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response && response.success,
+      responseSuccessCheck,
     });
   };
 

@@ -1,10 +1,11 @@
-import { HttpMethod } from '@citrineos/base';
+import { HttpMethod, OCPPVersion } from '@citrineos/base';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { Constructable } from '@util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
+import { MessageConfirmation } from './MessageConfirmation';
 
-export const showSucces = (payload?: string) => {
+export const showSuccess = (payload?: string) => {
   notification.success({
     message: 'Success',
     description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
@@ -31,7 +32,7 @@ export interface TriggerMessageAndHandleResponseProps<T> {
   responseClass: Constructable<T>;
   data: any;
   responseSuccessCheck: (response: T) => boolean;
-  isDataUrl?: boolean;
+  ocppVersion?: OCPPVersion | null;
   method?: HttpMethod;
   setLoading?: (loading: boolean) => void;
 }
@@ -41,7 +42,7 @@ export const triggerMessageAndHandleResponse = async <T,>({
   responseClass,
   data,
   responseSuccessCheck,
-  isDataUrl = false,
+  ocppVersion = OCPPVersion.OCPP2_0_1,
   method = HttpMethod.Post,
   setLoading,
 }: TriggerMessageAndHandleResponseProps<T>) => {
@@ -49,7 +50,7 @@ export const triggerMessageAndHandleResponse = async <T,>({
     if (setLoading) {
       setLoading(true);
     }
-    const client = new BaseRestClient(isDataUrl);
+    const client = new BaseRestClient(ocppVersion);
     let response = undefined;
     switch (method) {
       case HttpMethod.Post:
@@ -64,12 +65,11 @@ export const triggerMessageAndHandleResponse = async <T,>({
 
     // todo reuse handle response!
     if (responseSuccessCheck(response)) {
-      showSucces((response as any).payload);
+      showSuccess((response as any).payload);
     } else {
       let msg = 'The request did not receive a successful response.';
-      if ((response as any).payload) {
-        // todo incorrect response type?
-        msg += `Response payload: ${(response as any).payload}`;
+      if (response instanceof MessageConfirmation || Array.isArray(response)) {
+        msg += ` ${generateErrorMessageFromResponses(response)}`;
       }
       showError(msg);
     }
@@ -155,7 +155,39 @@ export function formatPem(pem: string): string | null {
   const formattedContent = base64Content.match(/.{1,64}/g)?.join('\n');
 
   // Reassemble the PEM with correct newlines
-  const formattedPem = `${header}\n${formattedContent}\n${footer}`;
-
-  return formattedPem;
+  return `${header}\n${formattedContent}\n${footer}`;
 }
+
+export const responseSuccessCheck = (
+  response: MessageConfirmation | MessageConfirmation[],
+) => {
+  if (Array.isArray(response)) {
+    return response.every((r) => r && r.success);
+  }
+  return response && response.success;
+};
+
+export const generateErrorMessageFromResponses = (
+  response: MessageConfirmation | MessageConfirmation[],
+) => {
+  let msg = '';
+  if (Array.isArray(response)) {
+    if (response.length === 1) {
+      response.map((r, i) => {
+        if (!r.success) {
+          msg += `Request ${i} failed. `;
+          if ((r as any).payload) {
+            msg += `${(r as any).payload}. `;
+          }
+        }
+      });
+      return msg;
+    } else {
+      response = response[0];
+    }
+  }
+  if ((response as any).payload) {
+    msg += `Response payload: ${(response as any).payload}`;
+  }
+  return msg;
+};

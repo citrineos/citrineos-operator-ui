@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { OCPP2_0_1 } from '@citrineos/base';
-import { formatPem, showError, showSucces } from '../util';
+import { formatPem, showError, showSuccess } from '../util';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GenericForm } from '../../components/form';
 import { BaseRestClient } from '@util/BaseRestClient';
@@ -133,7 +133,7 @@ export const InstallCertificate: React.FC<InstallCertificateProps> = ({
         {},
         data,
       );
-      showSucces();
+      showSuccess();
     } catch (error: any) {
       showError(
         'The set variables request failed with message: ' + error.message,

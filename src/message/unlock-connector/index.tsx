@@ -1,6 +1,6 @@
 import React from 'react';
 import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
-import { triggerMessageAndHandleResponse } from '../util';
+import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../util';
 import { Evse } from '../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
@@ -98,8 +98,7 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
       url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
       responseClass: MessageConfirmation,
       data: data,
-      responseSuccessCheck: (response: MessageConfirmation) =>
-        response?.success,
+      responseSuccessCheck,
     });
   };
 
