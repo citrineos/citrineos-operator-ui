@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Constructable } from './Constructable';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
-import { OCPPVersion } from '../../../citrineos-core/00_Base';
+import { OCPPVersion } from '@citrineos/base';
 
 const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
 
