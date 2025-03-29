@@ -47,6 +47,18 @@ import {
 } from './delete-station-network-profiles';
 import { DeleteCertificate } from './delete-certificate';
 import { ChangeAvailabilityProps } from './change-availability/model';
+import {
+  GetMonitoringReport,
+  GetMonitoringReportProps,
+} from './get-monitoring-report';
+import {
+  SetMonitoringBase,
+  SetMonitoringBaseProps,
+} from './set-monitoring-base';
+import {
+  SetVariableMonitoring,
+  SetVariableMonitoringProps,
+} from './set-variable-monitoring';
 
 const chargingStationActionMap: {
   [label: string]: React.FC<any>;
@@ -78,6 +90,11 @@ const chargingStationActionMap: {
   'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
   'Update Auth Password':
     UpdateAuthPassword as React.FC<UpdateAuthPasswordProps>,
+  'Get Monitoring Report':
+    GetMonitoringReport as React.FC<GetMonitoringReportProps>,
+  'Set Monitoring Base': SetMonitoringBase as React.FC<SetMonitoringBaseProps>,
+  'Set Variable Monitoring':
+    SetVariableMonitoring as React.FC<SetVariableMonitoringProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =

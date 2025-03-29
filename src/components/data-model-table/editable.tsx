@@ -594,9 +594,27 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
       }
       const parentIdFieldName = gqlAssociationProps.parentIdFieldName;
       const associatedIdFieldName = gqlAssociationProps.associatedIdFieldName;
-      const gqlListQuery = gqlAssociationProps.gqlListQuery;
+      let gqlListQuery: any | ((parentRecord: any) => any) =
+        gqlAssociationProps.gqlListQuery;
       const getGqlQueryVariables = gqlListQuery?.getQueryVariables;
       let gqlQueryVariables = undefined;
+
+      // Getting record
+      let record;
+      try {
+        record = form.getFieldValue(fieldPath.pop().keyPath);
+      } catch (_e: any) {
+        // ignore
+      }
+      if (!record) {
+        record = parentRecord;
+      }
+      // Setting query value
+      const gqlDocumentQuery =
+        typeof gqlListQuery?.query === 'function'
+          ? gqlListQuery?.query(record, useSelector)
+          : gqlListQuery?.query;
+
       if (getGqlQueryVariables) {
         gqlQueryVariables = getGqlQueryVariables(parentRecord, useSelector);
       }
@@ -607,7 +625,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               fieldPath={fieldPath}
               parentIdFieldName={parentIdFieldName!}
               associatedIdFieldName={associatedIdFieldName!}
-              gqlQuery={gqlListQuery?.query}
+              gqlQuery={gqlDocumentQuery}
               parentRecord={parentRecord}
               associatedRecordClass={field.dtoClass!}
               value={form.getFieldValue(fieldPath.namePath)}
