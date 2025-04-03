@@ -81,9 +81,9 @@ export class TriggerMessageRequest {
   @IsNotEmpty()
   evse!: Evse | null;
 
-  @IsEnum(MessageTriggerEnumType)
+  @IsEnum(OCPP2_0_1.MessageTriggerEnumType)
   @IsNotEmpty()
-  requestedMessage!: MessageTriggerEnumType;
+  requestedMessage!: OCPP2_0_1.MessageTriggerEnumType;
 
   @Type(() => CustomDataType)
   @ValidateNested()

@@ -38,8 +38,8 @@ export class IdTokenType {
   @MinLength(1)
   idToken!: string;
 
-  @IsEnum(IdTokenEnumType)
-  type!: IdTokenEnumType;
+  @IsEnum(OCPP2_0_1.IdTokenEnumType)
+  type!: OCPP2_0_1.IdTokenEnumType;
 }
 
 export class ChargingSchedulePeriodType {
@@ -88,8 +88,8 @@ export class ChargingScheduleType {
   @IsOptional()
   duration?: number | null;
 
-  @IsEnum(ChargingRateUnitEnumType)
-  chargingRateUnit!: ChargingRateUnitEnumType;
+  @IsEnum(OCPP2_0_1.ChargingRateUnitEnumType)
+  chargingRateUnit!: OCPP2_0_1.ChargingRateUnitEnumType;
 
   @ArrayNotEmpty()
   @ValidateNested()
@@ -116,12 +116,12 @@ export class ChargingProfileType {
   @IsEnum(RemoteStartChargingProfilePurpose)
   chargingProfilePurpose!: RemoteStartChargingProfilePurpose;
 
-  @IsEnum(ChargingProfileKindEnumType)
-  chargingProfileKind!: ChargingProfileKindEnumType;
+  @IsEnum(OCPP2_0_1.ChargingProfileKindEnumType)
+  chargingProfileKind!: OCPP2_0_1.ChargingProfileKindEnumType;
 
   @IsOptional()
-  @IsEnum(RecurrencyKindEnumType)
-  recurrencyKind?: RecurrencyKindEnumType | null;
+  @IsEnum(OCPP2_0_1.RecurrencyKindEnumType)
+  recurrencyKind?: OCPP2_0_1.RecurrencyKindEnumType | null;
 
   @IsOptional()
   @Type(() => Date)

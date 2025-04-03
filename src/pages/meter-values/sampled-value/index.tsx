@@ -77,7 +77,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
         {sampledValue.context ? (
           <GenericTag
             enumValue={sampledValue.context}
-            enumType={ReadingContextEnumType}
+            enumType={OCPP2_0_1.ReadingContextEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>
@@ -88,7 +88,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
         {sampledValue.measurand ? (
           <GenericTag
             enumValue={sampledValue.measurand}
-            enumType={MeasurandEnumType}
+            enumType={OCPP2_0_1.MeasurandEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>
@@ -97,7 +97,10 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
 
       <Descriptions.Item label="Phase">
         {sampledValue.phase ? (
-          <GenericTag enumValue={sampledValue.phase} enumType={PhaseEnumType} />
+          <GenericTag
+            enumValue={sampledValue.phase}
+            enumType={OCPP2_0_1.PhaseEnumType}
+          />
         ) : (
           <Text type="secondary">N/A</Text>
         )}
@@ -107,7 +110,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
         {sampledValue.location ? (
           <GenericTag
             enumValue={sampledValue.location}
-            enumType={LocationEnumType}
+            enumType={OCPP2_0_1.LocationEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>

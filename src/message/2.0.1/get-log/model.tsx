@@ -73,8 +73,8 @@ export class GetLogRequest {
   @IsNotEmpty()
   log!: LogParametersType;
 
-  @IsEnum(LogEnumType)
-  logType!: LogEnumType;
+  @IsEnum(OCPP2_0_1.LogEnumType)
+  logType!: OCPP2_0_1.LogEnumType;
 
   @IsInt()
   @IsNotEmpty()

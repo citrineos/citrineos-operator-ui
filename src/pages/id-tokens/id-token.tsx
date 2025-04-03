@@ -39,7 +39,7 @@ export class IdToken extends BaseModel {
   @IsNotEmpty()
   idToken!: string;
 
-  @IsEnum(IdTokenEnumType)
+  @IsEnum(OCPP2_0_1.IdTokenEnumType)
   @IsNotEmpty()
-  type!: IdTokenEnumType;
+  type!: OCPP2_0_1.IdTokenEnumType;
 }

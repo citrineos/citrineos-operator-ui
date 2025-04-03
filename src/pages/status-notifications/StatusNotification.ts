@@ -48,8 +48,8 @@ export class StatusNotification {
   @IsString()
   timestamp!: string;
 
-  @IsEnum(ConnectorStatusEnumType)
-  connectorStatus!: ConnectorStatusEnumType;
+  @IsEnum(OCPP2_0_1.ConnectorStatusEnumType)
+  connectorStatus!: OCPP2_0_1.ConnectorStatusEnumType;
 
   constructor(data: StatusNotification) {
     if (data) {

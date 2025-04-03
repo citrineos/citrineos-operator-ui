@@ -47,8 +47,8 @@ export const VARIABLE_MONITORINGS_COLUMNS = (
       render: (_: any, record: any) => {
         return (
           <GenericTag
-            enumValue={record.type as MonitorEnumType}
-            enumType={MonitorEnumType}
+            enumValue={record.type as OCPP2_0_1.MonitorEnumType}
+            enumType={OCPP2_0_1.MonitorEnumType}
           />
         );
       },

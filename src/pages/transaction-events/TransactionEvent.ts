@@ -82,7 +82,7 @@ export class TransactionEvent extends BaseModel {
 
   @IsString()
   @IsNotEmpty()
-  eventType!: TransactionEventEnumType;
+  eventType!: OCPP2_0_1.TransactionEventEnumType;
 
   @IsArray()
   @Type(() => MeterValue)
@@ -112,9 +112,9 @@ export class TransactionEvent extends BaseModel {
   @IsNotEmpty()
   timestamp!: Date;
 
-  @IsEnum(TriggerReasonEnumType)
+  @IsEnum(OCPP2_0_1.TriggerReasonEnumType)
   @IsNotEmpty()
-  triggerReason!: TriggerReasonEnumType;
+  triggerReason!: OCPP2_0_1.TriggerReasonEnumType;
 
   @IsInt()
   @IsNotEmpty()

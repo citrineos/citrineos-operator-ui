@@ -52,8 +52,8 @@ class ResetData {
   @IsNotEmpty()
   evse!: Evse | null;
 
-  @IsEnum(ResetEnumType)
-  type!: ResetEnumType;
+  @IsEnum(OCPP2_0_1.ResetEnumType)
+  type!: OCPP2_0_1.ResetEnumType;
 
   // @Type(() => CustomDataType)
   // @IsOptional()

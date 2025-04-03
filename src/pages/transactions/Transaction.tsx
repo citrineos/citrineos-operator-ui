@@ -131,9 +131,9 @@ export class Transaction {
   events?: TransactionEvent[];
 
   @Searchable()
-  @IsEnum(ChargingStateEnumType)
+  @IsEnum(OCPP2_0_1.ChargingStateEnumType)
   @IsOptional()
-  chargingState?: ChargingStateEnumType | null;
+  chargingState?: OCPP2_0_1.ChargingStateEnumType | null;
 
   @IsInt()
   @IsOptional()
@@ -147,9 +147,9 @@ export class Transaction {
   totalKwh?: number | null;
 
   @Searchable()
-  @IsEnum(ReasonEnumType)
+  @IsEnum(OCPP2_0_1.ReasonEnumType)
   @IsOptional()
-  stoppedReason?: ReasonEnumType | null;
+  stoppedReason?: OCPP2_0_1.ReasonEnumType | null;
 
   @IsInt()
   @IsOptional()

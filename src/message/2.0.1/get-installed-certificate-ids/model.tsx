@@ -8,7 +8,7 @@ import React from 'react';
 
 export class GetInstalledCertificateIdsRequest {
   @IsOptional()
-  @IsEnum(GetCertificateIdUseEnumType, { each: true })
+  @IsEnum(OCPP2_0_1.GetCertificateIdUseEnumType, { each: true })
   @CustomFormRender(() => {
     return (
       <Form.Item
@@ -17,16 +17,18 @@ export class GetInstalledCertificateIdsRequest {
         name="certificateType"
       >
         <Select mode="multiple">
-          {Object.entries(GetCertificateIdUseEnumType)?.map(([key, value]) => (
-            <Select.Option key={key} value={value}>
-              {value}
-            </Select.Option>
-          ))}
+          {Object.entries(OCPP2_0_1.GetCertificateIdUseEnumType)?.map(
+            ([key, value]) => (
+              <Select.Option key={key} value={value}>
+                {value}
+              </Select.Option>
+            ),
+          )}
         </Select>
       </Form.Item>
     );
   })
-  certificateType?: GetCertificateIdUseEnumType[] | null;
+  certificateType?: OCPP2_0_1.GetCertificateIdUseEnumType[] | null;
 
   @IsOptional()
   @ValidateNested()

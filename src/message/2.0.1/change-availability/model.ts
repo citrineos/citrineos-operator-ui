@@ -42,9 +42,9 @@ export class ChangeAvailabilityRequest {
   @IsOptional()
   evse?: Evse | null;
 
-  @IsEnum(OperationalStatusEnumType)
+  @IsEnum(OCPP2_0_1.OperationalStatusEnumType)
   @IsNotEmpty()
-  operationalStatus!: OperationalStatusEnumType;
+  operationalStatus!: OCPP2_0_1.OperationalStatusEnumType;
 
   // todo
   // @Type(() => CustomDataType)

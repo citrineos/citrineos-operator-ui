@@ -23,8 +23,8 @@ export class VariableMonitoring {
   @IsInt()
   value!: number;
 
-  @IsEnum(MonitorEnumType)
-  type!: MonitorEnumType;
+  @IsEnum(OCPP2_0_1.MonitorEnumType)
+  type!: OCPP2_0_1.MonitorEnumType;
 
   @IsInt()
   severity!: number;

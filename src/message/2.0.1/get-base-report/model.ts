@@ -14,9 +14,9 @@ export class GetBaseReportRequest {
   @IsNotEmpty()
   requestId!: number;
 
-  @IsEnum(ReportBaseEnumType)
+  @IsEnum(OCPP2_0_1.ReportBaseEnumType)
   @IsNotEmpty()
-  reportBase!: ReportBaseEnumType;
+  reportBase!: OCPP2_0_1.ReportBaseEnumType;
 
   @Type(() => CustomDataType)
   @IsOptional()

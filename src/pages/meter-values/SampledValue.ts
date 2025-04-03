@@ -54,21 +54,21 @@ export class SampledValue {
   @IsNumber()
   value!: number;
 
-  @IsEnum(ReadingContextEnumType)
+  @IsEnum(OCPP2_0_1.ReadingContextEnumType)
   @IsOptional()
-  context?: ReadingContextEnumType | null;
+  context?: OCPP2_0_1.ReadingContextEnumType | null;
 
-  @IsEnum(MeasurandEnumType)
+  @IsEnum(OCPP2_0_1.MeasurandEnumType)
   @IsOptional()
-  measurand?: MeasurandEnumType | null;
+  measurand?: OCPP2_0_1.MeasurandEnumType | null;
 
-  @IsEnum(PhaseEnumType)
+  @IsEnum(OCPP2_0_1.PhaseEnumType)
   @IsOptional()
-  phase?: PhaseEnumType | null;
+  phase?: OCPP2_0_1.PhaseEnumType | null;
 
-  @IsEnum(LocationEnumType)
+  @IsEnum(OCPP2_0_1.LocationEnumType)
   @IsOptional()
-  location?: LocationEnumType | null;
+  location?: OCPP2_0_1.LocationEnumType | null;
 
   @Type(() => SignedMeterValue)
   @IsOptional()

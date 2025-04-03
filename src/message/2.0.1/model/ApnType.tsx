@@ -44,7 +44,7 @@ export class ApnType {
   @IsOptional()
   useOnlyPreferredNetwork?: boolean;
 
-  @IsEnum(APNAuthenticationEnumType)
+  @IsEnum(OCPP2_0_1.APNAuthenticationEnumType)
   @IsNotEmpty()
-  apnAuthentication!: APNAuthenticationEnumType;
+  apnAuthentication!: OCPP2_0_1.APNAuthenticationEnumType;
 }
