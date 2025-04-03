@@ -65,7 +65,6 @@ import AppModal from './AppModal';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
-const LOGO_URL = import.meta.env.VITE_LOGO_URL;
 
 const client = new GraphQLClient(API_URL, {
   headers: {

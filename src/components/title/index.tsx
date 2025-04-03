@@ -6,6 +6,8 @@ export interface LogoProps {
   collapsed?: boolean;
 }
 
+const LOGO_URL = import.meta.env.VITE_LOGO_URL;
+
 export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
   const { collapsed = false } = props;
   const { mode } = useContext(ColorModeContext);
@@ -28,7 +30,7 @@ export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
       />
       {!collapsed && (
         <img
-          src={mode === 'light' ? '/logo-black.svg' : '/logo-white.svg'}
+          src={mode === 'light' ? LOGO_URL : '/logo-white.svg'}
           style={{
             width: '80%',
             position: 'absolute',
