@@ -1,0 +1,11 @@
+@use "../../../mixins" as mixins;
+
+main[class*='content-locations-']:not(.content-locations-new, [class*='-edit']) {
+  @include mixins.inner-content-no-padding;
+}
+
+.location-details-table {
+  td:nth-child(2) {
+    padding-left: var(--ant-padding-md);
+  }
+}

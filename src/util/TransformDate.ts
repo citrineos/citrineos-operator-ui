@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import moment from 'moment';
 import dayjs from 'dayjs';
 import { IsDateOrDayjs } from './IsDateOrDayjs';
@@ -27,11 +27,24 @@ export const TransformDate = () => {
 
   const toClass = Transform(
     ({ value }) => {
-      if (!value || !dayjs(value).isValid()) {
+      if (value instanceof Date) {
+        return value;
+      }
+
+      if (!value || typeof value !== 'string') {
         console.warn('Invalid date passed to toClass:', value);
         return value;
       }
-      return dayjs(value);
+
+      if (moment(value, moment.ISO_8601, true).isValid()) {
+        return moment(value);
+      }
+
+      if (dayjs(value).isValid()) {
+        return dayjs(value);
+      }
+
+      return value;
     },
     {
       toClassOnly: true,
@@ -40,7 +53,6 @@ export const TransformDate = () => {
 
   return function (target: any, key: string) {
     IsDateOrDayjs()(target, key);
-    Type(() => Date)(target, key);
     toPlain(target, key);
     toClass(target, key);
 

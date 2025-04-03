@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { CustomDataType } from './CustomData';
-import { IdTokenProps, IdToken } from '../pages/id-tokens/id-token';
+import { IdToken, IdTokenProps } from '../pages/id-tokens/id-token';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';

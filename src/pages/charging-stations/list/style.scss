@@ -1,0 +1,12 @@
+.view-charging-stations {
+  color: var(--secondary-color-3);
+  cursor: pointer;
+}
+
+.online {
+  color: var(--ui-color-success);
+}
+
+.offline {
+  color: var(--ui-color-error);
+}

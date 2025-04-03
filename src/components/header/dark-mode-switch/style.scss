@@ -1,0 +1,24 @@
+.dark-mode-switch {
+  width: 70px;
+  height: 35px;
+  border-radius: 50px;
+  cursor: pointer;
+  position: relative;
+  background: var(--secondary-color-1);
+
+  .icon-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 0 5px;
+    z-index: 2;
+  }
+
+  .toggle {
+    aspect-ratio: 1/1;
+    height: 30px;
+    background: var(--ant-layout-sider-bg);
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+  }
+}

@@ -5,7 +5,8 @@ import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
 import { SubscriptionsListQuery } from '../../graphql/types';
 import { Subscription } from './Subscription';
-import { DataModelTable, IDataModelListProps } from '../../components';
+import { DataModelTable } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   SUBSCRIPTIONS_CREATE_MUTATION,

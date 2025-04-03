@@ -1,73 +1,61 @@
-@font-face {
-  font-family: 'Roobert';
-  src:
-    url('/fonts/Roobert-Light.woff2') format('woff2'),
-    url('/fonts/Roobert-Light.woff') format('woff'),
-    url('/fonts/Roobert-Light.ttf') format('truetype');
-  font-weight: 300; /* Light */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Roobert';
-  src:
-    url('/fonts/Roobert-Medium.woff2') format('woff2'),
-    url('/fonts/Roobert-Medium.woff') format('woff'),
-    url('/fonts/Roobert-Medium.ttf') format('truetype');
-  font-weight: 500; /* Medium */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Roobert';
-  src:
-    url('/fonts/Roobert-Regular.woff2') format('woff2'),
-    url('/fonts/Roobert-Regular.woff') format('woff'),
-    url('/fonts/Roobert-Regular.ttf') format('truetype');
-  font-weight: 400; /* Regular */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Roobert';
-  src:
-    url('/fonts/Roobert-SemiBold.woff2') format('woff2'),
-    url('/fonts/Roobert-SemiBold.woff') format('woff'),
-    url('/fonts/Roobert-SemiBold.ttf') format('truetype');
-  font-weight: 600; /* SemiBold */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Roobert';
-  src:
-    url('/fonts/Roobert-Bold.woff') format('woff'),
-    url('/fonts/Roobert-Bold.woff2') format('woff2'),
-    url('/fonts/Roobert-Bold.ttf') format('truetype');
-  font-weight: 700; /* Bold */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Roobert';
-  src:
-    url('/fonts/Roobert-Heavy.woff') format('woff'),
-    url('/fonts/Roobert-Heavy.woff2') format('woff2'),
-    url('/fonts/Roobert-Heavy.ttf') format('truetype');
-  font-weight: 800; /* Heavy */
-  font-style: normal;
-}
-
-body {
-  font-family: 'Roobert', sans-serif;
-}
-
-.ant-typography {
-  font-family: 'Roobert', sans-serif;
-}
+@use 'font';
+@use 'variables';
 
 main {
   background: var(--ant-layout-body-bg);
+  height: calc(100vh - 130px);
+  overflow: auto;
+
+  .content-outer-wrap, .content-inner-wrap{
+    padding: var(--ant-padding-xl);
+  }
+
+  .content-inner-wrap {
+    border-radius: 12px;
+    background-color: var(--ant-color-bg-base);
+    box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.nowrap {
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
+.link {
+  color: var(--secondary-color-2);
+  cursor: pointer;
+}
+
+.header-row {
+  margin-bottom: var(--ant-margin-lg);
+}
+
+.gradient {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/gradient.svg");
+  background-size: cover;
+  z-index: 1;
+
+  &.dark {
+    background-image: url("/gradient-dark.svg");
+  }
 }
 
 .fade-enter {
@@ -86,14 +74,19 @@ main {
 }
 
 .ant-layout-content {
-  overflow: scroll;
-
   > div {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 0 var(--ant-padding-xs) 0 0 !important;
+    position: relative;
+    z-index: 10;
+  }
+}
+
+button.secondary{
+  background-color: var(--secondary-color-2);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover{
+    background-color: var(--secondary-color-3);
+    color: white;
   }
 }
 
@@ -104,6 +97,95 @@ main {
 .ant-table-wrapper tfoot > tr > th,
 .ant-table-wrapper tfoot > tr > td {
   padding: var(--ant-padding-xs) var(--ant-padding-xs);
+}
+
+.ant-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ant-card .ant-tabs-content-holder {
+  padding: 0 4px;
+}
+
+.ant-table {
+  .selected-row{
+    background: var(--ant-table-row-hover-bg);
+    .column-id h4 {
+      color: var(--secondary-color-3);
+    }
+  }
+
+  .ant-table-expanded-row {
+    .nested {
+      padding: var(--ant-padding-md);
+
+      .ant-table {
+        margin-block: 0 !important;
+        margin-inline: 0 !important;
+      }
+    }
+  }
+
+  .arrow {
+    transition: 250ms ease-in-out;
+    &.rotate {
+      transform: rotate(180deg);
+    }
+  }
+
+  .column-actions {
+    button {
+      margin-left: var(--ant-margin-xs);
+      color: black !important;
+
+      &:hover {
+        color: var(--secondary-color-3) !important;
+      }
+
+      &.ant-btn-color-dangerous:hover {
+        color: var(--ui-color-error) !important;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .row-origin-cs {
+    padding: 4px;
+    border-radius: 4px;
+    border-left: 3px solid #52c41a !important;
+    background-color: rgba(82, 196, 26, 0.05);
+    transition: background-color 0.3s ease;
+  }
+  
+  .row-origin-csms {
+    padding: 4px;
+    border-radius: 4px;
+    border-left: 3px solid #1890ff !important;
+    background-color: rgba(24, 144, 255, 0.05);
+    transition: background-color 0.3s ease;
+  }
+
+  .highlighted-correlation-cell {
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+
+  .column-message {
+    max-width: 60%;
+    word-break: break-word;
+  }
+}
+
+.ant-table-cell.ant-table-cell-row-hover.column-id:hover {
+  background-color: var(--secondary-color-2);
+}
+
+.ant-table-cell.ant-table-cell-row-hover.column-name:hover {
+  background-color: var(--secondary-color-2);
 }
 
 .ant-drawer {
@@ -129,6 +211,7 @@ main {
 
 .ant-layout {
   background: transparent;
+  height: 100vh;
 }
 
 /* Animation for grow from center */

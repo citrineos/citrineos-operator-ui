@@ -18,14 +18,8 @@ import { BaseModel } from '@util/BaseModel';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { Location, LocationProps } from '../locations/Location';
-import {
-  LOCATIONS_GET_QUERY,
-  LOCATIONS_LIST_QUERY,
-} from '../locations/queries';
-import {
-  StatusNotification,
-  StatusNotificationProps,
-} from '../status-notifications/StatusNotification';
+import { LOCATIONS_GET_QUERY, LOCATIONS_LIST_QUERY } from '../locations/queries';
+import { StatusNotification, StatusNotificationProps } from '../status-notifications/StatusNotification';
 import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,
@@ -47,6 +41,7 @@ import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor'
 import { NEW_IDENTIFIER } from '@util/consts';
 import { EvseProps } from '../evses/EvseProps';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
+import { OCPPVersion } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -69,6 +64,10 @@ export class ChargingStation extends BaseModel {
 
   @IsBoolean()
   isOnline!: boolean;
+
+  @IsString()
+  @IsOptional()
+  protocol?: OCPPVersion;
 
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.locationId,

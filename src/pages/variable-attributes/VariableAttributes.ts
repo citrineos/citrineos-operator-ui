@@ -9,7 +9,7 @@ import {
   AttributeEnumType,
   DataEnumType,
   MutabilityEnumType,
-} from '@citrineos/base';
+} from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { Component, ComponentProps } from './components/Component';

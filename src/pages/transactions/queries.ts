@@ -25,6 +25,31 @@ export const TRANSACTION_LIST_QUERY = gql`
       totalKwh
       createdAt
       updatedAt
+      TransactionEvents(where: { eventType: { _eq: "Started" } }) {
+        eventType
+        IdToken {
+          idToken
+        }
+      }
+      ChargingStation {
+        id
+        isOnline
+        protocol
+        locationId
+        createdAt
+        updatedAt
+        Location {
+          name
+          address
+          city
+          postalCode
+          state
+          country
+          coordinates
+          createdAt
+          updatedAt
+        }
+      }
     }
     Transactions_aggregate(where: $where) {
       aggregate {
@@ -49,6 +74,32 @@ export const TRANSACTION_GET_QUERY = gql`
       totalKwh
       createdAt
       updatedAt
+      ChargingStation {
+        id
+        isOnline
+        protocol
+        locationId
+        createdAt
+        updatedAt
+        Location {
+          name
+          address
+          city
+          postalCode
+          state
+          country
+          coordinates
+          createdAt
+          updatedAt
+        }
+      }
+      TransactionEvents(where: { eventType: { _eq: "Started" } }) {
+        eventType
+        IdToken {
+          idToken
+        }
+        idTokenId
+      }
     }
   }
 `;
@@ -122,6 +173,68 @@ export const TRANSACTION_GET_ID_BY_TRANSACTION_ID_STATION_ID_QUERY = gql`
       }
     ) {
       id
+    }
+  }
+`;
+
+// TODO when possible, include the total time as well
+export const TRANSACTION_SUCCESS_RATE_QUERY = gql`
+  query TransactionsSuccessRate {
+    success: Transactions_aggregate(where: { totalKwh: { _gt: 0 } }) {
+      aggregate {
+        count
+      }
+    }
+    total: Transactions_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const GET_TRANSACTIONS_BY_AUTHORIZATION = gql`
+  query AuthorizationsList(
+    $offset: Int!
+    $limit: Int!
+    $order_by: [Authorizations_order_by!]
+    $where: Authorizations_bool_exp!
+  ) {
+    Authorizations(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: $where
+    ) {
+      id
+      allowedConnectorTypes
+      disallowedEvseIdPrefixes
+      idTokenId
+      idTokenInfoId
+      IdToken {
+        createdAt
+        id
+        idToken
+        type
+        updatedAt
+      }
+      IdTokenInfo {
+        cacheExpiryDateTime
+        chargingPriority
+        createdAt
+        groupIdTokenId
+        id
+        language1
+        language2
+        personalMessage
+        status
+        updatedAt
+      }
+    }
+    Authorizations_aggregate(where: $where) {
+      aggregate {
+        count
+      }
     }
   }
 `;

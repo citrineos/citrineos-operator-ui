@@ -1,7 +1,4 @@
-import {
-  TransactionEventEnumType,
-  TriggerReasonEnumType,
-} from '@citrineos/base';
+import { TransactionEventEnumType, TriggerReasonEnumType } from '@OCPP2_0_1';
 import {
   IsArray,
   IsBoolean,

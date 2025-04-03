@@ -5,8 +5,7 @@ import { SUBSCRIPTIONS_DELETE_MUTATION } from './queries';
 import { StatusIcon } from '../../components/status-icon';
 import { ResourceType } from '../../resource-type';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
-import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import { ChargingStationsList } from '../charging-stations';
+// import { ChargingStationsList } from '../charging-stations';
 
 export const SUBSCRIPTIONS_COLUMNS = (
   withActions: boolean,
@@ -78,7 +77,8 @@ export const SUBSCRIPTIONS_COLUMNS = (
         const filter = DEFAULT_EXPANDED_DATA_FILTER('id', 'eq', stationId);
 
         return (
-          <ExpandableColumn
+          <div></div>
+          /*<ExpandableColumn
             initialContent={stationId}
             expandedContent={
               <ChargingStationsList
@@ -89,7 +89,7 @@ export const SUBSCRIPTIONS_COLUMNS = (
               />
             }
             viewTitle={`Charging Station linked to Subscription with ID ${record.id}`}
-          />
+          />*/
         );
       },
     },

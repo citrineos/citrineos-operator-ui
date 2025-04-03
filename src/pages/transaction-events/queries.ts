@@ -29,6 +29,15 @@ export const TRANSACTION_EVENT_LIST_QUERY = gql`
       createdAt
       timestamp
       updatedAt
+      MeterValues {
+        id
+        transactionDatabaseId
+        transactionEventId
+        sampledValue
+        timestamp
+        createdAt
+        updatedAt
+      }
     }
     TransactionEvents_aggregate(where: $where) {
       aggregate {

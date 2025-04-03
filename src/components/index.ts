@@ -1,6 +1,2 @@
-export { Header } from './header';
-export {
-  DataModelTable,
-  type IDataModelTableProps,
-  type IDataModelListProps,
-} from './data-model-table';
+export { Header } from './header/header';
+export { DataModelTable } from './data-model-table';

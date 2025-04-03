@@ -1,5 +1,59 @@
 import type * as Types from './schema.types';
 
+export type ConnectorCreateInput = Omit<Types.Connectors, 'id'>;
+
+export type ConnectorUpdateInput = Partial<Omit<Types.Connectors, 'id'>> & {
+  id: number;
+};
+
+export type GetConnectorListQuery = {
+  Connectors: Array<
+    Pick<
+      Types.Connectors,
+      | 'id'
+      | 'stationId'
+      | 'connectorId'
+      | 'status'
+      | 'errorCode'
+      | 'info'
+      | 'vendorId'
+      | 'vendorErrorCode'
+    >
+  >;
+  Connectors_aggregate: {
+    aggregate?: Types.Maybe<Pick<Types.Connectors_Aggregate_Fields, 'count'>>;
+  };
+};
+
+export type ConnectorCreateMutationVariables = Types.Exact<{
+  object: Types.Connectors_Insert_Input;
+}>;
+
+export type ConnectorDeleteMutation = {
+  delete_Connectors_by_pk?: Types.Maybe<
+    Pick<
+      Types.Connectors,
+      | 'id'
+      | 'stationId'
+      | 'connectorId'
+      | 'status'
+      | 'errorCode'
+      | 'info'
+      | 'vendorId'
+      | 'vendorErrorCode'
+    >
+  >;
+};
+
+export type GetConnectorListQueryVariables = Types.Exact<{
+  offset: Types.Scalars['Int']['input'];
+  limit: Types.Scalars['Int']['input'];
+  order_by?: Types.InputMaybe<
+    Array<Types.Connectors_Order_By> | Types.Connectors_Order_By
+  >;
+  where?: Types.InputMaybe<Types.Connectors_Bool_Exp>;
+}>;
+
 export type GetTransactionsQueryVariables = Types.Exact<{
   stationId: Types.Scalars['String']['input'];
 }>;

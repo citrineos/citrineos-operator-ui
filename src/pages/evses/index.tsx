@@ -2,7 +2,7 @@ import { ResourceType } from '../../resource-type';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import {
   EVSE_CREATE_MUTATION,
   EVSE_DELETE_MUTATION,
@@ -11,7 +11,8 @@ import {
 } from './queries';
 import { Evse } from './Evse';
 import { GenericDataTable } from '../../components/data-model-table/editable';
-import { TriggerMessageForEvseCustomAction } from '../../message/trigger-message';
+import { TriggerMessageForEvseCustomAction } from '../../message/2.0.1/trigger-message';
+import { BsFillInboxesFill } from 'react-icons/bs';
 
 export const EvseView: React.FC = () => {
   return (
@@ -57,5 +58,6 @@ export const resources = [
     meta: {
       canDelete: true,
     },
+    icon: <BsFillInboxesFill />,
   },
 ];

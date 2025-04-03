@@ -1,6 +1,6 @@
 import React from 'react';
 import { GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../components';
+import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { InstalledCertificate } from './InstalledCertificate';
 import {
@@ -12,7 +12,65 @@ import {
 import { Route, Routes } from 'react-router-dom';
 import { ResourceType } from '../../resource-type';
 import { AiOutlineProfile } from 'react-icons/ai';
-import { DeleteCertificateCustomAction } from '../../message/delete-certificate';
+import { CustomAction } from '../../components/custom-actions';
+import { BaseRestClient } from '@util/BaseRestClient';
+import { MessageConfirmation } from '../../message/MessageConfirmation';
+import { generateErrorMessageFromResponses, responseSuccessCheck } from '../../message/util';
+import { notification } from 'antd';
+
+export const DeleteCertificateCustomAction: CustomAction<InstalledCertificate> =
+  {
+    label: 'Delete Certificate',
+    execOrRender: (installedCertificate: InstalledCertificate, setLoading) => {
+      requestDeleteCertificate(installedCertificate, setLoading).then(() => {});
+    },
+  };
+
+export const requestDeleteCertificate = async (
+  installedCertificate: InstalledCertificate,
+  setLoading: (loading: boolean) => void,
+) => {
+  try {
+    setLoading(true);
+    const client = new BaseRestClient();
+    const response = await client.post<MessageConfirmation>(
+      `/certificates/deleteCertificate?identifier=${installedCertificate.stationId}&tenantId=1`,
+      {},
+      {
+        certificateHashData: {
+          hashAlgorithm: installedCertificate.hashAlgorithm,
+          issuerNameHash: installedCertificate.issuerNameHash,
+          issuerKeyHash: installedCertificate.issuerKeyHash,
+          serialNumber: installedCertificate.serialNumber,
+        },
+      },
+    );
+
+    if (responseSuccessCheck(response)) {
+      notification.success({
+        message: 'Success',
+        description: 'The delete certificate request was successful.',
+        placement: 'topRight',
+      });
+    } else {
+      notification.error({
+        message: 'Request Failed',
+        description: `The delete certificate request did not receive a successful response. ${generateErrorMessageFromResponses(response)}`,
+        placement: 'topRight',
+      });
+    }
+  } catch (error: any) {
+    const msg = `Could not perform request stop transaction, got error: ${error.message}`;
+    console.error(msg, error);
+    notification.error({
+      message: 'Error',
+      description: msg,
+      placement: 'topRight',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
 export const InstalledCertificateView: React.FC = () => {
   return (
