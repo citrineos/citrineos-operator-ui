@@ -223,10 +223,14 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               className: 'column-message',
             })}
             render={(message: any, record: OCPPMessageDto) => (
+<<<<<<< Updated upstream
               <CollapsibleOCPPMessageViewer
                 ocppMessage={message}
                 unparsed={!record.action}
               />
+=======
+              <CollapsibleOCPPMessageViewer ocppMessage={message} unparsed={typeof message === 'string'} />
+>>>>>>> Stashed changes
             )}
           />
         </Table>
