@@ -1,8 +1,8 @@
 export const DEFAULT_SORTERS: any = {
   initial: [
     {
-      field: 'id',
-      order: 'asc',
+      field: 'updatedAt',
+      order: 'desc',
     },
   ],
 };

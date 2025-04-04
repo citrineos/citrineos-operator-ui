@@ -1,6 +1,6 @@
 import { BaseModel } from '@util/BaseModel';
 import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { OCPP2_0_1 } from '@citrineos/base';
+import { IdTokenEnumType } from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
@@ -39,7 +39,7 @@ export class IdToken extends BaseModel {
   @IsNotEmpty()
   idToken!: string;
 
-  @IsEnum(OCPP2_0_1.IdTokenEnumType)
+  @IsEnum(IdTokenEnumType)
   @IsNotEmpty()
-  type!: OCPP2_0_1.IdTokenEnumType;
+  type!: IdTokenEnumType;
 }

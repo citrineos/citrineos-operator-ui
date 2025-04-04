@@ -47,6 +47,7 @@ import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor'
 import { NEW_IDENTIFIER } from '@util/consts';
 import { EvseProps } from '../evses/EvseProps';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
+import { OCPPVersion } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -69,6 +70,10 @@ export class ChargingStation extends BaseModel {
 
   @IsBoolean()
   isOnline!: boolean;
+
+  @IsString()
+  @IsOptional()
+  protocol?: OCPPVersion;
 
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.locationId,

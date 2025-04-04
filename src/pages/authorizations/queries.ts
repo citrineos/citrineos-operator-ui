@@ -18,6 +18,25 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      IdToken {
+        createdAt
+        id
+        idToken
+        type
+        updatedAt
+      }
+      IdTokenInfo {
+        cacheExpiryDateTime
+        chargingPriority
+        createdAt
+        groupIdTokenId
+        id
+        language1
+        language2
+        personalMessage
+        status
+        updatedAt
+      }
     }
     Authorizations_aggregate(where: $where) {
       aggregate {
@@ -93,6 +112,72 @@ export const AUTHORIZATIONS_SHOW_QUERY = gql`
         personalMessage
         status
         updatedAt
+      }
+    }
+  }
+`;
+
+export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
+  query TransactionsList(
+    $id: Int!
+    $limit: Int!
+    $offset: Int!
+    $order_by: [Transactions_order_by!]
+    $where: Transactions_bool_exp = {}
+  ) {
+    Transactions(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: {
+        _and: [{ TransactionEvents: { IdToken: { id: { _eq: $id } } } }, $where]
+      }
+    ) {
+      id
+      timeSpentCharging
+      isActive
+      chargingState
+      stationId
+      stoppedReason
+      transactionId
+      evseDatabaseId
+      remoteStartId
+      totalKwh
+      createdAt
+      updatedAt
+      ChargingStation {
+        id
+        isOnline
+        protocol
+        locationId
+        createdAt
+        updatedAt
+        Location {
+          name
+          address
+          city
+          postalCode
+          state
+          country
+          coordinates
+          createdAt
+          updatedAt
+        }
+      }
+      TransactionEvents(where: { eventType: { _eq: "Started" } }) {
+        eventType
+        IdToken {
+          idToken
+        }
+      }
+    }
+    Transactions_aggregate(
+      where: {
+        _and: [{ TransactionEvents: { IdToken: { id: { _eq: $id } } } }, $where]
+      }
+    ) {
+      aggregate {
+        count
       }
     }
   }

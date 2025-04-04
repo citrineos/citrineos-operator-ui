@@ -1,4 +1,4 @@
-import { OCPP2_0_1 } from '@citrineos/base';
+import { ChargingStateEnumType, ReasonEnumType } from '@OCPP2_0_1';
 import {
   IsArray,
   IsBoolean,
@@ -38,7 +38,6 @@ import {
 } from '../transaction-events/queries';
 import { TransformDate } from '@util/TransformDate';
 import { ClassCustomActions } from '@util/decorators/ClassCustomActions';
-import { requestStopTransaction } from '../../message/remote-stop';
 import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { ValueDisplay } from '../../components/value-display';
 import React from 'react';
@@ -73,13 +72,13 @@ export enum TransactionProps {
     label: 'Remote Stop',
     isVisible: (transaction) => transaction[TransactionProps.isActive],
     execOrRender: (transaction: Transaction, setLoading) => {
-      requestStopTransaction(
-        transaction[TransactionProps.stationId],
-        transaction[TransactionProps.transactionId],
-        setLoading,
-      ).then(() => {
-        console.log('Successfully stopped transaction', transaction);
-      });
+      // requestStopTransaction(
+      //   transaction[TransactionProps.stationId],
+      //   transaction[TransactionProps.transactionId],
+      //   setLoading,
+      // ).then(() => {
+      //   console.log('Successfully stopped transaction', transaction);
+      // });
     },
   },
 ])
@@ -132,9 +131,9 @@ export class Transaction {
   events?: TransactionEvent[];
 
   @Searchable()
-  @IsEnum(OCPP2_0_1.ChargingStateEnumType)
+  @IsEnum(ChargingStateEnumType)
   @IsOptional()
-  chargingState?: OCPP2_0_1.ChargingStateEnumType | null;
+  chargingState?: ChargingStateEnumType | null;
 
   @IsInt()
   @IsOptional()
@@ -148,9 +147,9 @@ export class Transaction {
   totalKwh?: number | null;
 
   @Searchable()
-  @IsEnum(OCPP2_0_1.ReasonEnumType)
+  @IsEnum(ReasonEnumType)
   @IsOptional()
-  stoppedReason?: OCPP2_0_1.ReasonEnumType | null;
+  stoppedReason?: ReasonEnumType | null;
 
   @IsInt()
   @IsOptional()

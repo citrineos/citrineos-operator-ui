@@ -1,8 +1,9 @@
 import React from 'react';
 import { Modal, Button } from 'antd';
 import { BaseRestClient } from './BaseRestClient';
+import { SystemConfig } from '@citrineos/base';
 
-const TELEMETRY_CONSENT_KEY = 'TELEMETRY_CONSENT';
+let systemConfig: SystemConfig | null = null;
 const client = new BaseRestClient(null);
 
 interface TelemetryConsentModalProps {
@@ -13,28 +14,31 @@ interface TelemetryConsentModalProps {
 }
 
 export async function checkTelemetryConsent(): Promise<boolean | undefined> {
-  const telemetryConsent = await client.getRaw(
-    `/ocpprouter/userPreferences?key=${TELEMETRY_CONSENT_KEY}`,
-    {},
-  );
   try {
-    const telemetryConsentData = JSON.parse(telemetryConsent.data as string);
-    if (typeof telemetryConsentData === 'boolean') {
-      return telemetryConsentData;
+    const systemConfigRaw = await client.getRaw(`/ocpprouter/systemConfig`);
+    systemConfig = systemConfigRaw.data as SystemConfig;
+    const telemetryConsent = systemConfig.userPreferences.telemetryConsent;
+    if (typeof telemetryConsent === 'boolean') {
+      return telemetryConsent;
     }
   } catch (error) {
-    // pass
+    console.error('error checking system config', error);
   }
   return undefined;
 }
 
-export function saveTelemetryConsent(telemetryConsent: boolean): void {
-  client.put(
-    `/ocpprouter/userPreferences?key=${TELEMETRY_CONSENT_KEY}&value=${telemetryConsent}`,
-    Boolean,
-    {},
-    undefined,
-  );
+export async function saveTelemetryConsent(
+  telemetryConsent: boolean,
+): Promise<void> {
+  if (systemConfig === null) {
+    throw new Error('System config not initialized');
+  }
+  systemConfig.userPreferences.telemetryConsent = telemetryConsent;
+  try {
+    await client.putRaw(`/ocpprouter/systemConfig`, systemConfig);
+  } catch (error) {
+    console.error('Error saving telemetry consent', error);
+  }
 }
 
 /**

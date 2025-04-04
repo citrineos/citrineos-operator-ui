@@ -18,13 +18,14 @@ import { CustomActions } from '../custom-actions';
 import dayjs from 'dayjs';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { useDispatch } from 'react-redux';
-import { setSelectedChargingStation } from '../../redux/selectedChargingStationSlice';
+import { setSelectedChargingStation } from '../../redux/selected.charging.station.slice';
 import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
 import { GenericViewState } from '@enums';
 
 export const GenericView = (props: GenericViewProps) => {
   const {
     dtoClass,
+    resourceType,
     gqlQuery,
     editMutation,
     createMutation,
@@ -47,6 +48,7 @@ export const GenericView = (props: GenericViewProps) => {
       id={id}
       state={genericViewState}
       dtoClass={dtoClass}
+      resourceType={resourceType}
       overrides={overrides}
       gqlQuery={gqlQuery}
       editMutation={editMutation}
@@ -95,6 +97,7 @@ export const GenericParameterizedView = (
   if (resourceType) {
     obj.resource = resourceType;
   }
+
   const [parentRecord, setParentRecord] = useState<any>(
     plainToInstance(dtoClass, {}),
   );

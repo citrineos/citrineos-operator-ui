@@ -6,6 +6,10 @@ import {
   ValidationOptions,
 } from 'class-validator';
 
+export enum GeoPointProps {
+  latitude = 'latitude',
+  longitude = 'longitude',
+}
 export class GeoPoint {
   private static TYPE = 'Point';
   private static CRS = {

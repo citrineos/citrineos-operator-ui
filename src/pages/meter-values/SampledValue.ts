@@ -1,4 +1,9 @@
-import { OCPP2_0_1 } from '@citrineos/base';
+import {
+  LocationEnumType,
+  MeasurandEnumType,
+  PhaseEnumType,
+  ReadingContextEnumType,
+} from '@OCPP2_0_1';
 import {
   IsEnum,
   IsNumber,
@@ -49,21 +54,21 @@ export class SampledValue {
   @IsNumber()
   value!: number;
 
-  @IsEnum(OCPP2_0_1.ReadingContextEnumType)
+  @IsEnum(ReadingContextEnumType)
   @IsOptional()
-  context?: OCPP2_0_1.ReadingContextEnumType | null;
+  context?: ReadingContextEnumType | null;
 
-  @IsEnum(OCPP2_0_1.MeasurandEnumType)
+  @IsEnum(MeasurandEnumType)
   @IsOptional()
-  measurand?: OCPP2_0_1.MeasurandEnumType | null;
+  measurand?: MeasurandEnumType | null;
 
-  @IsEnum(OCPP2_0_1.PhaseEnumType)
+  @IsEnum(PhaseEnumType)
   @IsOptional()
-  phase?: OCPP2_0_1.PhaseEnumType | null;
+  phase?: PhaseEnumType | null;
 
-  @IsEnum(OCPP2_0_1.LocationEnumType)
+  @IsEnum(LocationEnumType)
   @IsOptional()
-  location?: OCPP2_0_1.LocationEnumType | null;
+  location?: LocationEnumType | null;
 
   @Type(() => SignedMeterValue)
   @IsOptional()

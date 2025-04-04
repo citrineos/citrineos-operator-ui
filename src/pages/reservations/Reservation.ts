@@ -8,7 +8,11 @@ import {
   IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { OCPP2_0_1 } from '@citrineos/base';
+import {
+  ConnectorEnumType,
+  IdTokenEnumType,
+  ReserveNowStatusEnumType,
+} from '@OCPP2_0_1';
 import { CustomDataType } from '../../model/CustomData';
 import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';
@@ -37,8 +41,8 @@ export class IdTokenType {
   @IsString()
   idToken!: string;
 
-  @IsEnum(OCPP2_0_1.IdTokenEnumType)
-  type!: OCPP2_0_1.IdTokenEnumType;
+  @IsEnum(IdTokenEnumType)
+  type!: IdTokenEnumType;
 }
 
 export class Reservation {
@@ -56,13 +60,13 @@ export class Reservation {
   @TransformDate()
   expiryDateTime!: Dayjs;
 
-  @IsEnum(OCPP2_0_1.ConnectorEnumType)
+  @IsEnum(ConnectorEnumType)
   @IsOptional()
-  connectorType: OCPP2_0_1.ConnectorEnumType | null = null;
+  connectorType: ConnectorEnumType | null = null;
 
-  @IsEnum(OCPP2_0_1.ReserveNowStatusEnumType)
+  @IsEnum(ReserveNowStatusEnumType)
   @IsOptional()
-  reserveStatus: OCPP2_0_1.ReserveNowStatusEnumType | null = null;
+  reserveStatus: ReserveNowStatusEnumType | null = null;
 
   @IsBoolean()
   isActive!: boolean;

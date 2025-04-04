@@ -5,7 +5,12 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   plugins: [
-    nodePolyfills(),
+    nodePolyfills({
+      globals: {
+        process: false,
+        Buffer: false,
+      },
+    }),
     react({
       babel: {
         plugins: [
@@ -19,9 +24,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      '@dtos': path.resolve(__dirname, 'src/dtos'),
       '@util': path.resolve(__dirname, 'src/util'),
       '@enums': path.resolve(__dirname, 'src/model/enums'),
       '@interfaces': path.resolve(__dirname, 'src/model/interfaces'),
+      '@OCPP2_0_1': path.resolve(__dirname, 'src/util/ocpp2_0_1_dependencies'),
+      '@OCPP1_6': path.resolve(__dirname, 'src/util/ocpp1_6_dependencies'),
     },
   },
 });

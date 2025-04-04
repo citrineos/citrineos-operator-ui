@@ -24,6 +24,7 @@ import { Certificate, NewCertificateRequest } from './Certificate';
 import { Certificates } from '../../graphql/schema.types';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import { CertificatesListQuery } from '../../graphql/types';
+import { BaseRestClient } from '@util/BaseRestClient';
 
 const BUTTON_TEXT = 'Generate Certificates';
 const DRAWER_TITLE = 'Generate New Certificate';
@@ -67,14 +68,14 @@ export const CertificatesList: React.FC<IDataModelListProps> = ({
   const initialCertificateRequest = { selfSigned: false };
 
   const handleSubmit = async (plainValues: any) => {
-    const response = await triggerMessageAndHandleResponse({
-      url: CERTIFICATES_API_URL,
-      responseClass: NewCertificateRequest,
-      data: plainValues,
-      responseSuccessCheck: (res: NewCertificateRequest) => !!res,
-      ocppVersion: null,
-    });
-    if (response !== undefined && response !== null) handleDrawerClose();
+    const client = new BaseRestClient(null);
+    const response = await client.postRaw<NewCertificateRequest>(
+      CERTIFICATES_API_URL,
+      plainValues,
+    );
+
+    if (response.data !== undefined && response.data !== null)
+      handleDrawerClose();
   };
 
   return (

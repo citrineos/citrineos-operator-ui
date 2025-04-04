@@ -1,0 +1,35 @@
+@use '../../../mixins' as mixins;
+
+main[class*='content-charging-stations-']:not(
+    .content-charging-stations-new,
+    [class*='-edit']
+  ) {
+  @include mixins.inner-content-no-padding;
+}
+
+.image-placeholder {
+  width: 164px;
+  height: 164px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    color: var(--grayscale-color-1);
+  }
+}
+
+.border-left {
+  border-left: 1px solid var(--grayscale-color-6);
+  padding-left: var(--ant-padding-md);
+}
+
+.station-details {
+  padding: var(--ant-padding-md) 0;
+
+  table td:nth-child(2) {
+    padding-left: var(--ant-padding-md);
+  }
+}

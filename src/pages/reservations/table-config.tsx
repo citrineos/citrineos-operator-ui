@@ -3,11 +3,10 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { RESERVATIONS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { Reservations } from '../../graphql/schema.types';
-import { renderAssociatedStationId } from '../charging-stations';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';
-import { OCPP2_0_1 } from '@citrineos/base';
+import { ConnectorEnumType, ReserveNowStatusEnumType } from '@OCPP2_0_1';
 import { StatusIcon } from '../../components/status-icon';
 import { DefaultColors } from '@enums';
 
@@ -28,7 +27,7 @@ export const RESERVATIONS_COLUMNS = (
     {
       dataIndex: 'stationId',
       title: 'Station ID',
-      render: renderAssociatedStationId as any,
+      // render: renderAssociatedStationId as any,
     },
     {
       dataIndex: 'expiryDateTime',
@@ -43,8 +42,8 @@ export const RESERVATIONS_COLUMNS = (
       render: ((_: any, record: Reservations) => {
         return (
           <GenericTag
-            enumValue={record.connectorType as OCPP2_0_1.ConnectorEnumType}
-            enumType={OCPP2_0_1.ConnectorEnumType}
+            enumValue={record.connectorType as ConnectorEnumType}
+            enumType={ConnectorEnumType}
           />
         );
       }) as any,
@@ -55,10 +54,8 @@ export const RESERVATIONS_COLUMNS = (
       render: ((_: any, record: Reservations) => {
         return (
           <GenericTag
-            enumValue={
-              record.reserveStatus as OCPP2_0_1.ReserveNowStatusEnumType
-            }
-            enumType={OCPP2_0_1.ReserveNowStatusEnumType}
+            enumValue={record.reserveStatus as ReserveNowStatusEnumType}
+            enumType={ReserveNowStatusEnumType}
             colorMap={{
               Accepted: DefaultColors.GREEN,
               Faulted: DefaultColors.RED,

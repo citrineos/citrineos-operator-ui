@@ -1,4 +1,4 @@
-import { OCPP2_0_1 } from '@citrineos/base';
+import { TransactionEventEnumType, TriggerReasonEnumType } from '@OCPP2_0_1';
 import {
   IsArray,
   IsBoolean,
@@ -82,7 +82,7 @@ export class TransactionEvent extends BaseModel {
 
   @IsString()
   @IsNotEmpty()
-  eventType!: OCPP2_0_1.TransactionEventEnumType;
+  eventType!: TransactionEventEnumType;
 
   @IsArray()
   @Type(() => MeterValue)
@@ -112,9 +112,9 @@ export class TransactionEvent extends BaseModel {
   @IsNotEmpty()
   timestamp!: Date;
 
-  @IsEnum(OCPP2_0_1.TriggerReasonEnumType)
+  @IsEnum(TriggerReasonEnumType)
   @IsNotEmpty()
-  triggerReason!: OCPP2_0_1.TriggerReasonEnumType;
+  triggerReason!: TriggerReasonEnumType;
 
   @IsInt()
   @IsNotEmpty()

@@ -1,0 +1,13 @@
+@mixin inner-content-no-padding {
+  .content-inner-wrap {
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .ant-card {
+    box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--ant-margin-xl);
+  }
+}

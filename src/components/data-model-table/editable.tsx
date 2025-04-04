@@ -296,9 +296,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         content: `There was an error performing mutation: ${JSON.stringify(mutationError)}`,
       });
     } else if (mutationData) {
-      console.log('mutation result', mutationData, mutationError);
-
-      console.log('Update successful:');
       Modal.success({
         title: 'Save Successful',
         content: `The ${dtoResourceType} record has been updated successfully.`,
@@ -373,8 +370,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
           },
         });
 
-        console.log('Create successful:', response);
-
         Modal.success({
           title: 'Create Successful',
           content: `A new ${dtoResourceType} record has been created successfully.`,
@@ -404,7 +399,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
           valuesClass,
         );
 
-        console.log(`Saving values for id: ${id}`, valuesClass);
         const meta: any = {
           gqlMutation: dtoGqlEditMutation,
         };
@@ -476,9 +470,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     setEditingNewRecord(false);
   }, [editingRecord, form, primaryKeyFieldName]);
 
-  const onDeleteSuccess = () => {
-    console.log('success');
-  };
+  const onDeleteSuccess = () => {};
 
   const enableOptionalField = useCallback(
     (path: FieldPath) =>

@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
-import { OCPP2_0_1 } from '@citrineos/base';
+import { ConnectorStatusEnumType } from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
@@ -48,8 +48,8 @@ export class StatusNotification {
   @IsString()
   timestamp!: string;
 
-  @IsEnum(OCPP2_0_1.ConnectorStatusEnumType)
-  connectorStatus!: OCPP2_0_1.ConnectorStatusEnumType;
+  @IsEnum(ConnectorStatusEnumType)
+  connectorStatus!: ConnectorStatusEnumType;
 
   constructor(data: StatusNotification) {
     if (data) {

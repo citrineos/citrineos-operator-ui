@@ -1,7 +1,12 @@
 import React from 'react';
 import { Descriptions, Divider, Typography } from 'antd';
 import { SampledValue, SignedMeterValue, UnitOfMeasure } from '../SampledValue';
-import { OCPP2_0_1 } from '@citrineos/base';
+import {
+  LocationEnumType,
+  MeasurandEnumType,
+  PhaseEnumType,
+  ReadingContextEnumType,
+} from '@OCPP2_0_1';
 import GenericTag from '../../../components/tag';
 
 const { Text } = Typography;
@@ -72,7 +77,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
         {sampledValue.context ? (
           <GenericTag
             enumValue={sampledValue.context}
-            enumType={OCPP2_0_1.ReadingContextEnumType}
+            enumType={ReadingContextEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>
@@ -83,7 +88,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
         {sampledValue.measurand ? (
           <GenericTag
             enumValue={sampledValue.measurand}
-            enumType={OCPP2_0_1.MeasurandEnumType}
+            enumType={MeasurandEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>
@@ -92,10 +97,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
 
       <Descriptions.Item label="Phase">
         {sampledValue.phase ? (
-          <GenericTag
-            enumValue={sampledValue.phase}
-            enumType={OCPP2_0_1.PhaseEnumType}
-          />
+          <GenericTag enumValue={sampledValue.phase} enumType={PhaseEnumType} />
         ) : (
           <Text type="secondary">N/A</Text>
         )}
@@ -105,7 +107,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
         {sampledValue.location ? (
           <GenericTag
             enumValue={sampledValue.location}
-            enumType={OCPP2_0_1.LocationEnumType}
+            enumType={LocationEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>

@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   getSelectedAssociatedItems,
   setSelectedAssociatedItems,
-} from '../../redux/associationSelectionSlice';
+} from '../../redux/association.selection.slice';
 import { LABEL_FIELD } from '@util/decorators/LabelField';
 import { generateSearchFilters } from '@util/tables';
 import GenericTag from '../tag';

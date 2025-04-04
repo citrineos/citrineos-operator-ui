@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { OCPP2_0_1 } from '@citrineos/base';
+import { MonitorEnumType } from '@OCPP2_0_1';
 
 export class VariableMonitoring {
   @IsInt()
@@ -23,8 +23,8 @@ export class VariableMonitoring {
   @IsInt()
   value!: number;
 
-  @IsEnum(OCPP2_0_1.MonitorEnumType)
-  type!: OCPP2_0_1.MonitorEnumType;
+  @IsEnum(MonitorEnumType)
+  type!: MonitorEnumType;
 
   @IsInt()
   severity!: number;

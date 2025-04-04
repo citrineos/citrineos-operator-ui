@@ -1,14 +1,14 @@
 import { HttpMethod, OCPPVersion } from '@citrineos/base';
 import { BaseRestClient } from '@util/BaseRestClient';
-import { Constructable } from '@util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 import { MessageConfirmation } from './MessageConfirmation';
 
-export const showSuccess = (payload?: string) => {
+export const showSuccess = (payload?: string | object) => {
+  const payloadString = payload ? JSON.stringify(payload) : '.';
   notification.success({
     message: 'Success',
-    description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
+    description: `The request was successful ${payloadString}`,
     placement: 'topRight',
     props: {
       'data-testid': 'success-notification',
@@ -29,7 +29,6 @@ export const showError = (msg: string) => {
 
 export interface TriggerMessageAndHandleResponseProps<T> {
   url: string;
-  responseClass: Constructable<T>;
   data: any;
   responseSuccessCheck: (response: T) => boolean;
   ocppVersion?: OCPPVersion | null;
@@ -37,9 +36,12 @@ export interface TriggerMessageAndHandleResponseProps<T> {
   setLoading?: (loading: boolean) => void;
 }
 
-export const triggerMessageAndHandleResponse = async <T,>({
+type MessageConfirmationOrArray = MessageConfirmation | MessageConfirmation[];
+
+export const triggerMessageAndHandleResponse = async <
+  T extends MessageConfirmationOrArray,
+>({
   url,
-  responseClass,
   data,
   responseSuccessCheck,
   ocppVersion = OCPPVersion.OCPP2_0_1,
@@ -54,18 +56,22 @@ export const triggerMessageAndHandleResponse = async <T,>({
     let response = undefined;
     switch (method) {
       case HttpMethod.Post:
-        response = await client.post(url, responseClass, {}, data);
+        response = await client.postRaw<T>(url, data);
         break;
       case HttpMethod.Delete:
-        response = await client.del(url, responseClass, {});
+        response = await client.delRaw<T>(url);
         break;
       default:
         throw new Error(`Unimplemented Http Method: ${method}`);
     }
 
-    // todo reuse handle response!
-    if (responseSuccessCheck(response)) {
-      showSuccess((response as any).payload);
+    if (responseSuccessCheck(response.data)) {
+      const payload = Array.isArray(response.data)
+        ? response.data.length > 0 && response.data[0].payload
+          ? response.data[0].payload
+          : undefined
+        : response.data.payload;
+      showSuccess(payload);
     } else {
       let msg = 'The request did not receive a successful response.';
       if (response instanceof MessageConfirmation || Array.isArray(response)) {
@@ -158,9 +164,7 @@ export function formatPem(pem: string): string | null {
   return `${header}\n${formattedContent}\n${footer}`;
 }
 
-export const responseSuccessCheck = (
-  response: MessageConfirmation | MessageConfirmation[],
-) => {
+export const responseSuccessCheck = (response: MessageConfirmationOrArray) => {
   if (Array.isArray(response)) {
     return response.every((r) => r && r.success);
   }
@@ -168,7 +172,7 @@ export const responseSuccessCheck = (
 };
 
 export const generateErrorMessageFromResponses = (
-  response: MessageConfirmation | MessageConfirmation[],
+  response: MessageConfirmationOrArray,
 ) => {
   let msg = '';
   if (Array.isArray(response)) {

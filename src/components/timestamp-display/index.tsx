@@ -1,17 +1,29 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { Typography } from 'antd';
+import moment from 'moment';
 
 interface TimestampDisplayProps {
   isoTimestamp: string | Date;
   format?: string; // Date format to display (default: 'YYYY-MM-DD HH:mm:ss')
 }
 
+const defaultDateFormat = 'YYYY-MM-DD HH:mm:ss';
+
 export const TimestampDisplay: React.FC<TimestampDisplayProps> = ({
   isoTimestamp,
-  format = 'YYYY-MM-DD HH:mm:ss',
+  format = defaultDateFormat,
 }) => {
-  const formattedTimestamp = dayjs(isoTimestamp).format(format);
+  const formattedTimestamp = formatDate(isoTimestamp, format);
 
   return <Typography.Text>{formattedTimestamp}</Typography.Text>;
+};
+
+export const formatDate = (
+  isoTimestamp: string | Date | undefined,
+  format = defaultDateFormat,
+) => {
+  if (!isoTimestamp) {
+    return 'N/A';
+  }
+  return moment(isoTimestamp).format(format);
 };
