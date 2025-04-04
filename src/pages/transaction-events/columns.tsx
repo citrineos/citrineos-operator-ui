@@ -1,7 +1,10 @@
-import {Table} from "antd";
-import React from "react";
-import {TransactionEventDtoProps} from "../../dtos/transaction.event.dto";
-import {formatDate, TimestampDisplay} from "../../components/timestamp-display";
+import { Table } from 'antd';
+import React from 'react';
+import { TransactionEventDtoProps } from '../../dtos/transaction.event.dto';
+import {
+  formatDate,
+  TimestampDisplay,
+} from '../../components/timestamp-display';
 
 export const getTransactionEventColumns = () => {
   return (
@@ -45,4 +48,4 @@ export const getTransactionEventColumns = () => {
       />
     </>
   );
-}
+};

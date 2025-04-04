@@ -27,7 +27,7 @@ export const LocationsChargingStationsTable = ({
 
   // Use filteredStations if provided, otherwise use all stations from the location
   const stationsToDisplay = filteredStations || location.chargingStations;
-  
+
   const showRemoteStartModal = useCallback(
     (station: ChargingStationDto) => {
       dispatch(
@@ -93,7 +93,7 @@ export const LocationsChargingStationsTable = ({
       dataSource={stationsToDisplay}
       showHeader={true} // Show headers for improved usability
     >
-     {columns}
+      {columns}
     </Table>
   );
 };

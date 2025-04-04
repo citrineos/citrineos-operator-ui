@@ -28,13 +28,13 @@ export class NetworkConnectionProfileType {
   @IsOptional()
   apn?: ApnType;
 
-  @IsEnum(OCPP2_0_1.OCPPVersionEnumType)
+  @IsEnum(OCPPVersionEnumType)
   @IsNotEmpty()
-  ocppVersion!: OCPP2_0_1.OCPPVersionEnumType;
+  ocppVersion!: OCPPVersionEnumType;
 
-  @IsEnum(OCPP2_0_1.OCPPTransportEnumType)
+  @IsEnum(OCPPTransportEnumType)
   @IsNotEmpty()
-  ocppTransport!: OCPP2_0_1.OCPPTransportEnumType;
+  ocppTransport!: OCPPTransportEnumType;
 
   @MaxLength(512)
   @IsUrl({ require_tld: false })
@@ -49,9 +49,9 @@ export class NetworkConnectionProfileType {
   @IsNotEmpty()
   securityProfile!: number;
 
-  @IsEnum(OCPP2_0_1.OCPPInterfaceEnumType)
+  @IsEnum(OCPPInterfaceEnumType)
   @IsNotEmpty()
-  ocppInterface!: OCPP2_0_1.OCPPInterfaceEnumType;
+  ocppInterface!: OCPPInterfaceEnumType;
 
   @Type(() => VpnType)
   @ValidateNested()

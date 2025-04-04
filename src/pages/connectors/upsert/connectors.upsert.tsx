@@ -7,10 +7,7 @@ import { ResourceType } from '../../../resource-type';
 import { getSerializedValues } from '@util/middleware';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { CONNECTOR_CREATE_MUTATION, CONNECTOR_EDIT_MUTATION } from '../queries';
-import {
-  ErrorCodes,
-  ConnectorStatusEnumType,
-} from '@OCPP2_0_1';
+import { ErrorCodes, ConnectorStatusEnumType } from '@OCPP2_0_1';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 
 const { Option } = Select;

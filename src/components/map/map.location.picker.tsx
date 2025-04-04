@@ -111,7 +111,7 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
           zoomControl={true}
           fullscreenControl={false}
         >
-          {(mapFullyInitialized && selectedLocation) && (
+          {mapFullyInitialized && selectedLocation && (
             <MarkerWithMap selectedLocation={selectedLocation} />
           )}
         </Map>

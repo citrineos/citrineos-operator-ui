@@ -18,8 +18,8 @@ import { Dayjs } from 'dayjs';
 import { CustomDataType } from '../../model/CustomData';
 
 export class MessageContentType {
-  @IsEnum(OCPP2_0_1.MessageFormatEnumType)
-  format!: OCPP2_0_1.MessageFormatEnumType;
+  @IsEnum(MessageFormatEnumType)
+  format!: MessageFormatEnumType;
 
   @IsString()
   content!: string;
@@ -43,12 +43,12 @@ export class MessageInfo {
   @IsString()
   stationId!: string;
 
-  @IsEnum(OCPP2_0_1.MessagePriorityEnumType)
-  priority!: OCPP2_0_1.MessagePriorityEnumType;
+  @IsEnum(MessagePriorityEnumType)
+  priority!: MessagePriorityEnumType;
 
-  @IsEnum(OCPP2_0_1.MessageStateEnumType)
+  @IsEnum(MessageStateEnumType)
   @IsOptional()
-  state: OCPP2_0_1.MessageStateEnumType | null = null;
+  state: MessageStateEnumType | null = null;
 
   @Type(() => Date)
   @IsDate()

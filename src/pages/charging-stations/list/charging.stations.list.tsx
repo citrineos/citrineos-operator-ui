@@ -44,31 +44,46 @@ export const ChargingStationsList = () => {
     }
   };
 
-  const showRemoteStartModal = useCallback((station: ChargingStationDto) => {
-    dispatch(openModal({
-      title: 'Remote Start',
-      modalComponentType: ModalComponentType.remoteStart,
-      modalComponentProps: { station: instanceToPlain(station) },
-    }));
-  }, [dispatch]);
+  const showRemoteStartModal = useCallback(
+    (station: ChargingStationDto) => {
+      dispatch(
+        openModal({
+          title: 'Remote Start',
+          modalComponentType: ModalComponentType.remoteStart,
+          modalComponentProps: { station: instanceToPlain(station) },
+        }),
+      );
+    },
+    [dispatch],
+  );
 
-  const handleStopTransactionClick = useCallback((station: ChargingStationDto) => {
-    dispatch(openModal({
-      title: 'Remote Stop',
-      modalComponentType: ModalComponentType.remoteStop,
-      modalComponentProps: {
-        station: instanceToPlain(station),
-      },
-    }));
-  }, [dispatch]);
+  const handleStopTransactionClick = useCallback(
+    (station: ChargingStationDto) => {
+      dispatch(
+        openModal({
+          title: 'Remote Stop',
+          modalComponentType: ModalComponentType.remoteStop,
+          modalComponentProps: {
+            station: instanceToPlain(station),
+          },
+        }),
+      );
+    },
+    [dispatch],
+  );
 
-  const showResetStartModal = useCallback((station: ChargingStationDto) => {
-    dispatch(openModal({
-      title: 'Reset',
-      modalComponentType: ModalComponentType.reset,
-      modalComponentProps: { station: instanceToPlain(station) },
-    }));
-  }, [dispatch]);
+  const showResetStartModal = useCallback(
+    (station: ChargingStationDto) => {
+      dispatch(
+        openModal({
+          title: 'Reset',
+          modalComponentType: ModalComponentType.reset,
+          modalComponentProps: { station: instanceToPlain(station) },
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const columns = useMemo(
     () =>
@@ -78,7 +93,12 @@ export const ChargingStationsList = () => {
         handleStopTransactionClick,
         showResetStartModal,
       ),
-    [push, showRemoteStartModal, handleStopTransactionClick, showResetStartModal],
+    [
+      push,
+      showRemoteStartModal,
+      handleStopTransactionClick,
+      showResetStartModal,
+    ],
   );
 
   return (

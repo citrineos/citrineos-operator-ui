@@ -470,8 +470,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     setEditingNewRecord(false);
   }, [editingRecord, form, primaryKeyFieldName]);
 
-  const onDeleteSuccess = () => {
-  };
+  const onDeleteSuccess = () => {};
 
   const enableOptionalField = useCallback(
     (path: FieldPath) =>

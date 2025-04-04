@@ -34,11 +34,11 @@ export const ChargingStationDetail: React.FC = () => {
       label: 'Transactions',
       children: <TransactionsList stationId={id} hideTitle />,
     },
-    {
-      key: '5',
-      label: 'Data',
-      children: 'Data content',
-    },
+    // {
+    //   key: '5',
+    //   label: 'Data',
+    //   children: 'Data content',
+    // },
   ];
 
   return (

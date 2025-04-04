@@ -64,6 +64,12 @@ export const TransactionDetail = () => {
     });
   const meterValues = meterValuesData?.data ?? [];
 
+  let idTokenDatabaseId =
+    transaction?.transactionEvents && transaction.transactionEvents.length > 0
+      ? transaction.transactionEvents[0].idTokenId
+      : transaction?.startTransaction?.idTokenDatabaseId;
+  idTokenDatabaseId = Number(idTokenDatabaseId) || null; // ensure it's a number or null
+
   const { tableProps } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
     sorters: { permanent: [{ field: BaseDtoProps.updatedAt, order: 'desc' }] },
@@ -72,7 +78,7 @@ export const TransactionDetail = () => {
         {
           field: 'IdToken.id',
           operator: 'eq',
-          value: Number(transaction?.transactionEvents?.[0].idTokenId),
+          value: idTokenDatabaseId, // filter by the idTokenDatabaseId from the transaction
         },
       ],
     },
@@ -189,11 +195,11 @@ export const TransactionDetail = () => {
         <TransactionEventsList transactionDatabaseId={transaction.id} />
       ),
     },
-    {
-      key: '4',
-      label: 'Pricing',
-      children: 'Pricing content',
-    },
+    // {
+    //   key: '4',
+    //   label: 'Pricing',
+    //   children: 'Pricing content',
+    // },
   ];
 
   return (

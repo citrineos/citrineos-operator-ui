@@ -1,10 +1,15 @@
 // map.marker.tsx
 import React from 'react';
-import { AdvancedMarker, useAdvancedMarkerRef } from '@vis.gl/react-google-maps';
+import {
+  AdvancedMarker,
+  useAdvancedMarkerRef,
+} from '@vis.gl/react-google-maps';
 import { LocationIcon, ChargingStationIcon } from './marker.icons';
 import { BaseMapMarkerProps } from './types';
 
-export const MapMarkerComponent: React.FC<BaseMapMarkerProps & { type: 'station' | 'location' | 'mixed' }> = ({
+export const MapMarkerComponent: React.FC<
+  BaseMapMarkerProps & { type: 'station' | 'location' | 'mixed' }
+> = ({
   position,
   identifier,
   reactContent,
@@ -15,7 +20,7 @@ export const MapMarkerComponent: React.FC<BaseMapMarkerProps & { type: 'station'
   status,
 }) => {
   const [markerRef, marker] = useAdvancedMarkerRef();
-  
+
   // Create the appropriate icon based on type
   const renderIcon = () => {
     if (type === 'station') {

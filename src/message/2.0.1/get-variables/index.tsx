@@ -148,9 +148,9 @@ export class GetVariablesData {
   @IsOptional()
   evse?: Evse | null;
 
-  @IsEnum(OCPP2_0_1.AttributeEnumType)
+  @IsEnum(AttributeEnumType)
   @IsOptional()
-  attributeType?: OCPP2_0_1.AttributeEnumType | null;
+  attributeType?: AttributeEnumType | null;
 }
 
 enum GetVariablesRequestProps {
@@ -181,13 +181,13 @@ export class GetVariableResultType {
   @IsOptional()
   attributeStatusInfo?: StatusInfoType;
 
-  @IsEnum(OCPP2_0_1.GetVariableStatusEnumType)
+  @IsEnum(GetVariableStatusEnumType)
   @IsOptional()
-  attributeStatus!: OCPP2_0_1.GetVariableStatusEnumType;
+  attributeStatus!: GetVariableStatusEnumType;
 
-  @IsEnum(OCPP2_0_1.AttributeEnumType)
+  @IsEnum(AttributeEnumType)
   @IsOptional()
-  attributeType?: OCPP2_0_1.AttributeEnumType;
+  attributeType?: AttributeEnumType;
 
   @MaxLength(2500)
   @IsString()

@@ -6,7 +6,8 @@ main {
   height: calc(100vh - 130px);
   overflow: auto;
 
-  .content-outer-wrap, .content-inner-wrap{
+  .content-outer-wrap,
+  .content-inner-wrap {
     padding: var(--ant-padding-xl);
   }
 
@@ -49,12 +50,12 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("/gradient.svg");
+  background-image: url('/gradient.svg');
   background-size: cover;
   z-index: 1;
 
   &.dark {
-    background-image: url("/gradient-dark.svg");
+    background-image: url('/gradient-dark.svg');
   }
 }
 
@@ -80,11 +81,11 @@ main {
   }
 }
 
-button.secondary{
+button.secondary {
   background-color: var(--secondary-color-2);
   color: white;
   border: 0;
-  &:not(:disabled):not(.ant-btn-disabled):hover{
+  &:not(:disabled):not(.ant-btn-disabled):hover {
     background-color: var(--secondary-color-3);
     color: white;
   }
@@ -109,7 +110,7 @@ button.secondary{
 }
 
 .ant-table {
-  .selected-row{
+  .selected-row {
     background: var(--ant-table-row-hover-bg);
     .column-id h4 {
       color: var(--secondary-color-3);
@@ -161,7 +162,7 @@ button.secondary{
     background-color: rgba(82, 196, 26, 0.05);
     transition: background-color 0.3s ease;
   }
-  
+
   .row-origin-csms {
     padding: 4px;
     border-radius: 4px;

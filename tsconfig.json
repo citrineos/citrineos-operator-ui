@@ -23,7 +23,7 @@
       "@OCPP2_0_1": ["src/util/ocpp2_0_1_dependencies"],
       "@util/*": ["src/util/*"],
       "@enums": ["src/model/enums"],
-      "@interfaces": ["src/model/interfaces"],
+      "@interfaces": ["src/model/interfaces"]
     }
   },
   "include": ["src"],

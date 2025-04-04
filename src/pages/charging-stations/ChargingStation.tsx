@@ -18,8 +18,14 @@ import { BaseModel } from '@util/BaseModel';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { Location, LocationProps } from '../locations/Location';
-import { LOCATIONS_GET_QUERY, LOCATIONS_LIST_QUERY } from '../locations/queries';
-import { StatusNotification, StatusNotificationProps } from '../status-notifications/StatusNotification';
+import {
+  LOCATIONS_GET_QUERY,
+  LOCATIONS_LIST_QUERY,
+} from '../locations/queries';
+import {
+  StatusNotification,
+  StatusNotificationProps,
+} from '../status-notifications/StatusNotification';
 import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,

@@ -218,7 +218,11 @@ export const LocationsUpsert = () => {
       <Flex vertical gap={16}>
         <Flex align="center" className="relative">
           <ArrowLeftIcon
-            style={{ cursor: 'pointer', position: 'absolute', transform: 'translateX(-100%)' }}
+            style={{
+              cursor: 'pointer',
+              position: 'absolute',
+              transform: 'translateX(-100%)',
+            }}
             onClick={() => goBack()}
           />
           <h3>{locationId ? 'Edit Location' : 'Create Location'}</h3>

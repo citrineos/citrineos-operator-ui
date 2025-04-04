@@ -2,14 +2,17 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import { IsString, } from 'class-validator';
-import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../../util';
+import { IsString } from 'class-validator';
+import {
+  responseSuccessCheck,
+  triggerMessageAndHandleResponse,
+} from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 
 enum ChangeConfigurationDataProps {
-    key = 'key',
-    value = 'value',
+  key = 'key',
+  value = 'value',
 }
 
 export interface ChangeConfigurationProps {
@@ -41,7 +44,7 @@ export const ChangeConfiguration: React.FC<ChangeConfigurationProps> = ({
       url: `/configuration/changeConfiguration?identifier=${station.id}&tenantId=1`,
       data,
       responseSuccessCheck,
-      ocppVersion: OCPPVersion.OCPP1_6
+      ocppVersion: OCPPVersion.OCPP1_6,
     });
   };
 

@@ -69,9 +69,13 @@ export const CertificatesList: React.FC<IDataModelListProps> = ({
 
   const handleSubmit = async (plainValues: any) => {
     const client = new BaseRestClient(null);
-    const response = await client.postRaw<NewCertificateRequest>(CERTIFICATES_API_URL, plainValues);
+    const response = await client.postRaw<NewCertificateRequest>(
+      CERTIFICATES_API_URL,
+      plainValues,
+    );
 
-    if (response.data !== undefined && response.data !== null) handleDrawerClose();
+    if (response.data !== undefined && response.data !== null)
+      handleDrawerClose();
   };
 
   return (

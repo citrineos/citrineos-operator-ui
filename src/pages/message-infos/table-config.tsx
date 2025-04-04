@@ -65,8 +65,8 @@ export const MESSAGE_INFOS_COLUMNS = (
       render: ((_: any, record: MessageInfos) => {
         return (
           <GenericTag
-            enumValue={record.priority as OCPP2_0_1.MessagePriorityEnumType}
-            enumType={OCPP2_0_1.MessagePriorityEnumType}
+            enumValue={record.priority as MessagePriorityEnumType}
+            enumType={MessagePriorityEnumType}
             colorMap={{
               AlwaysFront: DefaultColors.GEEKBLUE,
               InFront: DefaultColors.BLUE,
@@ -82,8 +82,8 @@ export const MESSAGE_INFOS_COLUMNS = (
       render: ((_: any, record: MessageInfos) => {
         return (
           <GenericTag
-            enumValue={record.state as OCPP2_0_1.MessageStateEnumType}
-            enumType={OCPP2_0_1.MessageStateEnumType}
+            enumValue={record.state as MessageStateEnumType}
+            enumType={MessageStateEnumType}
             colorMap={{
               Charging: DefaultColors.GREEN,
               Faulted: DefaultColors.RED,

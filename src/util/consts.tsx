@@ -1,4 +1,4 @@
-import {CrudFilter} from "@refinedev/core";
+import { CrudFilter } from '@refinedev/core';
 
 export const NEW_IDENTIFIER = 'new';
 

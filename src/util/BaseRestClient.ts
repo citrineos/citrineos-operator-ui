@@ -47,10 +47,7 @@ export class BaseRestClient {
     return this.axiosInstance.options<T>(url, config!);
   }
 
-  async options<T>(
-    path: string,
-    config: AxiosRequestConfig,
-  ): Promise<T> {
+  async options<T>(path: string, config: AxiosRequestConfig): Promise<T> {
     return this.optionsRaw<T>(path, config).then((response) =>
       this.handleResponse<T>(response),
     );
@@ -64,10 +61,7 @@ export class BaseRestClient {
     return this.axiosInstance.get<T>(url, config!);
   }
 
-  async get<T>(
-    path: string,
-    config: AxiosRequestConfig,
-  ): Promise<T> {
+  async get<T>(path: string, config: AxiosRequestConfig): Promise<T> {
     incrementRequestCount({ path: path });
     return this.getRaw<T>(path, config).then((response) =>
       this.handleResponse<T>(response),
@@ -82,10 +76,7 @@ export class BaseRestClient {
     return this.axiosInstance.delete<T>(url, config!);
   }
 
-  async del<T>(
-    path: string,
-    config: AxiosRequestConfig,
-  ): Promise<T> {
+  async del<T>(path: string, config: AxiosRequestConfig): Promise<T> {
     incrementRequestCount({ path: path });
     return this.delRaw<T>(path, config).then((response) =>
       this.handleResponse<T>(response),
@@ -152,9 +143,7 @@ export class BaseRestClient {
     );
   }
 
-  protected handleResponse<T>(
-    response: AxiosResponse<T>,
-  ): T {
+  protected handleResponse<T>(response: AxiosResponse<T>): T {
     if (response.status >= 200 && response.status <= 299) {
       return response.data as T;
     } else {

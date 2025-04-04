@@ -20,7 +20,9 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
 }: LocationsMapProps) => {
   const [filteredLocations, setFilteredLocations] = useState<LocationDto[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocationId, setSelectedLocationId] = useState<string | undefined>();
+  const [selectedLocationId, setSelectedLocationId] = useState<
+    string | undefined
+  >();
 
   const { tableProps } = useTable<LocationDto>({
     resource: ResourceType.LOCATIONS,
@@ -55,32 +57,36 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
 
   // Process locations for rendering
   const locationsForMap = useMemo(() => {
-    const locationsData = (
-      searchQuery.length > 0 
-        ? filteredLocations 
-        : (tableProps.dataSource as unknown as LocationDto[])
-    ) || [];
+    const locationsData =
+      (searchQuery.length > 0
+        ? filteredLocations
+        : (tableProps.dataSource as unknown as LocationDto[])) || [];
 
     // Enhance locations with custom react content for markers
-    return locationsData.map(location => {
+    return locationsData.map((location) => {
       // Create a copy of the location with the custom React content
       const enhancedLocation = { ...location };
-      
+
       // Add react content to the location's charging stations if needed
-      enhancedLocation.chargingStations = enhancedLocation.chargingStations.map(station => ({
-        ...station,
-        reactContent: null, // If you need custom content for station markers
-      }));
-      
+      enhancedLocation.chargingStations = enhancedLocation.chargingStations.map(
+        (station) => ({
+          ...station,
+          reactContent: null, // If you need custom content for station markers
+        }),
+      );
+
       return enhancedLocation;
     });
   }, [tableProps.dataSource, filteredLocations, searchQuery]);
 
   // Handle marker click
-  const handleMarkerClick = (id: string, type: 'station' | 'location' | 'mixed') => {
+  const handleMarkerClick = (
+    id: string,
+    type: 'station' | 'location' | 'mixed',
+  ) => {
     console.debug(`Marker ${id} clicked, type: ${type}`);
     setSelectedLocationId(id);
-    
+
     if (type === 'location') {
       // Navigate to location detail page when a location marker is clicked
       window.location.href = `/locations/${id}`;
@@ -97,7 +103,11 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
       }}
     >
       {!mapOnly && (
-        <Row justify="space-between" className="header-row" style={{ padding: '0px 16px' }}>
+        <Row
+          justify="space-between"
+          className="header-row"
+          style={{ padding: '0px 16px' }}
+        >
           {/* <h2>Locations</h2> */}
           <AutoComplete
             options={filteredLocations.map((location) => ({
@@ -116,8 +126,11 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
                 window.location.href = `/locations/${option.data.id}`;
               }
             }}
-            filterOption={(inputValue, option) => 
-              option!.value.toString().toLowerCase().includes(inputValue.toLowerCase())
+            filterOption={(inputValue, option) =>
+              option!.value
+                .toString()
+                .toLowerCase()
+                .includes(inputValue.toLowerCase())
             }
           >
             <Input placeholder="Search for a location" />

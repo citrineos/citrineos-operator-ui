@@ -22,7 +22,9 @@ type SearchProps = GetProps<typeof Input.Search>;
 export const LocationsList = () => {
   const [expandedRowByToggle, setExpandedRowByToggle] = useState<string>();
   const [searchValue, setSearchValue] = useState<string>('');
-  const [filteredStationsByLocation, setFilteredStationsByLocation] = useState<Record<string, ChargingStationDto[]>>({});
+  const [filteredStationsByLocation, setFilteredStationsByLocation] = useState<
+    Record<string, ChargingStationDto[]>
+  >({});
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const { push } = useNavigation();
 
@@ -37,28 +39,30 @@ export const LocationsList = () => {
 
   const handleExpandToggle = (record: LocationDto) => {
     const isCurrentlyExpanded = expandedRowKeys.includes(record.id);
-    
+
     if (isCurrentlyExpanded) {
       // Remove this location from expanded rows
-      setExpandedRowKeys(prevKeys => prevKeys.filter(key => key !== record.id));
+      setExpandedRowKeys((prevKeys) =>
+        prevKeys.filter((key) => key !== record.id),
+      );
       setExpandedRowByToggle(undefined);
     } else {
       // Add this location to expanded rows
-      setExpandedRowKeys(prevKeys => [...prevKeys, record.id]);
+      setExpandedRowKeys((prevKeys) => [...prevKeys, record.id]);
       setExpandedRowByToggle(record.id);
     }
   };
 
   const onSearch: SearchProps['onSearch'] = (value, _e?, _info?) => {
     setSearchValue(value);
-    
+
     if (!value || value === '') {
       setFilters(EMPTY_FILTER);
       setFilteredStationsByLocation({});
       // Reset expansion state when search is cleared
       setExpandedRowKeys([]);
       setExpandedRowByToggle(undefined);
-      
+
       // Ensure all rows are collapsed when search is reset
       if (tableProps.dataSource) {
         const allLocations = tableProps.dataSource as LocationDto[];
@@ -67,7 +71,7 @@ export const LocationsList = () => {
     } else {
       // Use Hasura's nested filtering capabilities through the backend
       setFilters(getLocationAndStationsFilters(value));
-      
+
       // Update matching stations and expand relevant rows
       updateMatchingStations(value);
     }
@@ -89,14 +93,19 @@ export const LocationsList = () => {
     tableProps.dataSource?.forEach((location: LocationDto) => {
       if (!location.chargingStations?.length) return;
 
-      const matchingStations = location.chargingStations.filter(station => 
-        // Match against station ID
-        (station.id && station.id.toLowerCase().includes(lowercaseValue)) ||
-        // Match against online status
-        (typeof station.isOnline === 'boolean' && 
-          (station.isOnline ? 'online' : 'offline').includes(lowercaseValue)) ||
-        // Match against status notifications if available
-        (station.latestStatusNotifications?.[0]?.statusNotification?.connectorStatus?.toLowerCase().includes(lowercaseValue))
+      const matchingStations = location.chargingStations.filter(
+        (station) =>
+          // Match against station ID
+          (station.id && station.id.toLowerCase().includes(lowercaseValue)) ||
+          // Match against online status
+          (typeof station.isOnline === 'boolean' &&
+            (station.isOnline ? 'online' : 'offline').includes(
+              lowercaseValue,
+            )) ||
+          // Match against status notifications if available
+          station.latestStatusNotifications?.[0]?.statusNotification?.connectorStatus
+            ?.toLowerCase()
+            .includes(lowercaseValue),
       );
 
       if (matchingStations.length > 0) {
@@ -135,19 +144,19 @@ export const LocationsList = () => {
   // Get expanded row keys
   const getExpandedRowKeys = (): React.Key[] => {
     const keys: React.Key[] = [];
-    
+
     // Include manually expanded row
     if (expandedRowByToggle) {
       keys.push(expandedRowByToggle);
     }
-    
+
     // Include rows with matching charging stations
-    Object.keys(filteredStationsByLocation).forEach(locationId => {
+    Object.keys(filteredStationsByLocation).forEach((locationId) => {
       if (!keys.includes(locationId)) {
         keys.push(locationId);
       }
     });
-    
+
     return keys;
   };
 
@@ -176,20 +185,25 @@ export const LocationsList = () => {
         expandable={{
           expandIconColumnIndex: -1,
           expandedRowRender: (record: LocationDto) => {
-            return <LocationsChargingStationsTable 
-              location={record} 
-              filteredStations={filteredStationsByLocation[record.id]} 
-            />;
+            return (
+              <LocationsChargingStationsTable
+                location={record}
+                filteredStations={filteredStationsByLocation[record.id]}
+              />
+            );
           },
           expandedRowKeys: expandedRowKeys,
           onExpandedRowsChange: (expandedRows) => {
             setExpandedRowKeys([...expandedRows]);
-            
+
             // Clear the toggle state if the previously toggled row is collapsed
-            if (expandedRowByToggle && !expandedRows.includes(expandedRowByToggle)) {
+            if (
+              expandedRowByToggle &&
+              !expandedRows.includes(expandedRowByToggle)
+            ) {
               setExpandedRowByToggle(undefined);
             }
-          }
+          },
         }}
         rowClassName={(record: LocationDto) =>
           shouldHighlightLocation(record) ? 'selected-row' : ''

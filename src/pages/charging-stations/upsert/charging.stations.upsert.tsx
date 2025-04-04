@@ -227,7 +227,11 @@ export const ChargingStationUpsert = () => {
             style={{ marginBottom: 16 }}
           >
             <ArrowLeftIcon
-              style={{ cursor: 'pointer', position: 'absolute', transform: 'translateX(-100%)' }}
+              style={{
+                cursor: 'pointer',
+                position: 'absolute',
+                transform: 'translateX(-100%)',
+              }}
               onClick={() => goBack()}
             />
             <h3>

@@ -10,7 +10,10 @@ import { OperationalStatusEnumType } from '@OCPP2_0_1';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import { GET_EVSE_LIST_FOR_STATION, GET_EVSES_FOR_STATION } from '../../queries';
+import {
+  GET_EVSE_LIST_FOR_STATION,
+  GET_EVSES_FOR_STATION,
+} from '../../queries';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { EvseProps } from '../../../pages/evses/EvseProps';
 
@@ -42,9 +45,9 @@ export class ChangeAvailabilityRequest {
   @IsOptional()
   evse?: Evse | null;
 
-  @IsEnum(OCPP2_0_1.OperationalStatusEnumType)
+  @IsEnum(OperationalStatusEnumType)
   @IsNotEmpty()
-  operationalStatus!: OCPP2_0_1.OperationalStatusEnumType;
+  operationalStatus!: OperationalStatusEnumType;
 
   // todo
   // @Type(() => CustomDataType)

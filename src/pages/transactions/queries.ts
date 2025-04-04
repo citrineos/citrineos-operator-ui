@@ -100,6 +100,12 @@ export const TRANSACTION_GET_QUERY = gql`
         }
         idTokenId
       }
+      StartTransactions {
+        IdToken {
+          idToken
+        }
+        idTokenDatabaseId
+      }
     }
   }
 `;

@@ -33,11 +33,11 @@ export const LocationsDetail = () => {
       label: 'Charging Stations',
       children: <LocationsChargingStationsTable location={location} />,
     },
-    {
-      key: '2',
-      label: 'KPI Charts',
-      children: 'KPI Charts Content',
-    },
+    // {
+    //   key: '2',
+    //   label: 'KPI Charts',
+    //   children: 'KPI Charts Content',
+    // },
   ];
 
   return (

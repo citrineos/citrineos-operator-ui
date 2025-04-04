@@ -146,7 +146,7 @@ const MapWithClustering: React.FC<{
       const timer = setTimeout(() => {
         setMapFullyInitialized(true);
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     } else {
       setMapFullyInitialized(false);
@@ -260,53 +260,54 @@ const MapWithClustering: React.FC<{
       zoomControl={true}
       fullscreenControl={false}
     >
-      {mapFullyInitialized && visibleElements.map((element, index) => {
-        // Handle cluster elements
-        if ('count' in element && element.count > 1) {
+      {mapFullyInitialized &&
+        visibleElements.map((element, index) => {
+          // Handle cluster elements
+          if ('count' in element && element.count > 1) {
+            return (
+              <AdvancedMarker
+                key={`cluster-${index}`}
+                position={element.position}
+                onClick={() => {
+                  // Zoom in when cluster is clicked
+                  if (map) {
+                    const bounds = new google.maps.LatLngBounds();
+                    element.markers.forEach((marker) => {
+                      bounds.extend(marker.position);
+                    });
+                    map.fitBounds(bounds);
+                  }
+                }}
+              >
+                <ClusterIcon
+                  count={element.count}
+                  type={element.type}
+                  color={'var(--grayscale-color-1)'}
+                />
+              </AdvancedMarker>
+            );
+          }
+          // if ('markers' in element && element.markers) {
+          // }
+          // Handle regular marker elements
           return (
-            <AdvancedMarker
-              key={`cluster-${index}`}
+            <MapMarkerComponent
+              key={element.identifier}
               position={element.position}
-              onClick={() => {
-                // Zoom in when cluster is clicked
-                if (map) {
-                  const bounds = new google.maps.LatLngBounds();
-                  element.markers.forEach((marker) => {
-                    bounds.extend(marker.position);
-                  });
-                  map.fitBounds(bounds);
-                }
-              }}
-            >
-              <ClusterIcon
-                count={element.count}
-                type={element.type}
-                color={'var(--grayscale-color-1)'}
-              />
-            </AdvancedMarker>
+              identifier={element.identifier}
+              reactContent={element.reactContent}
+              onClick={
+                onMarkerClick
+                  ? () => onMarkerClick(element.identifier, element.type)
+                  : undefined
+              }
+              isSelected={element.identifier === selectedMarkerId}
+              color={element.color || 'var(--secondary-color-2)'}
+              type={element.type}
+              status={element.status}
+            />
           );
-        }
-        if ('markers' in element && element.markers) {
-        }
-        // Handle regular marker elements
-        return (
-          <MapMarkerComponent
-            key={element.identifier}
-            position={element.position}
-            identifier={element.identifier}
-            reactContent={element.reactContent}
-            onClick={
-              onMarkerClick
-                ? () => onMarkerClick(element.identifier, element.type)
-                : undefined
-            }
-            isSelected={element.identifier === selectedMarkerId}
-            color={element.color || 'var(--secondary-color-2)'}
-            type={element.type}
-            status={element.status}
-          />
-        );
-      })}
+        })}
     </GoogleMap>
   );
 };

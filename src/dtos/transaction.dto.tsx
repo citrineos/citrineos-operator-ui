@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
@@ -13,6 +14,10 @@ import { BaseDto } from './base.dto';
 import { Expose, Type } from 'class-transformer';
 import { ChargingStationDto } from './charging.station.dto';
 import { TransactionEventDto } from './transaction.event.dto';
+import { StartTransactionDto } from './start.transaction.dto';
+import { StopTransactionDto } from './stop.transaction.dto';
+import { MeterValueDto } from './meter.value.dto';
+import { EvseDto } from './evse.dto';
 
 export enum TransactionDtoProps {
   id = 'id',
@@ -21,11 +26,16 @@ export enum TransactionDtoProps {
   evseDatabaseId = 'evseDatabaseId',
   isActive = 'isActive',
   events = 'events',
+  meterValues = 'meterValues',
+  startTransaction = 'startTransaction',
+  stopTransaction = 'stopTransaction',
   chargingState = 'chargingState',
   timeSpentCharging = 'timeSpentCharging',
   totalKwh = 'totalKwh',
   stoppedReason = 'stoppedReason',
   remoteStartId = 'remoteStartId',
+  totalCost = 'totalCost',
+  evse = 'evse',
   // customData = 'customData',
 }
 
@@ -52,6 +62,11 @@ export class TransactionDto extends BaseDto {
   @Expose({ name: 'ChargingStation' })
   chargingStation?: Partial<ChargingStationDto>;
 
+  @IsOptional()
+  @Type(() => EvseDto)
+  @Expose({ name: 'Evse' })
+  evse?: EvseDto;
+
   @IsInt()
   @IsOptional()
   evseDatabaseId?: number;
@@ -66,6 +81,23 @@ export class TransactionDto extends BaseDto {
   @Expose({ name: 'TransactionEvents' })
   events?: TransactionEventDto[];
 
+  @IsArray()
+  @IsOptional()
+  @Type(() => MeterValueDto)
+  @ValidateNested({ each: true })
+  @Expose({ name: 'MeterValues' })
+  meterValues?: MeterValueDto[];
+
+  @IsOptional()
+  @Type(() => StartTransactionDto)
+  @Expose({ name: 'StartTransaction' })
+  startTransaction?: StartTransactionDto;
+
+  @IsOptional()
+  @Type(() => StopTransactionDto)
+  @Expose({ name: 'StopTransaction' })
+  stopTransaction?: StopTransactionDto;
+
   @IsEnum(ChargingStateEnumType)
   @IsOptional()
   chargingState?: ChargingStateEnumType | null;
@@ -74,7 +106,7 @@ export class TransactionDto extends BaseDto {
   @IsOptional()
   timeSpentCharging?: number | null;
 
-  @IsInt()
+  @IsNumber()
   @IsOptional()
   totalKwh?: number | null;
 
@@ -85,6 +117,10 @@ export class TransactionDto extends BaseDto {
   @IsInt()
   @IsOptional()
   remoteStartId?: number | null;
+
+  @IsNumber()
+  @IsOptional()
+  totalCost?: number;
 
   // todo: handle custom data
   // customData?: CustomDataType | null;

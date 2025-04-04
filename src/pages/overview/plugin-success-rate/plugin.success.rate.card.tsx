@@ -1,9 +1,9 @@
-import {Flex, Progress, Spin} from 'antd';
+import { Flex, Progress, Spin } from 'antd';
 import './style.scss';
-import { useCustom } from '@refinedev/core'
-import {CHARGING_STATIONS_STATUS_COUNT_QUERY} from "../../charging-stations/queries";
-import {TRANSACTION_SUCCESS_RATE_QUERY} from "../../transactions/queries";
-import React from "react";
+import { useCustom } from '@refinedev/core';
+import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '../../charging-stations/queries';
+import { TRANSACTION_SUCCESS_RATE_QUERY } from '../../transactions/queries';
+import React from 'react';
 
 export const PluginSuccessRateCard = () => {
   const { data, isLoading, error } = useCustom({
@@ -17,7 +17,7 @@ export const PluginSuccessRateCard = () => {
   const percentage = (successCount / totalCount) * 100;
   const roundedPercentage = Math.round(percentage * 10) / 10;
 
-  const comparison = "+2.5%"; // TODO
+  const comparison = '+2.5%'; // TODO
 
   if (isLoading) return <Spin />;
   if (error) return <p>Error loading success rate</p>;
@@ -25,7 +25,7 @@ export const PluginSuccessRateCard = () => {
   return (
     <Flex vertical gap={32} className="plugin-success-rate">
       <h4>Plug-in Success Rate</h4>
-      <Progress percent={roundedPercentage} size={[200, 20]} showInfo={false}/>
+      <Progress percent={roundedPercentage} size={[200, 20]} showInfo={false} />
       <div className="plugin-success-rate-percentage">{roundedPercentage}%</div>
     </Flex>
   );

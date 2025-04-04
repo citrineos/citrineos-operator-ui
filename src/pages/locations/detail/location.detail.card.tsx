@@ -110,7 +110,9 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
             <Button
               className="secondary"
               onClick={() =>
-                push(`/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`)
+                push(
+                  `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
+                )
               }
             >
               Add New Charging Station

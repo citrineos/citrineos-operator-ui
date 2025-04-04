@@ -115,7 +115,7 @@ export class OCPPMessageDto extends BaseDto {
 
   @IsString()
   message!: any;
-  
+
   @Sortable()
   @TransformDate()
   timestamp!: Date;

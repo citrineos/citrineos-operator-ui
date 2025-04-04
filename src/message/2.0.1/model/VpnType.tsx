@@ -39,7 +39,7 @@ export class VpnType {
   @IsNotEmpty()
   key!: string;
 
-  @IsEnum(OCPP2_0_1.VPNEnumType)
+  @IsEnum(VPNEnumType)
   @IsNotEmpty()
-  type!: OCPP2_0_1.VPNEnumType;
+  type!: VPNEnumType;
 }

@@ -84,41 +84,41 @@ export const AuthorizationDetail = () => {
           </Flex>
         ),
       },
-      {
-        key: '2',
-        label: 'Charts',
-        children: (
-          <Flex vertical gap={32}>
-            {transactionsLoading ? (
-              <p>Loading Chart...</p>
-            ) : (
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart
-                  data={transactionData?.data}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="id" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="id"
-                    stroke="#8884d8"
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            )}
-          </Flex>
-        ),
-      },
-      {
-        key: '3',
-        label: 'Logs',
-        children: 'Logs content',
-      },
+      // {
+      //   key: '2',
+      //   label: 'Charts',
+      //   children: (
+      //     <Flex vertical gap={32}>
+      //       {transactionsLoading ? (
+      //         <p>Loading Chart...</p>
+      //       ) : (
+      //         <ResponsiveContainer width="100%" height={400}>
+      //           <LineChart
+      //             data={transactionData?.data}
+      //             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      //           >
+      //             <CartesianGrid strokeDasharray="3 3" />
+      //             <XAxis dataKey="id" />
+      //             <YAxis />
+      //             <Tooltip />
+      //             <Legend />
+      //             <Line
+      //               type="monotone"
+      //               dataKey="id"
+      //               stroke="#8884d8"
+      //               activeDot={{ r: 8 }}
+      //             />
+      //           </LineChart>
+      //         </ResponsiveContainer>
+      //       )}
+      //     </Flex>
+      //   ),
+      // },
+      // {
+      //   key: '3',
+      //   label: 'Logs',
+      //   children: 'Logs content',
+      // },
     ],
     [transactionData, transactionsLoading, transactionColumns],
   );

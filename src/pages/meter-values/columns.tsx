@@ -1,9 +1,9 @@
-import {Table} from "antd";
-import React from "react";
-import {MeterValueDtoProps} from "../../dtos/meter.value.dto";
-import {ExpandableColumn} from "../../components/data-model-table/expandable-column";
-import {SampledValuesListView} from "./sampled-value";
-import {TimestampDisplay} from "../../components/timestamp-display";
+import { Table } from 'antd';
+import React from 'react';
+import { MeterValueDtoProps } from '../../dtos/meter.value.dto';
+import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
+import { SampledValuesListView } from './sampled-value';
+import { TimestampDisplay } from '../../components/timestamp-display';
 
 export const getMeterValueColumns = () => {
   return (
@@ -36,14 +36,16 @@ export const getMeterValueColumns = () => {
           className: `column-${MeterValueDtoProps.sampledValue}`,
         })}
         render={(sampledValue, meterValue) => {
-          return (<ExpandableColumn
-            viewTitle={`Meter Value ${meterValue.id}`}
-            expandedContent={
-              <SampledValuesListView  sampledValues={sampledValue} />
-            }
-          />)
+          return (
+            <ExpandableColumn
+              viewTitle={`Meter Value ${meterValue.id}`}
+              expandedContent={
+                <SampledValuesListView sampledValues={sampledValue} />
+              }
+            />
+          );
         }}
       />
     </>
   );
-}
+};

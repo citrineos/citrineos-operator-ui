@@ -101,8 +101,8 @@ class SetVariablesData {
   @IsString()
   value!: string;
 
-  @IsEnum(OCPP2_0_1.AttributeEnumType)
-  attributeType!: OCPP2_0_1.AttributeEnumType;
+  @IsEnum(AttributeEnumType)
+  attributeType!: AttributeEnumType;
 }
 
 enum SetVariablesRequestProps {

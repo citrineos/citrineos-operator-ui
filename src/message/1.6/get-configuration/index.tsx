@@ -2,13 +2,16 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import { IsArray, } from 'class-validator';
-import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../../util';
+import { IsArray } from 'class-validator';
+import {
+  responseSuccessCheck,
+  triggerMessageAndHandleResponse,
+} from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 
 enum GetConfigurationDataProps {
-    key = 'key',
+  key = 'key',
 }
 
 export interface GetConfigurationProps {
@@ -16,10 +19,8 @@ export interface GetConfigurationProps {
 }
 
 class GetConfigurationData {
-
   @IsArray()
   key?: string[] | null;
-
 }
 
 export const GetConfiguration: React.FC<GetConfigurationProps> = ({
@@ -39,7 +40,7 @@ export const GetConfiguration: React.FC<GetConfigurationProps> = ({
       url: `/configuration/getConfiguration?identifier=${station.id}&tenantId=1`,
       data,
       responseSuccessCheck,
-      ocppVersion: OCPPVersion.OCPP1_6
+      ocppVersion: OCPPVersion.OCPP1_6,
     });
   };
 

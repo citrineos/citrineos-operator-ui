@@ -19,9 +19,13 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
   defaultCenter = { lat: 36.7783, lng: -119.4179 },
   defaultZoom = 6,
 }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'locations' | 'stations'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'locations' | 'stations'>(
+    'all',
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<'location' | 'station' | 'mixed' | null>(null);
+  const [selectedType, setSelectedType] = useState<
+    'location' | 'station' | 'mixed' | null
+  >(null);
 
   // Fetch locations data
   const { data: locationsData } = useList<LocationDto>({
@@ -46,7 +50,9 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
     queryOptions: {
       select: (data) => ({
         ...data,
-        data: data.data.map((item) => plainToInstance(ChargingStationDto, item)),
+        data: data.data.map((item) =>
+          plainToInstance(ChargingStationDto, item),
+        ),
       }),
     },
   });
@@ -55,10 +61,13 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
   const stations = stationsData?.data || [];
 
   // Handle marker click
-  const handleMarkerClick = (id: string, type: 'station' | 'location' | 'mixed') => {
+  const handleMarkerClick = (
+    id: string,
+    type: 'station' | 'location' | 'mixed',
+  ) => {
     setSelectedId(id);
     setSelectedType(type);
-    
+
     // Optionally navigate to the details page
     // if (type === 'location') {
     //   window.location.href = `/locations/${id}`;
@@ -74,7 +83,9 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
         <Space>
           <Tabs
             activeKey={activeTab}
-            onChange={(key) => setActiveTab(key as 'all' | 'locations' | 'stations')}
+            onChange={(key) =>
+              setActiveTab(key as 'all' | 'locations' | 'stations')
+            }
             items={[
               { key: 'all', label: 'All' },
               { key: 'locations', label: 'Locations' },
@@ -86,9 +97,9 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
               <Button
                 type="primary"
                 onClick={() => {
-                  window.location.href = 
-                    selectedType === 'location' 
-                      ? `/locations/${selectedId}` 
+                  window.location.href =
+                    selectedType === 'location'
+                      ? `/locations/${selectedId}`
                       : `/charging-stations/${selectedId}`;
                 }}
               >
@@ -98,7 +109,7 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
           )}
         </Space>
       </Row>
-      
+
       <div className="map-wrapper">
         <LocationMap
           locations={locations}
@@ -109,19 +120,28 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
           // clusterByLocation={activeTab !== 'stations'} // Only cluster by location when not in stations-only view
         />
       </div>
-      
+
       <Row className="map-footer">
         <Space>
           <div className="legend-item">
-            <div className="legend-color" style={{ backgroundColor: 'var(--primary-color-1)' }}></div>
+            <div
+              className="legend-color"
+              style={{ backgroundColor: 'var(--primary-color-1)' }}
+            ></div>
             <span>Online</span>
           </div>
           <div className="legend-item">
-            <div className="legend-color" style={{ backgroundColor: 'var(--grayscale-color-2)' }}></div>
+            <div
+              className="legend-color"
+              style={{ backgroundColor: 'var(--grayscale-color-2)' }}
+            ></div>
             <span>Partial</span>
           </div>
           <div className="legend-item">
-            <div className="legend-color" style={{ backgroundColor: 'var(--secondary-color-2)' }}></div>
+            <div
+              className="legend-color"
+              style={{ backgroundColor: 'var(--secondary-color-2)' }}
+            ></div>
             <span>Offline</span>
           </div>
         </Space>
@@ -131,13 +151,17 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
 };
 
 // Helper functions
-const determineLocationStatus = (location: LocationDto): 'online' | 'offline' | 'partial' => {
+const determineLocationStatus = (
+  location: LocationDto,
+): 'online' | 'offline' | 'partial' => {
   if (!location.chargingStations || location.chargingStations.length === 0) {
     return 'offline';
   }
-  
-  const onlineCount = location.chargingStations.filter((station) => station.isOnline).length;
-  
+
+  const onlineCount = location.chargingStations.filter(
+    (station) => station.isOnline,
+  ).length;
+
   if (onlineCount === location.chargingStations.length) {
     return 'online';
   } else if (onlineCount === 0) {
@@ -149,7 +173,7 @@ const determineLocationStatus = (location: LocationDto): 'online' | 'offline' | 
 
 const determineLocationColor = (location: LocationDto): string => {
   const status = determineLocationStatus(location);
-  
+
   switch (status) {
     case 'online':
       return 'var(--primary-color-1)';

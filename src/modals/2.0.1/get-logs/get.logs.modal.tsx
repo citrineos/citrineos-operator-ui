@@ -5,7 +5,10 @@ import { plainToInstance } from 'class-transformer';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { LogEnumType } from '@OCPP2_0_1';
-import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../../../message/util';
+import {
+  responseSuccessCheck,
+  triggerMessageAndHandleResponse,
+} from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 
 export interface GetLogsModalProps {
@@ -27,7 +30,9 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
 
   const requestGetLogs = async (logType: LogEnumType) => {
     if (!parsedStation?.id) {
-      console.error("Error: Cannot request logs because station ID is missing.");
+      console.error(
+        'Error: Cannot request logs because station ID is missing.',
+      );
       return;
     }
 
@@ -60,7 +65,9 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
 
   const onFinish = async ({ logType }: { logType: LogEnumType }) => {
     if (!parsedStation?.id) {
-      console.error("Error: Cannot submit Get Logs request because station ID is missing.");
+      console.error(
+        'Error: Cannot submit Get Logs request because station ID is missing.',
+      );
       return;
     }
     await requestGetLogs(logType);
@@ -70,10 +77,18 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     <Form form={form} layout="vertical" onFinish={onFinish}>
       <Flex vertical gap={16}>
         <Flex>
-          <Form.Item label="Log Type" name="logType" rules={[{ required: true, message: 'Log Type is required' }]}>
+          <Form.Item
+            label="Log Type"
+            name="logType"
+            rules={[{ required: true, message: 'Log Type is required' }]}
+          >
             <Select className="full-width" placeholder="Select Log Type">
-              <Select.Option value={LogEnumType.DiagnosticsLog}>Diagnostics Log</Select.Option>
-              <Select.Option value={LogEnumType.SecurityLog}>Security Log</Select.Option>
+              <Select.Option value={LogEnumType.DiagnosticsLog}>
+                Diagnostics Log
+              </Select.Option>
+              <Select.Option value={LogEnumType.SecurityLog}>
+                Security Log
+              </Select.Option>
             </Select>
           </Form.Item>
         </Flex>
@@ -84,7 +99,9 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
 
         <Flex justify="end" gap={8}>
           <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-          <Button type="primary" htmlType="submit">Submit</Button>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
         </Flex>
       </Flex>
     </Form>

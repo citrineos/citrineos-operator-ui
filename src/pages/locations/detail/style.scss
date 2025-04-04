@@ -1,6 +1,9 @@
-@use "../../../mixins" as mixins;
+@use '../../../mixins' as mixins;
 
-main[class*='content-locations-']:not(.content-locations-new, [class*='-edit']) {
+main[class*='content-locations-']:not(
+    .content-locations-new,
+    [class*='-edit']
+  ) {
   @include mixins.inner-content-no-padding;
 }
 

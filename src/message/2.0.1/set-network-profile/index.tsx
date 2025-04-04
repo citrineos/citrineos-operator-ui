@@ -58,9 +58,9 @@ export class SetNetworkProfileResponse {
   // @ValidateNested()
   // customData?: CustomDataType;
 
-  @IsEnum(OCPP2_0_1.SetNetworkProfileStatusEnumType)
+  @IsEnum(SetNetworkProfileStatusEnumType)
   @IsNotEmpty()
-  status!: OCPP2_0_1.SetNetworkProfileStatusEnumType;
+  status!: SetNetworkProfileStatusEnumType;
 
   @Type(() => StatusInfoType)
   @ValidateNested()

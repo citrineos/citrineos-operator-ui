@@ -50,10 +50,13 @@ export const ChargingStationIcon: React.FC<{
   status?: 'online' | 'offline' | 'partial';
 }> = ({ width = 24, height = 24, color = 'white', status = 'offline' }) => {
   // Add a subtle indicator of status via the bolt color
-  const boltColor = 
-    status === 'online' ? '#4CAF50' :
-    status === 'partial' ? '#FFC107' : '#757575';
-    
+  const boltColor =
+    status === 'online'
+      ? '#4CAF50'
+      : status === 'partial'
+        ? '#FFC107'
+        : '#757575';
+
   return (
     <svg
       width={width}
@@ -84,7 +87,7 @@ export const ClusterIcon: React.FC<{
   color?: string;
 }> = ({ count, type, color = '#3388ff' }) => {
   const size = Math.min(60, Math.max(40, 30 + Math.log10(count) * 10));
-  
+
   return (
     <div
       style={{
@@ -103,12 +106,40 @@ export const ClusterIcon: React.FC<{
     >
       {count}
       {type === 'station' && (
-        <div style={{ position: 'absolute', bottom: -5, right: -5, backgroundColor: '#4CAF50', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid white' }}>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: -5,
+            right: -5,
+            backgroundColor: '#4CAF50',
+            borderRadius: '50%',
+            width: 16,
+            height: 16,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid white',
+          }}
+        >
           <ChargingStationIcon width={10} height={10} />
         </div>
       )}
       {type === 'location' && (
-        <div style={{ position: 'absolute', bottom: -5, right: -5, backgroundColor: '#2196F3', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid white' }}>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: -5,
+            right: -5,
+            backgroundColor: '#2196F3',
+            borderRadius: '50%',
+            width: 16,
+            height: 16,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid white',
+          }}
+        >
           <LocationIcon width={10} height={10} />
         </div>
       )}

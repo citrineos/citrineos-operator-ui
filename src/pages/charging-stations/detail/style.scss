@@ -1,6 +1,9 @@
-@use "../../../mixins" as mixins;
+@use '../../../mixins' as mixins;
 
-main[class*='content-charging-stations-']:not(.content-charging-stations-new, [class*='-edit']) {
+main[class*='content-charging-stations-']:not(
+    .content-charging-stations-new,
+    [class*='-edit']
+  ) {
   @include mixins.inner-content-no-padding;
 }
 

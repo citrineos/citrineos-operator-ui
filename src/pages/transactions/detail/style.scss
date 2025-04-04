@@ -1,5 +1,5 @@
-@use "../../../mixins" as mixins;
+@use '../../../mixins' as mixins;
 
 main[class*='content-transactions-'] {
- @include mixins.inner-content-no-padding;
+  @include mixins.inner-content-no-padding;
 }

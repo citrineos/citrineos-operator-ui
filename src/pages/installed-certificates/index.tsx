@@ -15,7 +15,10 @@ import { AiOutlineProfile } from 'react-icons/ai';
 import { CustomAction } from '../../components/custom-actions';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { MessageConfirmation } from '../../message/MessageConfirmation';
-import { generateErrorMessageFromResponses, responseSuccessCheck } from '../../message/util';
+import {
+  generateErrorMessageFromResponses,
+  responseSuccessCheck,
+} from '../../message/util';
 import { notification } from 'antd';
 
 export const DeleteCertificateCustomAction: CustomAction<InstalledCertificate> =

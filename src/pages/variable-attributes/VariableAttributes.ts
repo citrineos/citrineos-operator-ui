@@ -68,19 +68,19 @@ export class VariableAttribute extends BaseModel {
   stationId!: string;
 
   @IsOptional()
-  @IsEnum(OCPP2_0_1.AttributeEnumType)
-  type?: OCPP2_0_1.AttributeEnumType | null;
+  @IsEnum(AttributeEnumType)
+  type?: AttributeEnumType | null;
 
-  @IsEnum(OCPP2_0_1.DataEnumType)
-  dataType!: OCPP2_0_1.DataEnumType;
+  @IsEnum(DataEnumType)
+  dataType!: DataEnumType;
 
   @IsOptional()
   @IsString()
   value?: string | null;
 
   @IsOptional()
-  @IsEnum(OCPP2_0_1.MutabilityEnumType)
-  mutability?: OCPP2_0_1.MutabilityEnumType | null;
+  @IsEnum(MutabilityEnumType)
+  mutability?: MutabilityEnumType | null;
 
   @IsBoolean()
   persistent!: boolean;

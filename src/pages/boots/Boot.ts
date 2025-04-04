@@ -28,8 +28,8 @@ export class Boot extends BaseModel {
   @IsOptional()
   bootRetryInterval?: number;
 
-  @IsEnum(OCPP2_0_1.RegistrationStatusEnumType)
-  status!: OCPP2_0_1.RegistrationStatusEnumType;
+  @IsEnum(RegistrationStatusEnumType)
+  status!: RegistrationStatusEnumType;
 
   // @Type(() => StatusInfoType)
   // statusInfo?: StatusInfoType; // todo
@@ -41,7 +41,7 @@ export class Boot extends BaseModel {
   @IsArray()
   @ValidateNested({ each: true })
   // @Type(() => SetVariableResultType)
-  variablesRejectedOnLastBoot!: OCPP2_0_1.SetVariableResultType[];
+  variablesRejectedOnLastBoot!: SetVariableResultType[];
 
   @IsBoolean()
   @IsOptional()
@@ -54,7 +54,7 @@ export class Boot extends BaseModel {
       this.lastBootTime = data.lastBootTime;
       this.heartbeatInterval = data.heartbeatInterval as number;
       this.bootRetryInterval = data.bootRetryInterval as number;
-      this.status = data.status as OCPP2_0_1.RegistrationStatusEnumType;
+      this.status = data.status as RegistrationStatusEnumType;
       this.getBaseReportOnPending = data.getBaseReportOnPending as boolean;
       this.variablesRejectedOnLastBoot = data.variablesRejectedOnLastBoot;
       this.bootWithRejectedVariables =

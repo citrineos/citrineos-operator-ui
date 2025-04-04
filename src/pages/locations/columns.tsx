@@ -8,7 +8,9 @@ import { MenuSection } from '../../components/main-menu/main.menu';
  * Get column definitions for locations table
  * @returns React.ReactNode with Table.Column definitions
  */
-export const getLocationsColumns = (push: (path: string, ...rest: unknown[]) => void) => {
+export const getLocationsColumns = (
+  push: (path: string, ...rest: unknown[]) => void,
+) => {
   return (
     <>
       <Table.Column
@@ -20,7 +22,7 @@ export const getLocationsColumns = (push: (path: string, ...rest: unknown[]) => 
           className: `column-${LocationDtoProps.name}`,
           onClick: (event: React.MouseEvent) => {
             const path = `/${MenuSection.LOCATIONS}/${record.id}`;
-            
+
             // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
             if (event.ctrlKey || event.metaKey) {
               window.open(path, '_blank');
@@ -29,7 +31,7 @@ export const getLocationsColumns = (push: (path: string, ...rest: unknown[]) => 
               push(path);
             }
           },
-          style: { cursor: 'pointer' }
+          style: { cursor: 'pointer' },
         })}
         render={(_: any, record) => {
           return <h4>{record.name}</h4>;
@@ -181,10 +183,7 @@ export const getLocationAndStationsFilters = (value: string): CrudFilters => {
   return [
     {
       operator: 'or',
-      value: [
-        locationFieldsFilter,
-        chargingStationsFilter
-      ],
+      value: [locationFieldsFilter, chargingStationsFilter],
     },
   ];
 };

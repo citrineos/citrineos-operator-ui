@@ -42,8 +42,8 @@ export const RESERVATIONS_COLUMNS = (
       render: ((_: any, record: Reservations) => {
         return (
           <GenericTag
-            enumValue={record.connectorType as OCPP2_0_1.ConnectorEnumType}
-            enumType={OCPP2_0_1.ConnectorEnumType}
+            enumValue={record.connectorType as ConnectorEnumType}
+            enumType={ConnectorEnumType}
           />
         );
       }) as any,
@@ -54,10 +54,8 @@ export const RESERVATIONS_COLUMNS = (
       render: ((_: any, record: Reservations) => {
         return (
           <GenericTag
-            enumValue={
-              record.reserveStatus as OCPP2_0_1.ReserveNowStatusEnumType
-            }
-            enumType={OCPP2_0_1.ReserveNowStatusEnumType}
+            enumValue={record.reserveStatus as ReserveNowStatusEnumType}
+            enumType={ReserveNowStatusEnumType}
             colorMap={{
               Accepted: DefaultColors.GREEN,
               Faulted: DefaultColors.RED,

@@ -1,6 +1,6 @@
-import React, {useEffect, useMemo} from "react";
-import debounce from "lodash.debounce";
-import {Input} from "antd";
+import React, { useEffect, useMemo } from 'react';
+import debounce from 'lodash.debounce';
+import { Input } from 'antd';
 
 const { Search } = Input;
 
@@ -13,20 +13,25 @@ export interface DebounceSearchProps {
   debounceInMillis?: number;
 }
 
-export const DebounceSearch = ({ onSearch, placeholder, debounceInMillis }: DebounceSearchProps) => {
+export const DebounceSearch = ({
+  onSearch,
+  placeholder,
+  debounceInMillis,
+}: DebounceSearchProps) => {
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onSearch(event.target.value);
-  }
+  };
 
   const onChangeDebounce = useMemo(
-    () => debounce(onChange , debounceInMillis ?? defaultDebounceInMillis), []
+    () => debounce(onChange, debounceInMillis ?? defaultDebounceInMillis),
+    [],
   );
 
   // to cancel debounce when component unmounts
   useEffect(() => {
     return () => {
       onChangeDebounce.cancel();
-    }
+    };
   }, []);
 
   return (
@@ -37,5 +42,5 @@ export const DebounceSearch = ({ onSearch, placeholder, debounceInMillis }: Debo
       maxLength={maxInputLength}
       style={{ width: 300 }}
     />
-  )
-}
+  );
+};

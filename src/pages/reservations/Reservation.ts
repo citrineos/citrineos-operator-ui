@@ -41,8 +41,8 @@ export class IdTokenType {
   @IsString()
   idToken!: string;
 
-  @IsEnum(OCPP2_0_1.IdTokenEnumType)
-  type!: OCPP2_0_1.IdTokenEnumType;
+  @IsEnum(IdTokenEnumType)
+  type!: IdTokenEnumType;
 }
 
 export class Reservation {
@@ -60,13 +60,13 @@ export class Reservation {
   @TransformDate()
   expiryDateTime!: Dayjs;
 
-  @IsEnum(OCPP2_0_1.ConnectorEnumType)
+  @IsEnum(ConnectorEnumType)
   @IsOptional()
-  connectorType: OCPP2_0_1.ConnectorEnumType | null = null;
+  connectorType: ConnectorEnumType | null = null;
 
-  @IsEnum(OCPP2_0_1.ReserveNowStatusEnumType)
+  @IsEnum(ReserveNowStatusEnumType)
   @IsOptional()
-  reserveStatus: OCPP2_0_1.ReserveNowStatusEnumType | null = null;
+  reserveStatus: ReserveNowStatusEnumType | null = null;
 
   @IsBoolean()
   isActive!: boolean;

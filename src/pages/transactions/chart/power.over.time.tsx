@@ -29,7 +29,7 @@ export const PowerOverTime = ({ meterValues }: PowerOverTimeProps) => {
 
     const processedData = getTimestampToMeasurandArray(
       meterValues,
-      MeasurandEnumType.Power_Active_Import
+      MeasurandEnumType.Power_Active_Import,
     ).map(([elapsedTime, kw]) => {
       const kwFloat = Number(kw);
       if (kwFloat < min) min = Math.floor(kwFloat);

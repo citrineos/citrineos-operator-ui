@@ -5,7 +5,10 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
 import { ResetEnumType } from '@OCPP2_0_1';
-import { responseSuccessCheck, triggerMessageAndHandleResponse } from '../../../message/util';
+import {
+  responseSuccessCheck,
+  triggerMessageAndHandleResponse,
+} from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { EvseDto } from '../../../dtos/evse.dto';
 

@@ -36,7 +36,10 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
 
   // Custom click handler that supports Ctrl+Click
   // This function accepts any MouseEvent-like object with ctrlKey and metaKey properties
-  const handleMenuClick = (e: { ctrlKey?: boolean; metaKey?: boolean } | React.MouseEvent, key: string) => {
+  const handleMenuClick = (
+    e: { ctrlKey?: boolean; metaKey?: boolean } | React.MouseEvent,
+    key: string,
+  ) => {
     // Check if Ctrl or Cmd key (for Mac) is pressed
     if (e.ctrlKey || e.metaKey) {
       // Open in new tab by creating a temporary anchor and triggering a click
@@ -50,13 +53,13 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
   };
 
   // Custom Menu.Item component with proper Ctrl+Click handling
-  const MenuItem = ({ 
-    key, 
-    label, 
-    icon 
-  }: { 
-    key: string; 
-    label: React.ReactNode; 
+  const MenuItem = ({
+    key,
+    label,
+    icon,
+  }: {
+    key: string;
+    label: React.ReactNode;
     icon?: React.ReactNode;
   }) => {
     return {
@@ -81,7 +84,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
         >
           {icon}
         </span>
-      )
+      ),
     };
   };
 
@@ -124,12 +127,20 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
     {
       key: 'help',
       label: (
-        <a href="https://citrineos.github.io" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://citrineos.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Help
         </a>
       ),
       icon: (
-        <a href="https://citrineos.github.io" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://citrineos.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <HelpIcon />
         </a>
       ),
