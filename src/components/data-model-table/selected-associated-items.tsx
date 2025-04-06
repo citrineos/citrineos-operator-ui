@@ -1,7 +1,7 @@
 import { extractSchema, keyToLabel } from '../form';
 import React, { useCallback, useMemo } from 'react';
 import { renderViewContent } from './editable';
-import { setSelectedAssociatedItems } from '../../redux/associationSelectionSlice';
+import { setSelectedAssociatedItems } from '../../redux/association.selection.slice';
 import { instanceToPlain } from 'class-transformer';
 import { Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';

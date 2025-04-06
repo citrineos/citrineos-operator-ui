@@ -431,7 +431,6 @@ export const renderField = (props: RenderFieldProps) => {
   // Generate the data-testid attribute value automatically
   const dataTestId = `field-${schema.name || schema.type || fieldPath.key}`;
   const dataTestType = schema.type;
-  console.log('data test type: ', dataTestType);
   if (schema.type === FieldType.customRender && schema.customRender) {
     return schema.customRender(parentRecord);
   }

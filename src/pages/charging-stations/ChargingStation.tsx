@@ -13,9 +13,6 @@ import {
   CHARGING_STATIONS_EDIT_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
-  GET_OCPP_LOGS_FOR_STATION,
-  GET_OCPP_LOGS_LIST,
-  GET_OCPP_LOGS_LIST_FOR_STATION,
 } from './queries';
 import { BaseModel } from '@util/BaseModel';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
@@ -50,7 +47,7 @@ import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor'
 import { NEW_IDENTIFIER } from '@util/consts';
 import { EvseProps } from '../evses/EvseProps';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
-import { OCPPLogs, OCPPLogsProps } from './OCPPLogs';
+import { OCPPVersion } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -73,6 +70,10 @@ export class ChargingStation extends BaseModel {
 
   @IsBoolean()
   isOnline!: boolean;
+
+  @IsString()
+  @IsOptional()
+  protocol?: OCPPVersion;
 
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.locationId,
@@ -153,30 +154,6 @@ export class ChargingStation extends BaseModel {
   })
   @Type(() => Transaction)
   transactions?: Transaction[];
-
-  @IsArray()
-  @IsOptional()
-  @GqlAssociation({
-    parentIdFieldName: ChargingStationProps.id,
-    associatedIdFieldName: OCPPLogsProps.id,
-    gqlQuery: {
-      query: GET_OCPP_LOGS_FOR_STATION,
-    },
-    gqlListQuery: {
-      query: GET_OCPP_LOGS_LIST,
-    },
-    gqlListSelectedQuery: {
-      query: GET_OCPP_LOGS_LIST_FOR_STATION,
-      getQueryVariables: (station: ChargingStation) => ({
-        stationId: station.id,
-      }),
-    },
-  })
-  @HiddenWhen((record) => {
-    return record;
-  })
-  @Type(() => OCPPLogs)
-  ocppLogs?: OCPPLogs[];
 
   constructor(data?: ChargingStation) {
     super();

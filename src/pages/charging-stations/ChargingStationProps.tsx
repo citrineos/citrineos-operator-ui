@@ -5,4 +5,5 @@ export enum ChargingStationProps {
   statusNotifications = 'statusNotifications',
   evses = 'evses',
   transactions = 'transactions',
+  protocol = 'protocol',
 }

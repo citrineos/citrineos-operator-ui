@@ -122,3 +122,35 @@ export const GET_METER_VALUES_FOR_TRANSACTION_EVENT = gql`
     }
   }
 `;
+
+export const GET_METER_VALUES_FOR_TRANSACTION = gql`
+  query MeterValueList(
+    $transactionDatabaseId: Int!
+    $offset: Int!
+    $limit: Int!
+    $order_by: [MeterValues_order_by!]
+    $where: MeterValues_bool_exp! = []
+  ) {
+    MeterValues(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: { transactionDatabaseId: { _eq: $transactionDatabaseId } }
+    ) {
+      id
+      transactionDatabaseId
+      transactionEventId
+      sampledValue
+      timestamp
+      createdAt
+      updatedAt
+    }
+    MeterValues_aggregate(
+      where: { transactionDatabaseId: { _eq: $transactionDatabaseId } }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;

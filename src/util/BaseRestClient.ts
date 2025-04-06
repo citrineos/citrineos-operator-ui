@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Constructable } from './Constructable';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
+import { OCPPVersion } from '@citrineos/base';
 
 const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
 
@@ -16,16 +16,17 @@ export class MissingRequiredParamException extends Error {
   }
 }
 
-// TODO can we use typed-rest-client here else axios in CORE?
 export class BaseRestClient {
   private axiosInstance!: AxiosInstance;
   private _baseUrl: string;
 
-  constructor(dataBaseUrl = false) {
-    if (dataBaseUrl) {
+  constructor(ocppVersion: OCPPVersion | null = OCPPVersion.OCPP2_0_1) {
+    if (ocppVersion === null) {
       this._baseUrl = `${CITRINE_CORE_URL}/data/`;
+    } else if (ocppVersion === OCPPVersion.OCPP1_6) {
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/1.6`;
     } else {
-      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/`;
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/2.0.1/`;
     }
     this.initAxiosInstance();
   }
@@ -46,13 +47,9 @@ export class BaseRestClient {
     return this.axiosInstance.options<T>(url, config!);
   }
 
-  async options<T>(
-    path: string,
-    clazz: Constructable<T>,
-    config: AxiosRequestConfig,
-  ): Promise<T> {
+  async options<T>(path: string, config: AxiosRequestConfig): Promise<T> {
     return this.optionsRaw<T>(path, config).then((response) =>
-      this.handleResponse(clazz, response),
+      this.handleResponse<T>(response),
     );
   }
 
@@ -64,14 +61,10 @@ export class BaseRestClient {
     return this.axiosInstance.get<T>(url, config!);
   }
 
-  async get<T>(
-    path: string,
-    clazz: Constructable<T>,
-    config: AxiosRequestConfig,
-  ): Promise<T> {
+  async get<T>(path: string, config: AxiosRequestConfig): Promise<T> {
     incrementRequestCount({ path: path });
     return this.getRaw<T>(path, config).then((response) =>
-      this.handleResponse(clazz, response),
+      this.handleResponse<T>(response),
     );
   }
 
@@ -83,14 +76,10 @@ export class BaseRestClient {
     return this.axiosInstance.delete<T>(url, config!);
   }
 
-  async del<T>(
-    path: string,
-    clazz: Constructable<T>,
-    config: AxiosRequestConfig,
-  ): Promise<T> {
+  async del<T>(path: string, config: AxiosRequestConfig): Promise<T> {
     incrementRequestCount({ path: path });
     return this.delRaw<T>(path, config).then((response) =>
-      this.handleResponse(clazz, response),
+      this.handleResponse<T>(response),
     );
   }
 
@@ -105,13 +94,12 @@ export class BaseRestClient {
 
   async post<T>(
     path: string,
-    clazz: Constructable<T>,
     config: AxiosRequestConfig,
     body: any,
   ): Promise<T> {
     incrementRequestCount({ path: path });
     return this.postRaw<T>(path, body, config).then((response) =>
-      this.handleResponse(clazz, response),
+      this.handleResponse<T>(response),
     );
   }
 
@@ -126,13 +114,12 @@ export class BaseRestClient {
 
   async patch<T>(
     path: string,
-    clazz: Constructable<T>,
     config: AxiosRequestConfig,
     body: any,
   ): Promise<T> {
     incrementRequestCount({ path: path });
     return this.patchRaw<T>(path, body, config).then((response) =>
-      this.handleResponse(clazz, response),
+      this.handleResponse<T>(response),
     );
   }
 
@@ -147,20 +134,16 @@ export class BaseRestClient {
 
   async put<T>(
     path: string,
-    clazz: Constructable<T>,
     config: AxiosRequestConfig,
     body: any,
   ): Promise<T> {
     incrementRequestCount({ path: path });
     return this.putRaw<T>(path, body, config).then((response) =>
-      this.handleResponse(clazz, response),
+      this.handleResponse<T>(response),
     );
   }
 
-  protected handleResponse<T>(
-    clazz: Constructable<T>,
-    response: AxiosResponse<T>,
-  ): T {
+  protected handleResponse<T>(response: AxiosResponse<T>): T {
     if (response.status >= 200 && response.status <= 299) {
       return response.data as T;
     } else {

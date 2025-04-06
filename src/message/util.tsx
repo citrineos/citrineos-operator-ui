@@ -1,13 +1,14 @@
-import { HttpMethod } from '@citrineos/base';
+import { HttpMethod, OCPPVersion } from '@citrineos/base';
 import { BaseRestClient } from '@util/BaseRestClient';
-import { Constructable } from '@util/Constructable';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
+import { MessageConfirmation } from './MessageConfirmation';
 
-export const showSucces = (payload?: string) => {
+export const showSuccess = (payload?: string | object) => {
+  const payloadString = payload ? JSON.stringify(payload) : '.';
   notification.success({
     message: 'Success',
-    description: `The request was successful ${payload ? `: ${payload}` : '.'}`,
+    description: `The request was successful ${payloadString}`,
     placement: 'topRight',
     props: {
       'data-testid': 'success-notification',
@@ -28,20 +29,22 @@ export const showError = (msg: string) => {
 
 export interface TriggerMessageAndHandleResponseProps<T> {
   url: string;
-  responseClass: Constructable<T>;
   data: any;
   responseSuccessCheck: (response: T) => boolean;
-  isDataUrl?: boolean;
+  ocppVersion?: OCPPVersion | null;
   method?: HttpMethod;
   setLoading?: (loading: boolean) => void;
 }
 
-export const triggerMessageAndHandleResponse = async <T,>({
+type MessageConfirmationOrArray = MessageConfirmation | MessageConfirmation[];
+
+export const triggerMessageAndHandleResponse = async <
+  T extends MessageConfirmationOrArray,
+>({
   url,
-  responseClass,
   data,
   responseSuccessCheck,
-  isDataUrl = false,
+  ocppVersion = OCPPVersion.OCPP2_0_1,
   method = HttpMethod.Post,
   setLoading,
 }: TriggerMessageAndHandleResponseProps<T>) => {
@@ -49,27 +52,30 @@ export const triggerMessageAndHandleResponse = async <T,>({
     if (setLoading) {
       setLoading(true);
     }
-    const client = new BaseRestClient(isDataUrl);
+    const client = new BaseRestClient(ocppVersion);
     let response = undefined;
     switch (method) {
       case HttpMethod.Post:
-        response = await client.post(url, responseClass, {}, data);
+        response = await client.postRaw<T>(url, data);
         break;
       case HttpMethod.Delete:
-        response = await client.del(url, responseClass, {});
+        response = await client.delRaw<T>(url);
         break;
       default:
         throw new Error(`Unimplemented Http Method: ${method}`);
     }
 
-    // todo reuse handle response!
-    if (responseSuccessCheck(response)) {
-      showSucces((response as any).payload);
+    if (responseSuccessCheck(response.data)) {
+      const payload = Array.isArray(response.data)
+        ? response.data.length > 0 && response.data[0].payload
+          ? response.data[0].payload
+          : undefined
+        : response.data.payload;
+      showSuccess(payload);
     } else {
       let msg = 'The request did not receive a successful response.';
-      if ((response as any).payload) {
-        // todo incorrect response type?
-        msg += `Response payload: ${(response as any).payload}`;
+      if (response instanceof MessageConfirmation || Array.isArray(response)) {
+        msg += ` ${generateErrorMessageFromResponses(response)}`;
       }
       showError(msg);
     }
@@ -155,7 +161,37 @@ export function formatPem(pem: string): string | null {
   const formattedContent = base64Content.match(/.{1,64}/g)?.join('\n');
 
   // Reassemble the PEM with correct newlines
-  const formattedPem = `${header}\n${formattedContent}\n${footer}`;
-
-  return formattedPem;
+  return `${header}\n${formattedContent}\n${footer}`;
 }
+
+export const responseSuccessCheck = (response: MessageConfirmationOrArray) => {
+  if (Array.isArray(response)) {
+    return response.every((r) => r && r.success);
+  }
+  return response && response.success;
+};
+
+export const generateErrorMessageFromResponses = (
+  response: MessageConfirmationOrArray,
+) => {
+  let msg = '';
+  if (Array.isArray(response)) {
+    if (response.length === 1) {
+      response.map((r, i) => {
+        if (!r.success) {
+          msg += `Request ${i} failed. `;
+          if ((r as any).payload) {
+            msg += `${(r as any).payload}. `;
+          }
+        }
+      });
+      return msg;
+    } else {
+      response = response[0];
+    }
+  }
+  if ((response as any).payload) {
+    msg += `Response payload: ${(response as any).payload}`;
+  }
+  return msg;
+};

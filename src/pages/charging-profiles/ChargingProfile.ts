@@ -12,7 +12,7 @@ import {
   ChargingProfileKindEnumType,
   ChargingProfilePurposeEnumType,
   RecurrencyKindEnumType,
-} from '@citrineos/base';
+} from '@OCPP2_0_1';
 
 export class ChargingProfile {
   @IsInt()

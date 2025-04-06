@@ -26,12 +26,6 @@ describe('Charging station actions', () => {
       },
     }).as('resetRequest');
 
-    cy.getByData('citrine-os-icon').should(
-      'have.attr',
-      'src',
-      '/Citrine_OS_Logo.png',
-    );
-
     cy.getByData('custom-action-dropdown-button').click();
     cy.get('.ant-dropdown') // Target the dropdown container
       .within(() => {

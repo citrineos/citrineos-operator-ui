@@ -1,25 +1,24 @@
 import './telemetry';
+import type { ResourceProps } from '@refinedev/core';
 import { Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import './style.scss';
 
 import {
   ErrorComponent,
-  ThemedLayoutV2,
+  ThemedLayoutContextProvider,
   useNotificationProvider,
 } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
-import { App as AntdApp, ConfigProvider } from 'antd';
+import { App as AntdApp, ConfigProvider, Layout as AntdLayout } from 'antd';
 
 import dataProvider, {
   GraphQLClient,
   graphqlWS,
-  HasuraDataProviderOptions,
   liveProvider,
 } from '@refinedev/hasura';
 import routerBindings, {
   DocumentTitleHandler,
-  NavigateToResource,
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
@@ -29,119 +28,43 @@ import {
   Outlet,
   Route,
   Routes,
+  useLocation,
 } from 'react-router-dom';
 import { Header } from './components';
-import { ColorModeContextProvider } from './contexts/color-mode';
 import {
-  resources as IdTokenResources,
-  routes as IdTokenRoutes,
-} from './pages/id-tokens';
+  ColorModeContext,
+  ColorModeContextProvider,
+} from './contexts/color-mode';
 import {
-  resources as AuthorizationsResources,
-  routes as AuthorizationsRoutes,
-} from './pages/authorizations';
+  resources as locationResources,
+  routes as LocationsRoutes,
+} from './pages/locations';
 import {
-  resources as AdditionalInfosResources,
-  routes as AdditionalInfosRoutes,
-} from './pages/additional-infos';
-import {
-  resources as IdTokenInfosResources,
-  routes as IdTokenInfosRoutes,
-} from './pages/id-tokens-infos';
-import { ResourceType } from './resource-type';
-import {
-  resources as bootsResources,
-  routes as BootsRoutes,
-} from './pages/boots';
-import {
-  resources as chargingStationsResources,
+  resources as chargingStationResources,
   routes as ChargingStationsRoutes,
 } from './pages/charging-stations';
 import {
-  resources as chargingStationSequencesResources,
-  routes as ChargingStationSequencesRoutes,
-} from './pages/charging-station-sequences';
-import {
-  resources as locationsResources,
-  routes as LocationsRoutes,
-} from './pages/locations';
-
-import {
-  resources as statusNotificationsResources,
-  routes as StatusNotificationsRoutes,
-} from './pages/status-notifications';
-import {
-  resources as tariffsResources,
-  routes as TariffsRoutes,
-} from './pages/tariffs';
-import {
-  SecurityEventsCreate,
-  SecurityEventsList,
-  SecurityEventsShow,
-} from './pages/security-events';
-import {
-  resources as subscriptionsResources,
-  routes as SubscriptionsRoutes,
-} from './pages/subscriptions';
-import {
-  resources as transactionsResources,
   routes as TransactionsRoutes,
+  resources as transactionResources,
 } from './pages/transactions';
+import { routes as OverviewRoutes } from './pages/overview';
 import {
-  resources as meterValuesResources,
-  routes as MeterValuesRoutes,
-} from './pages/meter-values';
+  routes as AuthorizationsRoutes,
+  resources as authoriationResources,
+} from './pages/authorizations';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { darkTheme, lightTheme } from './theme';
+import { MainMenu, MenuSection } from './components/main-menu/main.menu';
 import {
-  resources as chargingProfilesResources,
-  routes as ChargingProfilesRoutes,
-} from './pages/charging-profiles';
-import {
-  resources as variableMonitoringsResources,
-  routes as VariableMonitoringsRoutes,
-} from './pages/variable-monitorings';
-import {
-  resources as variableAttributesResources,
-  routes as VariableAttributesRoutes,
-} from './pages/variable-attributes';
-import { routes as HomeRoutes } from './pages/home';
-import React, { useEffect, useState } from 'react';
-import { MdOutlineSecurity } from 'react-icons/md';
-import {
-  resources as messageInfosResources,
-  routes as MessageInfosRoutes,
-} from './pages/message-infos';
-import {
-  resources as certificatesResources,
-  routes as CertificatesRoutes,
-} from './pages/certificates';
-import {
-  resources as reservationsResources,
-  routes as ReservationsRoutes,
-} from './pages/reservations';
-import {
-  resources as evsesResources,
-  routes as EvsesRoutes,
-} from './pages/evses';
-import {
-  resources as installedCertificatesResources,
-  routes as InstalledCertificatesRoutes,
-} from './pages/installed-certificates';
-import {
-  resources as serverNetworkProfilesResources,
-  routes as ServerNetworkProfilesRoutes,
-} from './pages/server-network-profiles';
-import { theme } from './theme';
-import { MainMenu } from './components/main-menu';
-import {
-  TelemetryConsentModal,
   checkTelemetryConsent,
   saveTelemetryConsent,
+  TelemetryConsentModal,
 } from './util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
+import AppModal from './AppModal';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const WS_URL = import.meta.env.VITE_WS_URL;
-const LOGO_URL = import.meta.env.VITE_LOGO_URL;
 
 const client = new GraphQLClient(API_URL, {
   headers: {
@@ -153,62 +76,129 @@ const webSocketClient = graphqlWS.createClient({
   url: WS_URL,
 });
 
-const hasuraOptions: HasuraDataProviderOptions = {
-  idType: (resource) => {
-    switch (resource) {
-      default:
-        return 'Int';
-    }
-  },
-};
+const hasuraDataProvider = dataProvider(client, {
+  idType: 'String',
+});
 
-const hasuraDataProvider = dataProvider(client, hasuraOptions);
 hasuraDataProvider.getApiUrl = () => {
   return API_URL;
 };
 
-const resources = [
-  {
-    name: ResourceType.SECURITY_EVENTS,
-    list: '/security-events',
-    create: '/security-events/create',
-    edit: '/security-events/edit/:id',
-    show: '/security-events/show/:id',
-    meta: {
-      canDelete: true,
-    },
-    icon: <MdOutlineSecurity />,
-  },
-  ...AdditionalInfosResources,
-  ...AuthorizationsResources,
-  ...IdTokenInfosResources,
-  ...IdTokenResources,
-  ...bootsResources,
-  ...chargingStationsResources,
-  ...chargingStationSequencesResources,
-  ...locationsResources,
-  ...statusNotificationsResources,
-  ...tariffsResources,
-  ...subscriptionsResources,
-  ...transactionsResources,
-  ...meterValuesResources,
-  ...chargingProfilesResources,
-  ...messageInfosResources,
-  ...variableMonitoringsResources,
-  ...variableAttributesResources,
-  ...certificatesResources,
-  ...reservationsResources,
-  ...evsesResources,
-  ...installedCertificatesResources,
-  ...serverNetworkProfilesResources,
-].sort((a, b) => a.name.localeCompare(b.name));
+interface MainAntdAppProps {
+  isModalVisible: boolean;
+  handleModalDecision: (agreed: boolean) => void;
+}
 
-const CITRINEOS_VERSION = import.meta.env.VITE_CITRINEOS_VERSION;
+const resources: ResourceProps[] = [
+  ...chargingStationResources,
+  ...locationResources,
+  ...transactionResources,
+  ...authoriationResources,
+];
+
+const MainAntDApp: React.FC<MainAntdAppProps> = ({
+  isModalVisible,
+  handleModalDecision,
+}: MainAntdAppProps) => {
+  const { mode } = useContext(ColorModeContext);
+  const location = useLocation();
+
+  const routeClassName = useMemo(() => {
+    return `content-${location.pathname.replace(/\//g, '-').replace(/^-/, '')}`;
+  }, [location.pathname]);
+
+  const activeSection: MenuSection = useMemo(() => {
+    if (location.pathname.startsWith(`/${MenuSection.LOCATIONS}`))
+      return MenuSection.LOCATIONS;
+    if (location.pathname.startsWith(`/${MenuSection.CHARGING_STATIONS}`))
+      return MenuSection.CHARGING_STATIONS;
+    if (location.pathname.startsWith(`/${MenuSection.AUTHORIZATIONS}`))
+      return MenuSection.AUTHORIZATIONS;
+    if (location.pathname.startsWith(`/${MenuSection.TRANSACTIONS}`))
+      return MenuSection.TRANSACTIONS;
+    return MenuSection.OVERVIEW;
+  }, [location.pathname]);
+
+  const tabTitleHandler = () => {
+    return 'CitrineOS';
+  };
+
+  return (
+    <AntdApp>
+      <ConfigProvider theme={mode === 'light' ? lightTheme : darkTheme}>
+        <TelemetryConsentModal
+          visible={isModalVisible}
+          onDecision={handleModalDecision}
+        />
+
+        <Refine
+          dataProvider={hasuraDataProvider}
+          liveProvider={liveProvider(webSocketClient)}
+          notificationProvider={useNotificationProvider}
+          routerProvider={routerBindings}
+          resources={resources}
+          options={{
+            syncWithLocation: false,
+            warnWhenUnsavedChanges: true,
+            useNewQueryKeys: true,
+            projectId: '6ZV3T4-Lyy7B3-Dr5Uhd',
+            liveMode: 'auto',
+          }}
+        >
+          <Routes>
+            <Route
+              element={
+                <div style={{ position: 'relative' }}>
+                  <ThemedLayoutContextProvider initialSiderCollapsed={true}>
+                    <AntdLayout style={{ minHeight: '100vh' }} hasSider={true}>
+                      <MainMenu activeSection={activeSection} />
+                      <AntdLayout>
+                        <AppModal />
+                        <Header activeSection={activeSection} />
+                        <AntdLayout.Content
+                          className={`content-container ${routeClassName}`}
+                        >
+                          <div className="content-outer-wrap">
+                            <div className="content-inner-wrap">
+                              <Outlet />
+                            </div>
+                          </div>
+                        </AntdLayout.Content>
+                      </AntdLayout>
+                    </AntdLayout>
+                  </ThemedLayoutContextProvider>
+                  <div
+                    className={`gradient ${mode === 'dark' ? 'dark' : ''}`}
+                  />
+                </div>
+              }
+            >
+              <Route path="/" element={<Navigate to="/overview" replace />} />
+              <Route index path="/overview/*" element={<OverviewRoutes />} />
+              <Route path="/locations/*" element={<LocationsRoutes />} />
+              <Route
+                path="/authorizations/*"
+                element={<AuthorizationsRoutes />}
+              />
+              <Route path="/transactions/*" element={<TransactionsRoutes />} />
+              <Route
+                path="/charging-stations/*"
+                element={<ChargingStationsRoutes />}
+              />
+              <Route path="*" element={<ErrorComponent />} />
+            </Route>
+          </Routes>
+
+          <RefineKbar />
+          <UnsavedChangesNotifier />
+          <DocumentTitleHandler handler={tabTitleHandler} />
+        </Refine>
+      </ConfigProvider>
+    </AntdApp>
+  );
+};
 
 export default function App() {
-  // `undefined` means we haven’t read the config yet
-  // or that no consent is saved.
-
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -242,142 +232,10 @@ export default function App() {
     <BrowserRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
-          <AntdApp>
-            <ConfigProvider theme={theme}>
-              <TelemetryConsentModal
-                visible={isModalVisible}
-                onDecision={handleModalDecision}
-              />
-
-              <Refine
-                dataProvider={hasuraDataProvider}
-                liveProvider={liveProvider(webSocketClient)}
-                notificationProvider={useNotificationProvider}
-                routerProvider={routerBindings}
-                resources={resources}
-                options={{
-                  syncWithLocation: false,
-                  warnWhenUnsavedChanges: true,
-                  useNewQueryKeys: true,
-                  projectId: '6ZV3T4-Lyy7B3-Dr5Uhd',
-                  liveMode: 'auto',
-                  title: {
-                    icon: (
-                      <img
-                        src={LOGO_URL}
-                        alt="icon"
-                        style={{ height: '48px', margin: '-8px -8px' }}
-                        data-testid="citrine-os-icon"
-                      />
-                    ),
-                    text: `Citrine OS ${CITRINEOS_VERSION}`,
-                  },
-                }}
-              >
-                <Routes>
-                  <Route
-                    element={
-                      <ThemedLayoutV2
-                        Header={() => <Header sticky />}
-                        Sider={(props) => <MainMenu {...props} />}
-                      >
-                        <Outlet />
-                      </ThemedLayoutV2>
-                    }
-                  >
-                    <Route path="/" element={<Navigate to="/home" replace />} />
-                    <Route index path="/home/*" element={<HomeRoutes />} />
-                    <Route
-                      element={<NavigateToResource resource="Authorizations" />}
-                    />
-                    <Route
-                      path="/additional-infos/*"
-                      element={<AdditionalInfosRoutes />}
-                    />
-                    <Route path="/id-tokens/*" element={<IdTokenRoutes />} />
-                    <Route
-                      path="/id-token-infos/*"
-                      element={<IdTokenInfosRoutes />}
-                    />
-                    <Route
-                      path="/authorizations/*"
-                      element={<AuthorizationsRoutes />}
-                    />
-                    <Route path="/security-events">
-                      <Route index element={<SecurityEventsList />} />
-                      <Route path="create" element={<SecurityEventsCreate />} />
-                      <Route path="show/:id" element={<SecurityEventsShow />} />
-                    </Route>
-                    <Route path="/boots/*" element={<BootsRoutes />} />
-                    <Route
-                      path="/charging-stations/*"
-                      element={<ChargingStationsRoutes />}
-                    />
-                    <Route
-                      path="/charging-station-sequences/*"
-                      element={<ChargingStationSequencesRoutes />}
-                    />
-                    <Route path="/locations/*" element={<LocationsRoutes />} />
-                    <Route
-                      path="/status-notifications/*"
-                      element={<StatusNotificationsRoutes />}
-                    />
-                    <Route path="/tariffs/*" element={<TariffsRoutes />} />
-                    <Route
-                      path="/subscriptions/*"
-                      element={<SubscriptionsRoutes />}
-                    />
-                    <Route
-                      path="/transactions/*"
-                      element={<TransactionsRoutes />}
-                    />
-                    <Route
-                      path="/meter-values/*"
-                      element={<MeterValuesRoutes />}
-                    />
-                    <Route
-                      path="/charging-profiles/*"
-                      element={<ChargingProfilesRoutes />}
-                    />
-                    <Route
-                      path="/message-infos/*"
-                      element={<MessageInfosRoutes />}
-                    />
-                    <Route
-                      path="/variable-monitorings/*"
-                      element={<VariableMonitoringsRoutes />}
-                    />
-                    <Route
-                      path="/variable-attributes/*"
-                      element={<VariableAttributesRoutes />}
-                    />
-                    <Route
-                      path="/certificates/*"
-                      element={<CertificatesRoutes />}
-                    />
-                    <Route
-                      path="/installed-certificates/*"
-                      element={<InstalledCertificatesRoutes />}
-                    />
-                    <Route
-                      path="/server-network-profiles/*"
-                      element={<ServerNetworkProfilesRoutes />}
-                    />
-                    <Route
-                      path="/reservations/*"
-                      element={<ReservationsRoutes />}
-                    />
-                    <Route path="/evses/*" element={<EvsesRoutes />} />
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
-                </Routes>
-
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </Refine>
-            </ConfigProvider>
-          </AntdApp>
+          <MainAntDApp
+            isModalVisible={isModalVisible}
+            handleModalDecision={handleModalDecision}
+          />
         </ColorModeContextProvider>
       </RefineKbarProvider>
     </BrowserRouter>

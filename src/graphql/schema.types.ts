@@ -45,6 +45,150 @@ export type Scalars = {
   timestamptz: { input: any; output: any };
 };
 
+export type Connectors = {
+  id: Scalars['Int']['output'];
+  stationId: Scalars['String']['output'];
+  connectorId?: Maybe<Scalars['Int']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  errorCode?: Maybe<Scalars['String']['output']>;
+  info?: Maybe<Scalars['String']['output']>;
+  vendorId?: Maybe<Scalars['String']['output']>;
+  vendorErrorCode?: Maybe<Scalars['String']['output']>;
+};
+
+export type Connectors_Insert_Input = {
+  id?: InputMaybe<Scalars['Int']['input']>;
+  stationId: Scalars['String']['input'];
+  connectorId?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  errorCode?: InputMaybe<Scalars['String']['input']>;
+  info?: InputMaybe<Scalars['String']['input']>;
+  vendorId?: InputMaybe<Scalars['String']['input']>;
+  vendorErrorCode?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Connectors_Bool_Exp = {
+  _and?: InputMaybe<Array<Connectors_Bool_Exp>>;
+  _not?: InputMaybe<Connectors_Bool_Exp>;
+  _or?: InputMaybe<Array<Connectors_Bool_Exp>>;
+  id?: InputMaybe<Int_Comparison_Exp>;
+  stationId?: InputMaybe<String_Comparison_Exp>;
+  connectorId?: InputMaybe<Int_Comparison_Exp>;
+  status?: InputMaybe<String_Comparison_Exp>;
+  errorCode?: InputMaybe<String_Comparison_Exp>;
+  info?: InputMaybe<String_Comparison_Exp>;
+  vendorId?: InputMaybe<String_Comparison_Exp>;
+  vendorErrorCode?: InputMaybe<String_Comparison_Exp>;
+};
+
+export type Connectors_Order_By = {
+  id?: InputMaybe<Order_By>;
+  stationId?: InputMaybe<Order_By>;
+  connectorId?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  errorCode?: InputMaybe<Order_By>;
+  info?: InputMaybe<Order_By>;
+  vendorId?: InputMaybe<Order_By>;
+  vendorErrorCode?: InputMaybe<Order_By>;
+};
+
+export type Connectors_Set_Input = {
+  id?: InputMaybe<Scalars['Int']['input']>;
+  stationId?: InputMaybe<Scalars['String']['input']>;
+  connectorId?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  errorCode?: InputMaybe<Scalars['String']['input']>;
+  info?: InputMaybe<Scalars['String']['input']>;
+  vendorId?: InputMaybe<Scalars['String']['input']>;
+  vendorErrorCode?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Connectors_Aggregate_Fields = {
+  count: Scalars['Int']['output'];
+  avg?: Maybe<Connectors_Avg_Fields>;
+  max?: Maybe<Connectors_Max_Fields>;
+  min?: Maybe<Connectors_Min_Fields>;
+  stddev?: Maybe<Connectors_Stddev_Fields>;
+  stddev_pop?: Maybe<Connectors_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Connectors_Stddev_Samp_Fields>;
+  sum?: Maybe<Connectors_Sum_Fields>;
+  var_pop?: Maybe<Connectors_Var_Pop_Fields>;
+  var_samp?: Maybe<Connectors_Var_Samp_Fields>;
+  variance?: Maybe<Connectors_Variance_Fields>;
+};
+
+/** aggregate avg on columns */
+export type Connectors_Avg_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate max on columns */
+export type Connectors_Max_Fields = {
+  connectorId?: Maybe<Scalars['Int']['output']>;
+  errorCode?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  info?: Maybe<Scalars['String']['output']>;
+  stationId?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  vendorErrorCode?: Maybe<Scalars['String']['output']>;
+  vendorId?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Connectors_Min_Fields = {
+  connectorId?: Maybe<Scalars['Int']['output']>;
+  errorCode?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  info?: Maybe<Scalars['String']['output']>;
+  stationId?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  vendorErrorCode?: Maybe<Scalars['String']['output']>;
+  vendorId?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate stddev on columns */
+export type Connectors_Stddev_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Connectors_Stddev_Pop_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Connectors_Stddev_Samp_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate sum on columns */
+export type Connectors_Sum_Fields = {
+  connectorId?: Maybe<Scalars['Int']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Connectors_Var_Pop_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Connectors_Var_Samp_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Connectors_Variance_Fields = {
+  connectorId?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
 /** columns and relationships of "AdditionalInfos" */
 export type AdditionalInfos = {
   /** An array relationship */

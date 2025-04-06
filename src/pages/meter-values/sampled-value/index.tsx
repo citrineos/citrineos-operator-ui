@@ -6,7 +6,7 @@ import {
   MeasurandEnumType,
   PhaseEnumType,
   ReadingContextEnumType,
-} from '@citrineos/base';
+} from '@OCPP2_0_1';
 import GenericTag from '../../../components/tag';
 
 const { Text } = Typography;
