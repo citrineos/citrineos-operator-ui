@@ -14,7 +14,7 @@ export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <motion.img
-        src="/logo-collapsed.svg"
+        src={LOGO_URL}
         alt="Collapsed Logo"
         initial={{ scale: 0.2, opacity: 0, x: -10, left: 0 }}
         animate={{
@@ -30,7 +30,7 @@ export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
       />
       {!collapsed && (
         <img
-          src={mode === 'light' ? LOGO_URL : '/logo-white.svg'}
+          src={mode === 'light' ? '/logo-black.svg' : '/logo-white.svg'}
           style={{
             width: '80%',
             position: 'absolute',

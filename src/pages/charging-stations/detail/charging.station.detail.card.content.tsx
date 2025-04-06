@@ -236,7 +236,7 @@ export const ChargingStationDetailCardContent = ({
                     {station.chargePointModel ? (
                       station.chargePointModel
                     ) : (
-                      <Text>AX32</Text>
+                      <Text>Unknown</Text>
                     )}
                   </td>
                 </tr>
@@ -248,7 +248,7 @@ export const ChargingStationDetailCardContent = ({
                     {station.chargePointVendor ? (
                       station.chargePointVendor
                     ) : (
-                      <Text>Zerova</Text>
+                      <Text>Unknown</Text>
                     )}
                   </td>
                 </tr>
@@ -264,7 +264,11 @@ export const ChargingStationDetailCardContent = ({
                     <h5>Firmware Version</h5>
                   </td>
                   <td>
-                    <Text>v2.0.12-pr</Text>
+                  {station.firmwareVersion ? (
+                      station.firmwareVersion
+                    ) : (
+                      <Text>Unknown</Text>
+                    )}
                   </td>
                 </tr>
                 <tr>
