@@ -225,7 +225,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             render={(message: any, record: OCPPMessageDto) => (
               <CollapsibleOCPPMessageViewer
                 ocppMessage={message}
-                unparsed={!record.action}
+                unparsed={typeof message === 'string'}
               />
             )}
           />
