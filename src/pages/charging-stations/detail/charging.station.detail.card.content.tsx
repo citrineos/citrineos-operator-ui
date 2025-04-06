@@ -264,7 +264,7 @@ export const ChargingStationDetailCardContent = ({
                     <h5>Firmware Version</h5>
                   </td>
                   <td>
-                  {station.firmwareVersion ? (
+                    {station.firmwareVersion ? (
                       station.firmwareVersion
                     ) : (
                       <Text>Unknown</Text>
