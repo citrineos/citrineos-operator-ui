@@ -1,0 +1,47 @@
+name: Cypress tests
+on:
+  pull_request:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Clone citrineos-core repository
+        run: git clone -b main https://github.com/citrineos/citrineos-core.git ../citrineos-core
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install core and build as a dependency
+        run: |
+          npm install
+          npm run build:base:esm
+        working-directory: ../citrineos-core
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          browser: chrome
+            # Save screenshots as test artifacts
+            # https://github.com/actions/upload-artifact
+      - uses: actions/upload-artifact@v4
+          # there might be no screenshots created when:
+        # - there are no test failures
+        # so only upload screenshots if previous step has failed
+        if: failure()
+        with:
+          name: screenshots
+          path: cypress/screenshots

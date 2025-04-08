@@ -40,7 +40,11 @@ export const ExpandableColumn = ({
   return (
     <Space>
       {useInitialContentAsButton ? (
-        <span onClick={onViewButtonClick} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={onViewButtonClick}
+          style={{ cursor: 'pointer' }}
+          data-testId={`expandable-column-clickable-span`}
+        >
           {initialContent}
         </span>
       ) : (
@@ -50,6 +54,7 @@ export const ExpandableColumn = ({
             icon={<ExportOutlined />}
             onClick={onViewButtonClick}
             size="small"
+            data-testId={`expandable-column-clickable-button`}
           >
             {multipleNested ? 'View All' : ''}
           </Button>

@@ -73,7 +73,6 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
-      protocol
     }
     ChargingStations_aggregate(where: $where) {
       aggregate {
@@ -257,7 +256,6 @@ export const CHARGING_STATIONS_CREATE_MUTATION = gql`
       locationId
       createdAt
       updatedAt
-      protocol
     }
   }
 `;
@@ -271,7 +269,6 @@ export const CHARGING_STATIONS_DELETE_MUTATION = gql`
       locationId
       createdAt
       updatedAt
-      protocol
     }
   }
 `;
@@ -284,11 +281,10 @@ export const CHARGING_STATIONS_EDIT_MUTATION = gql`
     update_ChargingStations_by_pk(pk_columns: { id: $id }, _set: $object) {
       id
       isOnline
-      protcol
+      protocol
       locationId
       createdAt
       updatedAt
-      protocol
     }
   }
 `;
@@ -306,7 +302,6 @@ export const GET_OCPP_MESSAGES = gql`
       timestamp
       createdAt
       updatedAt
-      protocol
     }
   }
 `;

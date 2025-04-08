@@ -143,6 +143,7 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
             useNewQueryKeys: true,
             projectId: '6ZV3T4-Lyy7B3-Dr5Uhd',
             liveMode: 'auto',
+            disableTelemetry: true,
           }}
         >
           <Routes>
