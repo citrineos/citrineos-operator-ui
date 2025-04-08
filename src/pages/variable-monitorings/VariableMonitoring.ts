@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { MonitorEnumType } from '@citrineos/base';
+import { MonitorEnumType } from '@OCPP2_0_1';
 
 export class VariableMonitoring {
   @IsInt()

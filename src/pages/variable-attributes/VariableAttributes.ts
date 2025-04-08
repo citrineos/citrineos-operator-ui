@@ -9,7 +9,7 @@ import {
   AttributeEnumType,
   DataEnumType,
   MutabilityEnumType,
-} from '@citrineos/base';
+} from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { Component, ComponentProps } from './components/Component';
@@ -46,8 +46,8 @@ export enum VariableAttributeProps {
   mutability = 'mutability',
   persistent = 'persistent',
   constant = 'constant',
-  Variable = 'Variable',
-  Component = 'Component',
+  variableId = 'variableId',
+  componentId = 'componentId',
   evseDatabaseId = 'evseDatabaseId',
   generatedAt = 'generatedAt',
 }
@@ -89,7 +89,7 @@ export class VariableAttribute extends BaseModel {
   constant!: boolean;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.Variable,
+    parentIdFieldName: VariableAttributeProps.variableId,
     associatedIdFieldName: VariableProps.id,
     gqlQuery: {
       query: VARIABLE_GET_QUERY,
@@ -100,10 +100,10 @@ export class VariableAttribute extends BaseModel {
   })
   @Type(() => Variable)
   @IsOptional()
-  Variable?: Variable | null;
+  variableId?: Variable | null;
 
   @GqlAssociation({
-    parentIdFieldName: VariableAttributeProps.Component,
+    parentIdFieldName: VariableAttributeProps.componentId,
     associatedIdFieldName: ComponentProps.id,
     gqlQuery: {
       query: COMPONENT_GET_QUERY,
@@ -114,7 +114,7 @@ export class VariableAttribute extends BaseModel {
   })
   @Type(() => Component)
   @IsOptional()
-  Component?: Component | null;
+  componentId?: Component | null;
 
   @IsOptional()
   @IsNumber()
@@ -136,8 +136,8 @@ export class VariableAttribute extends BaseModel {
         [VariableAttributeProps.mutability]: data.mutability,
         [VariableAttributeProps.persistent]: data.persistent,
         [VariableAttributeProps.constant]: data.constant,
-        [VariableAttributeProps.Variable]: data.Variable,
-        [VariableAttributeProps.Component]: data.Component,
+        [VariableAttributeProps.variableId]: data.variableId,
+        [VariableAttributeProps.componentId]: data.componentId,
         [VariableAttributeProps.evseDatabaseId]: data.evseDatabaseId,
         [VariableAttributeProps.generatedAt]: data.generatedAt,
       });

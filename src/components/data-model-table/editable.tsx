@@ -12,7 +12,7 @@ import { StatusIcon } from '../status-icon';
 import GenericTag from '../tag';
 import { TruncateDisplay } from '../truncate-display';
 import { TimestampDisplay } from '../timestamp-display';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import { CLASS_GQL_LIST_QUERY } from '@util/decorators/ClassGqlListQuery';
 import { useForm } from '@refinedev/antd';
@@ -296,9 +296,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
         content: `There was an error performing mutation: ${JSON.stringify(mutationError)}`,
       });
     } else if (mutationData) {
-      console.log('mutation result', mutationData, mutationError);
-
-      console.log('Update successful:');
       Modal.success({
         title: 'Save Successful',
         content: `The ${dtoResourceType} record has been updated successfully.`,
@@ -314,7 +311,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     if (dtoGqlCreateMutation.getVariables) {
       vars = dtoGqlCreateMutation.getVariables(valuesClass);
     } else {
-      const record = structuredClone(valuesClass);
+      const record = structuredClone(instanceToPlain(valuesClass));
       if (associatedFields && associatedFields.size > 0) {
         for (const associatedField of associatedFields) {
           const associatedClass = getClassTransformerType(
@@ -330,8 +327,15 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
             record[associatedField] &&
             typeof record[associatedField] === 'object'
           ) {
-            record[associatedField] =
-              record[associatedField][associatedPrimaryKeyFieldName];
+            if (
+              record[associatedField][associatedPrimaryKeyFieldName] ===
+              NEW_IDENTIFIER
+            ) {
+              delete record[associatedField];
+            } else {
+              record[associatedField] =
+                record[associatedField][associatedPrimaryKeyFieldName];
+            }
           }
         }
       }
@@ -366,8 +370,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
           },
         });
 
-        console.log('Create successful:', response);
-
         Modal.success({
           title: 'Create Successful',
           content: `A new ${dtoResourceType} record has been created successfully.`,
@@ -397,7 +399,6 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
           valuesClass,
         );
 
-        console.log(`Saving values for id: ${id}`, valuesClass);
         const meta: any = {
           gqlMutation: dtoGqlEditMutation,
         };
@@ -413,7 +414,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
               meta.variables = {
                 id: id,
                 object: {
-                  ...valuesClass,
+                  ...instanceToPlain(valuesClass),
                   [associatedField]: undefined,
                 },
                 newAssociatedIds: valuesClass[associatedField].map(
@@ -469,9 +470,7 @@ export const GenericDataTable: React.FC<GenericDataTableProps> = (
     setEditingNewRecord(false);
   }, [editingRecord, form, primaryKeyFieldName]);
 
-  const onDeleteSuccess = () => {
-    console.log('success');
-  };
+  const onDeleteSuccess = () => {};
 
   const enableOptionalField = useCallback(
     (path: FieldPath) =>

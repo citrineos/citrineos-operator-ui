@@ -1,6 +1,6 @@
 import { BaseModel } from '@util/BaseModel';
 import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { IdTokenEnumType } from '@citrineos/base';
+import { IdTokenEnumType } from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '../../resource-type';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';

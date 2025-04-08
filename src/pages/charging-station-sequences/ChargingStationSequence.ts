@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsEnum } from 'class-validator';
+import { IsEnum, IsInt, IsString } from 'class-validator';
 import { BaseModel } from '@util/BaseModel';
 import { ResourceType } from '../../resource-type';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
@@ -8,11 +8,11 @@ import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import {
-  CHARGING_STATION_SEQUENCES_LIST_QUERY,
-  CHARGING_STATION_SEQUENCES_GET_QUERY,
   CHARGING_STATION_SEQUENCES_CREATE_MUTATION,
-  CHARGING_STATION_SEQUENCES_EDIT_MUTATION,
   CHARGING_STATION_SEQUENCES_DELETE_MUTATION,
+  CHARGING_STATION_SEQUENCES_EDIT_MUTATION,
+  CHARGING_STATION_SEQUENCES_GET_QUERY,
+  CHARGING_STATION_SEQUENCES_LIST_QUERY,
 } from './queries';
 import { ChargingStationSequenceType } from '@citrineos/base';
 

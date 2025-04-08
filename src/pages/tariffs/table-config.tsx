@@ -3,7 +3,6 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { TARIFF_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { Tariffs } from '../../graphql/schema.types';
-import { renderAssociatedStationId } from '../charging-stations';
 
 export const TARIFF_COLUMNS = (
   withActions: boolean,
@@ -18,7 +17,7 @@ export const TARIFF_COLUMNS = (
     {
       dataIndex: 'stationId',
       title: 'Station ID',
-      render: renderAssociatedStationId as any,
+      // render: renderAssociatedStationId as any,
     },
     {
       dataIndex: 'currency',

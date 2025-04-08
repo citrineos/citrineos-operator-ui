@@ -12,7 +12,7 @@ import {
   ConnectorEnumType,
   IdTokenEnumType,
   ReserveNowStatusEnumType,
-} from '@citrineos/base';
+} from '@OCPP2_0_1';
 import { CustomDataType } from '../../model/CustomData';
 import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';

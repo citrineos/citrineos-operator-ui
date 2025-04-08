@@ -37,7 +37,7 @@ export enum MeterValueProps {
 @ClassGqlCreateMutation(METER_VALUE_CREATE_MUTATION)
 @ClassGqlEditMutation(METER_VALUE_EDIT_MUTATION)
 @ClassGqlDeleteMutation(METER_VALUE_DELETE_MUTATION)
-@PrimaryKeyFieldName(MeterValueProps.transactionDatabaseId)
+@PrimaryKeyFieldName(MeterValueProps.id)
 export class MeterValue extends BaseModel {
   @IsInt()
   id!: number;

@@ -258,9 +258,6 @@ export const TableWrapper = forwardRef(function TableWrapper<
                 order: sort.order === 'ascend' ? 'asc' : 'desc',
               },
             ]);
-          } else {
-            // Clear sorting if no valid sort is applied
-            setSorters([]);
           }
         }}
         className="editable-table"

@@ -1,7 +1,4 @@
-import {
-  TransactionEventEnumType,
-  TriggerReasonEnumType,
-} from '@citrineos/base';
+import { TransactionEventEnumType, TriggerReasonEnumType } from '@OCPP2_0_1';
 import {
   IsArray,
   IsBoolean,
@@ -90,6 +87,9 @@ export class TransactionEvent extends BaseModel {
   @IsArray()
   @Type(() => MeterValue)
   @ValidateNested({ each: true })
+  @HiddenWhen((record) => {
+    return record;
+  })
   @GqlAssociation({
     parentIdFieldName: TransactionEventProps.id,
     associatedIdFieldName: MeterValueProps.transactionEventId,

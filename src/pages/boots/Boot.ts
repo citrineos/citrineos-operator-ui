@@ -7,10 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import {
-  RegistrationStatusEnumType,
-  SetVariableResultType,
-} from '@citrineos/base';
+import { RegistrationStatusEnumType, SetVariableResultType } from '@OCPP2_0_1';
 import { Boots } from '../../graphql/schema.types';
 import { TransformDate } from '@util/TransformDate';
 import { BaseModel } from '@util/BaseModel';

@@ -21,12 +21,72 @@ export const LOCATIONS_LIST_QUERY = gql`
       state
       country
       coordinates
+      createdAt
+      updatedAt
       ChargingStations {
         id
         isOnline
+        protocol
+        createdAt
+        updatedAt
+        Evses: VariableAttributes(
+          distinct_on: evseDatabaseId
+          where: {
+            evseDatabaseId: { _is_null: false }
+            Evse: { connectorId: { _is_null: false } }
+          }
+        ) {
+          Evse {
+            databaseId
+            id
+            connectorId
+            createdAt
+            updatedAt
+          }
+        }
+        LatestStatusNotifications {
+          id
+          stationId
+          statusNotificationId
+          updatedAt
+          createdAt
+          StatusNotification {
+            connectorId
+            connectorStatus
+            createdAt
+            evseId
+            stationId
+            id
+            timestamp
+            updatedAt
+          }
+        }
+        Transactions(where: { isActive: { _eq: true } }) {
+          id
+          timeSpentCharging
+          isActive
+          chargingState
+          stationId
+          stoppedReason
+          transactionId
+          evseDatabaseId
+          remoteStartId
+          totalKwh
+          createdAt
+          updatedAt
+        }
+        Connectors {
+          connectorId
+          status
+          errorCode
+          timestamp
+          info
+          vendorId
+          vendorErrorCode
+          createdAt
+          updatedAt
+        }
       }
-      createdAt
-      updatedAt
     }
     Locations_aggregate(where: $where) {
       aggregate {
@@ -49,6 +109,132 @@ export const LOCATIONS_GET_QUERY = gql`
       coordinates
       createdAt
       updatedAt
+      ChargingStations {
+        id
+        isOnline
+        protocol
+        createdAt
+        updatedAt
+        Evses: VariableAttributes(
+          distinct_on: evseDatabaseId
+          where: {
+            evseDatabaseId: { _is_null: false }
+            Evse: { connectorId: { _is_null: false } }
+          }
+        ) {
+          Evse {
+            databaseId
+            id
+            connectorId
+            createdAt
+            updatedAt
+          }
+        }
+        LatestStatusNotifications {
+          id
+          stationId
+          statusNotificationId
+          updatedAt
+          createdAt
+          StatusNotification {
+            connectorId
+            connectorStatus
+            createdAt
+            evseId
+            stationId
+            id
+            timestamp
+            updatedAt
+          }
+        }
+        Transactions(where: { isActive: { _eq: true } }) {
+          id
+          timeSpentCharging
+          isActive
+          chargingState
+          stationId
+          stoppedReason
+          transactionId
+          evseDatabaseId
+          remoteStartId
+          totalKwh
+          createdAt
+          updatedAt
+        }
+      }
+    }
+  }
+`;
+
+export const LOCATIONS_GET_QUERY_BY_ID = gql`
+  query GetLocationById($id: Int!, $where: Locations_bool_exp) {
+    Locations_by_pk(id: $id) {
+      id
+      name
+      address
+      city
+      postalCode
+      state
+      country
+      coordinates
+      createdAt
+      updatedAt
+      ChargingStations {
+        id
+        isOnline
+        protocol
+        createdAt
+        updatedAt
+        Evses: VariableAttributes(
+          distinct_on: evseDatabaseId
+          where: {
+            evseDatabaseId: { _is_null: false }
+            Evse: { connectorId: { _is_null: false } }
+          }
+        ) {
+          Evse {
+            databaseId
+            id
+            connectorId
+            createdAt
+            updatedAt
+          }
+        }
+        LatestStatusNotifications {
+          id
+          stationId
+          statusNotificationId
+          updatedAt
+          createdAt
+          StatusNotification {
+            connectorId
+            connectorStatus
+            createdAt
+            evseId
+            stationId
+            id
+            timestamp
+            updatedAt
+          }
+        }
+      }
+    }
+    Locations(where: $where) {
+      id
+      name
+      address
+      city
+      postalCode
+      state
+      country
+      coordinates
+      createdAt
+      updatedAt
+    }
+    Locations_aggregate(where: $where) {
+      aggregate {
+        count
+      }
     }
   }
 `;
@@ -56,6 +242,7 @@ export const LOCATIONS_GET_QUERY = gql`
 export const LOCATIONS_CREATE_MUTATION = gql`
   mutation LocationsCreate($object: Locations_insert_input!) {
     insert_Locations_one(object: $object) {
+      id
       name
       address
       city

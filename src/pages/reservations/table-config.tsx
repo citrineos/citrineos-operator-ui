@@ -3,11 +3,10 @@ import { ActionsColumn } from '../../components/data-model-table/actions-column'
 import { RESERVATIONS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '../../resource-type';
 import { Reservations } from '../../graphql/schema.types';
-import { renderAssociatedStationId } from '../charging-stations';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';
-import { ConnectorEnumType, ReserveNowStatusEnumType } from '@citrineos/base';
+import { ConnectorEnumType, ReserveNowStatusEnumType } from '@OCPP2_0_1';
 import { StatusIcon } from '../../components/status-icon';
 import { DefaultColors } from '@enums';
 
@@ -28,7 +27,7 @@ export const RESERVATIONS_COLUMNS = (
     {
       dataIndex: 'stationId',
       title: 'Station ID',
-      render: renderAssociatedStationId as any,
+      // render: renderAssociatedStationId as any,
     },
     {
       dataIndex: 'expiryDateTime',

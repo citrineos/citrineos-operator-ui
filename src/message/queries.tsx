@@ -10,7 +10,11 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
   ) {
     Evses(
       where: {
-        VariableAttributes: { stationId: { _eq: $stationId } }
+        VariableAttributes: {
+          stationId: { _eq: $stationId }
+          evseDatabaseId: { _is_null: false }
+          Evse: { connectorId: { _is_null: false } }
+        }
         _and: [$where]
       }
       order_by: $order_by
@@ -48,6 +52,58 @@ export const GET_EVSES_FOR_STATION = gql`
   }
 `;
 
+export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
+  query ConnectorList(
+    $stationId: String!
+    $offset: Int!
+    $limit: Int!
+    $order_by: [Connectors_order_by!]
+    $where: Connectors_bool_exp = {}
+  ) {
+    Connectors(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: { stationId: { _eq: $stationId } }
+    ) {
+      connectorId
+      createdAt
+      errorCode
+      id
+      info
+      stationId
+      status
+      timestamp
+      updatedAt
+      vendorErrorCode
+      vendorId
+    }
+    Connectors_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+export const CONNECTORS_FOR_STATION_QUERY = gql`
+  query GetConnectorListForStation($stationId: String!) {
+    Connectors(where: { stationId: { _eq: $stationId } }) {
+      connectorId
+      createdAt
+      errorCode
+      id
+      info
+      stationId
+      status
+      timestamp
+      updatedAt
+      vendorErrorCode
+      vendorId
+    }
+  }
+`;
+
 export const GET_TRANSACTION_LIST_FOR_STATION = gql`
   query GetTransactionListForStation(
     $stationId: String!
@@ -74,6 +130,30 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       totalKwh
       createdAt
       updatedAt
+      TransactionEvents(where: { eventType: { _eq: "Started" } }) {
+        eventType
+        IdToken {
+          idToken
+        }
+      }
+      ChargingStation {
+        id
+        isOnline
+        locationId
+        createdAt
+        updatedAt
+        Location {
+          name
+          address
+          city
+          postalCode
+          state
+          country
+          coordinates
+          createdAt
+          updatedAt
+        }
+      }
     }
     Transactions_aggregate(
       where: { stationId: { _eq: $stationId }, _and: $where }

@@ -42,21 +42,23 @@ import { SUPPORTED_FILE_FORMATS } from '@util/decorators/SupportedFileFormats';
 import { FIELD_CUSTOM_ACTIONS } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { HIDDEN_WHEN } from '@util/decorators/HiddenWhen';
+
 import {
   renderLabel,
   renderOptionalToggle,
   renderUnknownProperty,
   renderUploadField,
-} from '@util/renderUtil';
+} from '../../util/renderUtil';
 import {
   FieldAnnotations,
   FieldSchema,
   FieldSchemaKeys,
+  FieldSelectOption,
   GenericFormProps,
   isDynamicFieldSchema,
   RenderFieldProps,
 } from '@interfaces';
-import { FieldSelectOption, FieldType, ReflectType, SelectMode } from '@enums';
+import { FieldType, ReflectType, SelectMode } from '@enums';
 
 export const getReflectTypeFromString = (type: string): ReflectType => {
   switch (type) {
@@ -429,7 +431,6 @@ export const renderField = (props: RenderFieldProps) => {
   // Generate the data-testid attribute value automatically
   const dataTestId = `field-${schema.name || schema.type || fieldPath.key}`;
   const dataTestType = schema.type;
-  console.log('data test type: ', dataTestType);
   if (schema.type === FieldType.customRender && schema.customRender) {
     return schema.customRender(parentRecord);
   }

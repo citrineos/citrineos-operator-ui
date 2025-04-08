@@ -1,3 +1,6 @@
+import { plainToInstance } from 'class-transformer';
+import { Constructable } from '@util/Constructable';
+
 export function generateSearchFilters(
   values: any,
   searchableKeys: Set<string>,
@@ -19,3 +22,21 @@ export function generateSearchFilters(
 
   return result as any;
 }
+
+export const getPlainToInstanceOptions: any = (
+  dto: Constructable<any>,
+  isSingle = false,
+) =>
+  isSingle
+    ? {
+        select: (data: any) => ({
+          ...data,
+          data: plainToInstance(dto, data.data),
+        }),
+      }
+    : {
+        select: (data: any) => ({
+          ...data,
+          data: data.data.map((item: any) => plainToInstance(dto, item)),
+        }),
+      };

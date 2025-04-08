@@ -19,16 +19,16 @@ export enum SelectMode {
 }
 
 export enum DefaultColors {
-  MAGENTA = 'magenta',
-  RED = 'red',
-  VOLCANO = 'volcano',
-  ORANGE = 'orange',
-  GOLD = 'gold',
   LIME = 'lime',
+  GOLD = 'gold',
   GREEN = 'green',
+  MAGENTA = 'magenta',
   CYAN = 'cyan',
+  VOLCANO = 'volcano',
   BLUE = 'blue',
+  ORANGE = 'orange',
   GEEKBLUE = 'geekblue',
+  RED = 'red',
   PURPLE = 'purple',
 }
 
@@ -42,11 +42,6 @@ export enum ReflectType {
   unknown,
   unknownProperty,
   unknownProperties,
-}
-
-export interface FieldSelectOption {
-  label: string;
-  value: string;
 }
 
 export enum SelectionType {

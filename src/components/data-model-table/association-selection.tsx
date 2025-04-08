@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   getSelectedAssociatedItems,
   setSelectedAssociatedItems,
-} from '../../redux/associationSelectionSlice';
+} from '../../redux/association.selection.slice';
 import { LABEL_FIELD } from '@util/decorators/LabelField';
 import { generateSearchFilters } from '@util/tables';
 import GenericTag from '../tag';
@@ -116,7 +116,8 @@ export const AssociationSelection = <
           (parentRecord as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
       (!!value &&
         ((value as any)[primaryKeyFieldName] === NEW_IDENTIFIER ||
-          (value as any)[parentIdFieldName] === NEW_IDENTIFIER));
+          (value as any)[parentIdFieldName] === NEW_IDENTIFIER)) ||
+      (!value && (parentRecord as any)[parentIdFieldName] === null);
     setNew(newVal);
   }, [parentRecord, primaryKeyFieldName, parentIdFieldName, value]);
 

@@ -60,7 +60,7 @@ export class Location {
 
   @IsGeoPoint()
   @Type(() => GeoPoint)
-  @ToPlain<GeoPoint>((value) => value.json)
+  @ToPlain<GeoPoint>((value) => (value ? value.json : value))
   @ToClass<GeoPoint>(GeoPoint.parse)
   coordinates!: GeoPoint;
 

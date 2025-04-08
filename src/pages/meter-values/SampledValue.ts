@@ -3,7 +3,7 @@ import {
   MeasurandEnumType,
   PhaseEnumType,
   ReadingContextEnumType,
-} from '@citrineos/base';
+} from '@OCPP2_0_1';
 import {
   IsEnum,
   IsNumber,
