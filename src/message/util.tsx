@@ -65,11 +65,6 @@ export const triggerMessageAndHandleResponse = async <
         throw new Error(`Unimplemented Http Method: ${method}`);
     }
 
-<<<<<<< HEAD
-    // todo reuse handle response!
-    if (responseSuccessCheck(response)) {
-      showSuccess((response as any).payload);
-=======
     if (responseSuccessCheck(response.data)) {
       const payload = Array.isArray(response.data)
         ? response.data.length > 0 && response.data[0].payload
@@ -77,7 +72,6 @@ export const triggerMessageAndHandleResponse = async <
           : undefined
         : response.data.payload;
       showSuccess(payload);
->>>>>>> rc-0.3.1
     } else {
       let msg = 'The request did not receive a successful response.';
       if (response instanceof MessageConfirmation || Array.isArray(response)) {
