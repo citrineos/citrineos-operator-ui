@@ -82,7 +82,10 @@ const hasuraProviderOptions = {
   idType: 'String',
 };
 
-const hasuraDataProvider = dataProvider(client, hasuraProviderOptions as HasuraDataProviderOptions);
+const hasuraDataProvider = dataProvider(
+  client,
+  hasuraProviderOptions as HasuraDataProviderOptions,
+);
 
 hasuraDataProvider.getApiUrl = () => {
   return API_URL;
@@ -137,7 +140,10 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
 
         <Refine
           dataProvider={hasuraDataProvider}
-          liveProvider={liveProvider(webSocketClient, hasuraProviderOptions as HasuraLiveProviderOptions)}
+          liveProvider={liveProvider(
+            webSocketClient,
+            hasuraProviderOptions as HasuraLiveProviderOptions,
+          )}
           notificationProvider={useNotificationProvider}
           routerProvider={routerBindings}
           resources={resources}
