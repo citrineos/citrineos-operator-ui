@@ -15,6 +15,8 @@ import { App as AntdApp, ConfigProvider, Layout as AntdLayout } from 'antd';
 import dataProvider, {
   GraphQLClient,
   graphqlWS,
+  HasuraDataProviderOptions,
+  HasuraLiveProviderOptions,
   liveProvider,
 } from '@refinedev/hasura';
 import routerBindings, {
@@ -76,9 +78,14 @@ const webSocketClient = graphqlWS.createClient({
   url: WS_URL,
 });
 
-const hasuraDataProvider = dataProvider(client, {
+const hasuraProviderOptions = {
   idType: 'String',
-});
+};
+
+const hasuraDataProvider = dataProvider(
+  client,
+  hasuraProviderOptions as HasuraDataProviderOptions,
+);
 
 hasuraDataProvider.getApiUrl = () => {
   return API_URL;
@@ -133,7 +140,10 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
 
         <Refine
           dataProvider={hasuraDataProvider}
-          liveProvider={liveProvider(webSocketClient)}
+          liveProvider={liveProvider(
+            webSocketClient,
+            hasuraProviderOptions as HasuraLiveProviderOptions,
+          )}
           notificationProvider={useNotificationProvider}
           routerProvider={routerBindings}
           resources={resources}
