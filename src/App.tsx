@@ -80,6 +80,7 @@ const webSocketClient = graphqlWS.createClient({
 
 const hasuraProviderOptions = {
   idType: 'String',
+  namingConvention: 'hasura-default',
 };
 
 const hasuraDataProvider = dataProvider(
