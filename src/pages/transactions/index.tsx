@@ -18,9 +18,7 @@ export const resources = [
   {
     name: ResourceType.TRANSACTIONS,
     list: '/transactions',
-    create: '/transactions/new',
     show: '/transactions/:id',
-    edit: '/transactions/:id/edit',
     meta: {
       canDelete: true,
     },

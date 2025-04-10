@@ -1,5 +1,4 @@
-import { Card, Flex, Select, Table, Tabs, TabsProps } from 'antd';
-import { ChargingStationDetailCardContent } from '../../charging-stations/detail/charging.station.detail.card.content';
+import { Card, Flex, Select, Tabs, TabsProps, Table } from 'antd';
 import { useMemo, useState, useCallback } from 'react';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
@@ -11,10 +10,8 @@ import {
   GET_TRANSACTIONS_BY_AUTHORIZATION,
 } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import './style.scss';
 import { BaseDtoProps } from '../../../dtos/base.dto';
-import { getTransactionColumns } from '../columns';
 import { PowerOverTime } from '../chart/power.over.time';
 import { StateOfCharge } from '../chart/state.of.charge';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
@@ -23,11 +20,11 @@ import {
   MeterValueDto,
   MeterValueDtoProps,
 } from '../../../dtos/meter.value.dto';
-import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
 import { MeasurandEnumType } from '@OCPP2_0_1';
 import { findOverallValue } from '../../../dtos/meter.value.dto';
+import { TransactionDetailCard } from './transaction.detail.card';
 
 enum ChartType {
   POWER = 'power',
@@ -52,23 +49,22 @@ export const TransactionDetail = () => {
   });
   const transaction = transactionData?.data;
 
-  const { data: meterValuesData, isLoading: meterValuesLoading } =
-    useList<MeterValueDto>({
-      resource: ResourceType.METER_VALUES,
-      meta: {
-        gqlQuery: GET_METER_VALUES_FOR_TRANSACTION,
-        gqlVariables: { limit: 10000, transactionDatabaseId: Number(id) },
-      },
-      sorters: [{ field: MeterValueDtoProps.timestamp, order: 'asc' }],
-      queryOptions: getPlainToInstanceOptions(MeterValueDto),
-    });
+  const { data: meterValuesData } = useList<MeterValueDto>({
+    resource: ResourceType.METER_VALUES,
+    meta: {
+      gqlQuery: GET_METER_VALUES_FOR_TRANSACTION,
+      gqlVariables: { limit: 10000, transactionDatabaseId: Number(id) },
+    },
+    sorters: [{ field: MeterValueDtoProps.timestamp, order: 'asc' }],
+    queryOptions: getPlainToInstanceOptions(MeterValueDto),
+  });
   const meterValues = meterValuesData?.data ?? [];
 
   let idTokenDatabaseId =
     transaction?.transactionEvents && transaction.transactionEvents.length > 0
       ? transaction.transactionEvents[0].idTokenId
       : transaction?.startTransaction?.idTokenDatabaseId;
-  idTokenDatabaseId = Number(idTokenDatabaseId) || null; // ensure it's a number or null
+  idTokenDatabaseId = Number(idTokenDatabaseId) || null;
 
   const { tableProps } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
@@ -78,7 +74,7 @@ export const TransactionDetail = () => {
         {
           field: 'IdToken.id',
           operator: 'eq',
-          value: idTokenDatabaseId, // filter by the idTokenDatabaseId from the transaction
+          value: idTokenDatabaseId,
         },
       ],
     },
@@ -89,7 +85,6 @@ export const TransactionDetail = () => {
     queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
   });
 
-  const columns = useMemo(() => getTransactionColumns(push, false), [push]);
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
 
   const handleChartChangeLeft = useCallback(
@@ -128,7 +123,7 @@ export const TransactionDetail = () => {
         <Flex gap={32} style={{ paddingTop: 32 }}>
           <Flex vertical flex={1} gap={16}>
             <Select
-              className={'full-width'}
+              className="full-width"
               value={selectedChartLeft}
               onChange={(value) => setSelectedChartLeft(value as ChartType)}
             >
@@ -160,7 +155,7 @@ export const TransactionDetail = () => {
             style={{ aspectRatio: '1 / 1', maxHeight: 400 }}
           >
             <Select
-              className={'full-width'}
+              className="full-width"
               value={selectedChartRight}
               onChange={(value) => setSelectedChartRight(value as ChartType)}
             >
@@ -195,39 +190,16 @@ export const TransactionDetail = () => {
         <TransactionEventsList transactionDatabaseId={transaction.id} />
       ),
     },
-    // {
-    //   key: '4',
-    //   label: 'Pricing',
-    //   children: 'Pricing content',
-    // },
   ];
 
   return (
-    <Flex vertical>
-      <Card>
-        <Flex vertical gap={32}>
-          <Flex align="center" gap={16}>
-            <ArrowLeftIcon onClick={goBack} />
-            <h2>Transaction Details</h2>
-          </Flex>
-          <Table
-            rowKey="id"
-            dataSource={[transaction]}
-            className="full-width"
-            pagination={false}
-          >
-            {columns}
-          </Table>
-
-          <ChargingStationDetailCardContent
-            stationId={transaction.chargingStation!.id!}
-            transaction={transaction}
-          />
-        </Flex>
+    <div style={{ padding: '16px' }}>
+      <Card className="transaction-details">
+        <TransactionDetailCard transaction={transaction} />
       </Card>
       <Card>
         <Tabs defaultActiveKey="1" items={tabItems} />
       </Card>
-    </Flex>
+    </div>
   );
 };
