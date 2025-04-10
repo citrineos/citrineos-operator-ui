@@ -3,7 +3,7 @@ import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useNavigation } from '@refinedev/core';
 import { TransactionDto } from '../../../dtos/transaction.dto';
-import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
+import { BiDirectionsArrowsIcon } from '../../../components/icons/bi.directional.arrows.icon';
 import { useLocation } from 'react-router-dom';
 
 const { Text } = Typography;
@@ -22,7 +22,7 @@ export const TransactionDetailCard = ({
     <Flex gap={16}>
       <Flex vertical>
         <div className="image-placeholder">
-          <ChargingStationIcon width={164} height={164} />
+          <BiDirectionsArrowsIcon width={164} height={164} />
         </div>
       </Flex>
 
