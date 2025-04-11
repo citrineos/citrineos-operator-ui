@@ -1,4 +1,4 @@
-import { Button, Flex, message, Typography } from 'antd';
+import { Button, Flex, message, Tooltip, Typography } from 'antd';
 import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
 import {
   Link,
@@ -200,7 +200,14 @@ export const ChargingStationDetailCardContent = ({
             <Text className="nowrap">
               Location ID:{' '}
               <Link to={`/locations/${station.locationId}`}>
-                {station?.location?.name}
+                <Tooltip title={station?.location?.name}>
+                  <Typography.Text
+                    ellipsis
+                    style={{ maxWidth: 150, display: 'inline-block' }}
+                  >
+                    {station?.location?.name}
+                  </Typography.Text>
+                </Tooltip>
               </Link>
             </Text>
             <Text className="nowrap">
