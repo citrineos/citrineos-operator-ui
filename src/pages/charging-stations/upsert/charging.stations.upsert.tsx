@@ -45,12 +45,8 @@ export const ChargingStationUpsert = () => {
       if (locationId) {
         goBack();
       } else {
-        const newId =
-          (result?.data?.insert_charging_stations_one as any)?.id ??
-          (result?.data?.createChargingStation as any)?.id ??
-          stationId;
-
-        replace(`${MenuSection.CHARGING_STATIONS}/${newId}`);
+        const newId = result.data.id;
+        replace(`/${MenuSection.CHARGING_STATIONS}/${newId}`);
       }
     },
     meta: {
