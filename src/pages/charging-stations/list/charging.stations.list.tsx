@@ -3,10 +3,10 @@ import React, { useCallback, useMemo } from 'react';
 import { CHARGING_STATIONS_LIST_QUERY } from '../queries';
 import './style.scss';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { PlusIcon } from '../../../components/icons/plus.icon';
-import { useNavigation } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
@@ -20,6 +20,7 @@ import { instanceToPlain } from 'class-transformer';
 import { ModalComponentType } from '../../../AppModal';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../redux/modal.slice';
+import { ActionType, ChargingStationAccessType } from '@util/auth';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -106,14 +107,19 @@ export const ChargingStationsList = () => {
       <Row justify="space-between" align="middle" className="header-row">
         <h2>Charging Stations</h2>
         <Row>
-          <Button
-            type="primary"
-            style={{ marginRight: '20px' }}
-            onClick={() => push(`/${MenuSection.CHARGING_STATIONS}/new`)}
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.CREATE}
           >
-            Add New Charging Station
-            <PlusIcon />
-          </Button>
+            <Button
+              type="primary"
+              style={{ marginRight: '20px' }}
+              onClick={() => push(`/${MenuSection.CHARGING_STATIONS}/new`)}
+            >
+              Add New Charging Station
+              <PlusIcon />
+            </Button>
+          </CanAccess>
           <DebounceSearch
             onSearch={onSearch}
             placeholder="Search Charging Stations"

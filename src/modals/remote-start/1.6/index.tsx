@@ -4,7 +4,6 @@ import { useSelect } from '@refinedev/antd';
 import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { OCPPVersion } from '@citrineos/base';
-import { ResourceType } from '../../../resource-type';
 import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
@@ -16,6 +15,7 @@ import {
 } from '../../../message/util';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { ConnectorSelector } from '../../shared/connector-selector/connector.selector';
+import { ResourceType } from '@util/auth';
 
 export interface OCPP1_6_RemoteStartProps {
   station: ChargingStationDto;

@@ -1,9 +1,15 @@
 import { Flex, Progress, Spin } from 'antd';
 import './style.scss';
-import { useCustom } from '@refinedev/core';
+import { CanAccess, useCustom } from '@refinedev/core';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '../../charging-stations/queries';
 import { TRANSACTION_SUCCESS_RATE_QUERY } from '../../transactions/queries';
 import React from 'react';
+import {
+  TransactionAccessType,
+  ActionType,
+  AccessDeniedFallback,
+  ResourceType,
+} from '@util/auth';
 
 export const PluginSuccessRateCard = () => {
   const { data, isLoading, error } = useCustom({
@@ -23,10 +29,22 @@ export const PluginSuccessRateCard = () => {
   if (error) return <p>Error loading success rate</p>;
 
   return (
-    <Flex vertical gap={32} className="plugin-success-rate">
-      <h4>Plug-in Success Rate</h4>
-      <Progress percent={roundedPercentage} size={[200, 20]} showInfo={false} />
-      <div className="plugin-success-rate-percentage">{roundedPercentage}%</div>
-    </Flex>
+    <CanAccess
+      resource={ResourceType.TRANSACTIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
+      <Flex vertical gap={32} className="plugin-success-rate">
+        <h4>Plug-in Success Rate</h4>
+        <Progress
+          percent={roundedPercentage}
+          size={[200, 20]}
+          showInfo={false}
+        />
+        <div className="plugin-success-rate-percentage">
+          {roundedPercentage}%
+        </div>
+      </Flex>
+    </CanAccess>
   );
 };

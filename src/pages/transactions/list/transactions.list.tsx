@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { Flex, GetProps, Input, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { TRANSACTION_LIST_QUERY } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';

@@ -1,7 +1,7 @@
 import { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { SecurityEvents } from '../../graphql/schema.types';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { SECURITY_EVENTS_DELETE_MUTATION } from './queries';
 import { ColumnAction } from '@enums';
 

@@ -1,11 +1,16 @@
 import { Flex, Spin } from 'antd';
 import React from 'react';
-import { useCustom, useNavigation } from '@refinedev/core';
+import { CanAccess, useCustom, useNavigation } from '@refinedev/core';
 import './style.scss';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { Circle, CircleStatusEnum } from '../circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '../../charging-stations/queries';
 import { MenuSection } from '../../../components/main-menu/main.menu';
+import {
+  ActionType,
+  AccessDeniedFallback,
+  ResourceType,
+} from '@util/auth';
 
 export const OnlineStatusCard = () => {
   const { push } = useNavigation();
@@ -23,32 +28,38 @@ export const OnlineStatusCard = () => {
   if (error) return <p>Error loading counts</p>;
 
   return (
-    <Flex vertical gap={32}>
-      <Flex>
-        <h4>Charger Online Status</h4>
-      </Flex>
-      <Flex gap={32}>
-        <Flex vertical>
-          <div className="online-status-number">{onlineCount}</div>
-          <Flex align={'center'} gap={8}>
-            <Circle />
-            Online
+    <CanAccess
+      resource={ResourceType.CHARGING_STATIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
+      <Flex vertical gap={32}>
+        <Flex>
+          <h4>Charger Online Status</h4>
+        </Flex>
+        <Flex gap={32}>
+          <Flex vertical>
+            <div className="online-status-number">{onlineCount}</div>
+            <Flex align={'center'} gap={8}>
+              <Circle />
+              Online
+            </Flex>
+          </Flex>
+          <Flex vertical>
+            <div className="online-status-number">{offlineCount}</div>
+            <Flex align={'center'} gap={8}>
+              <Circle status={CircleStatusEnum.ERROR} />
+              Offline
+            </Flex>
           </Flex>
         </Flex>
-        <Flex vertical>
-          <div className="online-status-number">{offlineCount}</div>
-          <Flex align={'center'} gap={8}>
-            <Circle status={CircleStatusEnum.ERROR} />
-            Offline
-          </Flex>
+        <Flex
+          onClick={() => push(`/${MenuSection.CHARGING_STATIONS}`)}
+          className="link"
+        >
+          View all chargers <ArrowRightIcon />
         </Flex>
       </Flex>
-      <Flex
-        onClick={() => push(`/${MenuSection.CHARGING_STATIONS}`)}
-        className="link"
-      >
-        View all chargers <ArrowRightIcon />
-      </Flex>
-    </Flex>
+    </CanAccess>
   );
 };

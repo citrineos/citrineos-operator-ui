@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Form, Input, Button, Select } from 'antd';
 import React, { useCallback, useState } from 'react';
 
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getSerializedValues } from '@util/middleware';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { CONNECTOR_CREATE_MUTATION, CONNECTOR_EDIT_MUTATION } from '../queries';

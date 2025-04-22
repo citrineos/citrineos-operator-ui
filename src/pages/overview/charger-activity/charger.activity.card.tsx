@@ -14,6 +14,8 @@ import { TransactionDto } from 'src/dtos/transaction.dto';
 import { EvseDto } from 'src/dtos/evse.dto';
 import { plainToInstance } from 'class-transformer';
 import { LatestStatusNotificationDto } from 'src/dtos/latest.status.notification.dto';
+import { CanAccess } from '@refinedev/core';
+import { ResourceType, ActionType } from '@util/auth';
 
 export enum ChargerStatusEnum {
   CHARGING = 'Charging',
@@ -203,80 +205,87 @@ export const ChargerActivityCard = () => {
   };
 
   return (
-    <Flex vertical gap={32} style={{ height: '100%' }}>
-      <h4>Charger Activity</h4>
-      <Flex gap={8} flex={1}>
-        {[
-          ChargerStatusEnum.AVAILABLE,
-          ChargerStatusEnum.UNAVAILABLE,
-          ChargerStatusEnum.CHARGING,
-          ChargerStatusEnum.FAULTED,
-        ].map((status, index) => (
-          <Flex
-            key={index}
-            vertical
-            align="center"
-            flex={1}
-            onClick={() => handleGaugeClick(status)}
-            style={{ cursor: 'pointer' }}
-          >
-            <Gauge
-              percentage={Math.round((final[status].count / total) * 100)}
-              color={getGaugeColor(status)}
-            />
-            <span className={selectedStatus === status ? 'link' : ''}>
-              {status}
-            </span>
-          </Flex>
-        ))}
-      </Flex>
-      <AnimatePresence mode="wait">
-        {selectedStatus && (
-          <motion.div
-            key={selectedStatus}
-            initial={{ opacity: 0, maxHeight: 0 }}
-            animate={{ opacity: 1, maxHeight: 200 }}
-            exit={{ opacity: 0, maxHeight: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            style={{ overflowY: 'auto', minHeight: 25 }}
-          >
-            <Flex vertical gap={16}>
-              <Flex
-                justify="space-between"
-                align="center"
-                style={{ borderBottom: '1px solid var(--grayscale-color-0)' }}
-              >
-                <h4>{selectedStatus} chargers</h4>
-                <IoClose
-                  onClick={handleClose}
-                  size={20}
-                  style={{ cursor: 'pointer' }}
-                />
-              </Flex>
-              {Array.from(selectedChargingStations).length > 0 ? (
-                Array.from(selectedChargingStations).map((chargingStation) => (
-                  <ChargerRow
-                    key={chargingStation.id}
-                    chargingStation={chargingStation}
-                    circleColor={getGaugeColor(selectedStatus)}
-                  />
-                ))
-              ) : (
-                <Flex
-                  align="center"
-                  justify="center"
-                  style={{ padding: '16px 0' }}
-                >
-                  <span>
-                    No chargers currently have {selectedStatus} status
-                  </span>
-                </Flex>
-              )}
+    <CanAccess
+      resource={ResourceType.CHARGING_STATIONS}
+      action={ActionType.LIST}
+    >
+      <Flex vertical gap={32} style={{ height: '100%' }}>
+        <h4>Charger Activity</h4>
+        <Flex gap={8} flex={1}>
+          {[
+            ChargerStatusEnum.AVAILABLE,
+            ChargerStatusEnum.UNAVAILABLE,
+            ChargerStatusEnum.CHARGING,
+            ChargerStatusEnum.FAULTED,
+          ].map((status, index) => (
+            <Flex
+              key={index}
+              vertical
+              align="center"
+              flex={1}
+              onClick={() => handleGaugeClick(status)}
+              style={{ cursor: 'pointer' }}
+            >
+              <Gauge
+                percentage={Math.round((final[status].count / total) * 100)}
+                color={getGaugeColor(status)}
+              />
+              <span className={selectedStatus === status ? 'link' : ''}>
+                {status}
+              </span>
             </Flex>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Flex>
+          ))}
+        </Flex>
+        <AnimatePresence mode="wait">
+          {selectedStatus && (
+            <motion.div
+              key={selectedStatus}
+              initial={{ opacity: 0, maxHeight: 0 }}
+              animate={{ opacity: 1, maxHeight: 200 }}
+              exit={{ opacity: 0, maxHeight: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              style={{ overflowY: 'auto', minHeight: 25 }}
+            >
+              <Flex vertical gap={16}>
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  style={{ borderBottom: '1px solid var(--grayscale-color-0)' }}
+                >
+                  <h4>{selectedStatus} chargers</h4>
+                  <IoClose
+                    onClick={handleClose}
+                    size={20}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </Flex>
+                {Array.from(selectedChargingStations).length > 0 ? (
+                  Array.from(selectedChargingStations).map(
+                    (chargingStation) => (
+                      <ChargerRow
+                        key={chargingStation.id}
+                        chargingStation={chargingStation}
+                        circleColor={getGaugeColor(selectedStatus)}
+                      />
+                    ),
+                  )
+                ) : (
+                  <Flex
+                    align="center"
+                    justify="center"
+                    style={{ padding: '16px 0' }}
+                  >
+                    <span>
+                      No chargers currently have {selectedStatus} status
+                    </span>
+                  </Flex>
+                )}
+              </Flex>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Flex>
+    </CanAccess>
   );
 };
 

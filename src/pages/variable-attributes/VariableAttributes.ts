@@ -11,7 +11,7 @@ import {
   MutabilityEnumType,
 } from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { Component, ComponentProps } from './components/Component';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';

@@ -1,5 +1,5 @@
 import { AiOutlineMonitor } from 'react-icons/ai';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { Route, Routes } from 'react-router-dom';
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';

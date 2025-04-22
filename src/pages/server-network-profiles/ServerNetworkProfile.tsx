@@ -6,7 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 import { BaseModel } from '@util/BaseModel';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';

@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Flex, Table, Tabs, TabsProps } from 'antd';
-import { useNavigation, useOne, useList } from '@refinedev/core';
+import { useNavigation, useOne, useList, CanAccess } from '@refinedev/core';
 import {
   LineChart,
   Line,
@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 
 import { getAuthorizationColumns } from '../columns';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
@@ -24,6 +24,10 @@ import {
   GET_TRANSACTIONS_FOR_AUTHORIZATION,
 } from '../queries';
 import { getTransactionColumns } from '../../transactions/columns';
+import {
+  AccessDeniedFallback,
+  ActionType,
+} from '@util/auth';
 
 export const AuthorizationDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -127,26 +131,33 @@ export const AuthorizationDetail = () => {
   if (!authorization) return <p>No Data Found</p>;
 
   return (
-    <Flex vertical>
-      <Card>
-        <Flex vertical gap={32}>
-          <Flex align={'center'} gap={16}>
-            <ArrowLeftIcon onClick={handleGoBack} />
-            <h2>Authorization Details</h2>
+    <CanAccess
+      resource={ResourceType.AUTHORIZATIONS}
+      action={ActionType.SHOW}
+      fallback={<AccessDeniedFallback />}
+      params={{ id: authorization.id }}
+    >
+      <Flex vertical>
+        <Card>
+          <Flex vertical gap={32}>
+            <Flex align={'center'} gap={16}>
+              <ArrowLeftIcon onClick={handleGoBack} />
+              <h2>Authorization Details</h2>
+            </Flex>
+            <Flex>
+              <Table
+                rowKey="id"
+                dataSource={[authorization]}
+                className={'full-width'}
+                pagination={false}
+              >
+                {columns}
+              </Table>
+            </Flex>
+            <Tabs defaultActiveKey="1" items={tabItems} />
           </Flex>
-          <Flex>
-            <Table
-              rowKey="id"
-              dataSource={[authorization]}
-              className={'full-width'}
-              pagination={false}
-            >
-              {columns}
-            </Table>
-          </Flex>
-          <Tabs defaultActiveKey="1" items={tabItems} />
-        </Flex>
-      </Card>
-    </Flex>
+        </Card>
+      </Flex>
+    </CanAccess>
   );
 };

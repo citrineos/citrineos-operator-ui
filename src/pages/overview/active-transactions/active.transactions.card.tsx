@@ -1,10 +1,9 @@
 import { AutoComplete, Flex } from 'antd';
-import { useList, useNavigation } from '@refinedev/core';
+import { CanAccess, useList, useNavigation } from '@refinedev/core';
 import {
   TransactionDto,
   TransactionDtoProps,
 } from '../../../dtos/transaction.dto';
-import { ResourceType } from '../../../resource-type';
 import { TRANSACTION_LIST_QUERY } from '../../transactions/queries';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { getPlainToInstanceOptions } from '@util/tables';
@@ -12,6 +11,7 @@ import { useSelect } from '@refinedev/antd';
 import React from 'react';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
+import { ActionType, ResourceType } from '@util/auth';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useNavigation();
@@ -74,48 +74,57 @@ export const ActiveTransactionsCard = () => {
   }
 
   return (
-    <Flex vertical>
-      <Flex justify="space-between">
-        <h4>Active Transactions ({total})</h4>
-        <Flex
-          className="link"
-          onClick={() => push(`/${MenuSection.TRANSACTIONS}`)}
-        >
-          View all <ArrowRightIcon />
-        </Flex>
-      </Flex>
-      <Flex style={{ padding: '24px 0' }}>
-        <Flex flex={7}>
-          <AutoComplete
-            className="full-width"
-            onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
-            filterOption={false}
-            placeholder="Search Transaction"
-            {...activeTransactionSelectProps}
-          />
-        </Flex>
-        <Flex flex={3}>
-          <span></span>
-        </Flex>
-      </Flex>
+    <CanAccess
+      resource={ResourceType.TRANSACTIONS}
+      action={ActionType.LIST}
+    >
       <Flex vertical>
-        {transactions.map((transaction) => (
-          <Flex vertical style={{ marginBottom: '16px' }} key={transaction.id}>
-            <Flex
-              justify="space-between"
-              onClick={() =>
-                push(`/${MenuSection.TRANSACTIONS}/${transaction.id}`)
-              }
-            >
-              <span className="link">{transaction.transactionId}</span>
-            </Flex>
-            <Flex>Station ID: {transaction.stationId}</Flex>
-            <Flex>Total kWh: {transaction.totalKwh}</Flex>
-            <Flex>Total Time: {transaction.timeSpentCharging}</Flex>
-            <Flex>Status: {transaction.chargingState}</Flex>
+        <Flex justify="space-between">
+          <h4>Active Transactions ({total})</h4>
+          <Flex
+            className="link"
+            onClick={() => push(`/${MenuSection.TRANSACTIONS}`)}
+          >
+            View all <ArrowRightIcon />
           </Flex>
-        ))}
+        </Flex>
+        <Flex style={{ padding: '24px 0' }}>
+          <Flex flex={7}>
+            <AutoComplete
+              className="full-width"
+              onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
+              filterOption={false}
+              placeholder="Search Transaction"
+              {...activeTransactionSelectProps}
+            />
+          </Flex>
+          <Flex flex={3}>
+            <span></span>
+          </Flex>
+        </Flex>
+        <Flex vertical>
+          {transactions.map((transaction) => (
+            <Flex
+              vertical
+              style={{ marginBottom: '16px' }}
+              key={transaction.id}
+            >
+              <Flex
+                justify="space-between"
+                onClick={() =>
+                  push(`/${MenuSection.TRANSACTIONS}/${transaction.id}`)
+                }
+              >
+                <span className="link">{transaction.transactionId}</span>
+              </Flex>
+              <Flex>Station ID: {transaction.stationId}</Flex>
+              <Flex>Total kWh: {transaction.totalKwh}</Flex>
+              <Flex>Total Time: {transaction.timeSpentCharging}</Flex>
+              <Flex>Status: {transaction.chargingState}</Flex>
+            </Flex>
+          ))}
+        </Flex>
       </Flex>
-    </Flex>
+    </CanAccess>
   );
 };

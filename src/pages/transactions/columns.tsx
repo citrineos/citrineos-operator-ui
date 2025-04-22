@@ -15,15 +15,24 @@ import { BaseDtoProps } from '../../dtos/base.dto';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
-import { CrudFilter } from '@refinedev/core';
+import { CanAccess, CrudFilter } from '@refinedev/core';
 import { MenuSection } from '../../components/main-menu/main.menu';
+import {
+  ResourceType,
+  ActionType,
+  AccessDeniedFallback,
+} from '@util/auth';
 
 export const getTransactionColumns = (
   push: (path: string, ...rest: unknown[]) => void,
   includeActions = true,
 ) => {
   return (
-    <>
+    <CanAccess
+      resource={ResourceType.TRANSACTIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
       <Table.Column
         key={TransactionDtoProps.transactionId}
         dataIndex={TransactionDtoProps.transactionId}
@@ -163,7 +172,7 @@ export const getTransactionColumns = (
           )}
         />
       )}
-    </>
+    </CanAccess>
   );
 };
 

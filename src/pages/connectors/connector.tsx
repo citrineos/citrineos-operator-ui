@@ -2,7 +2,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ConnectorStatusEnumType, ErrorCodes } from '@OCPP2_0_1';
 import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';

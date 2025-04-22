@@ -1,4 +1,4 @@
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 
 export const CLASS_RESOURCE_TYPE = 'classResourceType';
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '../queries';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {

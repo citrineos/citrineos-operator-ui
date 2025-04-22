@@ -6,16 +6,16 @@ import './style.scss';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { LocationsChargingStationsTable } from './locations.charging.stations.table';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { PlusIcon } from '../../../components/icons/plus.icon';
-import { useNavigation } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { getLocationAndStationsFilters, getLocationsColumns } from '../columns';
 import { EMPTY_FILTER } from '@util/consts';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
+import { ActionType, ResourceType } from '@util/auth';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -167,14 +167,19 @@ export const LocationsList = () => {
       <Flex justify="space-between" align="middle" className="header-row">
         <h2>Locations</h2>
         <Flex>
-          <Button
-            type="primary"
-            style={{ marginRight: '20px' }}
-            onClick={() => push(`/${MenuSection.LOCATIONS}/new`)}
+          <CanAccess
+            resource={ResourceType.LOCATIONS}
+            action={ActionType.CREATE}
           >
-            Add New Location
-            <PlusIcon />
-          </Button>
+            <Button
+              type="primary"
+              style={{ marginRight: '20px' }}
+              onClick={() => push(`/${MenuSection.LOCATIONS}/new`)}
+            >
+              Add New Location
+              <PlusIcon />
+            </Button>
+          </CanAccess>
           <DebounceSearch onSearch={onSearch} placeholder="Search Locations" />
         </Flex>
       </Flex>

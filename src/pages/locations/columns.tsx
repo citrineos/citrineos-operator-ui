@@ -1,8 +1,18 @@
 import { LocationDtoProps } from '../../dtos/location.dto';
-import { ConditionalFilter, CrudFilters, LogicalFilter } from '@refinedev/core';
+import {
+  CanAccess,
+  ConditionalFilter,
+  CrudFilters,
+  LogicalFilter,
+} from '@refinedev/core';
 import { Table } from 'antd';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
+import {
+  AccessDeniedFallback,
+  ActionType,
+  ResourceType,
+} from '@util/auth';
 
 /**
  * Get column definitions for locations table
@@ -12,7 +22,11 @@ export const getLocationsColumns = (
   push: (path: string, ...rest: unknown[]) => void,
 ) => {
   return (
-    <>
+    <CanAccess
+      resource={ResourceType.LOCATIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
       <Table.Column
         key={LocationDtoProps.name}
         dataIndex={LocationDtoProps.name}
@@ -69,7 +83,7 @@ export const getLocationsColumns = (
           className: `column-${LocationDtoProps.state}`,
         })}
       />
-    </>
+    </CanAccess>
   );
 };
 

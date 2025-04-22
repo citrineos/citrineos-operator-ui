@@ -1,5 +1,5 @@
 import { Flex, Table } from 'antd';
-import { CrudFilter } from '@refinedev/core';
+import { CanAccess, CrudFilter } from '@refinedev/core';
 import {
   AuthorizationDto,
   AuthorizationDtoProps,
@@ -11,13 +11,22 @@ import { IdTokenDtoProps } from '../../dtos/id.token.dto';
 import { IdTokenInfoDtoProps } from '../../dtos/id.token.info.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { ArrowRightIcon } from '../../components/icons/arrow.right.icon';
+import {
+  ActionType,
+  AccessDeniedFallback,
+  ResourceType,
+} from '@util/auth';
 
 export const getAuthorizationColumns = (
   push: (path: string, ...rest: unknown[]) => void,
   includeActions = true,
 ) => {
   return (
-    <>
+    <CanAccess
+      resource={ResourceType.AUTHORIZATIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
       <Table.Column
         key={AuthorizationDtoProps.id}
         dataIndex={AuthorizationDtoProps.id}
@@ -86,7 +95,7 @@ export const getAuthorizationColumns = (
           )}
         />
       )}
-    </>
+    </CanAccess>
   );
 };
 

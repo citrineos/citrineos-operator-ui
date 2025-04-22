@@ -6,6 +6,8 @@ import {
   useList,
   useNavigation,
   useOne,
+  CanAccess,
+  useCan,
 } from '@refinedev/core';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import React, { useCallback } from 'react';
@@ -16,7 +18,7 @@ import { ModalComponentType } from '../../../AppModal';
 import { instanceToPlain } from 'class-transformer';
 import { formatDate } from '../../../components/timestamp-display';
 import { TransactionDto } from '../../../dtos/transaction.dto';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import {
@@ -30,6 +32,11 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
+import {
+  ActionType,
+  ChargingStationAccessType,
+  CommandType,
+} from '@util/auth';
 
 const { Text } = Typography;
 
@@ -199,9 +206,15 @@ export const ChargingStationDetailCardContent = ({
             <Text className="nowrap">Station ID: {station.id}</Text>
             <Text className="nowrap">
               Location ID:{' '}
-              <Link to={`/locations/${station.locationId}`}>
-                {station?.location?.name}
-              </Link>
+              <CanAccess
+                resource={ResourceType.LOCATIONS}
+                action={ActionType.SHOW}
+                params={{ id: station.locationId }}
+              >
+                <Link to={`/locations/${station.locationId}`}>
+                  {station?.location?.name}
+                </Link>
+              </CanAccess>
             </Text>
             <Text className="nowrap">
               Latitude: {station.location?.coordinates?.latitude}
@@ -297,52 +310,108 @@ export const ChargingStationDetailCardContent = ({
           </Flex>
 
           <Flex vertical>
-            <Button
-              type="text"
-              icon={<EditOutlined />}
-              onClick={() =>
-                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
-              }
-            />
-            <Button className="secondary" onClick={handleDeleteClick}>
-              Delete
-            </Button>
+            <CanAccess
+              resource={ResourceType.CHARGING_STATIONS}
+              action={ActionType.EDIT}
+              params={{ id: station.id }}
+            >
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() =>
+                  push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
+                }
+              />
+            </CanAccess>
+            <CanAccess
+              resource={ResourceType.CHARGING_STATIONS}
+              action={ActionType.DELETE}
+              params={{ id: station.id }}
+            >
+              <Button className="secondary" onClick={handleDeleteClick}>
+                Delete
+              </Button>
+            </CanAccess>
           </Flex>
         </Flex>
         <Flex style={{ marginTop: '32px' }}>
-          <Flex gap={16} justify="space-between" align="center" flex="1 1 auto">
-            <Flex gap={16} flex="1 1 auto">
-              {station.isOnline ? (
-                <Flex gap={16} flex="1 1 auto">
-                  {!hasActiveTransactions && (
-                    <Button onClick={() => showRemoteStartModal(station)}>
-                      Start Transaction
-                    </Button>
-                  )}
-                  {hasActiveTransactions && (
-                    <Button onClick={() => handleStopTransactionClick(station)}>
-                      Stop Transaction
-                    </Button>
-                  )}
-                  <Button onClick={() => showResetStartModal(station)}>
-                    Reset
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.ACCESS}
+            params={{ id: station.id, accessType: ChargingStationAccessType.COMMANDS }}
+          >
+            <Flex
+              gap={16}
+              justify="space-between"
+              align="center"
+              flex="1 1 auto"
+            >
+              <Flex gap={16} flex="1 1 auto">
+                {station.isOnline ? (
+                  <Flex gap={16} flex="1 1 auto">
+                    {!hasActiveTransactions && (
+                      <CanAccess
+                        resource={ResourceType.CHARGING_STATIONS}
+                        action={ActionType.ACCESS}
+                        params={{
+                          id: station.id,
+                          accessType: ChargingStationAccessType.COMMANDS,
+                          commandType: CommandType.START_TRANSACTION,
+                        }}
+                      >
+                        <Button onClick={() => showRemoteStartModal(station)}>
+                          Start Transaction
+                        </Button>
+                      </CanAccess>
+                    )}
+                    {hasActiveTransactions && (
+                      <CanAccess
+                        resource={ResourceType.CHARGING_STATIONS}
+                        action={ActionType.ACCESS}
+                        params={{
+                          id: station.id,
+                          accessType: ChargingStationAccessType.COMMANDS,
+                          commandType: CommandType.STOP_TRANSACTION,
+                        }}
+                      >
+                        <Button
+                          onClick={() => handleStopTransactionClick(station)}
+                        >
+                          Stop Transaction
+                        </Button>
+                      </CanAccess>
+                    )}
+                    <CanAccess
+                      resource={ResourceType.CHARGING_STATIONS}
+                      action={ActionType.ACCESS}
+                      params={{
+                        id: station.id,
+                        accessType: ChargingStationAccessType.COMMANDS,
+                        commandType: CommandType.RESET,
+                      }}
+                    >
+                      <Button onClick={() => showResetStartModal(station)}>
+                        Reset
+                      </Button>
+                    </CanAccess>
+                  </Flex>
+                ) : (
+                  <Flex gap={16} flex="1 1 auto" align="center">
+                    <Typography.Text type="secondary">
+                      <InfoCircleOutlined style={{ marginRight: 8 }} />
+                      Station offline - commands unavailable
+                    </Typography.Text>
+                  </Flex>
+                )}
+              </Flex>
+
+              <Flex>
+                  <Button type="link" onClick={showOtherCommandsModal}>
+                    Other Commands →
                   </Button>
-                </Flex>
-              ) : (
-                <Flex gap={16} flex="1 1 auto" align="center">
-                  <Typography.Text type="secondary">
-                    <InfoCircleOutlined style={{ marginRight: 8 }} />
-                    Station offline - commands unavailable
-                  </Typography.Text>
-                </Flex>
-              )}
+              </Flex>
             </Flex>
-            <Flex>
-              <Button type="link" onClick={showOtherCommandsModal}>
-                Other Commands →
-              </Button>
-            </Flex>
-          </Flex>
+          </CanAccess>
         </Flex>
       </Flex>
     </Flex>

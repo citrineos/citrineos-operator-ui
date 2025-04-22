@@ -1,6 +1,6 @@
 import { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { Certificates } from '../../graphql/schema.types';
 import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';

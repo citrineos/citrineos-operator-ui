@@ -3,7 +3,7 @@ import { Subscriptions } from '../../graphql/schema.types';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { SUBSCRIPTIONS_DELETE_MUTATION } from './queries';
 import { StatusIcon } from '../../components/status-icon';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 // import { ChargingStationsList } from '../charging-stations';
 

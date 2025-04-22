@@ -18,6 +18,8 @@ import { mapStyles } from './map.styles';
 import { ClusterIcon } from './marker.icons';
 import { ClusterInfo, LocationGroup, MapMarkerData, MapProps } from './types';
 import './style.scss';
+import { CanAccess } from '@refinedev/core';
+import { ActionType, ResourceType } from '@util/auth';
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -96,19 +98,21 @@ export const LocationMap: React.FC<MapProps> = ({
   }, [stationMarkers, locationMarkers, defaultCenter]);
 
   return (
-    <div className="map-wrapper">
-      <APIProvider apiKey={apiKey}>
-        <MapWithClustering
-          locations={locations}
-          markers={allMarkers}
-          defaultCenter={defaultCenter}
-          zoom={zoom}
-          onMarkerClick={onMarkerClick}
-          selectedMarkerId={selectedMarkerId}
-          clusterByLocation={clusterByLocation}
-        />
-      </APIProvider>
-    </div>
+    <CanAccess resource={ResourceType.LOCATIONS} action={ActionType.LIST}>
+      <div className="map-wrapper">
+        <APIProvider apiKey={apiKey}>
+          <MapWithClustering
+            locations={locations}
+            markers={allMarkers}
+            defaultCenter={defaultCenter}
+            zoom={zoom}
+            onMarkerClick={onMarkerClick}
+            selectedMarkerId={selectedMarkerId}
+            clusterByLocation={clusterByLocation}
+          />
+        </APIProvider>
+      </div>
+    </CanAccess>
   );
 };
 

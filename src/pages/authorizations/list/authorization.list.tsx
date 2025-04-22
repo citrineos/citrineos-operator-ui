@@ -3,7 +3,7 @@ import { Flex, GetProps, Input, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { EMPTY_FILTER } from '@util/consts';
 import { useNavigation } from '@refinedev/core';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 
 import { BaseDtoProps } from '../../../dtos/base.dto';
