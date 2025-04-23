@@ -61,15 +61,21 @@ export const AuthorizationDetail: React.FC = () => {
         key: '1',
         label: 'Transactions',
         children: (
-          <Flex vertical gap={32}>
-            <Table
-              {...transactionTableProps}
-              rowKey={TransactionDtoProps.transactionId}
-              className={'full-width'}
-            >
-              {transactionColumns}
-            </Table>
-          </Flex>
+          <CanAccess
+            resource={ResourceType.TRANSACTIONS}
+            action={ActionType.LIST}
+            fallback={<AccessDeniedFallback />}
+          >
+            <Flex vertical gap={32}>
+              <Table
+                {...transactionTableProps}
+                rowKey={TransactionDtoProps.transactionId}
+                className={'full-width'}
+              >
+                {transactionColumns}
+              </Table>
+            </Flex>
+          </CanAccess>
         ),
       },
       // {

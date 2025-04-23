@@ -8,6 +8,7 @@ import { ChargingStationConfiguration } from './charging.station.configuration';
 import { OCPPMessages } from './ocpp.messages';
 import { EVSESList } from '../../../pages/evses/list/evses.list';
 import {
+  AccessDeniedFallback,
   ActionType,
   ChargingStationAccessType,
   ResourceType,
@@ -48,7 +49,7 @@ export const ChargingStationDetail: React.FC = () => {
       children: (
         <CanAccess
           resource={ResourceType.CHARGING_STATIONS}
-          action={ActionType.LIST}
+          action={ActionType.ACCESS}
           params={{ id: id, accessType: ChargingStationAccessType.TOPOLOGY }}
           fallback={
             <Typography.Text type="secondary">
@@ -66,7 +67,7 @@ export const ChargingStationDetail: React.FC = () => {
       children: (
         <CanAccess
           resource={ResourceType.CHARGING_STATIONS}
-          action={ActionType.LIST}
+          action={ActionType.ACCESS}
           params={{
             id: id,
             accessType: ChargingStationAccessType.OCPP_MESSAGES,
@@ -87,7 +88,7 @@ export const ChargingStationDetail: React.FC = () => {
       children: (
         <CanAccess
           resource={ResourceType.CHARGING_STATIONS}
-          action={ActionType.LIST}
+          action={ActionType.ACCESS}
           params={{
             id: id,
             accessType: ChargingStationAccessType.CONFIGURATION,
@@ -106,15 +107,21 @@ export const ChargingStationDetail: React.FC = () => {
       key: '4',
       label: 'Transactions',
       children: (
-        <Flex vertical gap={32}>
-          <Table
-            {...tableProps}
-            rowKey={TransactionDtoProps.transactionId}
-            className={'full-width'}
-          >
-            {transactionColumns}
-          </Table>
-        </Flex>
+        <CanAccess
+          resource={ResourceType.TRANSACTIONS}
+          action={ActionType.LIST}
+          fallback={<AccessDeniedFallback />}
+        >
+          <Flex vertical gap={32}>
+            <Table
+              {...tableProps}
+              rowKey={TransactionDtoProps.transactionId}
+              className={'full-width'}
+            >
+              {transactionColumns}
+            </Table>
+          </Flex>
+        </CanAccess>
       ),
     },
     // {

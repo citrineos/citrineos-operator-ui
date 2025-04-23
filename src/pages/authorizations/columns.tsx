@@ -13,11 +13,7 @@ import { MenuSection } from '../../components/main-menu/main.menu';
 import { ActionType, AccessDeniedFallback, ResourceType } from '@util/auth';
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
-  <CanAccess
-    resource={ResourceType.AUTHORIZATIONS}
-    action={ActionType.LIST}
-    fallback={<AccessDeniedFallback />}
-  >
+  <>
     <Table.Column
       key={IdTokenDtoProps.idToken}
       dataIndex={IdTokenDtoProps.idToken}
@@ -70,7 +66,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
         />
       )}
     />
-  </CanAccess>
+  </>
 );
 
 export const getAuthorizationFilters = (value: string): CrudFilter[] => {

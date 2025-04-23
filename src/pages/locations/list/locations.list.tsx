@@ -15,7 +15,7 @@ import { getLocationAndStationsFilters, getLocationsColumns } from '../columns';
 import { EMPTY_FILTER } from '@util/consts';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { ActionType, ResourceType } from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -183,65 +183,73 @@ export const LocationsList = () => {
           <DebounceSearch onSearch={onSearch} placeholder="Search Locations" />
         </Flex>
       </Flex>
-      <Table
-        rowKey="id"
-        {...tableProps}
-        showHeader={true}
-        expandable={{
-          expandIconColumnIndex: -1,
-          expandedRowRender: (record: LocationDto) => {
-            return (
-              <LocationsChargingStationsTable
-                location={record}
-                filteredStations={filteredStationsByLocation[record.id]}
-              />
-            );
-          },
-          expandedRowKeys: expandedRowKeys,
-          onExpandedRowsChange: (expandedRows) => {
-            setExpandedRowKeys([...expandedRows]);
-
-            // Clear the toggle state if the previously toggled row is collapsed
-            if (
-              expandedRowByToggle &&
-              !expandedRows.includes(expandedRowByToggle)
-            ) {
-              setExpandedRowByToggle(undefined);
-            }
-          },
-        }}
-        rowClassName={(record: LocationDto) =>
-          shouldHighlightLocation(record) ? 'selected-row' : ''
-        }
+      <CanAccess
+        resource={ResourceType.LOCATIONS}
+        action={ActionType.LIST}
+        fallback={<AccessDeniedFallback />}
       >
-        {columns}
-        <Table.Column
-          key="actions"
-          dataIndex="actions"
-          title="Actions"
-          onCell={() => ({
-            className: 'column-actions',
-          })}
-          render={(_: any, record: LocationDto) => (
-            <Row
-              className="view-charging-stations"
-              justify="end"
-              align="middle"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent event propagation
-                handleExpandToggle(record);
-              }}
-            >
-              View All Charging Stations
-              <ArrowDownIcon
-                className={
-                  expandedRowKeys.includes(record.id) ? 'arrow rotate' : 'arrow'
-                }
-              />
-            </Row>
-          )}
-        />
-      </Table>
+        <Table
+          rowKey="id"
+          {...tableProps}
+          showHeader={true}
+          expandable={{
+            expandIconColumnIndex: -1,
+            expandedRowRender: (record: LocationDto) => {
+              return (
+                <LocationsChargingStationsTable
+                  location={record}
+                  filteredStations={filteredStationsByLocation[record.id]}
+                />
+              );
+            },
+            expandedRowKeys: expandedRowKeys,
+            onExpandedRowsChange: (expandedRows) => {
+              setExpandedRowKeys([...expandedRows]);
+
+              // Clear the toggle state if the previously toggled row is collapsed
+              if (
+                expandedRowByToggle &&
+                !expandedRows.includes(expandedRowByToggle)
+              ) {
+                setExpandedRowByToggle(undefined);
+              }
+            },
+          }}
+          rowClassName={(record: LocationDto) =>
+            shouldHighlightLocation(record) ? 'selected-row' : ''
+          }
+        >
+          {columns}
+          <Table.Column
+            key="actions"
+            dataIndex="actions"
+            title="Actions"
+            onCell={() => ({
+              className: 'column-actions',
+            })}
+            render={(_: any, record: LocationDto) => (
+              <Row
+                className="view-charging-stations"
+                justify="end"
+                align="middle"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent event propagation
+                  handleExpandToggle(record);
+                }}
+              >
+                View All Charging Stations
+                <ArrowDownIcon
+                  className={
+                    expandedRowKeys.includes(record.id)
+                      ? 'arrow rotate'
+                      : 'arrow'
+                  }
+                />
+              </Row>
+            )}
+          />
+        </Table>
+      </CanAccess>
     </Flex>
   );
 };

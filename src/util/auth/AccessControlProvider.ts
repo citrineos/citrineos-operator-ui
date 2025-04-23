@@ -6,6 +6,7 @@ import {
   ListCanReturnType,
   OperatorCanParams,
   ResourceType,
+  TransactionAccessType,
 } from './types';
 
 /**
@@ -40,10 +41,28 @@ export const createAccessProvider = (
           can: true,
           meta: {
             // Excluding these as an example, and because they would be duplicates
-            exceptions: [{param: 'commandType', values: ['Remote Start', 'Remote Stop', 'Reset']}],
+            exceptions: [
+              {
+                param: 'commandType',
+                values: ['Remote Start', 'Remote Stop', 'Reset'],
+              },
+            ],
           },
         };
       }
+
+      const check2 =
+        resource === ResourceType.CHARGING_STATIONS &&
+        action === ActionType.LIST;
+
+      if (check2) {
+        canResponse = {
+          can: false,
+        };
+      }
+
+      console.log(`AccessProvider: ${action} on ${resource}`);
+      console.log(`AccessProvider: canResponse`, canResponse);
 
       return canResponse;
     },

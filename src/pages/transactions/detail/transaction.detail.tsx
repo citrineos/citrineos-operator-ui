@@ -116,9 +116,15 @@ export const TransactionDetail = () => {
       key: '1',
       label: 'Authorizations',
       children: (
-        <Table rowKey="id" {...tableProps}>
-          {authColumns}
-        </Table>
+        <CanAccess
+          resource={ResourceType.AUTHORIZATIONS}
+          action={ActionType.LIST}
+          fallback={<AccessDeniedFallback />}
+        >
+          <Table rowKey="id" {...tableProps}>
+            {authColumns}
+          </Table>
+        </CanAccess>
       ),
     },
     {

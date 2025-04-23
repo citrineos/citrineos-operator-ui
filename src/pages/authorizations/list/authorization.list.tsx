@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { Col, GetProps, Input, Row, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
-import { useNavigation } from '@refinedev/core';
-import { ResourceType } from '@util/auth';
+import { CanAccess, useNavigation } from '@refinedev/core';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
 import { getPlainToInstanceOptions } from '@util/tables';
@@ -35,19 +35,25 @@ export const AuthorizationsList: React.FC = () => {
   const columns = useMemo(() => getAuthorizationColumns(push), [push]);
 
   return (
-    <Col className="authorizations-list">
-      <Row justify="space-between" align="middle" className="header-row">
-        <h2>Authorizations</h2>
-        <Row>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder="Search Authorizations"
-          />
+    <CanAccess
+      resource={ResourceType.AUTHORIZATIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
+      <Col className="authorizations-list">
+        <Row justify="space-between" align="middle" className="header-row">
+          <h2>Authorizations</h2>
+          <Row>
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder="Search Authorizations"
+            />
+          </Row>
         </Row>
-      </Row>
-      <Table rowKey="id" {...tableProps}>
-        {columns}
-      </Table>
-    </Col>
+        <Table rowKey="id" {...tableProps}>
+          {columns}
+        </Table>
+      </Col>
+    </CanAccess>
   );
 };

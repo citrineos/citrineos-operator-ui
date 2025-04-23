@@ -202,11 +202,6 @@ export const ChargingStationDetailCardContent = ({
             <Text className="nowrap">Station ID: {station.id}</Text>
             <Text className="nowrap">
               Location ID:{' '}
-              <CanAccess
-                resource={ResourceType.LOCATIONS}
-                action={ActionType.SHOW}
-                params={{ id: station.locationId }}
-              >
                 <Link to={`/locations/${station.locationId}`}>
                   <Tooltip title={station?.location?.name}>
                     <Typography.Text
@@ -217,7 +212,6 @@ export const ChargingStationDetailCardContent = ({
                     </Typography.Text>
                   </Tooltip>
                 </Link>
-              </CanAccess>
             </Text>
             <Text className="nowrap">
               Latitude: {station.location?.coordinates?.latitude}

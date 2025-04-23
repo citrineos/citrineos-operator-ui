@@ -179,15 +179,7 @@ export const getChargingStationColumns = (
     />,
   );
 
-  return (
-    <CanAccess
-      resource={ResourceType.CHARGING_STATIONS}
-      action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
-    >
-      {columns}
-    </CanAccess>
-  );
+  return columns;
 };
 
 export const getChargingStationsFilters = (value: string): CrudFilter[] => {

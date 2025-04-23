@@ -64,11 +64,7 @@ export const getTransactionColumns = (
   push: (path: string, ...rest: unknown[]) => void,
 ) => {
   return (
-    <CanAccess
-      resource={ResourceType.TRANSACTIONS}
-      action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
-    >
+    <>
       <Table.Column
         key={TransactionDtoProps.transactionId}
         dataIndex={TransactionDtoProps.transactionId}
@@ -214,6 +210,6 @@ export const getTransactionColumns = (
         })}
         render={(updatedAt) => <TimestampDisplay isoTimestamp={updatedAt} />}
       />
-    </CanAccess>
+    </>
   );
 };
