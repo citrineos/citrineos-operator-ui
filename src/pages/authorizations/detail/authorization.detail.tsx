@@ -4,16 +4,20 @@ import { useParams } from 'react-router-dom';
 import { useNavigation, useOne, useList } from '@refinedev/core';
 import { ResourceType } from '../../../resource-type';
 import { getPlainToInstanceOptions } from '@util/tables';
+import {
+  TransactionDto,
+  TransactionDtoProps,
+} from '../../../dtos/transaction.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import {
   AUTHORIZATIONS_SHOW_QUERY,
   GET_TRANSACTIONS_FOR_AUTHORIZATION,
 } from '../queries';
 import { getAuthorizationColumns } from '../columns';
-import { TransactionDto } from '../../../dtos/transaction.dto';
 import { getTransactionColumns } from '../../transactions/columns';
 import { AuthorizationDetailCard } from './authorization.detail.card';
 import './style.scss';
+import { useTable } from '@refinedev/antd';
 
 export const AuthorizationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,45 +32,75 @@ export const AuthorizationDetail: React.FC = () => {
   });
   const authorization = authData?.data;
 
-  const { data: txData, isLoading: txLoading } = useList<TransactionDto>({
+  const { tableProps: transactionTableProps } = useTable<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
     meta: {
       gqlQuery: GET_TRANSACTIONS_FOR_AUTHORIZATION,
       gqlVariables: {
-        limit: 10000,
+        limit: 10000, // trying to get all the authorized transactions
         id: Number(authorization?.idTokenId),
-        offset: 0,
-        order_by: [],
-        where: {},
       },
     },
     queryOptions: getPlainToInstanceOptions(TransactionDto, true),
   });
 
-  const authColumns = useMemo(
-    () => getAuthorizationColumns(push, false),
-    [push],
-  );
-  const txColumns = useMemo(() => getTransactionColumns(push, false), [push]);
+  const transactionColumns = useMemo(() => getTransactionColumns(push), []);
 
-  const tabItems: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Transactions',
-      children: txLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <Table
-          rowKey="id"
-          dataSource={txData?.data}
-          pagination={false}
-          className="full-width"
-        >
-          {txColumns}
-        </Table>
-      ),
-    },
-  ];
+  const tabItems: TabsProps['items'] = useMemo(
+    () => [
+      {
+        key: '1',
+        label: 'Transactions',
+        children: (
+          <Flex vertical gap={32}>
+            <Table
+              {...transactionTableProps}
+              rowKey={TransactionDtoProps.transactionId}
+              className={'full-width'}
+            >
+              {transactionColumns}
+            </Table>
+          </Flex>
+        ),
+      },
+      // {
+      //   key: '2',
+      //   label: 'Charts',
+      //   children: (
+      //     <Flex vertical gap={32}>
+      //       {transactionsLoading ? (
+      //         <p>Loading Chart...</p>
+      //       ) : (
+      //         <ResponsiveContainer width="100%" height={400}>
+      //           <LineChart
+      //             data={transactionData?.data}
+      //             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      //           >
+      //             <CartesianGrid strokeDasharray="3 3" />
+      //             <XAxis dataKey="id" />
+      //             <YAxis />
+      //             <Tooltip />
+      //             <Legend />
+      //             <Line
+      //               type="monotone"
+      //               dataKey="id"
+      //               stroke="#8884d8"
+      //               activeDot={{ r: 8 }}
+      //             />
+      //           </LineChart>
+      //         </ResponsiveContainer>
+      //       )}
+      //     </Flex>
+      //   ),
+      // },
+      // {
+      //   key: '3',
+      //   label: 'Logs',
+      //   children: 'Logs content',
+      // },
+    ],
+    [transactionTableProps, transactionColumns],
+  );
 
   if (authLoading) return <p>Loading...</p>;
   if (!authorization) return <p>No Data Found</p>;

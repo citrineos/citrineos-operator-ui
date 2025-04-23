@@ -10,24 +10,29 @@ import GenericTag from '../../components/tag';
 import { IdTokenDtoProps } from '../../dtos/id.token.dto';
 import { IdTokenInfoDtoProps } from '../../dtos/id.token.info.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { ArrowRightIcon } from '../../components/icons/arrow.right.icon';
 
 export const getAuthorizationColumns = (
   push: (path: string) => void,
-  includeActions = true,
 ) => (
   <>
     <Table.Column
-      key={AuthorizationDtoProps.id}
-      dataIndex={AuthorizationDtoProps.id}
+      key={IdTokenDtoProps.idToken}
+      dataIndex={IdTokenDtoProps.idToken}
       title="Authorization ID"
       sorter={true}
       onCell={(record: AuthorizationDto) => ({
-        className: `view-authorizations column-${AuthorizationDtoProps.id}`,
-        onClick: () => push(`/${MenuSection.AUTHORIZATIONS}/${record.id}`),
-        style: { cursor: 'pointer' },
+        className: `column-${IdTokenDtoProps.idToken}`,
+          onClick: (e: React.MouseEvent) => {
+            const path = `/${MenuSection.AUTHORIZATIONS}/${record.id}`;
+            if (e.ctrlKey || e.metaKey) {
+              window.open(path, '_blank');
+            } else {
+              push(path);
+            }
+          },
+          style: { cursor: 'pointer' },
       })}
-      render={(_, record) => <h4>{record.id}</h4>}
+      render={(_, record) => <h4>{record.idToken?.idToken}</h4>}
     />
 
     <Table.Column
@@ -37,8 +42,6 @@ export const getAuthorizationColumns = (
       sorter={true}
       onCell={(record: AuthorizationDto) => ({
         className: `view-authorizations column-${IdTokenDtoProps.type}`,
-        onClick: () => push(`/${MenuSection.AUTHORIZATIONS}/${record.id}`),
-        style: { cursor: 'pointer' },
       })}
       render={(_, record) => (
         <GenericTag
@@ -55,8 +58,6 @@ export const getAuthorizationColumns = (
       sorter={true}
       onCell={(record: AuthorizationDto) => ({
         className: `view-authorizations column-${IdTokenInfoDtoProps.status}`,
-        onClick: () => push(`/${MenuSection.AUTHORIZATIONS}/${record.id}`),
-        style: { cursor: 'pointer' },
       })}
       render={(_, record) => (
         <GenericTag
@@ -66,24 +67,6 @@ export const getAuthorizationColumns = (
         />
       )}
     />
-
-    {includeActions && (
-      <Table.Column
-        key="actions"
-        dataIndex="actions"
-        title="Actions"
-        onCell={() => ({ className: 'column-actions' })}
-        render={(_, record) => (
-          <Flex
-            className="view-authorizations"
-            align="center"
-            onClick={() => push(`/${MenuSection.AUTHORIZATIONS}/${record.id}`)}
-          >
-            View Detail <ArrowRightIcon />
-          </Flex>
-        )}
-      />
-    )}
   </>
 );
 
