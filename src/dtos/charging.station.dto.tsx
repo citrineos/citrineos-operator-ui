@@ -29,7 +29,7 @@ export enum ChargingStationDtoProps {
   evses = 'evses',
   transactions = 'transactions',
   ocppLogs = 'ocppLogs',
-  location = 'location',
+  location = 'Location',
   chargePointVendor = 'chargePointVendor',
   chargePointModel = 'chargePointModel',
   chargePointSerialNumber = 'chargePointSerialNumber',

@@ -1,39 +1,26 @@
-import React, { useEffect, useMemo } from 'react';
-import { Flex, GetProps, Input, Table } from 'antd';
+import { Col, GetProps, Input, Row, Table } from 'antd';
+import React, { useMemo } from 'react';
+import { TRANSACTION_LIST_QUERY } from '../queries';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { TRANSACTION_LIST_QUERY } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
+import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { useNavigation } from '@refinedev/core';
-import { getTransactionColumns, getTransactionsFilters } from '../columns';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { GET_TRANSACTION_LIST_FOR_STATION } from '../../../message/queries';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
+import { getTransactionsFilters, getTransactionColumns } from '../columns';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
-export interface TransactionsListProps {
-  stationId?: string;
-  hideTitle?: boolean;
-}
-
-export const TransactionsList = ({
-  stationId,
-  hideTitle = false,
-}: TransactionsListProps) => {
+export const TransactionsList = () => {
   const { push } = useNavigation();
 
   const { tableProps, setFilters } = useTable<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
-    sorters: { initial: [{ field: BaseDtoProps.updatedAt, order: 'desc' }] },
+    sorters: DEFAULT_SORTERS,
     meta: {
-      gqlQuery: stationId
-        ? GET_TRANSACTION_LIST_FOR_STATION
-        : TRANSACTION_LIST_QUERY,
-      gqlVariables: stationId ? { stationId } : undefined,
+      gqlQuery: TRANSACTION_LIST_QUERY,
     },
     queryOptions: getPlainToInstanceOptions(TransactionDto),
   });
@@ -46,19 +33,22 @@ export const TransactionsList = ({
     }
   };
 
-  const columns = useMemo(() => getTransactionColumns(push), []);
+  const columns = useMemo(() => getTransactionColumns(push), [push]);
 
   return (
-    <Flex vertical gap={32}>
-      <Flex justify={'space-between'}>
-        {!hideTitle && <h2>Transactions</h2>}
-        <DebounceSearch onSearch={onSearch} placeholder="Search Transactions" />
-      </Flex>
-      <Flex>
-        <Table rowKey="id" {...tableProps} className={'full-width'}>
-          {columns}
-        </Table>
-      </Flex>
-    </Flex>
+    <Col className="transactions-list">
+      <Row justify="space-between" align="middle" className="header-row">
+        <h2>Transactions</h2>
+        <Row>
+          <DebounceSearch
+            onSearch={onSearch}
+            placeholder="Search Transactions"
+          />
+        </Row>
+      </Row>
+      <Table rowKey="id" {...tableProps}>
+        {columns}
+      </Table>
+    </Col>
   );
 };

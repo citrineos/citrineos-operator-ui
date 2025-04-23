@@ -1,0 +1,17 @@
+@use '../../../mixins' as mixins;
+
+main[class*='content-authorizations-']:not(
+  .content-authorizations-new,
+  [class*='-edit']
+) {
+  @include mixins.inner-content-no-padding;
+}
+
+.border-left {
+  border-left: 1px solid var(--grayscale-color-6);
+  padding-left: var(--ant-padding-md);
+}
+
+.authorizations-list .header-row {
+  margin-bottom: var(--ant-margin-md);
+}

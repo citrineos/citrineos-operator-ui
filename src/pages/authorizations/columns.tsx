@@ -1,3 +1,4 @@
+import React from 'react';
 import { Flex, Table } from 'antd';
 import { CanAccess, CrudFilter } from '@refinedev/core';
 import {
@@ -5,140 +6,94 @@ import {
   AuthorizationDtoProps,
 } from '../../dtos/authoriation.dto';
 import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
-
 import GenericTag from '../../components/tag';
 import { IdTokenDtoProps } from '../../dtos/id.token.dto';
 import { IdTokenInfoDtoProps } from '../../dtos/id.token.info.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { ArrowRightIcon } from '../../components/icons/arrow.right.icon';
-import {
-  ActionType,
-  AccessDeniedFallback,
-  ResourceType,
-} from '@util/auth';
+import { ActionType, AccessDeniedFallback, ResourceType } from '@util/auth';
 
-export const getAuthorizationColumns = (
-  push: (path: string, ...rest: unknown[]) => void,
-  includeActions = true,
-) => {
-  return (
-    <CanAccess
-      resource={ResourceType.AUTHORIZATIONS}
-      action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
-    >
-      <Table.Column
-        key={AuthorizationDtoProps.id}
-        dataIndex={AuthorizationDtoProps.id}
-        title="Authorization ID"
-        sorter={true}
-        onCell={() => ({
-          className: `column-${AuthorizationDtoProps.id}`,
-        })}
-        render={(_: any, record: AuthorizationDto) => record.id}
-      />
-      <Table.Column
-        key={IdTokenDtoProps.type}
-        dataIndex={IdTokenDtoProps.type}
-        title="Type"
-        sorter={true}
-        onCell={() => ({
-          className: `column-${IdTokenDtoProps.type}`,
-        })}
-        render={(_: any, record: AuthorizationDto) => {
-          return (
-            <GenericTag
-              enumValue={record.idToken?.type}
-              enumType={IdTokenEnumType}
-            />
-          );
-        }}
-      />
-      <Table.Column
-        key={IdTokenInfoDtoProps.status}
-        dataIndex={IdTokenInfoDtoProps.status}
-        title="Status"
-        sorter={true}
-        onCell={() => ({
-          className: `column-${IdTokenInfoDtoProps.status}`,
-        })}
-        render={(_: any, record: AuthorizationDto) => {
-          return (
-            <GenericTag
-              colorMap={{
-                [AuthorizationStatusEnumType.Accepted]: 'green',
-              }}
-              enumValue={record.idTokenInfo?.status}
-              enumType={AuthorizationStatusEnumType}
-            />
-          );
-        }}
-      />
-      {includeActions && (
-        <Table.Column
-          key="actions"
-          dataIndex="actions"
-          title="Actions"
-          onCell={() => ({
-            className: 'column-actions',
-          })}
-          render={(_: any, record: AuthorizationDto) => (
-            <Flex
-              onClick={() =>
-                push(`/${MenuSection.AUTHORIZATIONS}/${record.id}`)
-              }
-              className="pointer"
-              align={'center'}
-            >
-              View Detail <ArrowRightIcon />
-            </Flex>
-          )}
+export const getAuthorizationColumns = (push: (path: string) => void) => (
+  <CanAccess
+    resource={ResourceType.AUTHORIZATIONS}
+    action={ActionType.LIST}
+    fallback={<AccessDeniedFallback />}
+  >
+    <Table.Column
+      key={IdTokenDtoProps.idToken}
+      dataIndex={IdTokenDtoProps.idToken}
+      title="Authorization ID"
+      sorter={true}
+      onCell={(record: AuthorizationDto) => ({
+        className: `column-${IdTokenDtoProps.idToken}`,
+        onClick: (e: React.MouseEvent) => {
+          const path = `/${MenuSection.AUTHORIZATIONS}/${record.id}`;
+          if (e.ctrlKey || e.metaKey) {
+            window.open(path, '_blank');
+          } else {
+            push(path);
+          }
+        },
+        style: { cursor: 'pointer' },
+      })}
+      render={(_, record) => <h4>{record.idToken?.idToken}</h4>}
+    />
+
+    <Table.Column
+      key={IdTokenDtoProps.type}
+      dataIndex={IdTokenDtoProps.type}
+      title="Type"
+      sorter={true}
+      onCell={(record: AuthorizationDto) => ({
+        className: `view-authorizations column-${IdTokenDtoProps.type}`,
+      })}
+      render={(_, record) => (
+        <GenericTag
+          enumValue={record.idToken?.type}
+          enumType={IdTokenEnumType}
         />
       )}
-    </CanAccess>
-  );
-};
+    />
+
+    <Table.Column
+      key={IdTokenInfoDtoProps.status}
+      dataIndex={IdTokenInfoDtoProps.status}
+      title="Status"
+      sorter={true}
+      onCell={(record: AuthorizationDto) => ({
+        className: `view-authorizations column-${IdTokenInfoDtoProps.status}`,
+      })}
+      render={(_, record) => (
+        <GenericTag
+          enumValue={record.idTokenInfo?.status}
+          enumType={AuthorizationStatusEnumType}
+          colorMap={{ [AuthorizationStatusEnumType.Accepted]: 'green' }}
+        />
+      )}
+    />
+  </CanAccess>
+);
 
 export const getAuthorizationFilters = (value: string): CrudFilter[] => {
-  const parsedValue = parseInt(value, 10);
-
-  const filters = [
+  return [
     {
-      operator: 'or' as const,
+      operator: 'or',
       value: [
         {
-          field: AuthorizationDtoProps.id,
-          operator: 'eq' as const,
-          value: !isNaN(parsedValue) ? parsedValue : undefined,
-        },
-        {
-          field: 'IdToken.type',
-          operator: 'contains' as const,
+          field: `${AuthorizationDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          operator: 'contains',
           value,
         },
         {
-          field: 'IdTokenInfo.status',
-          operator: 'contains' as const,
+          field: `${AuthorizationDtoProps.idToken}.${IdTokenDtoProps.type}`,
+          operator: 'contains',
           value,
         },
         {
-          field: AuthorizationDtoProps.idTokenId,
-          operator: 'eq' as const,
-          value: !isNaN(parsedValue) ? parsedValue : undefined,
-        },
-        {
-          field: AuthorizationDtoProps.idTokenInfoId,
-          operator: 'eq' as const,
-          value: !isNaN(parsedValue) ? parsedValue : undefined,
+          field: `${AuthorizationDtoProps.idTokenInfo}.${IdTokenInfoDtoProps.status}`,
+          operator: 'contains',
+          value,
         },
       ],
     },
   ];
-
-  // Remove filters with undefined values
-  filters[0].value = filters[0].value.filter(
-    (filter) => filter.value !== undefined,
-  );
-
-  return filters;
 };

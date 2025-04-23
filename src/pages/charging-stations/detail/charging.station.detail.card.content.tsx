@@ -1,4 +1,4 @@
-import { Button, Flex, message, Typography } from 'antd';
+import { Button, Flex, message, Tooltip, Typography } from 'antd';
 import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
 import {
   Link,
@@ -32,11 +32,7 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
-import {
-  ActionType,
-  ChargingStationAccessType,
-  CommandType,
-} from '@util/auth';
+import { ActionType, ChargingStationAccessType, CommandType } from '@util/auth';
 
 const { Text } = Typography;
 
@@ -212,7 +208,14 @@ export const ChargingStationDetailCardContent = ({
                 params={{ id: station.locationId }}
               >
                 <Link to={`/locations/${station.locationId}`}>
-                  {station?.location?.name}
+                  <Tooltip title={station?.location?.name}>
+                    <Typography.Text
+                      ellipsis
+                      style={{ maxWidth: 150, display: 'inline-block' }}
+                    >
+                      {station?.location?.name}
+                    </Typography.Text>
+                  </Tooltip>
                 </Link>
               </CanAccess>
             </Text>
@@ -338,7 +341,10 @@ export const ChargingStationDetailCardContent = ({
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.ACCESS}
-            params={{ id: station.id, accessType: ChargingStationAccessType.COMMANDS }}
+            params={{
+              id: station.id,
+              accessType: ChargingStationAccessType.COMMANDS,
+            }}
           >
             <Flex
               gap={16}
@@ -406,9 +412,9 @@ export const ChargingStationDetailCardContent = ({
               </Flex>
 
               <Flex>
-                  <Button type="link" onClick={showOtherCommandsModal}>
-                    Other Commands →
-                  </Button>
+                <Button type="link" onClick={showOtherCommandsModal}>
+                  Other Commands →
+                </Button>
               </Flex>
             </Flex>
           </CanAccess>

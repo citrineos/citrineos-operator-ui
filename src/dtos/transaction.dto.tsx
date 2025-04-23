@@ -23,11 +23,12 @@ export enum TransactionDtoProps {
   id = 'id',
   transactionId = 'transactionId',
   stationId = 'stationId',
+  chargingStation = 'ChargingStation',
+  transactionEvents = 'TransactionEvents',
   evseDatabaseId = 'evseDatabaseId',
   isActive = 'isActive',
-  events = 'events',
   meterValues = 'meterValues',
-  startTransaction = 'startTransaction',
+  startTransaction = 'StartTransactions',
   stopTransaction = 'stopTransaction',
   chargingState = 'chargingState',
   timeSpentCharging = 'timeSpentCharging',
@@ -76,12 +77,6 @@ export class TransactionDto extends BaseDto {
   isActive!: boolean;
 
   @IsArray()
-  @Type(() => TransactionEventDto)
-  @ValidateNested({ each: true })
-  @Expose({ name: 'TransactionEvents' })
-  events?: TransactionEventDto[];
-
-  @IsArray()
   @IsOptional()
   @Type(() => MeterValueDto)
   @ValidateNested({ each: true })
@@ -90,13 +85,13 @@ export class TransactionDto extends BaseDto {
 
   @IsOptional()
   @Type(() => StartTransactionDto)
-  @Expose({ name: 'StartTransaction' })
-  startTransaction?: StartTransactionDto;
+  @Expose({ name: 'StartTransactions' })
+  startTransaction?: Partial<StartTransactionDto>;
 
   @IsOptional()
   @Type(() => StopTransactionDto)
-  @Expose({ name: 'StopTransaction' })
-  stopTransaction?: StopTransactionDto;
+  @Expose({ name: 'StopTransactions' })
+  stopTransaction?: Partial<StopTransactionDto>;
 
   @IsEnum(ChargingStateEnumType)
   @IsOptional()
