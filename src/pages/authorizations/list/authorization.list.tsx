@@ -6,11 +6,11 @@ import { ResourceType } from '../../../resource-type';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { AUTHORIZATIONS_LIST_QUERY } from '../queries';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationFilters, getAuthorizationColumns } from '../columns';
 import './style.scss';
+import { DEFAULT_SORTERS } from '../../../components/defaults';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -19,7 +19,7 @@ export const AuthorizationsList: React.FC = () => {
 
   const { tableProps, setFilters } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
-    sorters: { permanent: [{ field: BaseDtoProps.updatedAt, order: 'desc' }] },
+    sorters: DEFAULT_SORTERS,
     meta: { gqlQuery: AUTHORIZATIONS_LIST_QUERY },
     queryOptions: getPlainToInstanceOptions(AuthorizationDto),
   });

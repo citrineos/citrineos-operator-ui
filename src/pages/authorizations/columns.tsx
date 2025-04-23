@@ -11,9 +11,7 @@ import { IdTokenDtoProps } from '../../dtos/id.token.dto';
 import { IdTokenInfoDtoProps } from '../../dtos/id.token.info.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
 
-export const getAuthorizationColumns = (
-  push: (path: string) => void,
-) => (
+export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>
     <Table.Column
       key={IdTokenDtoProps.idToken}
@@ -22,15 +20,15 @@ export const getAuthorizationColumns = (
       sorter={true}
       onCell={(record: AuthorizationDto) => ({
         className: `column-${IdTokenDtoProps.idToken}`,
-          onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.AUTHORIZATIONS}/${record.id}`;
-            if (e.ctrlKey || e.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              push(path);
-            }
-          },
-          style: { cursor: 'pointer' },
+        onClick: (e: React.MouseEvent) => {
+          const path = `/${MenuSection.AUTHORIZATIONS}/${record.id}`;
+          if (e.ctrlKey || e.metaKey) {
+            window.open(path, '_blank');
+          } else {
+            push(path);
+          }
+        },
+        style: { cursor: 'pointer' },
       })}
       render={(_, record) => <h4>{record.idToken?.idToken}</h4>}
     />
@@ -71,29 +69,26 @@ export const getAuthorizationColumns = (
 );
 
 export const getAuthorizationFilters = (value: string): CrudFilter[] => {
-  const parsed = parseInt(value, 10);
   return [
     {
-      operator: 'or' as const,
+      operator: 'or',
       value: [
         {
-          field: AuthorizationDtoProps.id,
-          operator: 'eq' as const,
-          value: !isNaN(parsed) ? parsed : undefined,
-        },
-        { field: 'IdToken.type', operator: 'contains' as const, value },
-        { field: 'IdTokenInfo.status', operator: 'contains' as const, value },
-        {
-          field: AuthorizationDtoProps.idTokenId,
-          operator: 'eq' as const,
-          value: !isNaN(parsed) ? parsed : undefined,
+          field: `${AuthorizationDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          operator: 'contains',
+          value,
         },
         {
-          field: AuthorizationDtoProps.idTokenInfoId,
-          operator: 'eq' as const,
-          value: !isNaN(parsed) ? parsed : undefined,
+          field: `${AuthorizationDtoProps.idToken}.${IdTokenDtoProps.type}`,
+          operator: 'contains',
+          value,
         },
-      ].filter((f) => f.value !== undefined),
+        {
+          field: `${AuthorizationDtoProps.idTokenInfo}.${IdTokenInfoDtoProps.status}`,
+          operator: 'contains',
+          value,
+        },
+      ],
     },
   ];
 };
