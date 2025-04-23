@@ -22,16 +22,15 @@ export const ChargingStationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { push } = useNavigation();
 
-  const { tableProps, setFilters } =
-    useTable<TransactionDto>({
-      resource: ResourceType.TRANSACTIONS,
-          sorters: DEFAULT_SORTERS,
-      meta: {
-        gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
-        gqlVariables: { stationId: id },
-      },
-      queryOptions: getPlainToInstanceOptions(TransactionDto),
-    });
+  const { tableProps, setFilters } = useTable<TransactionDto>({
+    resource: ResourceType.TRANSACTIONS,
+    sorters: DEFAULT_SORTERS,
+    meta: {
+      gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
+      gqlVariables: { stationId: id },
+    },
+    queryOptions: getPlainToInstanceOptions(TransactionDto),
+  });
 
   const transactionColumns = useMemo(() => getTransactionColumns(push), []);
 
@@ -58,13 +57,13 @@ export const ChargingStationDetail: React.FC = () => {
       label: 'Transactions',
       children: (
         <Flex vertical gap={32}>
-            <Table
-              {...tableProps}
-              rowKey={TransactionDtoProps.transactionId}
-              className={'full-width'}
-            >
-              {transactionColumns}
-            </Table>
+          <Table
+            {...tableProps}
+            rowKey={TransactionDtoProps.transactionId}
+            className={'full-width'}
+          >
+            {transactionColumns}
+          </Table>
         </Flex>
       ),
     },

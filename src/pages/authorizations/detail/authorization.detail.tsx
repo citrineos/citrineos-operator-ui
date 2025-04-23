@@ -16,7 +16,10 @@ import {
 import { getAuthorizationColumns } from '../columns';
 import { ResourceType } from '../../../resource-type';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { TransactionDto, TransactionDtoProps } from '../../../dtos/transaction.dto';
+import {
+  TransactionDto,
+  TransactionDtoProps,
+} from '../../../dtos/transaction.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import {
@@ -57,10 +60,7 @@ export const AuthorizationDetail = () => {
     });
 
   const columns = useMemo(() => getAuthorizationColumns(push, false), [push]);
-  const transactionColumns = useMemo(
-    () => getTransactionColumns(push),
-    [],
-  );
+  const transactionColumns = useMemo(() => getTransactionColumns(push), []);
 
   const tabItems: TabsProps['items'] = useMemo(
     () => [
