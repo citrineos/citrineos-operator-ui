@@ -15,7 +15,9 @@ export enum AuthorizationDtoProps {
   id = 'id',
   allowedConnectorTypes = 'allowedConnectorTypes',
   disallowedEvseIdPrefixes = 'disallowedEvseIdPrefixes',
+  idToken = 'IdToken',
   idTokenId = 'idTokenId',
+  idTokenInfo = 'IdTokenInfo',
   idTokenInfoId = 'idTokenInfoId',
 }
 

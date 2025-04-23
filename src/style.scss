@@ -189,6 +189,10 @@ button.secondary {
   background-color: var(--secondary-color-2);
 }
 
+.ant-table-cell.ant-table-cell-row-hover.column-idToken:hover {
+  background-color: var(--secondary-color-2);
+}
+
 .ant-table-cell.ant-table-cell-row-hover.column-transactionId:hover {
   background-color: var(--secondary-color-2);
 }
