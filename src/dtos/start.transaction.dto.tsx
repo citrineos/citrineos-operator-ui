@@ -21,7 +21,7 @@ export enum StartTransactionDtoProps {
   transactionDatabaseId = 'transactionDatabaseId',
   idTokenDatabaseId = 'idTokenDatabaseId',
   connectorDatabaseId = 'connectorDatabaseId',
-  idToken = 'idToken',
+  idToken = 'IdToken',
   connector = 'connector',
 }
 

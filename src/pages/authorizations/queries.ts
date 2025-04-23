@@ -170,6 +170,11 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
           idToken
         }
       }
+      StartTransactions {
+        IdToken {
+          idToken
+        }
+      }
     }
     Transactions_aggregate(
       where: {

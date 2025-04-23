@@ -14,6 +14,9 @@ import { IdTokenProps } from '../id-tokens/id-token';
 import { CrudFilters } from '@refinedev/core';
 import { LocationDtoProps } from '../../dtos/location.dto';
 import { ChargingStationDtoProps } from '../../dtos/charging.station.dto';
+import { TransactionEventDtoProps } from '../../dtos/transaction.event.dto';
+import { IdTokenDtoProps } from '../../dtos/id.token.dto';
+import { StartTransactionDtoProps } from '../../dtos/start.transaction.dto';
 
 export const getTransactionsFilters = (value: string): CrudFilters => {
   return [
@@ -26,7 +29,7 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: 'chargingStation.location.name',
+          field: `${TransactionDtoProps.chargingStation}.${ChargingStationDtoProps.location}.${LocationDtoProps.name}`,
           operator: 'contains',
           value,
         },
@@ -41,7 +44,12 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: 'transactionEvents.idToken.idToken',
+          field: `${TransactionDtoProps.transactionEvents}.${TransactionEventDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          operator: 'contains',
+          value,
+        },
+        {
+          field: `${TransactionDtoProps.startTransaction}.${StartTransactionDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
           operator: 'contains',
           value,
         },
@@ -104,10 +112,10 @@ export const getTransactionColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: TransactionDto) =>
+        render={(_: any, record: TransactionDto) => (
           <h4>{record.chargingStation?.id}</h4>
-        }
-      /> 
+        )}
+      />
       <Table.Column
         key="location"
         dataIndex="location"
@@ -125,9 +133,9 @@ export const getTransactionColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: TransactionDto) =>
-          record.chargingStation?.location?.name
-        }
+        render={(_: any, record: TransactionDto) => (
+          <h4>{record.chargingStation?.location?.name}</h4>
+        )}
       />
       <Table.Column
         key={IdTokenProps.idToken}
@@ -144,6 +152,10 @@ export const getTransactionColumns = (
             if (startedEvent && startedEvent.idToken) {
               return <h4>{startedEvent.idToken.idToken}</h4>;
             }
+          } else if (record.startTransaction) {
+            if (record.startTransaction.idToken) {
+              return <h4>{record.startTransaction.idToken.idToken}</h4>;
+            }
           }
           return '';
         }}
@@ -157,7 +169,7 @@ export const getTransactionColumns = (
           className: `column-${TransactionDtoProps.totalKwh}`,
         })}
         render={(_: any, record: TransactionDto) => (
-          <h4>{record.totalKwh?.toFixed(2)} kWh</h4>
+          <>{record.totalKwh?.toFixed(2)} kWh</>
         )}
       />
       <Table.Column

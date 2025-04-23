@@ -16,7 +16,7 @@ import {
 import { getAuthorizationColumns } from '../columns';
 import { ResourceType } from '../../../resource-type';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { TransactionDto } from '../../../dtos/transaction.dto';
+import { TransactionDto, TransactionDtoProps } from '../../../dtos/transaction.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import {
@@ -58,7 +58,7 @@ export const AuthorizationDetail = () => {
 
   const columns = useMemo(() => getAuthorizationColumns(push, false), [push]);
   const transactionColumns = useMemo(
-    () => getTransactionColumns(push, false),
+    () => getTransactionColumns(push),
     [],
   );
 
@@ -73,7 +73,7 @@ export const AuthorizationDetail = () => {
               <p>Loading data...</p>
             ) : (
               <Table
-                rowKey="id"
+                rowKey={TransactionDtoProps.transactionId}
                 dataSource={transactionData?.data}
                 className={'full-width'}
                 pagination={false}
