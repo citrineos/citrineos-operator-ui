@@ -39,6 +39,7 @@ export const TRANSACTION_LIST_QUERY = gql`
         createdAt
         updatedAt
         Location {
+          id
           name
           address
           city

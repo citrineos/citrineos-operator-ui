@@ -1,4 +1,4 @@
-import { Table, Row } from 'antd';
+import { Table } from 'antd';
 import React from 'react';
 import {
   TransactionDto,
@@ -12,7 +12,8 @@ import { ChargingStateEnumType, TransactionEventEnumType } from '@OCPP2_0_1';
 import { BaseDtoProps } from '../../dtos/base.dto';
 import { IdTokenProps } from '../id-tokens/id-token';
 import { CrudFilters } from '@refinedev/core';
-import { ArrowRightIcon } from '../../components/icons/arrow.right.icon';
+import { LocationDtoProps } from '../../dtos/location.dto';
+import { ChargingStationDtoProps } from '../../dtos/charging.station.dto';
 
 export const getTransactionsFilters = (value: string): CrudFilters => {
   return [
@@ -79,10 +80,22 @@ export const getTransactionColumns = (
         key={TransactionDtoProps.isActive}
         dataIndex={TransactionDtoProps.isActive}
         title="Active"
-        onCell={(record: TransactionDto) => ({
+        onCell={() => ({
           className: `column-${TransactionDtoProps.isActive}`,
+        })}
+        render={(_: any, record: TransactionDto) => (
+          <StatusIcon value={record.isActive} />
+        )}
+      />
+      <Table.Column
+        key="chargingStation"
+        dataIndex="chargingStation"
+        title="Station ID"
+        sorter={true}
+        onCell={(record: TransactionDto) => ({
+          className: `column-${ChargingStationDtoProps.id}`,
           onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
+            const path = `/${MenuSection.CHARGING_STATIONS}/${record.chargingStation?.id}`;
             if (e.ctrlKey || e.metaKey) {
               window.open(path, '_blank');
             } else {
@@ -91,19 +104,19 @@ export const getTransactionColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: TransactionDto) => (
-          <StatusIcon value={record.isActive} />
-        )}
-      />
+        render={(_: any, record: TransactionDto) =>
+          <h4>{record.chargingStation?.id}</h4>
+        }
+      /> 
       <Table.Column
         key="location"
         dataIndex="location"
-        title="Location Id"
+        title="Location Name"
         sorter={true}
         onCell={(record: TransactionDto) => ({
-          className: 'column-location',
+          className: `column-${LocationDtoProps.name}`,
           onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
+            const path = `/${MenuSection.LOCATIONS}/${record.chargingStation?.location?.id}`;
             if (e.ctrlKey || e.metaKey) {
               window.open(path, '_blank');
             } else {
@@ -120,17 +133,8 @@ export const getTransactionColumns = (
         key={IdTokenProps.idToken}
         dataIndex={IdTokenProps.idToken}
         title="ID Token"
-        onCell={(record: TransactionDto) => ({
+        onCell={() => ({
           className: `column-${IdTokenProps.idToken}`,
-          onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
-            if (e.ctrlKey || e.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              push(path);
-            }
-          },
-          style: { cursor: 'pointer' },
         })}
         render={(_: any, record: TransactionDto) => {
           if (record.transactionEvents) {
@@ -149,17 +153,8 @@ export const getTransactionColumns = (
         dataIndex={TransactionDtoProps.totalKwh}
         title="Total kWh"
         sorter={true}
-        onCell={(record: TransactionDto) => ({
+        onCell={() => ({
           className: `column-${TransactionDtoProps.totalKwh}`,
-          onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
-            if (e.ctrlKey || e.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              push(path);
-            }
-          },
-          style: { cursor: 'pointer' },
         })}
         render={(_: any, record: TransactionDto) => (
           <h4>{record.totalKwh?.toFixed(2)} kWh</h4>
@@ -169,17 +164,8 @@ export const getTransactionColumns = (
         key="status"
         dataIndex="status"
         title="Status"
-        onCell={(record: TransactionDto) => ({
+        onCell={() => ({
           className: 'column-status',
-          onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
-            if (e.ctrlKey || e.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              push(path);
-            }
-          },
-          style: { cursor: 'pointer' },
         })}
         render={(_: any, record: TransactionDto) =>
           record.chargingState ? (
@@ -195,17 +181,8 @@ export const getTransactionColumns = (
         dataIndex={BaseDtoProps.createdAt}
         title="Created At"
         sorter={true}
-        onCell={(record: TransactionDto) => ({
+        onCell={() => ({
           className: `column-${BaseDtoProps.createdAt}`,
-          onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
-            if (e.ctrlKey || e.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              push(path);
-            }
-          },
-          style: { cursor: 'pointer' },
         })}
         render={(createdAt) => <TimestampDisplay isoTimestamp={createdAt} />}
       />
@@ -214,41 +191,10 @@ export const getTransactionColumns = (
         dataIndex={BaseDtoProps.updatedAt}
         title="Updated At"
         sorter={true}
-        onCell={(record: TransactionDto) => ({
+        onCell={() => ({
           className: `column-${BaseDtoProps.updatedAt}`,
-          onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
-            if (e.ctrlKey || e.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              push(path);
-            }
-          },
-          style: { cursor: 'pointer' },
         })}
         render={(updatedAt) => <TimestampDisplay isoTimestamp={updatedAt} />}
-      />
-      <Table.Column
-        key="actions"
-        dataIndex="actions"
-        title="Actions"
-        onCell={() => ({
-          className: 'column-actions',
-        })}
-        render={(_: any, record: TransactionDto) => (
-          <Row
-            className="view-charging-stations"
-            justify="end"
-            align="middle"
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
-              push(path);
-            }}
-          >
-            View Detail <ArrowRightIcon />
-          </Row>
-        )}
       />
     </>
   );
