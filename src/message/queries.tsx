@@ -136,6 +136,11 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
           idToken
         }
       }
+      StartTransactions {
+        IdToken {
+          idToken
+        }
+      }
       ChargingStation {
         id
         isOnline
@@ -143,6 +148,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
         createdAt
         updatedAt
         Location {
+          id
           name
           address
           city
