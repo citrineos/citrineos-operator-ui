@@ -21,11 +21,6 @@ import { ResourceType } from '../../../resource-type';
 import { Country, countryStateData } from '../country.state.data';
 import { MapLocationPicker } from '../../../components/map/map.location.picker';
 import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
-import {
-  geocodeAddress,
-  getAddressComponent,
-  getFullAddress,
-} from '@util/geocoding';
 import { getSerializedValues } from '@util/middleware';
 import { LocationDto, LocationDtoProps } from '../../../dtos/location.dto';
 import { BaseKey, useNavigation, useUpdateMany } from '@refinedev/core';
@@ -63,24 +58,19 @@ export const LocationsUpsert = () => {
       const prevStations =
         form.getFieldValue(LocationDtoProps.chargingStations) || [];
 
-      // Compute added and removed charging stations
       const currentIds = new Set(
         currentStations.map((cs: ChargingStationDto) => cs.id),
       );
       const prevIds = new Set(
         prevStations.map((cs: ChargingStationDto) => cs.id),
       );
-
       const addedIds = [...currentIds].filter(
         (id) => !prevIds.has(id),
       ) as BaseKey[];
       const removedIds = [...prevIds].filter(
         (id) => !currentIds.has(id),
       ) as BaseKey[];
-
-      // Create update payloads
       const updateOperations = [];
-
       if (addedIds.length > 0) {
         updateOperations.push(
           new Promise((resolve, reject) => {
@@ -103,7 +93,6 @@ export const LocationsUpsert = () => {
           }),
         );
       }
-
       if (removedIds.length > 0) {
         updateOperations.push(
           new Promise((resolve, reject) => {
@@ -123,8 +112,6 @@ export const LocationsUpsert = () => {
           }),
         );
       }
-
-      // Wait for all mutations to complete
       try {
         await Promise.all(updateOperations);
         message.success('Location updated successfully').then();
@@ -158,13 +145,10 @@ export const LocationsUpsert = () => {
 
   const onFinish = () => {
     formValuesRef.current = form.getFieldsValue(true);
-
     if (isSubmitting) return;
     setIsSubmitting(true);
-
     const input = { ...formValuesRef.current };
     delete input[LocationDtoProps.chargingStations];
-
     const newItem: any = getSerializedValues(input, LocationDto);
     formProps.onFinish?.(newItem);
   };
@@ -173,39 +157,6 @@ export const LocationsUpsert = () => {
     form?.setFieldsValue({
       coordinates: { latitude: point.latitude, longitude: point.longitude },
     });
-  };
-
-  const handleGeocode = async () => {
-    const address = getFullAddress(formProps?.form?.getFieldsValue(true));
-    if (!address) {
-      message.warning('Please enter an address first.');
-      return;
-    }
-
-    try {
-      const response = await geocodeAddress(address);
-      const location = response.geometry.location;
-      const addressComponents = response.address_components;
-      const point = new GeoPoint(location.lat, location.lng);
-      const addressObj = {
-        address:
-          getAddressComponent(addressComponents, 'street_number') +
-          ' ' +
-          getAddressComponent(addressComponents, 'route'),
-        city: getAddressComponent(addressComponents, 'locality'),
-        state: getAddressComponent(
-          addressComponents,
-          'administrative_area_level_1',
-        ),
-        postalCode: getAddressComponent(addressComponents, 'postal_code'),
-        country: getAddressComponent(addressComponents, 'country'),
-        coordinates: { latitude: point.latitude, longitude: point.longitude },
-      };
-      formProps?.form?.setFieldsValue(addressObj);
-      message.success('Address geocoded successfully.');
-    } catch (_error: any) {
-      message.error('Error fetching coordinates.');
-    }
   };
 
   return (
@@ -329,7 +280,7 @@ export const LocationsUpsert = () => {
               </Col>
             </Row>
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span="12">
                 <Form.Item
                   label="Latitude"
                   key={GeoPointProps.latitude}
@@ -346,7 +297,6 @@ export const LocationsUpsert = () => {
                           GeoPointProps.longitude,
                         ]),
                       );
-
                       if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                         form.setFieldsValue({
                           [LocationDtoProps.coordinates]: {
@@ -359,7 +309,7 @@ export const LocationsUpsert = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col span="12">
                 <Form.Item
                   label="Longitude"
                   key={GeoPointProps.longitude}
@@ -391,15 +341,6 @@ export const LocationsUpsert = () => {
             </Row>
             <Row style={{ marginTop: '10px' }}>
               <Col>
-                <Row style={{ marginBottom: '20px' }}>
-                  <Button
-                    type="default"
-                    onClick={handleGeocode}
-                    data-testid="geocode-button"
-                  >
-                    Get Coordinates
-                  </Button>
-                </Row>
                 <Row style={{ marginBottom: '10px' }}>
                   <Upload>
                     <Button icon={<UploadOutlined />}>Upload Image</Button>
