@@ -1,10 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Select, Table, Row, Col, Typography, message, Form } from 'antd';
-import { useList } from '@refinedev/core';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Select, Table, Row, Col, Typography, message, Input } from 'antd';
+import { useList, type CrudFilter } from '@refinedev/core';
 import { VARIABLE_ATTRIBUTE_LIST_QUERY } from '../../../pages/variable-attributes/queries';
 import { CHANGE_CONFIGURATION_LIST_QUERY } from './queries';
 
 const { Text } = Typography;
+const { Search } = Input;
+
+interface VariableAttribute {
+  id: string;
+  type: string;
+  value: string;
+  Variable: {
+    name: string;
+    instance: string;
+  };
+  Component: {
+    name: string;
+    instance: string;
+  };
+  evseDatabaseId: number | null;
+}
+
+interface ChangeConfiguration {
+  stationId: string;
+  key: string;
+  value?: string | null;
+  readonly?: boolean | null;
+}
+
+interface ChargingStationConfigurationProps {
+  stationId: string;
+}
 
 const CONFIG_1_6_COLUMNS = [
   {
@@ -75,46 +102,29 @@ const CONFIG_2_0_1_COLUMNS = [
   },
 ];
 
-interface VariableAttribute {
-  id: string;
-  type: string;
-  value: string;
-  Variable: {
-    name: string;
-    instance: string;
-  };
-  Component: {
-    name: string;
-    instance: string;
-  };
-  evseDatabaseId: number | null;
-}
-
-interface ChangeConfiguration {
-  stationId: string;
-  key: string;
-  value?: string | null;
-  readonly?: boolean | null;
-}
-
-interface ChargingStationConfigurationProps {
-  stationId: string;
-}
-
 export const ChargingStationConfiguration: React.FC<
   ChargingStationConfigurationProps
 > = ({ stationId }) => {
   const [version, setVersion] = useState<'1.6' | '2.0.1'>('1.6');
+  const [searchTerm, setSearchTerm] = useState('');
   const [dataSource, setDataSource] = useState<any[]>([]);
-
   const [currentVariableAttributes, setCurrentVariableAttributes] = useState(1);
   const [pageSizeVariableAttributes, setPageSizeVariableAttributes] =
     useState(20);
-
   const [currentChangeConfigurations, setCurrentChangeConfigurations] =
     useState(1);
   const [pageSizeChangeConfigurations, setPageSizeChangeConfigurations] =
     useState(20);
+
+  const attributeFilters = useMemo<CrudFilter[]>(
+    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    [stationId],
+  );
+
+  const configFilters = useMemo<CrudFilter[]>(
+    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    [stationId],
+  );
 
   const {
     data: variableAttributesResult,
@@ -122,10 +132,8 @@ export const ChargingStationConfiguration: React.FC<
     error: attributesError,
   } = useList<VariableAttribute>({
     resource: 'VariableAttributes',
-    meta: {
-      gqlQuery: VARIABLE_ATTRIBUTE_LIST_QUERY,
-    },
-    filters: [{ field: 'stationId', operator: 'eq', value: stationId }],
+    meta: { gqlQuery: VARIABLE_ATTRIBUTE_LIST_QUERY },
+    filters: attributeFilters,
     sorters: [{ field: 'createdAt', order: 'desc' }],
     pagination: {
       current: currentVariableAttributes,
@@ -139,10 +147,8 @@ export const ChargingStationConfiguration: React.FC<
     error: configurationsError,
   } = useList<ChangeConfiguration>({
     resource: 'ChangeConfigurations',
-    meta: {
-      gqlQuery: CHANGE_CONFIGURATION_LIST_QUERY,
-    },
-    filters: [{ field: 'stationId', operator: 'eq', value: stationId }],
+    meta: { gqlQuery: CHANGE_CONFIGURATION_LIST_QUERY },
+    filters: configFilters,
     sorters: [{ field: 'key', order: 'asc' }],
     pagination: {
       current: currentChangeConfigurations,
@@ -152,68 +158,81 @@ export const ChargingStationConfiguration: React.FC<
 
   useEffect(() => {
     if (version === '2.0.1' && variableAttributesResult?.data) {
-      const formattedData = variableAttributesResult.data.map(
-        (attribute: VariableAttribute) => ({
+      setDataSource(
+        variableAttributesResult.data.map((attribute) => ({
           key: attribute.id,
           type: attribute.type,
           value: attribute.value,
           component: `${attribute.Component.name}:${attribute.Component.instance}`,
           variable: `${attribute.Variable.name}:${attribute.Variable.instance}`,
-          evse: attribute.evseDatabaseId
-            ? attribute.evseDatabaseId.toString()
-            : '',
-        }),
+          evse: attribute.evseDatabaseId?.toString() || '',
+        })),
       );
-      setDataSource(formattedData);
     } else if (version === '1.6' && changeConfigurationsResult?.data) {
-      const formattedData = changeConfigurationsResult.data.map(
-        (config: ChangeConfiguration) => ({
+      setDataSource(
+        changeConfigurationsResult.data.map((config) => ({
           key: config.key,
-          keyField: config.key,
           value: config.value,
-        }),
+        })),
       );
-      setDataSource(formattedData);
     }
-    if (version === '2.0.1' && attributesError) {
+
+    if (attributesError) {
       message.error('Failed to load variable attributes');
     }
-    if (version === '1.6' && configurationsError) {
+    if (configurationsError) {
       message.error('Failed to load change configurations');
     }
   }, [
     version,
     variableAttributesResult,
-    attributesError,
     changeConfigurationsResult,
+    attributesError,
     configurationsError,
-    stationId,
   ]);
 
-  const handleVersionChange = (value: '1.6' | '2.0.1') => {
-    setVersion(value);
-  };
+  const filteredDataSource = useMemo(() => {
+    if (!searchTerm) return dataSource;
+    const term = searchTerm.toLowerCase();
+    return dataSource.filter((item) => {
+      const valuesToCheck =
+        version === '1.6'
+          ? [item.key, item.value]
+          : [item.type, item.value, item.component, item.variable, item.evse];
+      return valuesToCheck.some((val) =>
+        val?.toString().toLowerCase().includes(term),
+      );
+    });
+  }, [dataSource, searchTerm, version]);
 
   return (
     <div>
-      <Row style={{ marginBottom: 16 }}>
+      <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={12}>
           <Text>Select OCPP Version</Text>
           <Select
             value={version}
-            onChange={handleVersionChange}
+            onChange={(v) => setVersion(v)}
             style={{ width: '100%' }}
           >
             <Select.Option value="1.6">OCPP 1.6</Select.Option>
             <Select.Option value="2.0.1">OCPP 2.0.1</Select.Option>
           </Select>
         </Col>
+        <Col span={12}>
+          <Text>Search</Text>
+          <Search
+            placeholder="Search..."
+            allowClear
+            onSearch={(val) => setSearchTerm(val)}
+            style={{ width: '100%' }}
+          />
+        </Col>
       </Row>
       <Table
         bordered
-        dataSource={dataSource}
+        dataSource={filteredDataSource}
         columns={version === '1.6' ? CONFIG_1_6_COLUMNS : CONFIG_2_0_1_COLUMNS}
-        rowClassName="editable-row"
         pagination={
           version === '2.0.1'
             ? {
