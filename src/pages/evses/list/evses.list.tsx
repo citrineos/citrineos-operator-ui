@@ -2,11 +2,11 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Table, Button, Col, Row, Modal, Dropdown } from 'antd';
 import { useDispatch } from 'react-redux';
 import { EvseDto } from '../../../dtos/evse.dto';
-import { EvseUpsert } from '../upsert/evses.upsert';
 import { ConnectorDto } from '../../../dtos/connector.dto';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
+import { EvseUpsert } from '../upsert/evses.upsert';
 import { ConnectorsUpsert } from '../../../pages/connectors/upsert/connectors.upsert';
+import { PlusIcon } from '../../../components/icons/plus.icon';
 import { setSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { useOne } from '@refinedev/core';
 import { CHARGING_STATIONS_GET_QUERY } from '../../../pages/charging-stations/queries';
@@ -28,13 +28,18 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
   const { data, isLoading } = useOne<ChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     id: stationId,
-    meta: {
-      gqlQuery: CHARGING_STATIONS_GET_QUERY,
-    },
+    meta: { gqlQuery: CHARGING_STATIONS_GET_QUERY },
     queryOptions: getPlainToInstanceOptions(ChargingStationDto, true),
   });
-
   const station = data?.data;
+
+  const connectorById = useMemo<Record<number, ConnectorDto>>(() => {
+    const map: Record<number, ConnectorDto> = {};
+    station?.connectors?.forEach((conn) => {
+      map[conn.id] = conn;
+    });
+    return map;
+  }, [station]);
 
   const openModal = useCallback(
     (
@@ -47,13 +52,11 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     },
     [],
   );
-
   const closeModal = useCallback(() => {
     setIsModalVisible(false);
     setModalType(null);
     setSelectedItem(null);
   }, []);
-
   const handleFormSubmit = useCallback(() => {
     closeModal();
   }, [closeModal]);
@@ -69,26 +72,18 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
 
   const columns = useMemo(
     () => [
-      {
-        title: 'Evse ID',
-        dataIndex: 'id',
-        key: 'id',
-      },
+      { title: 'Evse ID', dataIndex: 'id', key: 'id' },
       {
         title: 'Connector ID',
-        dataIndex: 'connectorId',
         key: 'connectorId',
+        render: (_: any, record: EvseDto) => {
+          const linkId = record.connectorId;
+          const connector = linkId != null ? connectorById[linkId] : undefined;
+          return connector?.connectorId ?? '-';
+        },
       },
-      {
-        title: 'Database ID',
-        dataIndex: 'databaseId',
-        key: 'databaseId',
-      },
-      {
-        title: 'Evse Status',
-        dataIndex: 'status',
-        key: 'status',
-      },
+      { title: 'Database ID', dataIndex: 'databaseId', key: 'databaseId' },
+      { title: 'Evse Status', dataIndex: 'status', key: 'status' },
       {
         title: 'Actions',
         key: 'actions',
@@ -102,7 +97,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         ),
       },
     ],
-    [openModal],
+    [openModal, connectorById],
   );
 
   const menuItems = [

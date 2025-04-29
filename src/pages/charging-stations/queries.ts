@@ -234,6 +234,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         updatedAt
       }
       Connectors {
+        id
         connectorId
         status
         errorCode

@@ -18,6 +18,7 @@ import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
 import { ToClass } from '@util/Transformers';
 import { OCPPMessageDto } from './ocpp.message.dto';
 import { OCPPVersion } from '@citrineos/base';
+import { ConnectorDto } from './connector.dto';
 
 export enum ChargingStationDtoProps {
   id = 'id',
@@ -100,6 +101,12 @@ export class ChargingStationDto extends BaseDto {
       .map((val: { value: string }) => val.value);
   })
   connectorTypes?: string[];
+
+  @IsArray()
+  @IsOptional()
+  @Type(() => ConnectorDto)
+  @Expose({ name: 'Connectors' })
+  connectors?: ConnectorDto[];
 
   @IsArray()
   @IsOptional()
