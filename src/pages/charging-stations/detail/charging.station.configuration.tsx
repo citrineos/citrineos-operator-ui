@@ -20,6 +20,10 @@ interface VariableAttribute {
     instance: string;
   };
   evseDatabaseId: number | null;
+  Evse: {
+    id: string;
+    connectorId: string;
+  };
 }
 
 interface ChangeConfiguration {
@@ -163,9 +167,9 @@ export const ChargingStationConfiguration: React.FC<
           key: attribute.id,
           type: attribute.type,
           value: attribute.value,
-          component: `${attribute.Component.name}:${attribute.Component.instance}`,
-          variable: `${attribute.Variable.name}:${attribute.Variable.instance}`,
-          evse: attribute.evseDatabaseId?.toString() || '',
+          component: `${attribute.Component?.name ?? '-'}:${attribute.Component?.instance ?? '-'}`,
+          variable: `${attribute.Variable?.name ?? '-'}:${attribute.Variable?.instance ?? '-'}`,
+          evse: `${attribute.Evse.id}:${attribute.Evse.connectorId}`,
         })),
       );
     } else if (version === '1.6' && changeConfigurationsResult?.data) {

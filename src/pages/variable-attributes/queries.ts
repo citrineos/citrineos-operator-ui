@@ -41,6 +41,13 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
+      Evse {
+        databaseId
+        id
+        connectorId
+        createdAt
+        updatedAt
+      }
     }
     VariableAttributes_aggregate(where: $where) {
       aggregate {
