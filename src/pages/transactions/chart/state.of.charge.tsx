@@ -12,21 +12,25 @@ import {
   getTimestampToMeasurandArray,
   MeterValueDto,
 } from '../../../dtos/meter.value.dto';
-import { MeasurandEnumType } from '@OCPP2_0_1';
+import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 
 export interface StateOfChargeProps {
   meterValues: MeterValueDto[];
+  validContexts: ReadingContextEnumType[];
 }
 
-export const StateOfCharge = ({ meterValues }: StateOfChargeProps) => {
+export const StateOfCharge = ({
+  meterValues,
+  validContexts,
+}: StateOfChargeProps) => {
   const strokeColor = 'var(--grayscale-color-1)';
   const lineColor = 'var(--primary-color-1)';
 
-  // todo temporary, need real soc
   const chartData = useMemo(() => {
     const rawData = getTimestampToMeasurandArray(
       meterValues,
       MeasurandEnumType.SoC,
+      new Set(validContexts),
     ).map(([elapsedTime]) => ({
       elapsedTime,
     }));
@@ -35,9 +39,9 @@ export const StateOfCharge = ({ meterValues }: StateOfChargeProps) => {
 
     return rawData.map(({ elapsedTime }, index) => ({
       elapsedTime,
-      percentage: (20 + (index / (rawData.length - 1)) * 60).toFixed(2), // Scale from 20% to 80%
+      percentage: (20 + (index / (rawData.length - 1)) * 60).toFixed(2),
     }));
-  }, [meterValues]);
+  }, [meterValues, validContexts]);
 
   if (!chartData || chartData.length === 0) {
     return <div>No State of Charge data available</div>;

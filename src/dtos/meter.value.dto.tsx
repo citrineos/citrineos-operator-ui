@@ -55,6 +55,7 @@ const validContexts = new Set([
 export const getTimestampToMeasurandArray = (
   sortedMeterValues: MeterValueDto[],
   measurand: MeasurandEnumType,
+  validContextsArg: Set<ReadingContextEnumType>,
 ): [number, string][] => {
   if (sortedMeterValues.length === 0) return [];
 
@@ -64,7 +65,7 @@ export const getTimestampToMeasurandArray = (
   for (const meterValue of sortedMeterValues) {
     if (
       !meterValue.sampledValue[0].context ||
-      validContexts.has(meterValue.sampledValue[0].context)
+      validContextsArg.has(meterValue.sampledValue[0].context)
     ) {
       const overallValue = findOverallValue(meterValue.sampledValue, measurand);
       if (overallValue) {
