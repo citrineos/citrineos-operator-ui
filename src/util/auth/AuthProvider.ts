@@ -19,7 +19,7 @@ const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
  * Creates a default permissive auth provider that uses localStorage
  * for persistence and always grants permissions
  */
-export const createAuthProvider = (
+const createAuthProvider = (
   config: AuthProviderConfig = {},
 ): AuthProvider & AuthenticationContextProvider => {
   const { tokenKey = 'auth_token', userKey = 'auth_user' } = config;
@@ -145,3 +145,6 @@ export const createAuthProvider = (
     getToken,
   };
 };
+
+export const authProvider = createAuthProvider();
+
