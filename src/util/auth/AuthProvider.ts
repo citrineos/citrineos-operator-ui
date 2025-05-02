@@ -127,8 +127,20 @@ const createAuthProvider = (
     },
 
     onError: async (error) => {
+      console.log(`Authprovider: onError triggered, error: ${error}`);
+      // Only logout for auth errors, not schema validation errors
+      if (error.statusCode === 401) {
+        return {
+          logout: true,
+        };
+      }
+
+      // For other errors, just return an error without logging out
       return {
-        logout: true,
+        error: {
+          message: error.message,
+          name: error.name
+        }
       };
     },
 
