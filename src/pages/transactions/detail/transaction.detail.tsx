@@ -25,10 +25,12 @@ import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { findOverallValue } from '../../../dtos/meter.value.dto';
 import { TransactionDetailCard } from './transaction.detail.card';
+import { EnergyOverTime } from '../chart/energy.over.time';
 
 enum ChartType {
-  POWER = 'power',
-  SOC = 'soc',
+  POWER = 'Power Over Time',
+  ENERGY = 'Energy Over Time',
+  SOC = 'State of Charge Over Time',
 }
 
 export const TransactionDetail = () => {
@@ -38,7 +40,7 @@ export const TransactionDetail = () => {
     ChartType.POWER,
   );
   const [selectedChartRight, setSelectedChartRight] = useState<ChartType>(
-    ChartType.SOC,
+    ChartType.ENERGY,
   );
 
   const [validContexts, setValidContexts] = useState<ReadingContextEnumType[]>([
@@ -46,6 +48,16 @@ export const TransactionDetail = () => {
     ReadingContextEnumType.Sample_Periodic,
     ReadingContextEnumType.Transaction_End,
   ]);
+
+  const generateReadingContextOptions = () => {
+    const enumValues = Object.values(ReadingContextEnumType);
+
+    return enumValues.map((value) => (
+      <Select.Option key={value} value={value}>
+        {value}
+      </Select.Option>
+    ));
+  };
 
   const { data: transactionData, isLoading } = useOne<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -93,24 +105,8 @@ export const TransactionDetail = () => {
 
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
 
-  const handleChartChangeLeft = useCallback(
-    (value: ChartType) => setSelectedChartLeft(value),
-    [],
-  );
-  const handleChartChangeRight = useCallback(
-    (value: ChartType) => setSelectedChartRight(value),
-    [],
-  );
-
   if (isLoading) return <p>Loading...</p>;
   if (!transaction) return <p>No Data Found</p>;
-
-  const hasSOCData = meterValues.some((mv) =>
-    findOverallValue(mv.sampledValue, MeasurandEnumType.SoC),
-  );
-  const hasPowerData = meterValues.some((mv) =>
-    findOverallValue(mv.sampledValue, MeasurandEnumType.Power_Active_Import),
-  );
 
   const tabItems: TabsProps['items'] = [
     {
@@ -136,15 +132,7 @@ export const TransactionDetail = () => {
               setValidContexts(vals as ReadingContextEnumType[])
             }
           >
-            <Select.Option value={ReadingContextEnumType.Transaction_Begin}>
-              Transaction.Begin
-            </Select.Option>
-            <Select.Option value={ReadingContextEnumType.Sample_Periodic}>
-              Sample.Periodic
-            </Select.Option>
-            <Select.Option value={ReadingContextEnumType.Transaction_End}>
-              Transaction.End
-            </Select.Option>
+            {generateReadingContextOptions()}
           </Select>
 
           <Flex gap={32}>
@@ -154,24 +142,28 @@ export const TransactionDetail = () => {
                 value={selectedChartLeft}
                 onChange={(value) => setSelectedChartLeft(value as ChartType)}
               >
-                {hasPowerData && (
-                  <Select.Option value={ChartType.POWER}>
-                    Power Over Time
-                  </Select.Option>
-                )}
-                {hasSOCData && (
-                  <Select.Option value={ChartType.SOC}>
-                    State of Charge
-                  </Select.Option>
-                )}
+                <Select.Option value={ChartType.POWER}>
+                  {ChartType.POWER}
+                </Select.Option>
+                <Select.Option value={ChartType.ENERGY}>
+                  {ChartType.ENERGY}
+                </Select.Option>
+                <Select.Option value={ChartType.SOC}>
+                  {ChartType.SOC}
+                </Select.Option>
               </Select>
               <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-                {selectedChartLeft === ChartType.POWER && hasPowerData ? (
+                {selectedChartLeft === ChartType.POWER ? (
                   <PowerOverTime
                     meterValues={meterValues}
                     validContexts={validContexts}
                   />
-                ) : selectedChartLeft === ChartType.SOC && hasSOCData ? (
+                ) : selectedChartLeft === ChartType.ENERGY ? (
+                  <EnergyOverTime
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : selectedChartLeft === ChartType.SOC ? (
                   <StateOfCharge
                     meterValues={meterValues}
                     validContexts={validContexts}
@@ -188,24 +180,28 @@ export const TransactionDetail = () => {
                 value={selectedChartRight}
                 onChange={(value) => setSelectedChartRight(value as ChartType)}
               >
-                {hasPowerData && (
-                  <Select.Option value={ChartType.POWER}>
-                    Power Over Time
-                  </Select.Option>
-                )}
-                {hasSOCData && (
-                  <Select.Option value={ChartType.SOC}>
-                    State of Charge
-                  </Select.Option>
-                )}
+                <Select.Option value={ChartType.POWER}>
+                  {ChartType.POWER}
+                </Select.Option>
+                <Select.Option value={ChartType.ENERGY}>
+                  {ChartType.ENERGY}
+                </Select.Option>
+                <Select.Option value={ChartType.SOC}>
+                  {ChartType.SOC}
+                </Select.Option>
               </Select>
               <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-                {selectedChartRight === ChartType.POWER && hasPowerData ? (
+                {selectedChartRight === ChartType.POWER ? (
                   <PowerOverTime
                     meterValues={meterValues}
                     validContexts={validContexts}
                   />
-                ) : selectedChartRight === ChartType.SOC && hasSOCData ? (
+                ) : selectedChartRight === ChartType.ENERGY ? (
+                  <EnergyOverTime
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : selectedChartRight === ChartType.SOC ? (
                   <StateOfCharge
                     meterValues={meterValues}
                     validContexts={validContexts}
