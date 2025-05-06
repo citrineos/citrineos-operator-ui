@@ -52,8 +52,28 @@ export const AUTHORIZATIONS_CREATE_MUTATION = gql`
       id
       allowedConnectorTypes
       disallowedEvseIdPrefixes
+      idTokenId
+      idTokenInfoId
       createdAt
       updatedAt
+      IdToken {
+        id
+        idToken
+        type
+        createdAt
+        updatedAt
+      }
+      IdTokenInfo {
+        id
+        cacheExpiryDateTime
+        chargingPriority
+        language1
+        language2
+        personalMessage
+        status
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
