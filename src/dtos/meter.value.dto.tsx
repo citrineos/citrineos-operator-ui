@@ -112,7 +112,9 @@ export const findOverallValue = (
       PhaseEnumType.L2,
       PhaseEnumType.L3,
     ]);
-    const summableSampledValues = measurandSampledValues.filter((sv) => sv.phase && summablePhases.has(sv.phase));
+    const summableSampledValues = measurandSampledValues.filter(
+      (sv) => sv.phase && summablePhases.has(sv.phase),
+    );
     if (summableSampledValues.length < 3) {
       return undefined; // Not all phases are present, cannot sum
     }
