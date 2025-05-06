@@ -14,15 +14,15 @@ import {
 } from '../../../dtos/meter.value.dto';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 
-export interface PowerOverTimeProps {
+export interface EnergyOverTimeProps {
   meterValues: MeterValueDto[];
   validContexts: ReadingContextEnumType[];
 }
 
-export const PowerOverTime = ({
+export const EnergyOverTime = ({
   meterValues,
   validContexts,
-}: PowerOverTimeProps) => {
+}: EnergyOverTimeProps) => {
   const strokeColor = 'var(--grayscale-color-1)';
   const lineColor = 'var(--secondary-color-2)';
   const buffer = 1;
@@ -33,7 +33,7 @@ export const PowerOverTime = ({
 
     const processedData = getTimestampToMeasurandArray(
       meterValues,
-      MeasurandEnumType.Power_Active_Import,
+      MeasurandEnumType.Energy_Active_Import_Register,
       new Set(validContexts),
     ).map(([elapsedTime, kw]) => {
       const kwFloat = Number(kw);
@@ -46,7 +46,7 @@ export const PowerOverTime = ({
   }, [meterValues, validContexts]);
 
   if (!chartData || chartData.length === 0) {
-    return <div>No Power data available</div>;
+    return <div>No Energy data available</div>;
   }
 
   return (
@@ -70,7 +70,7 @@ export const PowerOverTime = ({
           tick={{ fill: strokeColor }}
           stroke={strokeColor}
           label={{
-            value: 'Power (kW)',
+            value: 'Energy (kW)',
             angle: -90,
             position: 'insideLeft',
             fill: strokeColor,

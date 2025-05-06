@@ -4,7 +4,11 @@ import { Type } from 'class-transformer';
 import { TransformDate } from '@util/TransformDate';
 import { BaseDto } from './base.dto';
 import { SampledValueDto } from './sampled.value.dto';
-import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
+import {
+  MeasurandEnumType,
+  PhaseEnumType,
+  ReadingContextEnumType,
+} from '@OCPP2_0_1';
 
 export enum MeterValueDtoProps {
   id = 'id',
@@ -55,6 +59,7 @@ const validContexts = new Set([
 export const getTimestampToMeasurandArray = (
   sortedMeterValues: MeterValueDto[],
   measurand: MeasurandEnumType,
+  validContextsArg: Set<ReadingContextEnumType>,
 ): [number, string][] => {
   if (sortedMeterValues.length === 0) return [];
 
@@ -64,7 +69,7 @@ export const getTimestampToMeasurandArray = (
   for (const meterValue of sortedMeterValues) {
     if (
       !meterValue.sampledValue[0].context ||
-      validContexts.has(meterValue.sampledValue[0].context)
+      validContextsArg.has(meterValue.sampledValue[0].context)
     ) {
       const overallValue = findOverallValue(meterValue.sampledValue, measurand);
       if (overallValue) {
@@ -90,7 +95,42 @@ export const findOverallValue = (
   sampledValues: SampledValueDto[],
   measurand: MeasurandEnumType,
 ): SampledValueDto | undefined => {
-  return sampledValues.find((sv) => !sv.phase && sv.measurand === measurand);
+  const measurandSampledValues = sampledValues.filter(
+    (sv) =>
+      sv.measurand === measurand ||
+      (!sv.measurand && // Measurand defaults to Energy.Active.Import.Register
+        measurand === MeasurandEnumType.Energy_Active_Import_Register),
+  );
+  if (measurandSampledValues.length === 0) {
+    return undefined;
+  }
+  let summedPhasesSampledValue = measurandSampledValues.find((sv) => !sv.phase);
+  if (!summedPhasesSampledValue) {
+    // Manually sum all phases if no summed phase is found
+    const summablePhases = new Set<PhaseEnumType>([
+      PhaseEnumType.L1,
+      PhaseEnumType.L2,
+      PhaseEnumType.L3,
+    ]);
+    const summableSampledValues = measurandSampledValues.filter(
+      (sv) => sv.phase && summablePhases.has(sv.phase),
+    );
+    if (summableSampledValues.length < 3) {
+      return undefined; // Not all phases are present, cannot sum
+    }
+    const summedPhasesValue = summableSampledValues.reduce((acc, sv) => {
+      if (sv.phase) {
+        return acc + sv.value;
+      }
+      return acc;
+    }, 0);
+    summedPhasesSampledValue = {
+      ...measurandSampledValues[0],
+      value: summedPhasesValue,
+      phase: null,
+    };
+  }
+  return summedPhasesSampledValue;
 };
 
 export const normalizeToKwh = (

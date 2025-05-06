@@ -22,13 +22,15 @@ import {
 } from '../../../dtos/meter.value.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
-import { MeasurandEnumType } from '@OCPP2_0_1';
+import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { findOverallValue } from '../../../dtos/meter.value.dto';
 import { TransactionDetailCard } from './transaction.detail.card';
+import { EnergyOverTime } from '../chart/energy.over.time';
 
 enum ChartType {
-  POWER = 'power',
-  SOC = 'soc',
+  POWER = 'Power Over Time',
+  ENERGY = 'Energy Over Time',
+  SOC = 'State of Charge Over Time',
 }
 
 export const TransactionDetail = () => {
@@ -38,8 +40,24 @@ export const TransactionDetail = () => {
     ChartType.POWER,
   );
   const [selectedChartRight, setSelectedChartRight] = useState<ChartType>(
-    ChartType.SOC,
+    ChartType.ENERGY,
   );
+
+  const [validContexts, setValidContexts] = useState<ReadingContextEnumType[]>([
+    ReadingContextEnumType.Transaction_Begin,
+    ReadingContextEnumType.Sample_Periodic,
+    ReadingContextEnumType.Transaction_End,
+  ]);
+
+  const generateReadingContextOptions = () => {
+    const enumValues = Object.values(ReadingContextEnumType);
+
+    return enumValues.map((value) => (
+      <Select.Option key={value} value={value}>
+        {value}
+      </Select.Option>
+    ));
+  };
 
   const { data: transactionData, isLoading } = useOne<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -87,24 +105,8 @@ export const TransactionDetail = () => {
 
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
 
-  const handleChartChangeLeft = useCallback(
-    (value: ChartType) => setSelectedChartLeft(value),
-    [],
-  );
-  const handleChartChangeRight = useCallback(
-    (value: ChartType) => setSelectedChartRight(value),
-    [],
-  );
-
   if (isLoading) return <p>Loading...</p>;
   if (!transaction) return <p>No Data Found</p>;
-
-  const hasSOCData = meterValues.some((mv) =>
-    findOverallValue(mv.sampledValue, MeasurandEnumType.SoC),
-  );
-  const hasPowerData = meterValues.some((mv) =>
-    findOverallValue(mv.sampledValue, MeasurandEnumType.Power_Active_Import),
-  );
 
   const tabItems: TabsProps['items'] = [
     {
@@ -120,64 +122,94 @@ export const TransactionDetail = () => {
       key: '2',
       label: 'Meter Value Data',
       children: (
-        <Flex gap={32} style={{ paddingTop: 32 }}>
-          <Flex vertical flex={1} gap={16}>
-            <Select
-              className="full-width"
-              value={selectedChartLeft}
-              onChange={(value) => setSelectedChartLeft(value as ChartType)}
-            >
-              {hasPowerData && (
-                <Select.Option value={ChartType.POWER}>
-                  Power Over Time
-                </Select.Option>
-              )}
-              {hasSOCData && (
-                <Select.Option value={ChartType.SOC}>
-                  State of Charge
-                </Select.Option>
-              )}
-            </Select>
-            <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-              {selectedChartLeft === ChartType.POWER && hasPowerData ? (
-                <PowerOverTime meterValues={meterValues} />
-              ) : selectedChartLeft === ChartType.SOC && hasSOCData ? (
-                <StateOfCharge meterValues={meterValues} />
-              ) : (
-                <div>No data available for selected chart</div>
-              )}
-            </Flex>
-          </Flex>
-          <Flex
-            vertical
-            flex={1}
-            gap={16}
-            style={{ aspectRatio: '1 / 1', maxHeight: 400 }}
+        <Flex vertical gap={32} style={{ paddingTop: 32 }}>
+          <Select
+            mode="multiple"
+            className="full-width"
+            style={{ width: '100%' }}
+            value={validContexts}
+            onChange={(vals) =>
+              setValidContexts(vals as ReadingContextEnumType[])
+            }
           >
-            <Select
-              className="full-width"
-              value={selectedChartRight}
-              onChange={(value) => setSelectedChartRight(value as ChartType)}
-            >
-              {hasPowerData && (
+            {generateReadingContextOptions()}
+          </Select>
+
+          <Flex gap={32}>
+            <Flex vertical flex={1} gap={16}>
+              <Select
+                className="full-width"
+                value={selectedChartLeft}
+                onChange={(value) => setSelectedChartLeft(value as ChartType)}
+              >
                 <Select.Option value={ChartType.POWER}>
-                  Power Over Time
+                  {ChartType.POWER}
                 </Select.Option>
-              )}
-              {hasSOCData && (
+                <Select.Option value={ChartType.ENERGY}>
+                  {ChartType.ENERGY}
+                </Select.Option>
                 <Select.Option value={ChartType.SOC}>
-                  State of Charge
+                  {ChartType.SOC}
                 </Select.Option>
-              )}
-            </Select>
-            <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-              {selectedChartRight === ChartType.POWER && hasPowerData ? (
-                <PowerOverTime meterValues={meterValues} />
-              ) : selectedChartRight === ChartType.SOC && hasSOCData ? (
-                <StateOfCharge meterValues={meterValues} />
-              ) : (
-                <div>No data available for selected chart</div>
-              )}
+              </Select>
+              <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
+                {selectedChartLeft === ChartType.POWER ? (
+                  <PowerOverTime
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : selectedChartLeft === ChartType.ENERGY ? (
+                  <EnergyOverTime
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : selectedChartLeft === ChartType.SOC ? (
+                  <StateOfCharge
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : (
+                  <div>No data available for selected chart</div>
+                )}
+              </Flex>
+            </Flex>
+
+            <Flex vertical flex={1} gap={16}>
+              <Select
+                className="full-width"
+                value={selectedChartRight}
+                onChange={(value) => setSelectedChartRight(value as ChartType)}
+              >
+                <Select.Option value={ChartType.POWER}>
+                  {ChartType.POWER}
+                </Select.Option>
+                <Select.Option value={ChartType.ENERGY}>
+                  {ChartType.ENERGY}
+                </Select.Option>
+                <Select.Option value={ChartType.SOC}>
+                  {ChartType.SOC}
+                </Select.Option>
+              </Select>
+              <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
+                {selectedChartRight === ChartType.POWER ? (
+                  <PowerOverTime
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : selectedChartRight === ChartType.ENERGY ? (
+                  <EnergyOverTime
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : selectedChartRight === ChartType.SOC ? (
+                  <StateOfCharge
+                    meterValues={meterValues}
+                    validContexts={validContexts}
+                  />
+                ) : (
+                  <div>No data available for selected chart</div>
+                )}
+              </Flex>
             </Flex>
           </Flex>
         </Flex>
