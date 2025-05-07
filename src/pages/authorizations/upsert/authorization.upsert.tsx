@@ -79,9 +79,6 @@ export const AuthorizationUpsert = () => {
     },
   });
 
-  console.log('idTokenId', idTokenId);
-  console.log('idTokenInfoId', idTokenInfoId);
-
   const handleOnChange = useCallback(() => {
     setIsFormChanged(true);
   }, []);
