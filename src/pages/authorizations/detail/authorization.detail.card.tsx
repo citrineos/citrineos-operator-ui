@@ -32,36 +32,6 @@ export const AuthorizationDetailCard: React.FC<
 
     mutate(
       {
-        id: authorization.idTokenInfoId.toString(),
-        resource: ResourceType.ID_TOKEN_INFOS,
-        meta: {
-          gqlMutation: ID_TOKEN_INFOS_DELETE_MUTATION,
-        },
-      },
-      {
-        onError: () => {
-          message.error('Failed to delete id token info.');
-        },
-      },
-    );
-
-    mutate(
-      {
-        id: authorization.idTokenId.toString(),
-        resource: ResourceType.ID_TOKENS,
-        meta: {
-          gqlMutation: ID_TOKENS_DELETE_MUTATION,
-        },
-      },
-      {
-        onError: () => {
-          message.error('Failed to delete id token.');
-        },
-      },
-    );
-
-    mutate(
-      {
         id: authorization.id.toString(),
         resource: ResourceType.AUTHORIZATIONS,
         meta: {
@@ -70,6 +40,34 @@ export const AuthorizationDetailCard: React.FC<
       },
       {
         onSuccess: () => {
+          mutate(
+            {
+              id: authorization.idTokenId.toString(),
+              resource: ResourceType.ID_TOKENS,
+              meta: {
+                gqlMutation: ID_TOKENS_DELETE_MUTATION,
+              },
+            },
+            {
+              onError: () => {
+                message.error('Failed to delete id token.');
+              },
+            },
+          );
+          mutate(
+            {
+              id: authorization.idTokenInfoId.toString(),
+              resource: ResourceType.ID_TOKEN_INFOS,
+              meta: {
+                gqlMutation: ID_TOKEN_INFOS_DELETE_MUTATION,
+              },
+            },
+            {
+              onError: () => {
+                message.error('Failed to delete id token info.');
+              },
+            },
+          );
           push(`/${MenuSection.AUTHORIZATIONS}`);
         },
         onError: () => {
