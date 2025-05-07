@@ -4,7 +4,7 @@ import {
   AUTHORIZATIONS_EDIT_MUTATION,
   AUTHORIZATIONS_SHOW_QUERY,
 } from '../queries';
-import { useNavigation } from '@refinedev/core';
+import { GetOneResponse, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { Button, Flex, Form, Input, Modal, Select } from 'antd';
 import { ResourceType } from '../../../resource-type';
@@ -29,6 +29,16 @@ export const AuthorizationUpsert = () => {
   const authorizationId = params.id ? params.id : undefined;
   const [isFormChanged, setIsFormChanged] = useState(false);
 
+  // Add these state variables for the edit mutation
+  const [updateIdToken, setUpdateIdToken] = useState(false);
+  const [idTokenId, setIdTokenId] = useState<number | undefined>(undefined);
+  const [idTokenData, setIdTokenData] = useState<any>(undefined);
+  const [updateIdTokenInfo, setUpdateIdTokenInfo] = useState(false);
+  const [idTokenInfoId, setIdTokenInfoId] = useState<number | undefined>(
+    undefined,
+  );
+  const [idTokenInfoData, setIdTokenInfoData] = useState<any>(undefined);
+
   const { replace, goBack } = useNavigation();
 
   const { formProps } = useForm({
@@ -36,6 +46,15 @@ export const AuthorizationUpsert = () => {
     id: authorizationId,
     queryOptions: {
       enabled: !!authorizationId,
+      onSuccess: (data: GetOneResponse<AuthorizationDto>) => {
+        // Set the initial values for the edit mutation when data is loaded
+        if (data?.data.idTokenId) {
+          setIdTokenId(data?.data.idTokenId);
+        }
+        if (data?.data?.idTokenInfoId) {
+          setIdTokenInfoId(data?.data?.idTokenInfoId);
+        }
+      },
     },
     redirect: false,
     onMutationSuccess: (result) => {
@@ -48,7 +67,20 @@ export const AuthorizationUpsert = () => {
         ? AUTHORIZATIONS_EDIT_MUTATION
         : AUTHORIZATIONS_CREATE_MUTATION,
     },
+    mutationMeta: {
+      gqlVariables: {
+        updateIdToken,
+        idTokenId,
+        idTokenData,
+        updateIdTokenInfo,
+        idTokenInfoId,
+        idTokenInfoData,
+      },
+    },
   });
+
+  console.log('idTokenId', idTokenId);
+  console.log('idTokenInfoId', idTokenInfoId);
 
   const handleOnChange = useCallback(() => {
     setIsFormChanged(true);
@@ -73,28 +105,84 @@ export const AuthorizationUpsert = () => {
 
   const onFinish = useCallback(
     async (input: any) => {
-      const idTokenInput = {
-        idToken: input[IdTokenDtoProps.idToken],
-        type: input[IdTokenDtoProps.type],
-      };
-      console.log('idTokenInput', idTokenInput);
-      const newIdToken = getSerializedValues(idTokenInput, IdTokenDto);
-      const idTokenInfoInput = { status: input[IdTokenInfoDtoProps.status] };
-      console.log('idTokenInfoInput', idTokenInfoInput);
-      const newIdTokenInfo = getSerializedValues(
-        idTokenInfoInput,
-        IdTokenInfoDto,
-      );
-      const authoriationInput = {
-        [AuthorizationDtoProps.idToken]: newIdToken,
-        [AuthorizationDtoProps.idTokenInfo]: newIdTokenInfo,
-      };
-      console.log('authoriationInput', authoriationInput);
-      const newItem: any = getSerializedValues(
-        authoriationInput,
-        AuthorizationDto,
-      );
-      formProps.onFinish?.(newItem);
+      if (!authorizationId) {
+        const newIdToken = getSerializedValues(
+          input[AuthorizationDtoProps.idToken],
+          IdTokenDto,
+        );
+        const newIdTokenInfo = getSerializedValues(
+          input[AuthorizationDtoProps.idTokenInfo],
+          IdTokenInfoDto,
+        );
+        const authoriationInput = {
+          [AuthorizationDtoProps.idToken]: newIdToken,
+          [AuthorizationDtoProps.idTokenInfo]: newIdTokenInfo,
+        };
+        const newAuthorization: any = getSerializedValues(
+          authoriationInput,
+          AuthorizationDto,
+        );
+        const newItem = {
+          ...newAuthorization,
+          [AuthorizationDtoProps.idToken]: {
+            data: {
+              ...newIdToken,
+            },
+          },
+          [AuthorizationDtoProps.idTokenInfo]: {
+            data: {
+              ...newIdTokenInfo,
+            },
+          },
+        };
+        formProps.onFinish?.(newItem);
+      } else {
+        // Update edit mutation variables here
+        const idTokenInput = input[AuthorizationDtoProps.idToken];
+        const idTokenInfoInput = input[AuthorizationDtoProps.idTokenInfo];
+
+        // Process IdToken data if it exists
+        if (idTokenInput && Object.keys(idTokenInput).length > 0 && idTokenId) {
+          setUpdateIdToken(true);
+          const processedIdTokenData = getSerializedValues(
+            idTokenInput,
+            IdTokenDto,
+          );
+          setIdTokenData(processedIdTokenData);
+        } else {
+          setUpdateIdToken(false);
+        }
+
+        // Process IdTokenInfo data if it exists
+        if (
+          idTokenInfoInput &&
+          Object.keys(idTokenInfoInput).length > 0 &&
+          idTokenInfoId
+        ) {
+          setUpdateIdTokenInfo(true);
+          const processedIdTokenInfoData = getSerializedValues(
+            idTokenInfoInput,
+            IdTokenInfoDto,
+          );
+          setIdTokenInfoData(processedIdTokenInfoData);
+        } else {
+          setUpdateIdTokenInfo(false);
+        }
+
+        // Prepare the authorization object without nested objects
+        const authorizationInput = {
+          // Include fields you want to update on the authorization itself
+          // Exclude idToken and idTokenInfo since those will be updated separately
+        };
+
+        const updatedAuthorization = getSerializedValues(
+          authorizationInput,
+          AuthorizationDto,
+        );
+
+        // Call onFinish with just the authorization data
+        formProps.onFinish?.(updatedAuthorization);
+      }
     },
     [formProps],
   );
@@ -129,7 +217,7 @@ export const AuthorizationUpsert = () => {
           <Form.Item
             key={IdTokenDtoProps.idToken}
             label="Authorization IdToken"
-            name={IdTokenDtoProps.idToken}
+            name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.idToken]}
             rules={[{ required: true, message: 'IdToken is required' }]}
             data-testid={IdTokenDtoProps.idToken}
           >
@@ -138,7 +226,7 @@ export const AuthorizationUpsert = () => {
           <Form.Item
             key={IdTokenDtoProps.type}
             label="IdToken Type"
-            name={IdTokenDtoProps.type}
+            name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.type]}
             data-testid={IdTokenDtoProps.type}
           >
             <Select onChange={handleOnChange}>
@@ -148,9 +236,11 @@ export const AuthorizationUpsert = () => {
           <Form.Item
             key={IdTokenInfoDtoProps.status}
             label="IdToken Status"
-            name={IdTokenInfoDtoProps.status}
+            name={[
+              AuthorizationDtoProps.idTokenInfo,
+              IdTokenInfoDtoProps.status,
+            ]}
             data-testid={IdTokenInfoDtoProps.status}
-            hidden
           >
             <Select onChange={handleOnChange}>
               {renderEnumSelectOptions(AuthorizationStatusEnumType)}
