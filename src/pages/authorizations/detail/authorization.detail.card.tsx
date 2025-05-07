@@ -160,13 +160,13 @@ export const AuthorizationDetailCard: React.FC<
           </Flex>
 
           <Flex vertical>
-            <Button
+            {/* <Button
               type="text"
               icon={<EditOutlined />}
               onClick={() =>
                 push(`/${MenuSection.AUTHORIZATIONS}/${authorization.id}/edit`)
               }
-            />
+            /> */}
             <Button className="secondary" onClick={handleDeleteClick}>
               Delete
             </Button>

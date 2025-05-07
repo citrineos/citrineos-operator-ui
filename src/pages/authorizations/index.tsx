@@ -11,7 +11,7 @@ export const routes: React.FC = () => (
     <Route index element={<AuthorizationsList />} />
     <Route path="/new" element={<AuthorizationUpsert />} />
     <Route path="/:id" element={<AuthorizationDetail />} />
-    <Route path="/:id/edit" element={<AuthorizationUpsert />} />
+    {/* <Route path="/:id/edit" element={<AuthorizationUpsert />} /> */}
   </Routes>
 );
 
@@ -21,7 +21,7 @@ export const resources = [
     list: '/authorizations',
     create: '/authorizations/new',
     show: '/authorizations/:id',
-    edit: '/authorizations/:id/edit',
+    // edit: '/authorizations/:id/edit',
     meta: { canDelete: false },
     icon: <ContainerOutlined />,
   },
