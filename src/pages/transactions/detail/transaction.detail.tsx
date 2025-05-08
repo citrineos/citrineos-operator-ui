@@ -27,6 +27,8 @@ import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { TransactionDetailCard } from './transaction.detail.card';
+import { EnergyOverTime } from '../chart/energy.over.time';
+import { renderEnumSelectOptions } from '@util/renderUtil';
 
 enum ChartType {
   POWER = 'Power Over Time',
@@ -51,14 +53,6 @@ export const TransactionDetail = () => {
     ReadingContextEnumType.Sample_Periodic,
     ReadingContextEnumType.Transaction_End,
   ]);
-
-  const generateReadingContextOptions = () => {
-    return Object.values(ReadingContextEnumType).map((value) => (
-      <Select.Option key={value} value={value}>
-        {value}
-      </Select.Option>
-    ));
-  };
 
   const { data: transactionData, isLoading } = useOne<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -196,7 +190,7 @@ export const TransactionDetail = () => {
               setValidContexts(vals as ReadingContextEnumType[])
             }
           >
-            {generateReadingContextOptions()}
+            {renderEnumSelectOptions(ReadingContextEnumType)}
           </Select>
 
           <Flex gap={32}>
