@@ -163,8 +163,7 @@ export const AuthorizationUpsert = () => {
           setUpdateIdTokenInfo(false);
         }
 
-        const authorizationInput = {
-        };
+        const authorizationInput = {};
 
         const updatedAuthorization = getSerializedValues(
           authorizationInput,
