@@ -80,13 +80,13 @@ export const AUTHORIZATIONS_CREATE_MUTATION = gql`
 
 export const AUTHORIZATIONS_EDIT_MUTATION = gql`
   mutation AuthorizationsEdit(
-    $id: Int!, 
-    $object: Authorizations_set_input!,
-    $updateIdToken: Boolean = false,
-    $idTokenId: Int,
-    $idTokenData: IdToken_set_input,
-    $updateIdTokenInfo: Boolean = false,
-    $idTokenInfoId: Int,
+    $id: Int!
+    $object: Authorizations_set_input!
+    $updateIdToken: Boolean = false
+    $idTokenId: Int
+    $idTokenData: IdToken_set_input
+    $updateIdTokenInfo: Boolean = false
+    $idTokenInfoId: Int
     $idTokenInfoData: IdTokenInfo_set_input
   ) {
     update_Authorizations_by_pk(pk_columns: { id: $id }, _set: $object) {
@@ -98,14 +98,18 @@ export const AUTHORIZATIONS_EDIT_MUTATION = gql`
       createdAt
       updatedAt
     }
-    update_IdToken_by_pk(pk_columns: { id: $idTokenId }, _set: $idTokenData) @include(if: $updateIdToken) {
+    update_IdToken_by_pk(pk_columns: { id: $idTokenId }, _set: $idTokenData)
+      @include(if: $updateIdToken) {
       id
       idToken
       type
       createdAt
       updatedAt
     }
-    update_IdTokenInfo_by_pk(pk_columns: { id: $idTokenInfoId }, _set: $idTokenInfoData) @include(if: $updateIdTokenInfo) {
+    update_IdTokenInfo_by_pk(
+      pk_columns: { id: $idTokenInfoId }
+      _set: $idTokenInfoData
+    ) @include(if: $updateIdTokenInfo) {
       id
       cacheExpiryDateTime
       chargingPriority
