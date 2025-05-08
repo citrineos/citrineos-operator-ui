@@ -26,6 +26,7 @@ import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { findOverallValue } from '../../../dtos/meter.value.dto';
 import { TransactionDetailCard } from './transaction.detail.card';
 import { EnergyOverTime } from '../chart/energy.over.time';
+import { renderEnumSelectOptions } from '@util/renderUtil';
 
 enum ChartType {
   POWER = 'Power Over Time',
@@ -48,16 +49,6 @@ export const TransactionDetail = () => {
     ReadingContextEnumType.Sample_Periodic,
     ReadingContextEnumType.Transaction_End,
   ]);
-
-  const generateReadingContextOptions = () => {
-    const enumValues = Object.values(ReadingContextEnumType);
-
-    return enumValues.map((value) => (
-      <Select.Option key={value} value={value}>
-        {value}
-      </Select.Option>
-    ));
-  };
 
   const { data: transactionData, isLoading } = useOne<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -132,7 +123,7 @@ export const TransactionDetail = () => {
               setValidContexts(vals as ReadingContextEnumType[])
             }
           >
-            {generateReadingContextOptions()}
+            {renderEnumSelectOptions(ReadingContextEnumType)}
           </Select>
 
           <Flex gap={32}>
