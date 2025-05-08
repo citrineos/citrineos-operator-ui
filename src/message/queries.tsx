@@ -139,10 +139,10 @@ export const CONNECTOR_ID_LIST_FOR_STATION_QUERY = gql`
     $where: Connectors_bool_exp = {}
   ) {
     Connectors(
-      where: { 
+      where: {
         stationId: { _eq: $stationId }
         connectorId: { _gt: 0 }
-        _and: [$where] 
+        _and: [$where]
       }
       order_by: $order_by
       offset: $offset
@@ -162,7 +162,11 @@ export const CONNECTOR_ID_LIST_FOR_STATION_QUERY = gql`
       vendorId
     }
     Connectors_aggregate(
-      where: { stationId: { _eq: $stationId }, connectorId: { _gt: 0 }, _and: [$where] }
+      where: {
+        stationId: { _eq: $stationId }
+        connectorId: { _gt: 0 }
+        _and: [$where]
+      }
     ) {
       aggregate {
         count

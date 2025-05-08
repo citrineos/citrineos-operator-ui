@@ -32,9 +32,7 @@ export const EvseSelector = ({
         stationId: station.id,
       },
     },
-    sorters: [
-      { field: EvseDtoProps.id, order: 'asc' }
-    ],
+    sorters: [{ field: EvseDtoProps.id, order: 'asc' }],
     pagination: { mode: 'off' },
     onSearch: (value) => {
       const evseId = Number(value);

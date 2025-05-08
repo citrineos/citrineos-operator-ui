@@ -32,9 +32,7 @@ export const ConnectorSelector = ({
         stationId: station.id,
       },
     },
-    sorters: [
-      { field: ConnectorDtoProps.connectorId, order: 'asc' }
-    ],
+    sorters: [{ field: ConnectorDtoProps.connectorId, order: 'asc' }],
     pagination: { mode: 'off' },
     onSearch: (value) => {
       const connectorId = Number(value);
