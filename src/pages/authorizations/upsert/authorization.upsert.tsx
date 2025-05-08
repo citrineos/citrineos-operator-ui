@@ -134,11 +134,9 @@ export const AuthorizationUpsert = () => {
         };
         formProps.onFinish?.(newItem);
       } else {
-        // Update edit mutation variables here
         const idTokenInput = input[AuthorizationDtoProps.idToken];
         const idTokenInfoInput = input[AuthorizationDtoProps.idTokenInfo];
 
-        // Process IdToken data if it exists
         if (idTokenInput && Object.keys(idTokenInput).length > 0 && idTokenId) {
           setUpdateIdToken(true);
           const processedIdTokenData = getSerializedValues(
@@ -150,7 +148,6 @@ export const AuthorizationUpsert = () => {
           setUpdateIdToken(false);
         }
 
-        // Process IdTokenInfo data if it exists
         if (
           idTokenInfoInput &&
           Object.keys(idTokenInfoInput).length > 0 &&
@@ -166,10 +163,7 @@ export const AuthorizationUpsert = () => {
           setUpdateIdTokenInfo(false);
         }
 
-        // Prepare the authorization object without nested objects
         const authorizationInput = {
-          // Include fields you want to update on the authorization itself
-          // Exclude idToken and idTokenInfo since those will be updated separately
         };
 
         const updatedAuthorization = getSerializedValues(
@@ -177,7 +171,6 @@ export const AuthorizationUpsert = () => {
           AuthorizationDto,
         );
 
-        // Call onFinish with just the authorization data
         formProps.onFinish?.(updatedAuthorization);
       }
     },
