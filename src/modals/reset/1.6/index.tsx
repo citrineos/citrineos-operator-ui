@@ -24,14 +24,23 @@ export const OCPP1_6_Reset = ({ station }: OCPP1_6_ResetProps) => {
   const handleSubmit = async ({ type }: { type: ResetRequestType }) => {
     const data = { type };
 
+    const responseSuccessCheckAndCloseModal = (
+      confirmation: MessageConfirmation[],
+    ) => {
+      const success = responseSuccessCheck(confirmation);
+      if (success) {
+        dispatch(closeModal());
+      }
+      return success;
+    };
+
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,
-      responseSuccessCheck,
+      responseSuccessCheck: responseSuccessCheckAndCloseModal,
     });
-    dispatch(closeModal());
   };
 
   useEffect(() => {

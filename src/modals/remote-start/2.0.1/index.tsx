@@ -37,7 +37,6 @@ export const OCPP2_0_1_RemoteStart = ({
   const [evseSelectorLoading, setEvseSelectorLoading] =
     useState<boolean>(false);
   const [idToken, setIdToken] = useState<IdTokenDto | null>(null);
-  const [evse, setEvse] = useState<EvseDto | null>(null);
   const isModalOpen = useSelector(selectIsModalOpen);
 
   const { data: requestIdResponse, isLoading: isLoadingRequestId } =
@@ -115,27 +114,35 @@ export const OCPP2_0_1_RemoteStart = ({
   };
 
   const handleEvseSelection = (value: any) => {
-    const evse = JSON.parse(value) as EvseDto;
-    setEvse(evse);
-    form.setFieldsValue({ evse: evse.id });
+    form.setFieldsValue({ evseId: Number(value) });
   };
 
   const onFinish = async () => {
-    const { remoteStartId } = form.getFieldsValue();
+    const { remoteStartId, evseId } = form.getFieldsValue();
 
     const data = {
       remoteStartId,
-      evseId: evse?.id,
+      evseId,
       idToken: {
         idToken: idToken?.idToken,
         type: idToken?.type,
       },
     };
 
+    const responseSuccessCheckAndCloseModal = (
+      confirmation: MessageConfirmation[],
+    ) => {
+      const success = responseSuccessCheck(confirmation);
+      if (success) {
+        dispatch(closeModal());
+      }
+      return success;
+    };
+
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
+      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       setLoading,
     });
   };
@@ -176,6 +183,7 @@ export const OCPP2_0_1_RemoteStart = ({
             station={station}
             onSelect={handleEvseSelection}
             onLoading={setEvseSelectorLoading}
+            isOptional={true}
           />
         </Flex>
 
