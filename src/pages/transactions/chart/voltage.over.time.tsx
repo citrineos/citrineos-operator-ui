@@ -35,11 +35,11 @@ export const VoltageOverTime = ({
       meterValues,
       MeasurandEnumType.Voltage,
       new Set(validContexts),
-    ).map(([elapsedTime, kw]) => {
-      const kwFloat = Number(kw);
-      if (kwFloat < min) min = Math.floor(kwFloat);
-      if (kwFloat > max) max = Math.ceil(kwFloat);
-      return { elapsedTime, kw };
+    ).map(([elapsedTime, v]) => {
+      const vFloat = Number(v);
+      if (vFloat < min) min = Math.floor(vFloat);
+      if (vFloat > max) max = Math.ceil(vFloat);
+      return { elapsedTime, v };
     });
 
     return { chartData: processedData, minValue: min, maxValue: max };
@@ -81,7 +81,7 @@ export const VoltageOverTime = ({
         <Tooltip />
         <Line
           type="monotone"
-          dataKey="kw"
+          dataKey="v"
           stroke={lineColor}
           strokeWidth={5}
           dot={{ r: 6, fill: lineColor }}

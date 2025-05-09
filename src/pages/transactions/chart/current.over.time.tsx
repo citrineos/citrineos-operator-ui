@@ -35,11 +35,11 @@ export const CurrentOverTime = ({
       meterValues,
       MeasurandEnumType.Current_Import,
       new Set(validContexts),
-    ).map(([elapsedTime, kw]) => {
-      const kwFloat = Number(kw);
-      if (kwFloat < min) min = Math.floor(kwFloat);
-      if (kwFloat > max) max = Math.ceil(kwFloat);
-      return { elapsedTime, kw };
+    ).map(([elapsedTime, a]) => {
+      const aFloat = Number(a);
+      if (aFloat < min) min = Math.floor(aFloat);
+      if (aFloat > max) max = Math.ceil(aFloat);
+      return { elapsedTime, a };
     });
 
     return { chartData: processedData, minValue: min, maxValue: max };
@@ -81,7 +81,7 @@ export const CurrentOverTime = ({
         <Tooltip />
         <Line
           type="monotone"
-          dataKey="kw"
+          dataKey="a"
           stroke={lineColor}
           strokeWidth={5}
           dot={{ r: 6, fill: lineColor }}
