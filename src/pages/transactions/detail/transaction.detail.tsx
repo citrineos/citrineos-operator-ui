@@ -27,7 +27,6 @@ import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { TransactionDetailCard } from './transaction.detail.card';
-import { EnergyOverTime } from '../chart/energy.over.time';
 import { renderEnumSelectOptions } from '@util/renderUtil';
 
 enum ChartType {
