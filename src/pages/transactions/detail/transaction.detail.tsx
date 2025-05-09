@@ -1,5 +1,5 @@
 import { Card, Flex, Select, Tabs, TabsProps, Table } from 'antd';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
 import { useList, useNavigation, useOne } from '@refinedev/core';
@@ -14,6 +14,9 @@ import './style.scss';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { PowerOverTime } from '../chart/power.over.time';
 import { StateOfCharge } from '../chart/state.of.charge';
+import { EnergyOverTime } from '../chart/energy.over.time';
+import { VoltageOverTime } from '../chart/voltage.over.time';
+import { CurrentOverTime } from '../chart/current.over.time';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
 import {
@@ -22,16 +25,16 @@ import {
 } from '../../../dtos/meter.value.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
-import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
-import { findOverallValue } from '../../../dtos/meter.value.dto';
+import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { TransactionDetailCard } from './transaction.detail.card';
-import { EnergyOverTime } from '../chart/energy.over.time';
 import { renderEnumSelectOptions } from '@util/renderUtil';
 
 enum ChartType {
   POWER = 'Power Over Time',
   ENERGY = 'Energy Over Time',
   SOC = 'State of Charge Over Time',
+  VOLTAGE = 'Voltage Over Time',
+  CURRENT = 'Current Over Time',
 }
 
 export const TransactionDetail = () => {
@@ -96,6 +99,69 @@ export const TransactionDetail = () => {
 
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
 
+  const renderChartSelect = (
+    selectedChart: ChartType,
+    onChange: (value: ChartType) => void,
+  ) => (
+    <Select
+      className="full-width"
+      value={selectedChart}
+      onChange={(value) => onChange(value as ChartType)}
+    >
+      {(Object.values(ChartType) as ChartType[]).map((chart) => (
+        <Select.Option key={chart} value={chart}>
+          {chart}
+        </Select.Option>
+      ))}
+    </Select>
+  );
+
+  const renderChartContent = (selectedChart: ChartType) => (
+    <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
+      {(() => {
+        switch (selectedChart) {
+          case ChartType.POWER:
+            return (
+              <PowerOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.ENERGY:
+            return (
+              <EnergyOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.SOC:
+            return (
+              <StateOfCharge
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.VOLTAGE:
+            return (
+              <VoltageOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.CURRENT:
+            return (
+              <CurrentOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          default:
+            return <div>No data available for selected chart</div>;
+        }
+      })()}
+    </Flex>
+  );
+
   if (isLoading) return <p>Loading...</p>;
   if (!transaction) return <p>No Data Found</p>;
 
@@ -128,79 +194,13 @@ export const TransactionDetail = () => {
 
           <Flex gap={32}>
             <Flex vertical flex={1} gap={16}>
-              <Select
-                className="full-width"
-                value={selectedChartLeft}
-                onChange={(value) => setSelectedChartLeft(value as ChartType)}
-              >
-                <Select.Option value={ChartType.POWER}>
-                  {ChartType.POWER}
-                </Select.Option>
-                <Select.Option value={ChartType.ENERGY}>
-                  {ChartType.ENERGY}
-                </Select.Option>
-                <Select.Option value={ChartType.SOC}>
-                  {ChartType.SOC}
-                </Select.Option>
-              </Select>
-              <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-                {selectedChartLeft === ChartType.POWER ? (
-                  <PowerOverTime
-                    meterValues={meterValues}
-                    validContexts={validContexts}
-                  />
-                ) : selectedChartLeft === ChartType.ENERGY ? (
-                  <EnergyOverTime
-                    meterValues={meterValues}
-                    validContexts={validContexts}
-                  />
-                ) : selectedChartLeft === ChartType.SOC ? (
-                  <StateOfCharge
-                    meterValues={meterValues}
-                    validContexts={validContexts}
-                  />
-                ) : (
-                  <div>No data available for selected chart</div>
-                )}
-              </Flex>
+              {renderChartSelect(selectedChartLeft, setSelectedChartLeft)}
+              {renderChartContent(selectedChartLeft)}
             </Flex>
 
             <Flex vertical flex={1} gap={16}>
-              <Select
-                className="full-width"
-                value={selectedChartRight}
-                onChange={(value) => setSelectedChartRight(value as ChartType)}
-              >
-                <Select.Option value={ChartType.POWER}>
-                  {ChartType.POWER}
-                </Select.Option>
-                <Select.Option value={ChartType.ENERGY}>
-                  {ChartType.ENERGY}
-                </Select.Option>
-                <Select.Option value={ChartType.SOC}>
-                  {ChartType.SOC}
-                </Select.Option>
-              </Select>
-              <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-                {selectedChartRight === ChartType.POWER ? (
-                  <PowerOverTime
-                    meterValues={meterValues}
-                    validContexts={validContexts}
-                  />
-                ) : selectedChartRight === ChartType.ENERGY ? (
-                  <EnergyOverTime
-                    meterValues={meterValues}
-                    validContexts={validContexts}
-                  />
-                ) : selectedChartRight === ChartType.SOC ? (
-                  <StateOfCharge
-                    meterValues={meterValues}
-                    validContexts={validContexts}
-                  />
-                ) : (
-                  <div>No data available for selected chart</div>
-                )}
-              </Flex>
+              {renderChartSelect(selectedChartRight, setSelectedChartRight)}
+              {renderChartContent(selectedChartRight)}
             </Flex>
           </Flex>
         </Flex>
