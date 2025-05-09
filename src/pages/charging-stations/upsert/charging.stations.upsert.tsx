@@ -41,11 +41,12 @@ export const ChargingStationUpsert = () => {
       enabled: !!stationId,
     },
     redirect: false,
-    onMutationSuccess: () => {
+    onMutationSuccess: (result) => {
       if (locationId) {
         goBack();
       } else {
-        replace(`/${MenuSection.CHARGING_STATIONS}/new`);
+        const newId = result.data.id;
+        replace(`/${MenuSection.CHARGING_STATIONS}/${newId}`);
       }
     },
     meta: {

@@ -1,6 +1,5 @@
-import { Card, Flex, Select, Table, Tabs, TabsProps } from 'antd';
-import { ChargingStationDetailCardContent } from '../../charging-stations/detail/charging.station.detail.card.content';
-import { useMemo, useState, useCallback } from 'react';
+import { Card, Flex, Select, Tabs, TabsProps, Table } from 'antd';
+import { useMemo, useState } from 'react';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
 import { useList, useNavigation, useOne } from '@refinedev/core';
@@ -11,27 +10,31 @@ import {
   GET_TRANSACTIONS_BY_AUTHORIZATION,
 } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import './style.scss';
 import { BaseDtoProps } from '../../../dtos/base.dto';
-import { getTransactionColumns } from '../columns';
 import { PowerOverTime } from '../chart/power.over.time';
 import { StateOfCharge } from '../chart/state.of.charge';
+import { EnergyOverTime } from '../chart/energy.over.time';
+import { VoltageOverTime } from '../chart/voltage.over.time';
+import { CurrentOverTime } from '../chart/current.over.time';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
 import {
   MeterValueDto,
   MeterValueDtoProps,
 } from '../../../dtos/meter.value.dto';
-import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
-import { MeasurandEnumType } from '@OCPP2_0_1';
-import { findOverallValue } from '../../../dtos/meter.value.dto';
+import { ReadingContextEnumType } from '@OCPP2_0_1';
+import { TransactionDetailCard } from './transaction.detail.card';
+import { renderEnumSelectOptions } from '@util/renderUtil';
 
 enum ChartType {
-  POWER = 'power',
-  SOC = 'soc',
+  POWER = 'Power Over Time',
+  ENERGY = 'Energy Over Time',
+  SOC = 'State of Charge Over Time',
+  VOLTAGE = 'Voltage Over Time',
+  CURRENT = 'Current Over Time',
 }
 
 export const TransactionDetail = () => {
@@ -41,8 +44,14 @@ export const TransactionDetail = () => {
     ChartType.POWER,
   );
   const [selectedChartRight, setSelectedChartRight] = useState<ChartType>(
-    ChartType.SOC,
+    ChartType.ENERGY,
   );
+
+  const [validContexts, setValidContexts] = useState<ReadingContextEnumType[]>([
+    ReadingContextEnumType.Transaction_Begin,
+    ReadingContextEnumType.Sample_Periodic,
+    ReadingContextEnumType.Transaction_End,
+  ]);
 
   const { data: transactionData, isLoading } = useOne<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -52,23 +61,22 @@ export const TransactionDetail = () => {
   });
   const transaction = transactionData?.data;
 
-  const { data: meterValuesData, isLoading: meterValuesLoading } =
-    useList<MeterValueDto>({
-      resource: ResourceType.METER_VALUES,
-      meta: {
-        gqlQuery: GET_METER_VALUES_FOR_TRANSACTION,
-        gqlVariables: { limit: 10000, transactionDatabaseId: Number(id) },
-      },
-      sorters: [{ field: MeterValueDtoProps.timestamp, order: 'asc' }],
-      queryOptions: getPlainToInstanceOptions(MeterValueDto),
-    });
+  const { data: meterValuesData } = useList<MeterValueDto>({
+    resource: ResourceType.METER_VALUES,
+    meta: {
+      gqlQuery: GET_METER_VALUES_FOR_TRANSACTION,
+      gqlVariables: { limit: 10000, transactionDatabaseId: Number(id) },
+    },
+    sorters: [{ field: MeterValueDtoProps.timestamp, order: 'asc' }],
+    queryOptions: getPlainToInstanceOptions(MeterValueDto),
+  });
   const meterValues = meterValuesData?.data ?? [];
 
   let idTokenDatabaseId =
     transaction?.transactionEvents && transaction.transactionEvents.length > 0
       ? transaction.transactionEvents[0].idTokenId
       : transaction?.startTransaction?.idTokenDatabaseId;
-  idTokenDatabaseId = Number(idTokenDatabaseId) || null; // ensure it's a number or null
+  idTokenDatabaseId = Number(idTokenDatabaseId) || null;
 
   const { tableProps } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
@@ -78,7 +86,7 @@ export const TransactionDetail = () => {
         {
           field: 'IdToken.id',
           operator: 'eq',
-          value: idTokenDatabaseId, // filter by the idTokenDatabaseId from the transaction
+          value: idTokenDatabaseId,
         },
       ],
     },
@@ -89,27 +97,73 @@ export const TransactionDetail = () => {
     queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
   });
 
-  const columns = useMemo(() => getTransactionColumns(push, false), [push]);
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
 
-  const handleChartChangeLeft = useCallback(
-    (value: ChartType) => setSelectedChartLeft(value),
-    [],
+  const renderChartSelect = (
+    selectedChart: ChartType,
+    onChange: (value: ChartType) => void,
+  ) => (
+    <Select
+      className="full-width"
+      value={selectedChart}
+      onChange={(value) => onChange(value as ChartType)}
+    >
+      {(Object.values(ChartType) as ChartType[]).map((chart) => (
+        <Select.Option key={chart} value={chart}>
+          {chart}
+        </Select.Option>
+      ))}
+    </Select>
   );
-  const handleChartChangeRight = useCallback(
-    (value: ChartType) => setSelectedChartRight(value),
-    [],
+
+  const renderChartContent = (selectedChart: ChartType) => (
+    <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
+      {(() => {
+        switch (selectedChart) {
+          case ChartType.POWER:
+            return (
+              <PowerOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.ENERGY:
+            return (
+              <EnergyOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.SOC:
+            return (
+              <StateOfCharge
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.VOLTAGE:
+            return (
+              <VoltageOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          case ChartType.CURRENT:
+            return (
+              <CurrentOverTime
+                meterValues={meterValues}
+                validContexts={validContexts}
+              />
+            );
+          default:
+            return <div>No data available for selected chart</div>;
+        }
+      })()}
+    </Flex>
   );
 
   if (isLoading) return <p>Loading...</p>;
   if (!transaction) return <p>No Data Found</p>;
-
-  const hasSOCData = meterValues.some((mv) =>
-    findOverallValue(mv.sampledValue, MeasurandEnumType.SoC),
-  );
-  const hasPowerData = meterValues.some((mv) =>
-    findOverallValue(mv.sampledValue, MeasurandEnumType.Power_Active_Import),
-  );
 
   const tabItems: TabsProps['items'] = [
     {
@@ -125,64 +179,28 @@ export const TransactionDetail = () => {
       key: '2',
       label: 'Meter Value Data',
       children: (
-        <Flex gap={32} style={{ paddingTop: 32 }}>
-          <Flex vertical flex={1} gap={16}>
-            <Select
-              className={'full-width'}
-              value={selectedChartLeft}
-              onChange={(value) => setSelectedChartLeft(value as ChartType)}
-            >
-              {hasPowerData && (
-                <Select.Option value={ChartType.POWER}>
-                  Power Over Time
-                </Select.Option>
-              )}
-              {hasSOCData && (
-                <Select.Option value={ChartType.SOC}>
-                  State of Charge
-                </Select.Option>
-              )}
-            </Select>
-            <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-              {selectedChartLeft === ChartType.POWER && hasPowerData ? (
-                <PowerOverTime meterValues={meterValues} />
-              ) : selectedChartLeft === ChartType.SOC && hasSOCData ? (
-                <StateOfCharge meterValues={meterValues} />
-              ) : (
-                <div>No data available for selected chart</div>
-              )}
-            </Flex>
-          </Flex>
-          <Flex
-            vertical
-            flex={1}
-            gap={16}
-            style={{ aspectRatio: '1 / 1', maxHeight: 400 }}
+        <Flex vertical gap={32} style={{ paddingTop: 32 }}>
+          <Select
+            mode="multiple"
+            className="full-width"
+            style={{ width: '100%' }}
+            value={validContexts}
+            onChange={(vals) =>
+              setValidContexts(vals as ReadingContextEnumType[])
+            }
           >
-            <Select
-              className={'full-width'}
-              value={selectedChartRight}
-              onChange={(value) => setSelectedChartRight(value as ChartType)}
-            >
-              {hasPowerData && (
-                <Select.Option value={ChartType.POWER}>
-                  Power Over Time
-                </Select.Option>
-              )}
-              {hasSOCData && (
-                <Select.Option value={ChartType.SOC}>
-                  State of Charge
-                </Select.Option>
-              )}
-            </Select>
-            <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-              {selectedChartRight === ChartType.POWER && hasPowerData ? (
-                <PowerOverTime meterValues={meterValues} />
-              ) : selectedChartRight === ChartType.SOC && hasSOCData ? (
-                <StateOfCharge meterValues={meterValues} />
-              ) : (
-                <div>No data available for selected chart</div>
-              )}
+            {renderEnumSelectOptions(ReadingContextEnumType)}
+          </Select>
+
+          <Flex gap={32}>
+            <Flex vertical flex={1} gap={16}>
+              {renderChartSelect(selectedChartLeft, setSelectedChartLeft)}
+              {renderChartContent(selectedChartLeft)}
+            </Flex>
+
+            <Flex vertical flex={1} gap={16}>
+              {renderChartSelect(selectedChartRight, setSelectedChartRight)}
+              {renderChartContent(selectedChartRight)}
             </Flex>
           </Flex>
         </Flex>
@@ -195,39 +213,16 @@ export const TransactionDetail = () => {
         <TransactionEventsList transactionDatabaseId={transaction.id} />
       ),
     },
-    // {
-    //   key: '4',
-    //   label: 'Pricing',
-    //   children: 'Pricing content',
-    // },
   ];
 
   return (
-    <Flex vertical>
-      <Card>
-        <Flex vertical gap={32}>
-          <Flex align="center" gap={16}>
-            <ArrowLeftIcon onClick={goBack} />
-            <h2>Transaction Details</h2>
-          </Flex>
-          <Table
-            rowKey="id"
-            dataSource={[transaction]}
-            className="full-width"
-            pagination={false}
-          >
-            {columns}
-          </Table>
-
-          <ChargingStationDetailCardContent
-            stationId={transaction.chargingStation!.id!}
-            transaction={transaction}
-          />
-        </Flex>
+    <div style={{ padding: '16px' }}>
+      <Card className="transaction-details">
+        <TransactionDetailCard transaction={transaction} />
       </Card>
       <Card>
         <Tabs defaultActiveKey="1" items={tabItems} />
       </Card>
-    </Flex>
+    </div>
   );
 };

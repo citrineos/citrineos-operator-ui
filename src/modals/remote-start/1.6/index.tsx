@@ -30,8 +30,6 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [connectorSelectorLoading, setConnectorSelectorLoading] =
     useState<boolean>(false);
-  const [idToken, setIdToken] = useState<IdTokenDto | null>(null);
-  const [connector, setConnector] = useState<ConnectorDto | null>(null);
   const isModalOpen = useSelector(selectIsModalOpen);
 
   const { selectProps: idTokenSelectProps } = useSelect<IdTokenDto>({
@@ -66,26 +64,34 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
 
   const handleIdTokenSelection = (value: any) => {
     const idToken = JSON.parse(value);
-    setIdToken(idToken);
-    form.setFieldsValue({ idToken: idToken.idToken });
+    form.setFieldsValue({ idTag: idToken.idToken });
   };
 
   const handleConnectorSelection = (value: any) => {
-    const connector = JSON.parse(value) as ConnectorDto;
-    setConnector(connector);
-    form.setFieldsValue({ connectorId: connector.id });
-  };
-
-  const data = {
-    connectorId: connector?.connectorId,
-    idTag: idToken?.idToken,
+    form.setFieldsValue({ connectorId: Number(value) });
   };
 
   const onFinish = async () => {
+    const { connectorId, idTag } = form.getFieldsValue();
+    const data = {
+      connectorId,
+      idTag,
+    };
+
+    const responseSuccessCheckAndCloseModal = (
+      confirmation: MessageConfirmation[],
+    ) => {
+      const success = responseSuccessCheck(confirmation);
+      if (success) {
+        dispatch(closeModal());
+      }
+      return success;
+    };
+
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/remoteStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
+      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,
     });
@@ -109,7 +115,7 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
           <Form.Item
             className={'full-width'}
             label="ID Token"
-            name="idToken"
+            name="idTag"
             rules={[{ required: true, message: 'ID Token is required' }]}
           >
             <AutoComplete
@@ -127,6 +133,7 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
             station={station}
             onSelect={handleConnectorSelection}
             onLoading={setConnectorSelectorLoading}
+            isOptional={true}
           />
         </Flex>
 

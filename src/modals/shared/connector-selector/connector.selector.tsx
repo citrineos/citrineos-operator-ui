@@ -5,7 +5,7 @@ import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { BaseOption } from '@refinedev/core';
-import { CONNECTOR_LIST_FOR_STATION_QUERY } from '../../../message/queries';
+import { CONNECTOR_ID_LIST_FOR_STATION_QUERY } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
 export interface ConnectorSelectorProps {
@@ -23,25 +23,28 @@ export const ConnectorSelector = ({
   const { selectProps } = useSelect<ConnectorDto>({
     resource: ResourceType.CONNECTORS,
     optionLabel: (connector) => String(connector.connectorId),
-    optionValue: (connector) => JSON.stringify(connector.connectorId),
+    optionValue: (connector) => String(connector.connectorId),
     meta: {
-      gqlQuery: CONNECTOR_LIST_FOR_STATION_QUERY,
+      gqlQuery: CONNECTOR_ID_LIST_FOR_STATION_QUERY,
       gqlVariables: {
         offset: 0,
         limit: 10,
         stationId: station.id,
       },
     },
-    sorters: [{ field: BaseDtoProps.updatedAt, order: 'desc' }],
+    sorters: [{ field: ConnectorDtoProps.connectorId, order: 'asc' }],
     pagination: { mode: 'off' },
     onSearch: (value) => {
-      if (!value) {
+      const connectorId = Number(value);
+      if (!connectorId || !Number.isInteger(connectorId) || connectorId < 1) {
         return [];
       }
       return [
         {
           operator: 'or',
-          value: [{ field: ConnectorDtoProps.id, operator: 'eq', value }],
+          value: [
+            { field: ConnectorDtoProps.connectorId, operator: 'eq', value },
+          ],
         },
       ];
     },
@@ -55,10 +58,26 @@ export const ConnectorSelector = ({
     <Form.Item
       className={'full-width'}
       label="Connector"
-      name="connector"
-      rules={
-        isOptional ? [] : [{ required: true, message: 'Connector is required' }]
-      }
+      name="connectorId"
+      rules={[
+        {
+          validator: (_, value) => {
+            const connectorId = Number(value);
+            if (Number.isInteger(connectorId) && connectorId >= 1) {
+              return Promise.resolve();
+            }
+            if (isOptional && value === undefined) {
+              return Promise.resolve();
+            }
+            return Promise.reject(
+              'Connector Ids are serial integers starting at 1',
+            );
+          },
+        },
+        ...(!isOptional
+          ? [{ required: true, message: 'Connector Id is required' }]
+          : []),
+      ]}
     >
       <AutoComplete
         className="full-width"

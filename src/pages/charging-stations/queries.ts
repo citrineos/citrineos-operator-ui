@@ -251,6 +251,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
 export const CHARGING_STATIONS_CREATE_MUTATION = gql`
   mutation ChargingStationsCreate($object: ChargingStations_insert_input!) {
     insert_ChargingStations_one(object: $object) {
+      id
       isOnline
       protocol
       locationId

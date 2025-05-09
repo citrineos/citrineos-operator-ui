@@ -3,18 +3,24 @@ import { useNavigation } from '@refinedev/core';
 import { Circle, CircleStatusEnum } from './circle/circle';
 import React from 'react';
 import { ChargingStationDto } from '../../dtos/charging.station.dto';
+import { EvseDto } from 'src/dtos/evse.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
 
 export interface ChargerRowProps {
   chargingStation: ChargingStationDto;
+  evse?: EvseDto;
   circleColor?: string;
 }
 
-export const ChargerRow = ({
+export const ChargerRow: React.FC<ChargerRowProps> = ({
   chargingStation,
+  evse,
   circleColor,
-}: ChargerRowProps) => {
+}) => {
   const { push } = useNavigation();
+  const label = evse
+    ? `${chargingStation.id}:EVSE ${evse.connectorId}`
+    : chargingStation.id;
 
   return (
     <Flex>
@@ -27,16 +33,10 @@ export const ChargerRow = ({
         >
           <Flex align="center">
             <strong>
-              Station: <span className="link">{chargingStation.id}</span>
+              Station: <span className="link">{label}</span>
             </strong>
             <div style={{ width: '8px' }} />
-            <Circle
-              color={circleColor}
-              status={
-                CircleStatusEnum.ERROR
-                // TODO: implement different possible status colors, such as CircleStatusEnum.WARNING
-              }
-            />
+            <Circle color={circleColor} status={CircleStatusEnum.ERROR} />
           </Flex>
         </Flex>
         <Flex

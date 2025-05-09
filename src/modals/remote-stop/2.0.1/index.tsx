@@ -31,10 +31,20 @@ export const OCPP2_0_1_RemoteStop = ({
   const onFinish = async ({ transactionId }: { transactionId: string }) => {
     const data = { transactionId };
 
+    const responseSuccessCheckAndCloseModal = (
+      confirmation: MessageConfirmation[],
+    ) => {
+      const success = responseSuccessCheck(confirmation);
+      if (success) {
+        dispatch(closeModal());
+      }
+      return success;
+    };
+
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
+      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       ocppVersion: OCPPVersion.OCPP2_0_1,
       setLoading,
     });

@@ -30,6 +30,7 @@ export enum TransactionEventDtoProps {
   numberOfPhasesUsed = 'numberOfPhasesUsed',
   cableMaxCurrent = 'cableMaxCurrent',
   reservationId = 'reservationId',
+  idToken = 'IdToken',
   idTokenId = 'idTokenId',
 }
 

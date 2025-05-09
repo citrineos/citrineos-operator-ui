@@ -10,7 +10,6 @@ import {
   triggerMessageAndHandleResponse,
 } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import { EvseDto } from '../../../dtos/evse.dto';
 
 export interface OCPP2_0_1_ResetProps {
   station: ChargingStationDto;
@@ -22,24 +21,37 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [evseLoading, setEvseLoading] = useState<boolean>(false);
   const isModalOpen = useSelector(selectIsModalOpen);
-  const [evse, setEvse] = useState<EvseDto | null>(null);
 
-  const handleSubmit = async ({ type }: { type: ResetEnumType }) => {
-    const data = { type, evseId: evse?.id };
+  const handleSubmit = async ({
+    type,
+    evseId,
+  }: {
+    type: ResetEnumType;
+    evseId?: number;
+  }) => {
+    const data = { type, evseId };
+
+    const responseSuccessCheckAndCloseModal = (
+      confirmation: MessageConfirmation[],
+    ) => {
+      const success = responseSuccessCheck(confirmation);
+      if (success) {
+        dispatch(closeModal());
+      }
+      return success;
+    };
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
       data,
       setLoading,
-      responseSuccessCheck,
+      responseSuccessCheck: responseSuccessCheckAndCloseModal,
     });
-    dispatch(closeModal());
   };
 
   useEffect(() => {
     if (isModalOpen) {
       form.resetFields();
-      setEvse(null);
     }
   }, [isModalOpen, form]);
 
@@ -48,9 +60,7 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
   }
 
   const handleEvseSelection = (value: any) => {
-    const evse = JSON.parse(value) as EvseDto;
-    setEvse(evse);
-    form.setFieldsValue({ evse: evse.id });
+    form.setFieldsValue({ evseId: Number(value) });
   };
 
   return (
@@ -74,7 +84,7 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
           station={station}
           onSelect={handleEvseSelection}
           onLoading={setEvseLoading}
-          isOptional
+          isOptional={true}
         />
 
         <Flex justify="end" gap={8}>

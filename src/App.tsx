@@ -71,6 +71,7 @@ const WS_URL = import.meta.env.VITE_WS_URL;
 const client = new GraphQLClient(API_URL, {
   headers: {
     'x-hasura-role': 'admin',
+    'x-hasura-admin-secret': import.meta.env.VITE_HASURA_ADMIN_SECRET,
   },
 });
 
@@ -80,6 +81,7 @@ const webSocketClient = graphqlWS.createClient({
 
 const hasuraProviderOptions = {
   idType: 'String',
+  namingConvention: 'hasura-default',
 };
 
 const hasuraDataProvider = dataProvider(

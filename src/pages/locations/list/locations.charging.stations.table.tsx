@@ -91,7 +91,7 @@ export const LocationsChargingStationsTable = ({
       rowKey="id"
       className="table nested"
       dataSource={stationsToDisplay}
-      showHeader={true} // Show headers for improved usability
+      showHeader={true}
     >
       {columns}
     </Table>
