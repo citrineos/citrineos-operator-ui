@@ -1,0 +1,32 @@
+{
+  "data": {
+    "Evses": [
+      {
+        "databaseId": 4,
+        "id": 2,
+        "connectorId": null,
+        "createdAt": "2024-09-26T13:12:16.485+00:00",
+        "updatedAt": "2024-09-26T13:12:16.485+00:00"
+      },
+      {
+        "databaseId": 3,
+        "id": 1,
+        "connectorId": null,
+        "createdAt": "2024-09-26T13:12:16.324+00:00",
+        "updatedAt": "2024-09-26T13:12:16.324+00:00"
+      },
+      {
+        "databaseId": 2,
+        "id": 2,
+        "connectorId": 1,
+        "createdAt": "2024-09-26T13:12:15.776+00:00",
+        "updatedAt": "2024-09-26T13:12:15.776+00:00"
+      }
+    ],
+    "Evses_aggregate": {
+      "aggregate": {
+        "count": 3
+      }
+    }
+  }
+}
