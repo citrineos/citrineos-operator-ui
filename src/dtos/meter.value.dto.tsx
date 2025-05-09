@@ -9,6 +9,7 @@ import {
   PhaseEnumType,
   ReadingContextEnumType,
 } from '@OCPP2_0_1';
+import { UnitOfMeasure } from 'src/pages/meter-values/SampledValue';
 
 export enum MeterValueDtoProps {
   id = 'id',
@@ -78,9 +79,12 @@ export const getTimestampToMeasurandArray = (
         const elapsedTime = (timestampEpoch - baseTime) / 1000;
         if (elapsedTime > TWO_HOURS) {
           // skip weird data // todo is needed?
+          console.warn(
+            `Skipping data for ${elapsedTime} seconds, more than 2 hours from base time`,
+          );
           continue;
         }
-        const normalizedValue = normalizeToKwh(overallValue);
+        const normalizedValue = normalizeValue(overallValue);
         if (normalizedValue !== null) {
           result.push([elapsedTime, normalizedValue]);
         }
@@ -133,7 +137,7 @@ export const findOverallValue = (
   return summedPhasesSampledValue;
 };
 
-export const normalizeToKwh = (
+export const normalizeValue = (
   overallValue: SampledValueDto,
 ): string | null => {
   let powerOfTen = overallValue.unitOfMeasure?.multiplier ?? 0;
@@ -148,6 +152,9 @@ export const normalizeToKwh = (
       break;
     case 'PERCENT':
       powerOfTen -= 2;
+      break;
+    case 'V':
+    case 'A':
       break;
     default:
       throw new Error(

@@ -13,6 +13,7 @@ import {
   MeterValueDto,
 } from '../../../dtos/meter.value.dto';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
+import { formatTimeLabel, generateTimeTicks } from './util';
 
 export interface StateOfChargeProps {
   meterValues: MeterValueDto[];
@@ -53,12 +54,13 @@ export const StateOfCharge = ({
         <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
         <XAxis
           dataKey="elapsedTime"
-          type={'number'}
+          type="number"
           tick={{ fill: strokeColor }}
           stroke={strokeColor}
-          tickFormatter={(time) => `${Math.floor(time / 60)} min`}
+          ticks={generateTimeTicks(chartData)}
+          tickFormatter={formatTimeLabel}
           label={{
-            value: 'Time (Minutes)',
+            value: 'Time Elapsed',
             position: 'insideBottom',
             offset: -20,
             fill: strokeColor,
