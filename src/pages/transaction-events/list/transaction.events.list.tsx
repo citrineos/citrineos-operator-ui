@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Table, Row } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '../../../resource-type';
