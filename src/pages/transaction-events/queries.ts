@@ -188,3 +188,98 @@ export const GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY = gql`
     }
   }
 `;
+
+export const GET_OCPPMESSAGES_FOR_TRANSACTION_LIST_QUERY = gql`
+  query OCPPMessageList(
+    $transactionDatabaseId: Int!
+    $offset: Int!
+    $limit: Int!
+    $order_by: [OCPPMessages_order_by!]
+    $where: OCPPMessages_bool_exp!
+  ) {
+    OCPPMessages(
+      offset: $offset
+      limit: $limit
+      order_by: $order_by
+      where: {
+        _and: [
+          {
+            message: { _contains: [{ transactionId: $transactionDatabaseId }] }
+          }
+          {
+            _or: [
+              {
+                _and: [
+                  { protocol: { _eq: "ocpp1.6" } }
+                  {
+                    action: {
+                      _in: [
+                        "StartTransaction"
+                        "StopTransaction"
+                        "MeterValues"
+                        "RemoteStopTransaction"
+                      ]
+                    }
+                  }
+                ]
+              }
+              {
+                _and: [
+                  { protocol: { _eq: "ocpp2.0.1" } }
+                  { action: { _eq: "GetTransactionStatus" } }
+                ]
+              }
+            ]
+          }
+          $where
+        ]
+      }
+    ) {
+      id
+      action
+      protocol
+      message
+      timestamp
+    }
+
+    OCPPMessages_aggregate(
+      where: {
+        _and: [
+          {
+            message: { _contains: [{ transactionId: $transactionDatabaseId }] }
+          }
+          {
+            _or: [
+              {
+                _and: [
+                  { protocol: { _eq: "ocpp1.6" } }
+                  {
+                    action: {
+                      _in: [
+                        "StartTransaction"
+                        "StopTransaction"
+                        "MeterValues"
+                        "RemoteStopTransaction"
+                      ]
+                    }
+                  }
+                ]
+              }
+              {
+                _and: [
+                  { protocol: { _eq: "ocpp2.0.1" } }
+                  { action: { _eq: "GetTransactionStatus" } }
+                ]
+              }
+            ]
+          }
+          $where
+        ]
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
