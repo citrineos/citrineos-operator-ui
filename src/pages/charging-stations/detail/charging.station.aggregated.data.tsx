@@ -148,7 +148,9 @@ const ChartPanel: FC<ChartPanelProps> = ({
   );
 };
 
-export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({ stationId }) => {
+export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
+  stationId,
+}) => {
   const { data: txData, isLoading: txLoading } = useList<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
     meta: {
