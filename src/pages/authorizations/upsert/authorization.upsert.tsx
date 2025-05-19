@@ -111,6 +111,7 @@ export const AuthorizationUpsert = () => {
           input[AuthorizationDtoProps.idTokenInfo],
           IdTokenInfoDto,
         );
+        newIdTokenInfo.cacheExpiryDateTime = undefined;
         const authoriationInput = {
           [AuthorizationDtoProps.idToken]: newIdToken,
           [AuthorizationDtoProps.idTokenInfo]: newIdTokenInfo,
