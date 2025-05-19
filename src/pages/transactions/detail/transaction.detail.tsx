@@ -12,11 +12,13 @@ import {
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import './style.scss';
 import { BaseDtoProps } from '../../../dtos/base.dto';
-import { PowerOverTime } from '../chart/power.over.time';
-import { StateOfCharge } from '../chart/state.of.charge';
-import { EnergyOverTime } from '../chart/energy.over.time';
-import { VoltageOverTime } from '../chart/voltage.over.time';
-import { CurrentOverTime } from '../chart/current.over.time';
+import {
+  PowerOverTime,
+  StateOfCharge,
+  EnergyOverTime,
+  VoltageOverTime,
+  CurrentOverTime,
+} from '../chart';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
 import {

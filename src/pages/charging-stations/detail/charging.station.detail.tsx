@@ -17,6 +17,7 @@ import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { getTransactionColumns } from '../../../pages/transactions/columns';
 import { useNavigation } from '@refinedev/core';
 import { useTable } from '@refinedev/antd';
+import { AggregatedMeterValuesData } from './charging.station.aggregated.data';
 
 export const ChargingStationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -67,11 +68,11 @@ export const ChargingStationDetail: React.FC = () => {
         </Flex>
       ),
     },
-    // {
-    //   key: '5',
-    //   label: 'Data',
-    //   children: 'Data content',
-    // },
+    {
+      key: '5',
+      label: 'Aggregated Meter Values Data',
+      children: <AggregatedMeterValuesData stationId={id} />,
+    },
   ];
 
   return (
