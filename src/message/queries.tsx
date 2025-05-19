@@ -193,6 +193,45 @@ export const CONNECTORS_FOR_STATION_QUERY = gql`
   }
 `;
 
+export const GET_METER_VALUES_FOR_STATION = gql`
+  query GetMeterValuesForStation(
+    $transactionDatabaseIds: [Int!]!
+    $where: MeterValues_bool_exp! = {}
+    $order_by: [MeterValues_order_by!] = { timestamp: asc }
+    $offset: Int
+    $limit: Int
+  ) {
+    MeterValues(
+      where: {
+        _and: [
+          { transactionDatabaseId: { _in: $transactionDatabaseIds } }
+          $where
+        ]
+      }
+      order_by: $order_by
+      offset: $offset
+      limit: $limit
+    ) {
+      id
+      transactionDatabaseId
+      sampledValue
+      timestamp
+    }
+    MeterValues_aggregate(
+      where: {
+        _and: [
+          { transactionDatabaseId: { _in: $transactionDatabaseIds } }
+          $where
+        ]
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const GET_TRANSACTION_LIST_FOR_STATION = gql`
   query GetTransactionListForStation(
     $stationId: String!
