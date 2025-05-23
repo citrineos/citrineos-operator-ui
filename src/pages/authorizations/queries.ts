@@ -18,6 +18,7 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       IdToken {
         createdAt
         id
@@ -54,6 +55,7 @@ export const AUTHORIZATIONS_CREATE_MUTATION = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       createdAt
       updatedAt
       IdToken {
@@ -95,6 +97,7 @@ export const AUTHORIZATIONS_EDIT_MUTATION = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       createdAt
       updatedAt
     }
@@ -129,6 +132,7 @@ export const AUTHORIZATIONS_DELETE_MUTATION = gql`
       id
       allowedConnectorTypes
       disallowedEvseIdPrefixes
+      concurrentTransaction
       createdAt
       updatedAt
     }
@@ -143,6 +147,7 @@ export const AUTHORIZATIONS_SHOW_QUERY = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       createdAt
       updatedAt
       IdToken {

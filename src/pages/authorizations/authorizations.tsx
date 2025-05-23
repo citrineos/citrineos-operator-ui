@@ -1,6 +1,7 @@
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   ValidateNested,
@@ -44,6 +45,7 @@ export enum AuthorizationsProps {
   disallowedEvseIdPrefixes = 'disallowedEvseIdPrefixes',
   idTokenId = 'idTokenId',
   idTokenInfoId = 'idTokenInfoId',
+  concurrentTransaction = 'concurrentTransaction',
 }
 
 @ClassResourceType(ResourceType.AUTHORIZATIONS)
@@ -99,4 +101,7 @@ export class Authorizations extends BaseModel {
   @Type(() => IdTokenInfos)
   @IsNotEmpty()
   idTokenInfoId!: IdTokenInfos;
+
+  @IsBoolean()
+  concurrentTransaction?: boolean;
 }
