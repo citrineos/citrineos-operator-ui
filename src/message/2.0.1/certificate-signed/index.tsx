@@ -3,11 +3,7 @@ import { Form } from 'antd';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { CertificateSigningUseEnumType } from '@OCPP2_0_1';
-import {
-  readFileContent,
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { readFileContent, triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { SupportedFileFormats } from '@util/decorators/SupportedFileFormats';
@@ -59,7 +55,6 @@ export const CertificateSigned: React.FC<CertificateSignedProps> = ({
       await triggerMessageAndHandleResponse<MessageConfirmation[]>({
         url: `/certificates/certificateSigned?identifier=${station.id}&tenantId=1`,
         data,
-        responseSuccessCheck,
       });
     } catch (error) {
       console.error('Error during submission:', error);

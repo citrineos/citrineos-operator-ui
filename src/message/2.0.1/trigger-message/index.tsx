@@ -4,7 +4,6 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import {
   createClassWithoutProperty,
-  responseSuccessCheck,
   triggerMessageAndHandleResponse,
 } from '../../util';
 import { GenericForm } from '../../../components/form';
@@ -167,7 +166,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/triggerMessage?identifier=${stationId}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP2_0_1,
     });
   };

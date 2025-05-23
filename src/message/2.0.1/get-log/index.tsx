@@ -2,10 +2,7 @@ import React from 'react';
 import { Form, Spin } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { useApiUrl, useCustom } from '@refinedev/core';
@@ -49,7 +46,6 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/reporting/getLog?identifier=${station.id}&tenantId=1`,
       data: request,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP2_0_1,
     });
   };
