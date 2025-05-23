@@ -6,7 +6,7 @@ import {
 } from '../queries';
 import { GetOneResponse, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
-import { Button, Flex, Form, Input, Modal, Select } from 'antd';
+import { Button, Flex, Form, Input, Modal, Select, Switch } from 'antd';
 import { ResourceType } from '../../../resource-type';
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -112,9 +112,13 @@ export const AuthorizationUpsert = () => {
           IdTokenInfoDto,
         );
         newIdTokenInfo.cacheExpiryDateTime = undefined;
+        const concurrentTx = input[
+          AuthorizationDtoProps.concurrentTransaction
+        ] as boolean;
         const authoriationInput = {
           [AuthorizationDtoProps.idToken]: newIdToken,
           [AuthorizationDtoProps.idTokenInfo]: newIdTokenInfo,
+          [AuthorizationDtoProps.concurrentTransaction]: concurrentTx,
         };
         const newAuthorization: any = getSerializedValues(
           authoriationInput,
@@ -164,7 +168,13 @@ export const AuthorizationUpsert = () => {
           setUpdateIdTokenInfo(false);
         }
 
-        const authorizationInput = {};
+        const concurrentTx = input[
+          AuthorizationDtoProps.concurrentTransaction
+        ] as boolean;
+
+        const authorizationInput = {
+          [AuthorizationDtoProps.concurrentTransaction]: concurrentTx,
+        };
 
         const updatedAuthorization = getSerializedValues(
           authorizationInput,
@@ -212,6 +222,15 @@ export const AuthorizationUpsert = () => {
             data-testid={IdTokenDtoProps.idToken}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            key={AuthorizationDtoProps.concurrentTransaction}
+            label="Allow Concurrent Transaction"
+            name={AuthorizationDtoProps.concurrentTransaction}
+            valuePropName="checked"
+            data-testid={AuthorizationDtoProps.concurrentTransaction}
+          >
+            <Switch />
           </Form.Item>
           <Form.Item
             key={IdTokenDtoProps.type}
