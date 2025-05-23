@@ -5,10 +5,7 @@ import { plainToInstance } from 'class-transformer';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { LogEnumType } from '@OCPP2_0_1';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 
 export interface GetLogsModalProps {
@@ -49,7 +46,6 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       setLoading,
     });
   };

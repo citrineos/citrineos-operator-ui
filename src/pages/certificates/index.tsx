@@ -9,7 +9,6 @@ import { GenericView } from '../../components/view';
 import { DataModelTable } from '../../components';
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericForm } from '../../components/form';
-import { triggerMessageAndHandleResponse } from '../../message/util';
 import { useRequestValidator } from '../../util/useRequestValidator';
 
 import {

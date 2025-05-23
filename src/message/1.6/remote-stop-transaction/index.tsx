@@ -3,10 +3,7 @@ import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { IsNotEmpty } from 'class-validator';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
@@ -62,7 +59,6 @@ export const RemoteStopTransaction: React.FC<RemoteStopTransactionProps> = ({
       await triggerMessageAndHandleResponse<MessageConfirmation[]>({
         url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=1`,
         data,
-        responseSuccessCheck,
         ocppVersion: OCPPVersion.OCPP1_6,
       });
     }
