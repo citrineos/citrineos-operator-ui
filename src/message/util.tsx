@@ -31,7 +31,7 @@ export const showError = (msg: string) => {
 
 export interface TriggerMessageAndHandleResponseProps<T> {
   url: string;
-  data?: any;
+  data: any;
   ocppVersion?: OCPPVersion | null;
   method?: HttpMethod;
   setLoading?: (loading: boolean) => void;
@@ -52,7 +52,7 @@ export const triggerMessageAndHandleResponse = async <
     setLoading?.(true);
 
     const client = new BaseRestClient(ocppVersion);
-    let response;
+    let response = undefined;
     switch (method) {
       case HttpMethod.Post:
         response = await client.postRaw<T>(url, data);
@@ -67,8 +67,11 @@ export const triggerMessageAndHandleResponse = async <
     if (responseSuccessCheck(response.data)) {
       store.dispatch(closeModal());
       const payload = Array.isArray(response.data)
-        ? response.data[0]?.payload
-        : (response.data as any).payload;
+        ? response.data.length > 0 && response.data[0].payload
+          ? response.data[0].payload
+          : undefined
+        : response.data.payload;
+
       showSuccess(payload);
     } else {
       let msg = 'The request did not receive a successful response.';
