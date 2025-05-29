@@ -4,10 +4,7 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { TriggerMessageRequestRequestedMessage } from '@OCPP1_6';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { ConnectorDtoProps } from '../../../dtos/connector.dto';
@@ -80,7 +77,6 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/triggerMessage?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP1_6,
     });
   };

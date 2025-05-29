@@ -2,10 +2,7 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import {
@@ -42,7 +39,6 @@ export const CustomerInformation: React.FC<GetCustomerProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/reporting/customerInformation?identifier=${station.id}&tenantId=1`,
       data: payload,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP2_0_1,
     });
   };

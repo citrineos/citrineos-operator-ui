@@ -16,10 +16,7 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
-import {
-  triggerMessageAndHandleResponse,
-  responseSuccessCheck,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: ChargingStationDto;
@@ -129,20 +126,9 @@ export const OCPP2_0_1_RemoteStart = ({
       },
     };
 
-    const responseSuccessCheckAndCloseModal = (
-      confirmation: MessageConfirmation[],
-    ) => {
-      const success = responseSuccessCheck(confirmation);
-      if (success) {
-        dispatch(closeModal());
-      }
-      return success;
-    };
-
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       setLoading,
     });
   };

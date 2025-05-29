@@ -3,7 +3,7 @@ import counterReducer from './association.selection.slice';
 import selectedChargingStationSlice from './selected.charging.station.slice';
 import modalReducer from './modal.slice';
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     selectedAssociatedItems: counterReducer,
     selectedChargingStationSlice,

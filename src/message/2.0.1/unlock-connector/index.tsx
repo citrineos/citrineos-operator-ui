@@ -2,10 +2,7 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { Type } from 'class-transformer';
@@ -94,7 +91,6 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/unlockConnector?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP2_0_1,
     });
   };
