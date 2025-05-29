@@ -19,7 +19,7 @@ const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
  * Creates a default permissive auth provider that uses localStorage
  * for persistence and always grants permissions
  */
-export const createAuthProvider = (
+const createAuthProvider = (
   config: AuthProviderConfig = {},
 ): AuthProvider & AuthenticationContextProvider => {
   const { tokenKey = 'auth_token', userKey = 'auth_user' } = config;
@@ -127,8 +127,20 @@ export const createAuthProvider = (
     },
 
     onError: async (error) => {
+      console.log(`Authprovider: onError triggered, error: ${error}`);
+      // Only logout for auth errors, not schema validation errors
+      if (error.statusCode === 401) {
+        return {
+          logout: true,
+        };
+      }
+
+      // For other errors, just return an error without logging out
       return {
-        logout: true,
+        error: {
+          message: error.message,
+          name: error.name
+        }
       };
     },
 
@@ -145,3 +157,6 @@ export const createAuthProvider = (
     getToken,
   };
 };
+
+export const authProvider = createAuthProvider();
+

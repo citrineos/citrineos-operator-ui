@@ -63,12 +63,11 @@ import {
   checkTelemetryConsent,
   saveTelemetryConsent,
   TelemetryConsentModal,
-} from './util/TelemetryConsentModal';
+} from '@util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
-import { createAccessProvider, createAuthProvider } from '@util/auth';
+import {authProvider, createAccessProvider} from '@util/auth';
 
-const authProvider = createAuthProvider({});
 
 const accessControlProvider = createAccessProvider({});
 
