@@ -155,6 +155,10 @@ export const AuthorizationDetailCard: React.FC<
                 ? authorization.disallowedEvseIdPrefixes.join(', ')
                 : '—'}
             </Text>
+            <Text className="nowrap">
+              <strong>Allowing Concurrent Transactions:</strong>{' '}
+              {authorization.concurrentTransaction ? 'True' : 'False'}
+            </Text>
           </Flex>
 
           <Flex vertical>
