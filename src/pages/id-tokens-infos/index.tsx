@@ -3,7 +3,7 @@ import { GenericView } from '../../components/view';
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { Route, Routes } from 'react-router-dom';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { AuditOutlined } from '@ant-design/icons';
 import { IdTokenInfos } from './id-token-infos';
 import {

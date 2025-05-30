@@ -5,6 +5,13 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { chargingStationActionMap } from '../../../message/2.0.1';
 import { openModal, closeModal } from '../../../redux/modal.slice';
 import { useDispatch } from 'react-redux';
+import { useCan } from '@refinedev/core';
+import {
+  ResourceType,
+  ActionType,
+  ChargingStationAccessType,
+  ListCanReturnType,
+} from '@util/auth';
 
 export interface OCPP2_0_1_CommandsProps {
   station: ChargingStationDto;
@@ -38,7 +45,28 @@ export const OCPP2_0_1_Commands = ({ station }: OCPP2_0_1_CommandsProps) => {
     );
   };
 
-  const commandsToExclude = ['Get Log', 'Remote Start', 'Remote Stop', 'Reset'];
+  const commandsToExclude: string[] = [];
+
+  const { data } = useCan({
+    resource: ResourceType.CHARGING_STATIONS,
+    action: ActionType.ACCESS,
+    params: {
+      id: station.id,
+      accessType: ChargingStationAccessType.COMMANDS,
+      commandType: 'otherCommands',
+    },
+  });
+
+  const listData = data as ListCanReturnType;
+  if (!data?.can) {
+    return null;
+  } else if (listData?.meta?.exceptions) {
+    for (const exception of listData.meta.exceptions) {
+      if (exception.param === 'commandType') {
+        commandsToExclude.push(...exception.values);
+      }
+    }
+  }
 
   const filteredCommands = Object.keys(chargingStationActionMap).filter(
     (command) => !commandsToExclude.includes(command),

@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
 import { OCPPVersion } from '@citrineos/base';
+import { authProvider } from '@util/auth';
 
 const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
 
@@ -160,6 +161,16 @@ export class BaseRestClient {
       headers: {
         'Content-Type': 'application/json',
       },
+    });
+    this.axiosInstance.interceptors.request.use(async (config) => {
+      // Get token and add to headers if it exists
+      const token = await authProvider.getToken();
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      return config;
     });
   }
 }

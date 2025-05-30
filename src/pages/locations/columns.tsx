@@ -1,8 +1,9 @@
 import { LocationDtoProps } from '../../dtos/location.dto';
-import { ConditionalFilter, CrudFilters, LogicalFilter } from '@refinedev/core';
+import { CanAccess, ConditionalFilter, CrudFilters } from '@refinedev/core';
 import { Table } from 'antd';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 
 /**
  * Get column definitions for locations table

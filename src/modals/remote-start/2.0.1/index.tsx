@@ -8,7 +8,6 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ChargingStationSequenceType } from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { ChargingStationSequenceDto } from '../../../dtos/charging.station.sequence.dto';
-import { ResourceType } from '../../../resource-type';
 import { EvseDto } from '../../../dtos/evse.dto';
 import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
 import { BaseDtoProps } from '../../../dtos/base.dto';
@@ -16,7 +15,9 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
+
 import { triggerMessageAndHandleResponse } from '../../../message/util';
+import { ResourceType } from '@util/auth';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: ChargingStationDto;

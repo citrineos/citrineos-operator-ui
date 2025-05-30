@@ -1,7 +1,7 @@
 import { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { STATUS_NOTIFICATIONS_DELETE_MUTATION } from './queries';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { StatusNotifications } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ColumnAction } from '@enums';

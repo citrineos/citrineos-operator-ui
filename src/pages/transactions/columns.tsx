@@ -4,9 +4,11 @@ import {
   TransactionDto,
   TransactionDtoProps,
 } from '../../dtos/transaction.dto';
-import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import GenericTag from '../../components/tag';
+import { StatusIcon } from '../../components/status-icon';
+import { CanAccess } from '@refinedev/core';
+import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { ChargingStateEnumType, TransactionEventEnumType } from '@OCPP2_0_1';
 import { BaseDtoProps } from '../../dtos/base.dto';

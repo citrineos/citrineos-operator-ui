@@ -2,7 +2,7 @@ import { AiFillDatabase } from 'react-icons/ai';
 import { Route, Routes } from 'react-router-dom';
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericView } from '../../components/view';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ChargingStationSequence } from './ChargingStationSequence';
 import {
   CHARGING_STATION_SEQUENCES_CREATE_MUTATION,

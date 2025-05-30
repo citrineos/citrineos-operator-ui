@@ -7,7 +7,6 @@ import {
 import { GetOneResponse, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { Button, Flex, Form, Input, Modal, Select, Switch } from 'antd';
-import { ResourceType } from '../../../resource-type';
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
@@ -23,6 +22,7 @@ import {
   AuthorizationDto,
   AuthorizationDtoProps,
 } from '../../../dtos/authoriation.dto';
+import { ResourceType } from '@util/auth';
 
 export const AuthorizationUpsert = () => {
   const params: any = useParams<{ id: string }>();

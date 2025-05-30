@@ -4,7 +4,7 @@ import { Drawer, Form } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { AiFillSafetyCertificate } from 'react-icons/ai';
 
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { GenericView } from '../../components/view';
 import { DataModelTable } from '../../components';
 import { IDataModelListProps } from '../../model/interfaces';

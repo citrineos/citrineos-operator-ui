@@ -1,6 +1,6 @@
 import { useTable } from '@refinedev/antd';
 import { TransactionEventDto } from '../../../dtos/transaction.event.dto';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import React, { useMemo } from 'react';
 import {

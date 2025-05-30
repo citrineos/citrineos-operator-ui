@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { TransactionsList } from './list/transactions.list';
 import { TransactionDetail } from './detail/transaction.detail';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { IoReceiptOutline } from 'react-icons/io5';
 
 export const routes: React.FC = () => {

@@ -14,7 +14,7 @@ import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation'
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
 import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import {
   AUTHORIZATIONS_CREATE_MUTATION,
   AUTHORIZATIONS_DELETE_MUTATION,

@@ -209,6 +209,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
         createdAt
         updatedAt
         Location {
+          id
           name
           address
           city

@@ -1,4 +1,4 @@
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericParameterizedView, GenericView } from '../../components/view';

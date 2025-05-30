@@ -3,7 +3,7 @@ import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { useNavigation } from '@refinedev/core';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useSelect } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import React from 'react';
 import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
