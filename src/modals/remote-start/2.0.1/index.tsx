@@ -15,10 +15,8 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
-import {
-  triggerMessageAndHandleResponse,
-  responseSuccessCheck,
-} from '../../../message/util';
+
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { ResourceType } from '@util/auth';
 
 export interface OCPP2_0_1_RemoteStartProps {
@@ -37,7 +35,6 @@ export const OCPP2_0_1_RemoteStart = ({
   const [evseSelectorLoading, setEvseSelectorLoading] =
     useState<boolean>(false);
   const [idToken, setIdToken] = useState<IdTokenDto | null>(null);
-  const [evse, setEvse] = useState<EvseDto | null>(null);
   const isModalOpen = useSelector(selectIsModalOpen);
 
   const { data: requestIdResponse, isLoading: isLoadingRequestId } =
@@ -115,17 +112,15 @@ export const OCPP2_0_1_RemoteStart = ({
   };
 
   const handleEvseSelection = (value: any) => {
-    const evse = JSON.parse(value) as EvseDto;
-    setEvse(evse);
-    form.setFieldsValue({ evse: evse.id });
+    form.setFieldsValue({ evseId: Number(value) });
   };
 
   const onFinish = async () => {
-    const { remoteStartId } = form.getFieldsValue();
+    const { remoteStartId, evseId } = form.getFieldsValue();
 
     const data = {
       remoteStartId,
-      evseId: evse?.id,
+      evseId,
       idToken: {
         idToken: idToken?.idToken,
         type: idToken?.type,
@@ -135,7 +130,6 @@ export const OCPP2_0_1_RemoteStart = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       setLoading,
     });
   };
@@ -176,6 +170,7 @@ export const OCPP2_0_1_RemoteStart = ({
             station={station}
             onSelect={handleEvseSelection}
             onLoading={setEvseSelectorLoading}
+            isOptional={true}
           />
         </Flex>
 

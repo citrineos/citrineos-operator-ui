@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Col, GetProps, Input, Row, Table } from 'antd';
+import { Button, Col, GetProps, Input, Row, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
@@ -11,6 +11,8 @@ import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { getAuthorizationFilters, getAuthorizationColumns } from '../columns';
 import './style.scss';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
+import { MenuSection } from '../../../components/main-menu/main.menu';
+import { PlusIcon } from '../../../components/icons/plus.icon';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -44,6 +46,14 @@ export const AuthorizationsList: React.FC = () => {
         <Row justify="space-between" align="middle" className="header-row">
           <h2>Authorizations</h2>
           <Row>
+            <Button
+              type="primary"
+              style={{ marginRight: '20px' }}
+              onClick={() => push(`/${MenuSection.AUTHORIZATIONS}/new`)}
+            >
+              Add New Authorization
+              <PlusIcon />
+            </Button>
             <DebounceSearch
               onSearch={onSearch}
               placeholder="Search Authorizations"

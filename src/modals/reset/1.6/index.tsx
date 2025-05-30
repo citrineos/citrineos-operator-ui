@@ -3,10 +3,7 @@ import { Button, Flex, Form, Select, Spin } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { OCPPVersion } from '@citrineos/base';
 import { ResetRequestType } from '@OCPP1_6';
@@ -29,9 +26,7 @@ export const OCPP1_6_Reset = ({ station }: OCPP1_6_ResetProps) => {
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,
-      responseSuccessCheck,
     });
-    dispatch(closeModal());
   };
 
   useEffect(() => {

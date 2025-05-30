@@ -41,6 +41,11 @@ export const AuthorizationDetail: React.FC = () => {
   });
   const authorization = authData?.data;
 
+  const authIdTokenId =
+    authorization && authorization.idTokenId != null
+      ? Number(authorization.idTokenId)
+      : undefined;
+
   const { tableProps: transactionTableProps } = useTable<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
     meta: {
@@ -50,7 +55,10 @@ export const AuthorizationDetail: React.FC = () => {
         id: Number(authorization?.idTokenId),
       },
     },
-    queryOptions: getPlainToInstanceOptions(TransactionDto, true),
+    queryOptions: {
+      enabled: !!authIdTokenId,
+      ...getPlainToInstanceOptions(TransactionDto, true),
+    },
   });
 
   const transactionColumns = useMemo(() => getTransactionColumns(push), []);

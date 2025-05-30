@@ -4,7 +4,7 @@ import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { BaseOption } from '@refinedev/core';
-import { GET_EVSE_LIST_FOR_STATION } from '../../../message/queries';
+import { GET_EVSE_ID_LIST_FOR_STATION } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { ResourceType } from '@util/auth';
 
@@ -23,19 +23,20 @@ export const EvseSelector = ({
   const { selectProps } = useSelect<EvseDto>({
     resource: ResourceType.EVSES,
     optionLabel: (evse) => String(evse.id),
-    optionValue: (evse) => JSON.stringify(evse),
+    optionValue: (evse) => String(evse.id),
     meta: {
-      gqlQuery: GET_EVSE_LIST_FOR_STATION,
+      gqlQuery: GET_EVSE_ID_LIST_FOR_STATION,
       gqlVariables: {
         offset: 0,
         limit: 10,
         stationId: station.id,
       },
     },
-    sorters: [{ field: BaseDtoProps.updatedAt, order: 'desc' }],
+    sorters: [{ field: EvseDtoProps.id, order: 'asc' }],
     pagination: { mode: 'off' },
     onSearch: (value) => {
-      if (!value) {
+      const evseId = Number(value);
+      if (!evseId || !Number.isInteger(evseId) || evseId < 1) {
         return [];
       }
       return [
@@ -55,10 +56,27 @@ export const EvseSelector = ({
     <Form.Item
       className={'full-width'}
       label="EVSE"
-      name="evse"
-      rules={
-        isOptional ? [] : [{ required: true, message: 'EVSE is required' }]
-      }
+      name="evseId"
+      rules={[
+        {
+          validator: (_, value) => {
+            const evseId = Number(value);
+            if (Number.isInteger(evseId) && evseId >= 1) {
+              return Promise.resolve();
+            }
+            if (isOptional && value === undefined) {
+              return Promise.resolve();
+            }
+            return Promise.reject('EVSE Ids are serial integers starting at 1');
+          },
+        },
+        ...(!isOptional
+          ? [{ required: true, message: 'EVSE Id is required' }]
+          : []),
+      ]}
+      getValueFromEvent={(event) => {
+        return event === '' ? undefined : Number(event);
+      }}
     >
       <AutoComplete
         className="full-width"

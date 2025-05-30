@@ -3,10 +3,7 @@ import { Button, Flex, Form, Select, Spin } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { OCPPVersion } from '@citrineos/base';
 
@@ -26,7 +23,6 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,
     });

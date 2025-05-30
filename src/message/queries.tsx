@@ -52,6 +52,50 @@ export const GET_EVSES_FOR_STATION = gql`
   }
 `;
 
+export const GET_EVSE_ID_LIST_FOR_STATION = gql`
+  query GetEvseListForStation(
+    $stationId: String!
+    $where: Evses_bool_exp = {}
+    $order_by: [Evses_order_by!] = {}
+    $offset: Int
+    $limit: Int
+  ) {
+    Evses(
+      where: {
+        VariableAttributes: {
+          stationId: { _eq: $stationId }
+          evseDatabaseId: { _is_null: false }
+        }
+        id: { _gt: "0" }
+        connectorId: { _is_null: true }
+        _and: [$where]
+      }
+      order_by: $order_by
+      offset: $offset
+      limit: $limit
+      distinct_on: [id]
+    ) {
+      databaseId
+      id
+      connectorId
+      createdAt
+      updatedAt
+    }
+    Evses_aggregate(
+      where: {
+        VariableAttributes: { stationId: { _eq: $stationId } }
+        id: { _gt: 0 }
+        connectorId: { _is_null: true }
+        _and: [$where]
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
   query ConnectorList(
     $stationId: String!
@@ -86,6 +130,51 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
   }
 `;
 
+export const CONNECTOR_ID_LIST_FOR_STATION_QUERY = gql`
+  query ConnectorList(
+    $stationId: String!
+    $offset: Int!
+    $limit: Int!
+    $order_by: [Connectors_order_by!] = {}
+    $where: Connectors_bool_exp = {}
+  ) {
+    Connectors(
+      where: {
+        stationId: { _eq: $stationId }
+        connectorId: { _gt: 0 }
+        _and: [$where]
+      }
+      order_by: $order_by
+      offset: $offset
+      limit: $limit
+      distinct_on: [connectorId]
+    ) {
+      connectorId
+      createdAt
+      errorCode
+      id
+      info
+      stationId
+      status
+      timestamp
+      updatedAt
+      vendorErrorCode
+      vendorId
+    }
+    Connectors_aggregate(
+      where: {
+        stationId: { _eq: $stationId }
+        connectorId: { _gt: 0 }
+        _and: [$where]
+      }
+    ) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const CONNECTORS_FOR_STATION_QUERY = gql`
   query GetConnectorListForStation($stationId: String!) {
     Connectors(where: { stationId: { _eq: $stationId } }) {
@@ -100,6 +189,45 @@ export const CONNECTORS_FOR_STATION_QUERY = gql`
       updatedAt
       vendorErrorCode
       vendorId
+    }
+  }
+`;
+
+export const GET_METER_VALUES_FOR_STATION = gql`
+  query GetMeterValuesForStation(
+    $transactionDatabaseIds: [Int!]!
+    $where: MeterValues_bool_exp! = {}
+    $order_by: [MeterValues_order_by!] = { timestamp: asc }
+    $offset: Int
+    $limit: Int
+  ) {
+    MeterValues(
+      where: {
+        _and: [
+          { transactionDatabaseId: { _in: $transactionDatabaseIds } }
+          $where
+        ]
+      }
+      order_by: $order_by
+      offset: $offset
+      limit: $limit
+    ) {
+      id
+      transactionDatabaseId
+      sampledValue
+      timestamp
+    }
+    MeterValues_aggregate(
+      where: {
+        _and: [
+          { transactionDatabaseId: { _in: $transactionDatabaseIds } }
+          $where
+        ]
+      }
+    ) {
+      aggregate {
+        count
+      }
     }
   }
 `;

@@ -2,10 +2,7 @@ import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { HttpMethod } from '@citrineos/base';
 import { ArrayMinSize, IsArray, IsInt, IsNotEmpty } from 'class-validator';
@@ -46,7 +43,6 @@ export const DeleteStationNetworkProfiles: React.FC<
     await triggerMessageAndHandleResponse<MessageConfirmation>({
       url: url,
       data: undefined,
-      responseSuccessCheck,
       ocppVersion: null,
       method: HttpMethod.Delete,
     });

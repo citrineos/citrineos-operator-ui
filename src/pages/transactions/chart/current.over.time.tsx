@@ -15,15 +15,15 @@ import {
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { formatTimeLabel, generateTimeTicks } from './util';
 
-export interface PowerOverTimeProps {
+export interface CurrentOverTimeProps {
   meterValues: MeterValueDto[];
   validContexts: ReadingContextEnumType[];
 }
 
-export const PowerOverTime = ({
+export const CurrentOverTime = ({
   meterValues,
   validContexts,
-}: PowerOverTimeProps) => {
+}: CurrentOverTimeProps) => {
   const strokeColor = 'var(--grayscale-color-1)';
   const lineColor = 'var(--secondary-color-2)';
   const buffer = 1;
@@ -34,20 +34,20 @@ export const PowerOverTime = ({
 
     const processedData = getTimestampToMeasurandArray(
       meterValues,
-      MeasurandEnumType.Power_Active_Import,
+      MeasurandEnumType.Current_Import,
       new Set(validContexts),
-    ).map(([elapsedTime, kw]) => {
-      const kwFloat = Number(kw);
-      if (kwFloat < min) min = Math.floor(kwFloat);
-      if (kwFloat > max) max = Math.ceil(kwFloat);
-      return { elapsedTime, kw };
+    ).map(([elapsedTime, a]) => {
+      const aFloat = Number(a);
+      if (aFloat < min) min = Math.floor(aFloat);
+      if (aFloat > max) max = Math.ceil(aFloat);
+      return { elapsedTime, a };
     });
 
     return { chartData: processedData, minValue: min, maxValue: max };
   }, [meterValues, validContexts]);
 
   if (!chartData || chartData.length === 0) {
-    return <div>No Power data available</div>;
+    return <div>No Current data available</div>;
   }
 
   return (
@@ -72,7 +72,7 @@ export const PowerOverTime = ({
           tick={{ fill: strokeColor }}
           stroke={strokeColor}
           label={{
-            value: 'Power (kW)',
+            value: 'Current (A)',
             angle: -90,
             position: 'insideLeft',
             fill: strokeColor,
@@ -83,7 +83,7 @@ export const PowerOverTime = ({
         <Tooltip />
         <Line
           type="monotone"
-          dataKey="kw"
+          dataKey="a"
           stroke={lineColor}
           strokeWidth={5}
           dot={{ r: 6, fill: lineColor }}

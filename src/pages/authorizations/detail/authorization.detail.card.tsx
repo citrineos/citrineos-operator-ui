@@ -1,13 +1,18 @@
-import React from 'react';
-import { Flex, Typography } from 'antd';
+import React, { useCallback } from 'react';
+import { Button, Flex, message, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { useNavigation } from '@refinedev/core';
+import { useDelete, useNavigation } from '@refinedev/core';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { ClipboardIcon } from '../../../components/icons/clipboard.icon';
 import GenericTag from '../../../components/tag';
 import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
 import { useLocation, Link } from 'react-router-dom';
+import { EditOutlined } from '@ant-design/icons';
+import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
+import { ID_TOKEN_INFOS_DELETE_MUTATION } from '../../../pages/id-tokens-infos/queries';
+import { ID_TOKENS_DELETE_MUTATION } from '../../../pages/id-tokens/queries';
+import { ResourceType } from '@util/auth';
 
 const { Text } = Typography;
 
@@ -20,6 +25,57 @@ export const AuthorizationDetailCard: React.FC<
 > = ({ authorization }) => {
   const { goBack, push } = useNavigation();
   const loc = useLocation();
+  const { mutate } = useDelete();
+
+  const handleDeleteClick = useCallback(() => {
+    if (!authorization) return;
+
+    mutate(
+      {
+        id: authorization.id.toString(),
+        resource: ResourceType.AUTHORIZATIONS,
+        meta: {
+          gqlMutation: AUTHORIZATIONS_DELETE_MUTATION,
+        },
+      },
+      {
+        onSuccess: () => {
+          mutate(
+            {
+              id: authorization.idTokenId.toString(),
+              resource: ResourceType.ID_TOKENS,
+              meta: {
+                gqlMutation: ID_TOKENS_DELETE_MUTATION,
+              },
+            },
+            {
+              onError: () => {
+                message.error('Failed to delete id token.');
+              },
+            },
+          );
+          mutate(
+            {
+              id: authorization.idTokenInfoId.toString(),
+              resource: ResourceType.ID_TOKEN_INFOS,
+              meta: {
+                gqlMutation: ID_TOKEN_INFOS_DELETE_MUTATION,
+              },
+            },
+            {
+              onError: () => {
+                message.error('Failed to delete id token info.');
+              },
+            },
+          );
+          push(`/${MenuSection.AUTHORIZATIONS}`);
+        },
+        onError: () => {
+          message.error('Failed to delete authorization.');
+        },
+      },
+    );
+  }, [authorization, mutate, push]);
 
   return (
     <Flex gap={24}>
@@ -99,6 +155,23 @@ export const AuthorizationDetailCard: React.FC<
                 ? authorization.disallowedEvseIdPrefixes.join(', ')
                 : '—'}
             </Text>
+            <Text className="nowrap">
+              <strong>Allowing Concurrent Transactions:</strong>{' '}
+              {authorization.concurrentTransaction ? 'True' : 'False'}
+            </Text>
+          </Flex>
+
+          <Flex vertical>
+            {/* <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() =>
+                push(`/${MenuSection.AUTHORIZATIONS}/${authorization.id}/edit`)
+              }
+            /> */}
+            <Button className="secondary" onClick={handleDeleteClick}>
+              Delete
+            </Button>
           </Flex>
         </Flex>
       </Flex>

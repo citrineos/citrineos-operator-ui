@@ -66,9 +66,7 @@ import {
 } from './util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
-import { createAccessProvider, createAuthProvider } from '@util/auth';
-
-const authProvider = createAuthProvider({});
+import { authProvider, createAccessProvider } from '@util/auth';
 
 const accessControlProvider = createAccessProvider({});
 
@@ -78,7 +76,7 @@ const requestMiddleware = async (request: any) => {
     headers: {
       ...request.headers,
       'x-hasura-role': 'admin',
-      'x-auth-token': await authProvider.getToken(),
+      'x-hasura-admin-secret': import.meta.env.VITE_HASURA_ADMIN_SECRET,
     },
   };
 };

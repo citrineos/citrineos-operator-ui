@@ -293,3 +293,13 @@ export const renderPrimitiveField = (
     </Form.Item>
   );
 };
+
+export const renderEnumSelectOptions = <T extends object>(enumType: T) => {
+  const enumValues = Object.values(enumType);
+
+  return enumValues.map((value) => (
+    <Select.Option key={value} value={value}>
+      {value}
+    </Select.Option>
+  ));
+};

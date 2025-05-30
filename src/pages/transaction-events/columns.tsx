@@ -21,7 +21,10 @@ export const getTransactionEventColumns = () => {
         key={TransactionEventDtoProps.timestamp}
         dataIndex={TransactionEventDtoProps.timestamp}
         title="Timestamp"
-        sorter={true}
+        sorter={(a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        }
+        sortDirections={['descend', 'ascend']}
         onCell={() => ({
           className: `column-${TransactionEventDtoProps.timestamp}`,
         })}
@@ -33,7 +36,8 @@ export const getTransactionEventColumns = () => {
         key={TransactionEventDtoProps.seqNo}
         dataIndex={TransactionEventDtoProps.seqNo}
         title="Seq. #"
-        sorter={true}
+        sorter={(a, b) => a.seqNo - b.seqNo}
+        sortDirections={['descend', 'ascend']}
         onCell={() => ({
           className: `column-${TransactionEventDtoProps.seqNo}`,
         })}

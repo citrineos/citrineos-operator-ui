@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
@@ -9,10 +9,7 @@ import { BaseDtoProps } from '../../../dtos/base.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import {
-  triggerMessageAndHandleResponse,
-  responseSuccessCheck,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { ConnectorSelector } from '../../shared/connector-selector/connector.selector';
 import { ResourceType } from '@util/auth';
@@ -30,8 +27,6 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [connectorSelectorLoading, setConnectorSelectorLoading] =
     useState<boolean>(false);
-  const [idToken, setIdToken] = useState<IdTokenDto | null>(null);
-  const [connector, setConnector] = useState<ConnectorDto | null>(null);
   const isModalOpen = useSelector(selectIsModalOpen);
 
   const { selectProps: idTokenSelectProps } = useSelect<IdTokenDto>({
@@ -66,26 +61,23 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
 
   const handleIdTokenSelection = (value: any) => {
     const idToken = JSON.parse(value);
-    setIdToken(idToken);
-    form.setFieldsValue({ idToken: idToken.idToken });
+    form.setFieldsValue({ idTag: idToken.idToken });
   };
 
   const handleConnectorSelection = (value: any) => {
-    const connector = JSON.parse(value) as ConnectorDto;
-    setConnector(connector);
-    form.setFieldsValue({ connectorId: connector.id });
-  };
-
-  const data = {
-    connectorId: connector?.connectorId,
-    idTag: idToken?.idToken,
+    form.setFieldsValue({ connectorId: Number(value) });
   };
 
   const onFinish = async () => {
+    const { connectorId, idTag } = form.getFieldsValue();
+    const data = {
+      connectorId,
+      idTag,
+    };
+
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/remoteStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,
     });
@@ -109,7 +101,7 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
           <Form.Item
             className={'full-width'}
             label="ID Token"
-            name="idToken"
+            name="idTag"
             rules={[{ required: true, message: 'ID Token is required' }]}
           >
             <AutoComplete
@@ -127,6 +119,7 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
             station={station}
             onSelect={handleConnectorSelection}
             onLoading={setConnectorSelectorLoading}
+            isOptional={true}
           />
         </Flex>
 
