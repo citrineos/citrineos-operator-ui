@@ -6,11 +6,7 @@ import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { Circle, CircleStatusEnum } from '../circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '../../charging-stations/queries';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import {
-  ActionType,
-  AccessDeniedFallback,
-  ResourceType,
-} from '@util/auth';
+import { ActionType, AccessDeniedFallback, ResourceType } from '@util/auth';
 
 export const OnlineStatusCard = () => {
   const { push } = useNavigation();

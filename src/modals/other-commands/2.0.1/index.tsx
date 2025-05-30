@@ -6,7 +6,12 @@ import { chargingStationActionMap } from '../../../message/2.0.1';
 import { openModal, closeModal } from '../../../redux/modal.slice';
 import { useDispatch } from 'react-redux';
 import { useCan } from '@refinedev/core';
-import { ResourceType, ActionType, ChargingStationAccessType, ListCanReturnType } from '@util/auth';
+import {
+  ResourceType,
+  ActionType,
+  ChargingStationAccessType,
+  ListCanReturnType,
+} from '@util/auth';
 
 export interface OCPP2_0_1_CommandsProps {
   station: ChargingStationDto;
@@ -40,7 +45,7 @@ export const OCPP2_0_1_Commands = ({ station }: OCPP2_0_1_CommandsProps) => {
     );
   };
 
-  const commandsToExclude: String[] = [];
+  const commandsToExclude: string[] = [];
 
   const { data } = useCan({
     resource: ResourceType.CHARGING_STATIONS,

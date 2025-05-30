@@ -202,16 +202,16 @@ export const ChargingStationDetailCardContent = ({
             <Text className="nowrap">Station ID: {station.id}</Text>
             <Text className="nowrap">
               Location ID:{' '}
-                <Link to={`/locations/${station.locationId}`}>
-                  <Tooltip title={station?.location?.name}>
-                    <Typography.Text
-                      ellipsis
-                      style={{ maxWidth: 150, display: 'inline-block' }}
-                    >
-                      {station?.location?.name}
-                    </Typography.Text>
-                  </Tooltip>
-                </Link>
+              <Link to={`/locations/${station.locationId}`}>
+                <Tooltip title={station?.location?.name}>
+                  <Typography.Text
+                    ellipsis
+                    style={{ maxWidth: 150, display: 'inline-block' }}
+                  >
+                    {station?.location?.name}
+                  </Typography.Text>
+                </Tooltip>
+              </Link>
             </Text>
             <Text className="nowrap">
               Latitude: {station.location?.coordinates?.latitude}

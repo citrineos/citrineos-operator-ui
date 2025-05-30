@@ -74,10 +74,7 @@ export const ActiveTransactionsCard = () => {
   }
 
   return (
-    <CanAccess
-      resource={ResourceType.TRANSACTIONS}
-      action={ActionType.LIST}
-    >
+    <CanAccess resource={ResourceType.TRANSACTIONS} action={ActionType.LIST}>
       <Flex vertical>
         <Flex justify="space-between">
           <h4>Active Transactions ({total})</h4>

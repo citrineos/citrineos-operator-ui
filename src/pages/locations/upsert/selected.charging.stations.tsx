@@ -21,11 +21,7 @@ import { PlusIcon } from '../../../components/icons/plus.icon';
 import { SearchIcon } from '../../../components/icons/search.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
-import {
-  ResourceType,
-  ActionType,
-  AccessDeniedFallback,
-} from '@util/auth';
+import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];

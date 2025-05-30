@@ -23,11 +23,7 @@ import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { useSearchParams } from 'react-router-dom';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { debounce } from 'lodash';
-import {
-  AccessDeniedFallback,
-  ActionType,
-  ResourceType,
-} from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 
 export const ChargingStationUpsert = () => {
   const params: any = useParams<{ id: string }>();

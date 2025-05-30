@@ -4,11 +4,7 @@ import { ChargingStationsList } from './list/charging.stations.list';
 import { ChargingStationDetail } from './detail/charging.station.detail';
 import { ChargingStationUpsert } from './upsert/charging.stations.upsert';
 import { CanAccess } from '@refinedev/core';
-import {
-  AccessDeniedFallback,
-  ActionType,
-  ResourceType,
-} from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 
 export const routes: React.FC = () => {
   return (

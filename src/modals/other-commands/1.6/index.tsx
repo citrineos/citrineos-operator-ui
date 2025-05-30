@@ -34,7 +34,7 @@ export const OCPP1_6_Commands = ({ station }: OCPP1_6_CommandsProps) => {
     );
   };
 
-  const commandsToExclude: String[] = [];
+  const commandsToExclude: string[] = [];
 
   const { data } = useCan({
     resource: ResourceType.CHARGING_STATIONS,

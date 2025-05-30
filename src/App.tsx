@@ -63,7 +63,7 @@ import {
   checkTelemetryConsent,
   saveTelemetryConsent,
   TelemetryConsentModal,
-} from './util/TelemetryConsentModal';
+} from '@util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
 import { authProvider, createAccessProvider } from '@util/auth';

@@ -5,11 +5,7 @@ import { LocationsUpsert } from './upsert/locations.upsert';
 import { LocationsDetail } from './detail/locations.detail';
 import { LocationsMap } from './map/locations.map';
 import { CanAccess } from '@refinedev/core';
-import {
-  AccessDeniedFallback,
-  ActionType,
-  ResourceType,
-} from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 
 export const routes: React.FC = () => {
   return (
