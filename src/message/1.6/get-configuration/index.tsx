@@ -3,10 +3,7 @@ import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { IsArray } from 'class-validator';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 
@@ -39,7 +36,6 @@ export const GetConfiguration: React.FC<GetConfigurationProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/getConfiguration?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP1_6,
     });
   };

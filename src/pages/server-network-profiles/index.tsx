@@ -10,7 +10,7 @@ import {
   SERVER_NETWORK_PROFILE_GET_QUERY,
 } from './queries';
 import { Route, Routes } from 'react-router-dom';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { AiFillSignal } from 'react-icons/ai';
 
 export const ServerNetworkProfileView: React.FC = () => {

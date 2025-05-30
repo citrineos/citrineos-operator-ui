@@ -10,8 +10,8 @@ import {
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { Route, Routes } from 'react-router-dom';
-import { ResourceType } from '../../resource-type';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ResourceType } from '@util/auth';
 
 export const AdditionalInfosView: React.FC = () => {
   return (

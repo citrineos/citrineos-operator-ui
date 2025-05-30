@@ -10,7 +10,7 @@ import { ConnectorsUpsert } from '../../../pages/connectors/upsert/connectors.up
 import { setSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { useOne } from '@refinedev/core';
 import { CHARGING_STATIONS_GET_QUERY } from '../../../pages/charging-stations/queries';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 
 interface EVSESListProps {

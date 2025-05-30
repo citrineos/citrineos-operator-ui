@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { LocationDto } from '../../../dtos/location.dto';
 import { LocationMarker } from './location-marker';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { LOCATIONS_LIST_QUERY } from '../queries';
 import { plainToInstance } from 'class-transformer';

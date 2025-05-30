@@ -10,7 +10,6 @@ import {
 } from 'antd';
 import { useList } from '@refinedev/core';
 import dayjs, { Dayjs } from 'dayjs';
-import { ResourceType } from '../../../resource-type';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { MeterValueDto } from '../../../dtos/meter.value.dto';
 import { TransactionDto } from '../../../dtos/transaction.dto';
@@ -26,6 +25,7 @@ import {
   CurrentOverTime,
 } from '../../transactions/chart';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
+import { ResourceType } from '@util/auth';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;

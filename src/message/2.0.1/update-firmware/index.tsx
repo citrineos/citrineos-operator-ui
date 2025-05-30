@@ -5,7 +5,6 @@ import { ChargingStation } from '../../../pages/charging-stations/ChargingStatio
 import {
   formatPem,
   readFileContent,
-  responseSuccessCheck,
   triggerMessageAndHandleResponse,
 } from '../../util';
 import { GenericForm } from '../../../components/form';
@@ -63,7 +62,6 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
       data: request,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP2_0_1,
     });
   };

@@ -6,7 +6,7 @@ import { DEFAULT_SORTERS } from '../../components/defaults';
 import { DataModelTable } from '../../components';
 import { IDataModelListProps } from '../../model/interfaces';
 import { SECURITY_EVENTS_COLUMNS } from './table-config';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { SecurityEventsListQuery } from '../../graphql/types';
 
 export const SecurityEventsList = (props: IDataModelListProps) => {

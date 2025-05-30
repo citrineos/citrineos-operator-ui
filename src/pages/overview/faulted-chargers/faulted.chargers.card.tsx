@@ -1,7 +1,7 @@
 import { Flex } from 'antd';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { FAULTED_CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { useList, useNavigation } from '@refinedev/core';

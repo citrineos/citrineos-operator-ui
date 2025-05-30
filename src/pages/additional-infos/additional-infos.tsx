@@ -7,7 +7,6 @@ import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation'
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
 import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
-import { ResourceType } from '../../resource-type';
 import {
   ADDITIONAL_INFOS_CREATE_MUTATION,
   ADDITIONAL_INFOS_DELETE_MUTATION,
@@ -15,6 +14,7 @@ import {
   ADDITIONAL_INFOS_LIST_QUERY,
   ADDITIONAL_INFOS_SHOW_QUERY,
 } from '../../queries/additionalInfo';
+import { ResourceType } from '@util/auth';
 
 export enum AdditionalInfosProps {
   id = 'id',

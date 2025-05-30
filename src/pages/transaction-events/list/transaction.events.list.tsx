@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Table, Row } from 'antd';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
   TransactionEventDto,

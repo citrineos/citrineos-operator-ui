@@ -3,7 +3,7 @@ import { Flex, Row, Table } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
-import { useNavigation } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import { formatDate } from '../../../components/timestamp-display';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ChargingStationStatusTag } from '../../charging-stations/charging.station.status.tag';
@@ -12,6 +12,7 @@ import { instanceToPlain } from 'class-transformer';
 import { ModalComponentType } from '../../../AppModal';
 import { getChargingStationColumns } from '../../charging-stations/columns';
 import { openModal } from '../../../redux/modal.slice';
+import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 
 export interface LocationsChargingStationsTableProps {
   location: LocationDto;
@@ -87,13 +88,19 @@ export const LocationsChargingStationsTable = ({
   );
 
   return (
-    <Table
-      rowKey="id"
-      className="table nested"
-      dataSource={stationsToDisplay}
-      showHeader={true}
+    <CanAccess
+      resource={ResourceType.CHARGING_STATIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
     >
-      {columns}
-    </Table>
+      <Table
+        rowKey="id"
+        className="table nested"
+        dataSource={stationsToDisplay}
+        showHeader={true}
+      >
+        {columns}
+      </Table>
+    </CanAccess>
   );
 };

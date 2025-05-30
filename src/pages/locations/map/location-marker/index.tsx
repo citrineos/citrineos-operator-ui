@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { useNavigation } from '@refinedev/core';
 import './style.scss';
-import { ResourceType } from '../../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { LocationDto } from '../../../../dtos/location.dto';
 
 interface LocationMarkerProps {

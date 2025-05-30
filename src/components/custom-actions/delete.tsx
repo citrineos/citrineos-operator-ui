@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useDelete, useNotification } from '@refinedev/core';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 
 interface CustomDeleteButtonProps {
   recordItemId: string;

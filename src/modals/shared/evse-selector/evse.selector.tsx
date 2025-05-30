@@ -1,5 +1,4 @@
 import { EvseDto, EvseDtoProps } from '../../../dtos/evse.dto';
-import { ResourceType } from '../../../resource-type';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
@@ -7,6 +6,7 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { BaseOption } from '@refinedev/core';
 import { GET_EVSE_ID_LIST_FOR_STATION } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
+import { ResourceType } from '@util/auth';
 
 export interface EvseSelectorProps {
   onSelect: (value: BaseOption) => void;
