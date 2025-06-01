@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Layout, Menu, Row } from 'antd';
 import React, { useState } from 'react';
 import { HomeIcon } from '../icons/home.icon';

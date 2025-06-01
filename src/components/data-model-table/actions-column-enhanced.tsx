@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Alert, Button, Col, Row } from 'antd';
 import { CustomActions } from '../custom-actions';
 import React from 'react';

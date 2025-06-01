@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useCallback } from 'react';
 import { Button, Flex, message, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { getFullAddress } from '@util/geocoding';
 import { Button, Flex } from 'antd';
 import { useLocation } from 'react-router-dom';

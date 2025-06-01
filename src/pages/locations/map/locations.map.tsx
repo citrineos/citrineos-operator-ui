@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { AutoComplete, Input, Row } from 'antd';
 import React, { useState, useMemo } from 'react';
 import { LocationDto } from '../../../dtos/location.dto';

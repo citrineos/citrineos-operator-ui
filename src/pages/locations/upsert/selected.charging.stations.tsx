@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { useParams } from 'react-router';
 import { useSelect } from '@refinedev/antd';
 import React, { useEffect, useState } from 'react';

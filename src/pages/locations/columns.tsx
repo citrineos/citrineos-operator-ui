@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { LocationDtoProps } from '../../dtos/location.dto';
 import { CanAccess, ConditionalFilter, CrudFilters } from '@refinedev/core';
 import { Table } from 'antd';

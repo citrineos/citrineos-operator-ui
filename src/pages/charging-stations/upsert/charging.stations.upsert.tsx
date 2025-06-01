@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { useForm, useSelect } from '@refinedev/antd';
 import {
   CHARGING_STATIONS_CREATE_MUTATION,

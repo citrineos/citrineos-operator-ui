@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Button, Flex, Form } from 'antd';
 import { ModalComponentType } from '../../../AppModal';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';

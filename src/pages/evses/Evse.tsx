@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 
 import { Type } from 'class-transformer';

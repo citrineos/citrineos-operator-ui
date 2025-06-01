@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Button, Flex, message, Tooltip, Typography } from 'antd';
 import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
 import {
