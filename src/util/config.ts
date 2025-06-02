@@ -31,7 +31,8 @@ const getConfig: () => {
     googleMapsApiKey:
       window.APP_CONFIG?.VITE_GOOGLE_MAPS_API_KEY ||
       import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    hasuraAdminSecret: window.APP_CONFIG?.VITE_HASURA_ADMIN_SECRET ||
+    hasuraAdminSecret:
+      window.APP_CONFIG?.VITE_HASURA_ADMIN_SECRET ||
       import.meta.env.VITE_HASURA_ADMIN_SECRET,
     apiUrl: window.APP_CONFIG?.VITE_API_URL || import.meta.env.VITE_API_URL,
     wsUrl: window.APP_CONFIG?.VITE_WS_URL || import.meta.env.VITE_WS_URL,
