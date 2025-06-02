@@ -39,7 +39,7 @@ jobs:
               # Find files that are failing but NOT in the ignore list
               > unignored_failures.txt
               while IFS= read -r failing_file; do
-                if ! grep -Fxq "$failing_file" .reuse/ignore-files.txt; then
+                if [[ "$failing_file" != "reuse_output.txt" ]] && ! grep -Fxq "$failing_file" .reuse/ignore-files.txt; then
                   echo "$failing_file" >> unignored_failures.txt
                 fi
               done < failing_files.txt
