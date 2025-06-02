@@ -31,11 +31,6 @@ jobs:
               # Extract failing files from the REUSE output
               sed '/SUMMARY/q' reuse_output.txt | grep "^\* " | sed 's/^\* //' > failing_files.txt
               
-              echo "Failing files:"
-              cat failing_files.txt
-              echo "Ignoring files listed in .reuse/ignore-files.txt"
-              cat .reuse/ignore-files.txt
-              echo "Filtering out unignored files..."
               # Find files that are failing but NOT in the ignore list
               > unignored_failures.txt
               while IFS= read -r failing_file; do
