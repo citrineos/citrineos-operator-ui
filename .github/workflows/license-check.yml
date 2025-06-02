@@ -27,14 +27,18 @@ jobs:
             
             # Check if .reuse/ignore-files.txt exists
             if [ -f ".reuse/ignore-files.txt" ]; then
-              echo "Found .reuse/ignore file. Filtering results..."
+              echo "Found .reuse/ignore-files.txt file. Filtering results..."
               # Extract failing files from the REUSE output
               sed '/SUMMARY/q' reuse_output.txt | grep "^\* " | sed 's/^\* //' > failing_files.txt
               
+              echo "Failing files:"
+              cat failing_files.txt
+              echo "Ignoring files listed in .reuse/ignore-files.txt"
+              cat .reuse/ignore-files.txt
+              echo "Filtering out unignored files..."
               # Find files that are failing but NOT in the ignore list
               > unignored_failures.txt
               while IFS= read -r failing_file; do
-                echo "$failing_file"
                 if ! grep -Fxq "$failing_file" .reuse/ignore-files.txt; then
                   echo "$failing_file" >> unignored_failures.txt
                 fi
@@ -47,11 +51,9 @@ jobs:
                 echo ""
                 echo "These files need proper license headers or should be added to .reuse/ignore-files.txt"
                 echo ""
-                echo "Full REUSE lint output:"
-                cat reuse_output.txt
                 exit 1
               else
-                echo "✅ All REUSE lint failures are properly ignored"
+                echo "✅ All REUSE lint failures are accounted for in .reuse/ignore-files.txt"
                 ignored_count=$(wc -l < failing_files.txt)
                 echo "Ignored $ignored_count file(s) as specified in .reuse/ignore-files.txt"
               fi
@@ -69,4 +71,4 @@ jobs:
       - name: Clean up temporary files
         if: always()
         run: |
-          rm -f reuse_output.txt failing_files.txt actually_ignored.txt unignored_failures.txt
+          rm -f reuse_output.txt failing_files.txt unignored_failures.txt
