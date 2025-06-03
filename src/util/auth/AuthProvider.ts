@@ -1,5 +1,6 @@
 import { AuthProvider } from '@refinedev/core';
 import { AuthenticationContextProvider, User } from './types';
+import config from '@util/config';
 
 /**
  * Configuration for the auth provider
@@ -12,8 +13,8 @@ export interface AuthProviderConfig {
 /**
  * Default auth provider implementation
  */
-const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
+const ADMIN_EMAIL = config.adminEmail;
+const ADMIN_PASSWORD = config.adminPassword;
 
 /**
  * Creates a default permissive auth provider that uses localStorage

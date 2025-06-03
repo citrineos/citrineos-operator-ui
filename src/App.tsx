@@ -67,6 +67,7 @@ import {
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
 import { authProvider, createAccessProvider } from '@util/auth';
+import config from '@util/config';
 
 const accessControlProvider = createAccessProvider({});
 
@@ -76,13 +77,13 @@ const requestMiddleware = async (request: any) => {
     headers: {
       ...request.headers,
       'x-hasura-role': 'admin',
-      'x-hasura-admin-secret': import.meta.env.VITE_HASURA_ADMIN_SECRET,
+      'x-hasura-admin-secret': config.hasuraAdminSecret,
     },
   };
 };
 
-const API_URL = import.meta.env.VITE_API_URL;
-const WS_URL = import.meta.env.VITE_WS_URL;
+const API_URL = config.apiUrl;
+const WS_URL = config.wsUrl;
 
 const client = new GraphQLClient(API_URL, {
   requestMiddleware,

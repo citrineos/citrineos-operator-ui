@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { ColorModeContext } from '../../contexts/color-mode';
+import config from '@util/config';
 
 export interface LogoProps {
   collapsed?: boolean;
 }
 
-const LOGO_URL = import.meta.env.VITE_LOGO_URL;
+const LOGO_URL = config.logoUrl;
 
 export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
   const { collapsed = false } = props;

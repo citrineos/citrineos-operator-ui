@@ -12,8 +12,9 @@ import { OCPPVersion } from '@citrineos/base';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { UpdateFirmwareRequest, UpdateFirmwareRequestProps } from './model';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../../pages/charging-station-sequences/queries';
+import config from '@util/config';
 
-const FILE_SERVER_URL = import.meta.env.VITE_FILE_SERVER_URL;
+const FILE_SERVER_URL = config.fileServer;
 
 export interface UpdateFirmwareProps {
   station: ChargingStation;

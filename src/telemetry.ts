@@ -5,6 +5,7 @@ import {
 } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import config from '@util/config';
 
 let isTelemetryEnabled = false; // tracks whether we've initialized telemetry
 let requestCount: any | null = null;
@@ -19,7 +20,7 @@ export function initTelemetry() {
   });
 
   const metricExporter = new OTLPMetricExporter({
-    url: import.meta.env.VITE_METRICS_URL,
+    url: config.metricsUrl,
   });
 
   const metricReader = new PeriodicExportingMetricReader({

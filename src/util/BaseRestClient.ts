@@ -3,8 +3,9 @@ import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestE
 import { incrementRequestCount } from '../telemetry';
 import { OCPPVersion } from '@citrineos/base';
 import { authProvider } from '@util/auth';
+import config from './config';
 
-const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
+const CITRINE_CORE_URL = config.citrineCoreUrl;
 
 export class MissingRequiredParamException extends Error {
   override name = 'MissingRequiredParamException' as const;

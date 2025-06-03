@@ -1,4 +1,5 @@
 import { LocationDto } from '../dtos/location.dto';
+import config from './config';
 
 export interface GoogleGeocodingResponse {
   results: GeocodingResult[];
@@ -45,7 +46,7 @@ export const geocodeAddress = async (
   address: string,
 ): Promise<GeocodingResult> => {
   const encodedAddress = encodeURIComponent(address);
-  const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`;
+  const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${config.googleMapsApiKey}`;
 
   try {
     const response = await fetch(geocodeUrl);
