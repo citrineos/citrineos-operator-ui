@@ -4,16 +4,3 @@ dist/
 .git/
 
 public/
-cypress/fixtures/
-cypress/support/
-
-.dockerignore 
-.gitignore 
-.npmrc 
-.prettierrc
-
-graphql.config.ts
-package-lock.json
-tsconfig.json
-tsconfig.node.json
-**/tsconfig.json
