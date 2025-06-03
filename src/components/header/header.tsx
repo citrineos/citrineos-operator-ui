@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Flex, Layout as AntdLayout, Menu, theme } from 'antd';
 import React, { useContext, useMemo } from 'react';
 import { ColorModeContext } from '../../contexts/color-mode';

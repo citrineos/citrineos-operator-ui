@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { AutoComplete, Flex, Input } from 'antd';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { useNavigation } from '@refinedev/core';

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState } from 'react';
 import { Button, Modal, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';

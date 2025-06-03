@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { useTable } from '@refinedev/antd';
 import { TransactionEventDto } from '../../../dtos/transaction.event.dto';
 import { ResourceType } from '@util/auth';

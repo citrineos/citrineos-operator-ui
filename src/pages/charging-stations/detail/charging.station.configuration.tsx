@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Select, Table, Row, Col, Typography, message, Input } from 'antd';
 import { useList, type CrudFilter } from '@refinedev/core';

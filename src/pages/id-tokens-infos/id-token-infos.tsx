@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BaseModel } from '@util/BaseModel';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
