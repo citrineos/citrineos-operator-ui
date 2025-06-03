@@ -32,7 +32,7 @@ export enum TransactionDtoProps {
   evseDatabaseId = 'evseDatabaseId',
   isActive = 'isActive',
   meterValues = 'meterValues',
-  startTransaction = 'StartTransactions',
+  startTransaction = 'StartTransaction',
   stopTransaction = 'stopTransaction',
   chargingState = 'chargingState',
   timeSpentCharging = 'timeSpentCharging',
@@ -89,12 +89,12 @@ export class TransactionDto extends BaseDto {
 
   @IsOptional()
   @Type(() => StartTransactionDto)
-  @Expose({ name: 'StartTransactions' })
+  @Expose({ name: 'StartTransaction' })
   startTransaction?: Partial<StartTransactionDto>;
 
   @IsOptional()
   @Type(() => StopTransactionDto)
-  @Expose({ name: 'StopTransactions' })
+  @Expose({ name: 'StopTransaction' })
   stopTransaction?: Partial<StopTransactionDto>;
 
   @IsEnum(ChargingStateEnumType)

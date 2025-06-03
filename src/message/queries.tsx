@@ -268,7 +268,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
           idToken
         }
       }
-      StartTransactions {
+      StartTransaction {
         IdToken {
           idToken
         }
