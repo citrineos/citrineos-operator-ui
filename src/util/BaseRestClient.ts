@@ -5,7 +5,7 @@ import { OCPPVersion } from '@citrineos/base';
 import { authProvider } from '@util/auth';
 import config from './config';
 
-const CITRINE_CORE_URL = config.citrineCore;
+const CITRINE_CORE_URL = config.citrineCoreUrl;
 
 export class MissingRequiredParamException extends Error {
   override name = 'MissingRequiredParamException' as const;

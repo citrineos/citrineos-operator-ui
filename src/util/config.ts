@@ -20,7 +20,7 @@ const getConfig: () => {
   hasuraAdminSecret: string;
   apiUrl: string;
   wsUrl: string;
-  citrineCore: string;
+  citrineCoreUrl: string;
   fileServer: string;
   logoUrl: string;
   metricsUrl: string;
@@ -36,7 +36,7 @@ const getConfig: () => {
       import.meta.env.VITE_HASURA_ADMIN_SECRET,
     apiUrl: window.APP_CONFIG?.VITE_API_URL || import.meta.env.VITE_API_URL,
     wsUrl: window.APP_CONFIG?.VITE_WS_URL || import.meta.env.VITE_WS_URL,
-    citrineCore:
+    citrineCoreUrl:
       window.APP_CONFIG?.VITE_CITRINE_CORE_URL ||
       import.meta.env.VITE_CITRINE_CORE_URL,
     fileServer:
