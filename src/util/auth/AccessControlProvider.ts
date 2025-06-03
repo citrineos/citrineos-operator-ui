@@ -36,8 +36,7 @@ export const createAccessProvider = (
 
       const check =
         resource === ResourceType.CHARGING_STATIONS &&
-        action === ActionType.ACCESS &&
-        params?.accessType === ChargingStationAccessType.COMMANDS &&
+        action === ActionType.COMMAND &&
         params?.commandType === CommandType.OTHER_COMMANDS;
 
       if (check) {

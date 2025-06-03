@@ -62,19 +62,18 @@ export enum ActionType {
    * For accessing sub-resources, accessType param must be set
    */
   ACCESS = 'access',
+  /**
+   * For sending commands to the charging station, commandType param must be set
+   */
+  COMMAND = 'command',
 }
 
 export enum ChargingStationAccessType {
   TOPOLOGY = 'topology',
   CONFIGURATION = 'configuration',
-  COMMANDS = 'commands',
   OCPP_MESSAGES = 'ocpp-messages',
 }
 
-/**
- * For filling out params.commandType
- * Params.accessType must be set to ChargingStationAccessType.COMMANDS
- */
 export enum CommandType {
   START_TRANSACTION = 'startTransaction',
   STOP_TRANSACTION = 'stopTransaction',

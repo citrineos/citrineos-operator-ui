@@ -53,10 +53,9 @@ export const OCPP2_0_1_Commands = ({ station }: OCPP2_0_1_CommandsProps) => {
 
   const { data } = useCan({
     resource: ResourceType.CHARGING_STATIONS,
-    action: ActionType.ACCESS,
+    action: ActionType.COMMAND,
     params: {
       id: station.id,
-      accessType: ChargingStationAccessType.COMMANDS,
       commandType: 'otherCommands',
     },
   });

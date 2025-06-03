@@ -119,20 +119,18 @@ export const getChargingStationColumns = (
         return record.isOnline ? (
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
-            action={ActionType.ACCESS}
+            action={ActionType.COMMAND}
             params={{
               id: record.id,
-              accessType: ChargingStationAccessType.COMMANDS,
             }}
           >
             <Flex gap={16} flex="1 1 auto">
               {!hasActiveTransactions && (
                 <CanAccess
                   resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.ACCESS}
+                  action={ActionType.COMMAND}
                   params={{
                     id: record.id,
-                    accessType: ChargingStationAccessType.COMMANDS,
                     commandType: CommandType.START_TRANSACTION,
                   }}
                 >
@@ -144,10 +142,9 @@ export const getChargingStationColumns = (
               {hasActiveTransactions && (
                 <CanAccess
                   resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.ACCESS}
+                  action={ActionType.COMMAND}
                   params={{
                     id: record.id,
-                    accessType: ChargingStationAccessType.COMMANDS,
                     commandType: CommandType.STOP_TRANSACTION,
                   }}
                 >
@@ -158,10 +155,9 @@ export const getChargingStationColumns = (
               )}
               <CanAccess
                 resource={ResourceType.CHARGING_STATIONS}
-                action={ActionType.ACCESS}
+                action={ActionType.COMMAND}
                 params={{
                   id: record.id,
-                  accessType: ChargingStationAccessType.COMMANDS,
                   commandType: CommandType.RESET,
                 }}
               >
