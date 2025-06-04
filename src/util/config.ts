@@ -7,6 +7,7 @@ declare global {
     APP_CONFIG?: {
       VITE_GOOGLE_MAPS_API_KEY?: string;
       VITE_HASURA_ADMIN_SECRET?: string;
+      VITE_TENANT_ID?: string;
       VITE_API_URL?: string;
       VITE_WS_URL?: string;
       VITE_CITRINE_CORE_URL?: string;
@@ -22,6 +23,7 @@ declare global {
 const getConfig: () => {
   googleMapsApiKey: string;
   hasuraAdminSecret: string;
+  tenantId?: string;
   apiUrl: string;
   wsUrl: string;
   citrineCoreUrl: string;
@@ -38,6 +40,8 @@ const getConfig: () => {
     hasuraAdminSecret:
       window.APP_CONFIG?.VITE_HASURA_ADMIN_SECRET ||
       import.meta.env.VITE_HASURA_ADMIN_SECRET,
+    tenantId:
+      window.APP_CONFIG?.VITE_TENANT_ID || import.meta.env.VITE_TENANT_ID,
     apiUrl: window.APP_CONFIG?.VITE_API_URL || import.meta.env.VITE_API_URL,
     wsUrl: window.APP_CONFIG?.VITE_WS_URL || import.meta.env.VITE_WS_URL,
     citrineCoreUrl:

@@ -8,7 +8,7 @@ import {
   AUTHORIZATIONS_EDIT_MUTATION,
   AUTHORIZATIONS_SHOW_QUERY,
 } from '../queries';
-import { GetOneResponse, useNavigation } from '@refinedev/core';
+import { CanAccess, GetOneResponse, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { Button, Flex, Form, Input, Modal, Select, Switch } from 'antd';
 import { useState, useCallback } from 'react';
@@ -26,7 +26,8 @@ import {
   AuthorizationDto,
   AuthorizationDtoProps,
 } from '../../../dtos/authoriation.dto';
-import { ResourceType } from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import config from '@util/config';
 
 export const AuthorizationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -111,10 +112,12 @@ export const AuthorizationUpsert = () => {
           input[AuthorizationDtoProps.idToken],
           IdTokenDto,
         );
+        newIdToken.tenantId = config.tenantId;
         const newIdTokenInfo = getSerializedValues(
           input[AuthorizationDtoProps.idTokenInfo],
           IdTokenInfoDto,
         );
+        newIdTokenInfo.tenantId = config.tenantId;
         newIdTokenInfo.cacheExpiryDateTime = undefined;
         const concurrentTx = input[
           AuthorizationDtoProps.concurrentTransaction
@@ -128,6 +131,7 @@ export const AuthorizationUpsert = () => {
           authoriationInput,
           AuthorizationDto,
         );
+        newAuthorization.tenantId = config.tenantId;
         const newItem = {
           ...newAuthorization,
           [AuthorizationDtoProps.idToken]: {
@@ -192,94 +196,103 @@ export const AuthorizationUpsert = () => {
   );
 
   return (
-    <Form
-      {...formProps}
-      layout="vertical"
-      onFinish={onFinish}
-      onChange={handleOnChange}
-      data-testid="authorizations-create-form"
+    <CanAccess
+      resource={ResourceType.AUTHORIZATIONS}
+      action={ActionType.EDIT}
+      fallback={<AccessDeniedFallback />}
+      params={{ id: authorizationId }}
     >
-      <Flex gap={32}>
-        <Flex flex={1} vertical>
-          <Flex
-            align="center"
-            className="relative"
-            style={{ marginBottom: 16 }}
-          >
-            <ArrowLeftIcon
-              style={{
-                cursor: 'pointer',
-                position: 'absolute',
-                transform: 'translateX(-100%)',
-              }}
-              onClick={() => goBack()}
-            />
-            <h3>
-              {authorizationId ? 'Edit Authorization' : 'Create Authorization'}
-            </h3>
-          </Flex>
-          <Form.Item
-            key={IdTokenDtoProps.idToken}
-            label="Authorization IdToken"
-            name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.idToken]}
-            rules={[{ required: true, message: 'IdToken is required' }]}
-            data-testid={IdTokenDtoProps.idToken}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            key={AuthorizationDtoProps.concurrentTransaction}
-            label="Allow Concurrent Transaction"
-            name={AuthorizationDtoProps.concurrentTransaction}
-            valuePropName="checked"
-            data-testid={AuthorizationDtoProps.concurrentTransaction}
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            key={IdTokenDtoProps.type}
-            label="IdToken Type"
-            name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.type]}
-            data-testid={IdTokenDtoProps.type}
-          >
-            <Select onChange={handleOnChange}>
-              {renderEnumSelectOptions(IdTokenEnumType)}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            key={IdTokenInfoDtoProps.status}
-            label="IdToken Status"
-            name={[
-              AuthorizationDtoProps.idTokenInfo,
-              IdTokenInfoDtoProps.status,
-            ]}
-            data-testid={IdTokenInfoDtoProps.status}
-          >
-            <Select onChange={handleOnChange}>
-              {renderEnumSelectOptions(AuthorizationStatusEnumType)}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Flex gap={16}>
-              {authorizationId && (
-                <Button onClick={handleReset} disabled={!isFormChanged}>
-                  Reset
-                </Button>
-              )}
-              <Button onClick={handleCancel} danger>
-                Cancel
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                data-testid="authorizations-create-form-submit"
-              >
-                Submit
-              </Button>
+      <Form
+        {...formProps}
+        layout="vertical"
+        onFinish={onFinish}
+        onChange={handleOnChange}
+        data-testid="authorizations-create-form"
+      >
+        <Flex gap={32}>
+          <Flex flex={1} vertical>
+            <Flex
+              align="center"
+              className="relative"
+              style={{ marginBottom: 16 }}
+            >
+              <ArrowLeftIcon
+                style={{
+                  cursor: 'pointer',
+                  position: 'absolute',
+                  transform: 'translateX(-100%)',
+                }}
+                onClick={() => goBack()}
+              />
+              <h3>
+                {authorizationId
+                  ? 'Edit Authorization'
+                  : 'Create Authorization'}
+              </h3>
             </Flex>
-          </Form.Item>
+            <Form.Item
+              key={IdTokenDtoProps.idToken}
+              label="Authorization IdToken"
+              name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.idToken]}
+              rules={[{ required: true, message: 'IdToken is required' }]}
+              data-testid={IdTokenDtoProps.idToken}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key={AuthorizationDtoProps.concurrentTransaction}
+              label="Allow Concurrent Transaction"
+              name={AuthorizationDtoProps.concurrentTransaction}
+              valuePropName="checked"
+              data-testid={AuthorizationDtoProps.concurrentTransaction}
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item
+              key={IdTokenDtoProps.type}
+              label="IdToken Type"
+              name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.type]}
+              data-testid={IdTokenDtoProps.type}
+            >
+              <Select onChange={handleOnChange}>
+                {renderEnumSelectOptions(IdTokenEnumType)}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              key={IdTokenInfoDtoProps.status}
+              label="IdToken Status"
+              name={[
+                AuthorizationDtoProps.idTokenInfo,
+                IdTokenInfoDtoProps.status,
+              ]}
+              data-testid={IdTokenInfoDtoProps.status}
+            >
+              <Select onChange={handleOnChange}>
+                {renderEnumSelectOptions(AuthorizationStatusEnumType)}
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Flex gap={16}>
+                {authorizationId && (
+                  <Button onClick={handleReset} disabled={!isFormChanged}>
+                    Reset
+                  </Button>
+                )}
+                <Button onClick={handleCancel} danger>
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  data-testid="authorizations-create-form-submit"
+                >
+                  Submit
+                </Button>
+              </Flex>
+            </Form.Item>
+          </Flex>
         </Flex>
-      </Flex>
-    </Form>
+      </Form>
+    </CanAccess>
   );
 };
