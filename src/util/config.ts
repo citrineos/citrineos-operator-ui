@@ -40,7 +40,8 @@ const getConfig: () => {
     hasuraAdminSecret:
       window.APP_CONFIG?.VITE_HASURA_ADMIN_SECRET ||
       import.meta.env.VITE_HASURA_ADMIN_SECRET,
-    tenantId: window.APP_CONFIG?.VITE_TENANT_ID || import.meta.env.VITE_TENANT_ID,
+    tenantId:
+      window.APP_CONFIG?.VITE_TENANT_ID || import.meta.env.VITE_TENANT_ID,
     apiUrl: window.APP_CONFIG?.VITE_API_URL || import.meta.env.VITE_API_URL,
     wsUrl: window.APP_CONFIG?.VITE_WS_URL || import.meta.env.VITE_WS_URL,
     citrineCoreUrl:
