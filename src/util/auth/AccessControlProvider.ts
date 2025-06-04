@@ -54,19 +54,6 @@ export const createAccessProvider = (
         };
       }
 
-      const check2 =
-        resource === ResourceType.CHARGING_STATIONS &&
-        action === ActionType.LIST;
-
-      if (check2) {
-        canResponse = {
-          can: false,
-        };
-      }
-
-      console.log(`AccessProvider: ${action} on ${resource}`);
-      console.log(`AccessProvider: canResponse`, canResponse);
-
       return canResponse;
     },
   };
