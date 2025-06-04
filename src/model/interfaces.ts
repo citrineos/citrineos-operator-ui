@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   FormInstance,
   FormListFieldData,
@@ -6,7 +10,7 @@ import {
 } from 'antd';
 import { UseFormReturnType } from '@refinedev/antd';
 import { CustomAction } from '../components/custom-actions';
-import { ResourceType } from '../resource-type';
+import { ResourceType } from '@util/auth';
 import {
   ColumnAction,
   DefaultColors,

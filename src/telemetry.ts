@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import {
   MeterProvider,
@@ -5,6 +9,7 @@ import {
 } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import config from '@util/config';
 
 let isTelemetryEnabled = false; // tracks whether we've initialized telemetry
 let requestCount: any | null = null;
@@ -19,7 +24,7 @@ export function initTelemetry() {
   });
 
   const metricExporter = new OTLPMetricExporter({
-    url: import.meta.env.VITE_METRICS_URL,
+    url: config.metricsUrl,
   });
 
   const metricReader = new PeriodicExportingMetricReader({

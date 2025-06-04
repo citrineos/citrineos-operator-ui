@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+
 FROM refinedev/node:22
 WORKDIR /app/refine
 COPY . .

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import { Alert } from 'antd';

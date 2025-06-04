@@ -1,13 +1,14 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ResetRequestType } from '@OCPP1_6';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { IsEnum } from 'class-validator';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 
@@ -40,7 +41,6 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP1_6,
     });
   };

@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { MESSAGE_INFOS_DELETE_MUTATION } from './queries';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { MessageInfos } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';

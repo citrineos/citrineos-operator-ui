@@ -1,12 +1,13 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { ChangeAvailabilityRequestType } from '@OCPP1_6';
 import { OCPPVersion } from '@citrineos/base';
@@ -84,7 +85,6 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       ocppVersion: OCPPVersion.OCPP1_6,
     });
   };

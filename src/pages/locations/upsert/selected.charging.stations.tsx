@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { useParams } from 'react-router';
 import { useSelect } from '@refinedev/antd';
 import React, { useEffect, useState } from 'react';
-import { CrudFilter, useNavigation } from '@refinedev/core';
+import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
 import {
   AutoComplete,
   Button,
@@ -15,13 +19,13 @@ import {
   ChargingStationDto,
   ChargingStationDtoProps,
 } from '../../../dtos/charging.station.dto';
-import { ResourceType } from '../../../resource-type';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { LocationDtoProps } from '../../../dtos/location.dto';
 import { PlusIcon } from '../../../components/icons/plus.icon';
 import { SearchIcon } from '../../../components/icons/search.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
+import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
@@ -139,19 +143,30 @@ export const SelectedChargingStations = ({
   }
 
   return (
-    <>
+    <CanAccess
+      resource={ResourceType.CHARGING_STATIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
       <Flex gap={16}>
         {chargingStations != undefined && (
           <Flex vertical flex={1} gap={16}>
             <Flex align={'center'} justify={'space-between'}>
               <h3>Add Charging Stations</h3>
-              <Button
-                className="secondary"
-                onClick={handleAddNewChargingStation}
+
+              <CanAccess
+                resource={ResourceType.CHARGING_STATIONS}
+                action={ActionType.CREATE}
+                fallback={<AccessDeniedFallback />}
               >
-                Add New Charging Station
-                <PlusIcon />
-              </Button>
+                <Button
+                  className="secondary"
+                  onClick={handleAddNewChargingStation}
+                >
+                  Add New Charging Station
+                  <PlusIcon />
+                </Button>
+              </CanAccess>
             </Flex>
             <Flex>
               <AutoComplete
@@ -271,6 +286,6 @@ export const SelectedChargingStations = ({
           />
         </Table>
       </Flex>
-    </>
+    </CanAccess>
   );
 };

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { Input } from 'antd';

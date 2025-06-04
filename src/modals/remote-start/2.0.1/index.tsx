@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useState } from 'react';
 import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
@@ -8,7 +12,6 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ChargingStationSequenceType } from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { ChargingStationSequenceDto } from '../../../dtos/charging.station.sequence.dto';
-import { ResourceType } from '../../../resource-type';
 import { EvseDto } from '../../../dtos/evse.dto';
 import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
 import { BaseDtoProps } from '../../../dtos/base.dto';
@@ -16,10 +19,9 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
-import {
-  triggerMessageAndHandleResponse,
-  responseSuccessCheck,
-} from '../../../message/util';
+
+import { triggerMessageAndHandleResponse } from '../../../message/util';
+import { ResourceType } from '@util/auth';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: ChargingStationDto;
@@ -129,20 +131,9 @@ export const OCPP2_0_1_RemoteStart = ({
       },
     };
 
-    const responseSuccessCheckAndCloseModal = (
-      confirmation: MessageConfirmation[],
-    ) => {
-      const success = responseSuccessCheck(confirmation);
-      if (success) {
-        dispatch(closeModal());
-      }
-      return success;
-    };
-
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       setLoading,
     });
   };

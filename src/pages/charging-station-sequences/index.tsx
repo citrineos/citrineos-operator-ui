@@ -1,8 +1,12 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { AiFillDatabase } from 'react-icons/ai';
 import { Route, Routes } from 'react-router-dom';
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericView } from '../../components/view';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ChargingStationSequence } from './ChargingStationSequence';
 import {
   CHARGING_STATION_SEQUENCES_CREATE_MUTATION,

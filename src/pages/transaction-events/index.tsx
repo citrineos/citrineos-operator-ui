@@ -1,4 +1,8 @@
-import { ResourceType } from '../../resource-type';
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+import { ResourceType } from '@util/auth';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericParameterizedView, GenericView } from '../../components/view';

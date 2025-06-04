@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { TransformDate } from './TransformDate';
 import { IsOptional } from 'class-validator';
 import { HiddenWhen } from './decorators/HiddenWhen';

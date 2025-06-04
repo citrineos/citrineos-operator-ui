@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
