@@ -265,7 +265,7 @@ export const ChargingStationConfiguration: React.FC<
       }
       downloadCSV(
         `configurations_${stationId}_${version}_${new Date().toISOString()}`,
-        ['StationId', ...CONFIG_1_6_COLUMNS.map((col) => col.title)],
+        ['Station Id', ...CONFIG_1_6_COLUMNS.map((col) => col.title)],
         changeConfigurationsForDownload.data,
         (item) => [item.stationId, item.key, item.value ?? ''],
       );
