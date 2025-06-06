@@ -61,6 +61,56 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
   }
 `;
 
+export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
+  query DownloadVariableAttributes($stationId: String!) {
+    VariableAttributes(
+      where: { stationId: { _eq: $stationId } }
+      order_by: { createdAt: desc }
+    ) {
+      id
+      stationId
+      type
+      dataType
+      value
+      mutability
+      persistent
+      constant
+      variableId
+      componentId
+      evseDatabaseId
+      createdAt
+      updatedAt
+      Variable {
+        id
+        instance
+        name
+        createdAt
+        updatedAt
+      }
+      Component {
+        id
+        instance
+        name
+        evseDatabaseId
+        createdAt
+        updatedAt
+      }
+      Evse {
+        databaseId
+        id
+        connectorId
+        createdAt
+        updatedAt
+      }
+    }
+    VariableAttributes_aggregate(where: { stationId: { _eq: $stationId } }) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY = gql`
   query VariableAttributeListByEvse(
     $evseDatabaseId: Int!
