@@ -29,3 +29,21 @@ export const CHANGE_CONFIGURATION_LIST_QUERY = gql`
     }
   }
 `;
+
+export const CHANGE_CONFIGURATION_DOWNLOAD_QUERY = gql`
+  query DownloadChangeConfigurations($stationId: String!) {
+    ChangeConfigurations(
+      where: { stationId: { _eq: $stationId } }
+      order_by: { key: asc }
+    ) {
+      stationId
+      key
+      value
+    }
+    ChangeConfigurations_aggregate(where: { stationId: { _eq: $stationId } }) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
