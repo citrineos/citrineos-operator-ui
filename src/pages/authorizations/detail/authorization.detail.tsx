@@ -1,8 +1,21 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useMemo, useCallback } from 'react';
 import { Card, Flex, Table, Tabs, TabsProps } from 'antd';
-import { useParams } from 'react-router-dom';
-import { useNavigation, useOne, useList } from '@refinedev/core';
-import { ResourceType } from '../../../resource-type';
+import { useNavigation, useOne, CanAccess } from '@refinedev/core';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
   TransactionDto,
@@ -13,16 +26,16 @@ import {
   AUTHORIZATIONS_SHOW_QUERY,
   GET_TRANSACTIONS_FOR_AUTHORIZATION,
 } from '../queries';
-import { getAuthorizationColumns } from '../columns';
 import { getTransactionColumns } from '../../transactions/columns';
+import { AccessDeniedFallback, ActionType } from '@util/auth';
 import { AuthorizationDetailCard } from './authorization.detail.card';
 import './style.scss';
 import { useTable } from '@refinedev/antd';
+import { useParams } from 'react-router-dom';
 
 export const AuthorizationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { goBack, push } = useNavigation();
-  const back = useCallback(() => goBack(), [goBack]);
+  const { push } = useNavigation();
 
   const { data: authData, isLoading: authLoading } = useOne<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
@@ -31,6 +44,11 @@ export const AuthorizationDetail: React.FC = () => {
     queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
   });
   const authorization = authData?.data;
+
+  const authIdTokenId =
+    authorization && authorization.idTokenId != null
+      ? Number(authorization.idTokenId)
+      : undefined;
 
   const { tableProps: transactionTableProps } = useTable<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -41,7 +59,10 @@ export const AuthorizationDetail: React.FC = () => {
         id: Number(authorization?.idTokenId),
       },
     },
-    queryOptions: getPlainToInstanceOptions(TransactionDto, true),
+    queryOptions: {
+      enabled: !!authIdTokenId,
+      ...getPlainToInstanceOptions(TransactionDto, true),
+    },
   });
 
   const transactionColumns = useMemo(() => getTransactionColumns(push), []);
@@ -52,15 +73,21 @@ export const AuthorizationDetail: React.FC = () => {
         key: '1',
         label: 'Transactions',
         children: (
-          <Flex vertical gap={32}>
-            <Table
-              {...transactionTableProps}
-              rowKey={TransactionDtoProps.transactionId}
-              className={'full-width'}
-            >
-              {transactionColumns}
-            </Table>
-          </Flex>
+          <CanAccess
+            resource={ResourceType.TRANSACTIONS}
+            action={ActionType.LIST}
+            fallback={<AccessDeniedFallback />}
+          >
+            <Flex vertical gap={32}>
+              <Table
+                {...transactionTableProps}
+                rowKey={TransactionDtoProps.transactionId}
+                className={'full-width'}
+              >
+                {transactionColumns}
+              </Table>
+            </Flex>
+          </CanAccess>
         ),
       },
       // {
@@ -106,13 +133,20 @@ export const AuthorizationDetail: React.FC = () => {
   if (!authorization) return <p>No Data Found</p>;
 
   return (
-    <Flex vertical>
-      <Card className="authorization-details">
-        <AuthorizationDetailCard authorization={authorization} />
-      </Card>
-      <Card>
-        <Tabs defaultActiveKey="1" items={tabItems} />
-      </Card>
-    </Flex>
+    <CanAccess
+      resource={ResourceType.AUTHORIZATIONS}
+      action={ActionType.SHOW}
+      fallback={<AccessDeniedFallback />}
+      params={{ id: authorization.id }}
+    >
+      <Flex vertical>
+        <Card className="authorization-details">
+          <AuthorizationDetailCard authorization={authorization} />
+        </Card>
+        <Card>
+          <Tabs defaultActiveKey="1" items={tabItems} />
+        </Card>
+      </Flex>
+    </CanAccess>
   );
 };

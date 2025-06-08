@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { CustomAction } from '../../components/custom-actions';
 
 export const CLASS_CUSTOM_ACTIONS = 'classCustomActions';

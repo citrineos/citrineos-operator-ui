@@ -1,12 +1,13 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { OCPPVersion } from '@citrineos/base';
 import { ResetRequestType } from '@OCPP1_6';
@@ -24,22 +25,11 @@ export const OCPP1_6_Reset = ({ station }: OCPP1_6_ResetProps) => {
   const handleSubmit = async ({ type }: { type: ResetRequestType }) => {
     const data = { type };
 
-    const responseSuccessCheckAndCloseModal = (
-      confirmation: MessageConfirmation[],
-    ) => {
-      const success = responseSuccessCheck(confirmation);
-      if (success) {
-        dispatch(closeModal());
-      }
-      return success;
-    };
-
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,
-      responseSuccessCheck: responseSuccessCheckAndCloseModal,
     });
   };
 

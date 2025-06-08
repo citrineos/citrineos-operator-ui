@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useMemo, useState, FC } from 'react';
 import {
   DatePicker,
@@ -10,7 +14,6 @@ import {
 } from 'antd';
 import { useList } from '@refinedev/core';
 import dayjs, { Dayjs } from 'dayjs';
-import { ResourceType } from '../../../resource-type';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { MeterValueDto } from '../../../dtos/meter.value.dto';
 import { TransactionDto } from '../../../dtos/transaction.dto';
@@ -26,6 +29,7 @@ import {
   CurrentOverTime,
 } from '../../transactions/chart';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
+import { ResourceType } from '@util/auth';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;

@@ -1,13 +1,24 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Button, Flex, Table, Typography } from 'antd';
 import {
   ChargingStationDto,
   ChargingStationDtoProps,
 } from '../../dtos/charging.station.dto';
 import React from 'react';
-import { CrudFilter } from '@refinedev/core';
+import { CanAccess, CrudFilter } from '@refinedev/core';
 import { LocationDtoProps } from '../../dtos/location.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import {
+  AccessDeniedFallback,
+  ActionType,
+  ChargingStationAccessType,
+  CommandType,
+  ResourceType,
+} from '@util/auth';
 
 export const getChargingStationColumns = (
   push: (path: string, ...rest: unknown[]) => void,
@@ -106,19 +117,56 @@ export const getChargingStationColumns = (
           record.transactions && record.transactions.length > 0;
 
         return record.isOnline ? (
-          <Flex gap={16} flex="1 1 auto">
-            {!hasActiveTransactions && (
-              <Button onClick={() => showRemoteStartModal(record)}>
-                Start Transaction
-              </Button>
-            )}
-            {hasActiveTransactions && (
-              <Button onClick={() => handleStopTransactionClick(record)}>
-                Stop Transaction
-              </Button>
-            )}
-            <Button onClick={() => showResetStartModal(record)}>Reset</Button>
-          </Flex>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.COMMAND}
+            params={{
+              id: record.id,
+            }}
+          >
+            <Flex gap={16} flex="1 1 auto">
+              {!hasActiveTransactions && (
+                <CanAccess
+                  resource={ResourceType.CHARGING_STATIONS}
+                  action={ActionType.COMMAND}
+                  params={{
+                    id: record.id,
+                    commandType: CommandType.START_TRANSACTION,
+                  }}
+                >
+                  <Button onClick={() => showRemoteStartModal(record)}>
+                    Start Transaction
+                  </Button>
+                </CanAccess>
+              )}
+              {hasActiveTransactions && (
+                <CanAccess
+                  resource={ResourceType.CHARGING_STATIONS}
+                  action={ActionType.COMMAND}
+                  params={{
+                    id: record.id,
+                    commandType: CommandType.STOP_TRANSACTION,
+                  }}
+                >
+                  <Button onClick={() => handleStopTransactionClick(record)}>
+                    Stop Transaction
+                  </Button>
+                </CanAccess>
+              )}
+              <CanAccess
+                resource={ResourceType.CHARGING_STATIONS}
+                action={ActionType.COMMAND}
+                params={{
+                  id: record.id,
+                  commandType: CommandType.RESET,
+                }}
+              >
+                <Button onClick={() => showResetStartModal(record)}>
+                  Reset
+                </Button>
+              </CanAccess>
+            </Flex>
+          </CanAccess>
         ) : (
           <Flex gap={16} flex="1 1 auto" align="center">
             <Typography.Text type="secondary">

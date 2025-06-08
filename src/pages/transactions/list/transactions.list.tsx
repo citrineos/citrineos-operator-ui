@@ -1,12 +1,16 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Col, GetProps, Input, Row, Table } from 'antd';
 import React, { useMemo } from 'react';
 import { TRANSACTION_LIST_QUERY } from '../queries';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
-import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { useNavigation } from '@refinedev/core';
-import { TransactionDto } from '../../../dtos/transaction.dto';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
+import { TransactionDto } from '../../../dtos/transaction.dto';
+import { DEFAULT_SORTERS } from '../../../components/defaults';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
 import { getTransactionsFilters, getTransactionColumns } from '../columns';
@@ -36,19 +40,25 @@ export const TransactionsList = () => {
   const columns = useMemo(() => getTransactionColumns(push), [push]);
 
   return (
-    <Col className="transactions-list">
-      <Row justify="space-between" align="middle" className="header-row">
-        <h2>Transactions</h2>
-        <Row>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder="Search Transactions"
-          />
+    <CanAccess
+      resource={ResourceType.TRANSACTIONS}
+      action={ActionType.LIST}
+      fallback={<AccessDeniedFallback />}
+    >
+      <Col className="transactions-list">
+        <Row justify="space-between" align="middle" className="header-row">
+          <h2>Transactions</h2>
+          <Row>
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder="Search Transactions"
+            />
+          </Row>
         </Row>
-      </Row>
-      <Table rowKey="id" {...tableProps}>
-        {columns}
-      </Table>
-    </Col>
+        <Table rowKey="id" {...tableProps}>
+          {columns}
+        </Table>
+      </Col>
+    </CanAccess>
   );
 };

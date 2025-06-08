@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Flex, Table } from 'antd';
-import { CrudFilter } from '@refinedev/core';
+import { CanAccess, CrudFilter } from '@refinedev/core';
 import {
   AuthorizationDto,
   AuthorizationDtoProps,
@@ -10,6 +14,7 @@ import GenericTag from '../../components/tag';
 import { IdTokenDtoProps } from '../../dtos/id.token.dto';
 import { IdTokenInfoDtoProps } from '../../dtos/id.token.info.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
+import { ActionType, AccessDeniedFallback, ResourceType } from '@util/auth';
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>

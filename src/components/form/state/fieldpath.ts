@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 export class FieldPath {
   private readonly _keyPath: (string | number)[];
   private readonly _namePath: (string | number)[];

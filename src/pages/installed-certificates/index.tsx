@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { IDataModelListProps } from '../../model/interfaces';
@@ -10,7 +14,7 @@ import {
   INSTALLED_CERTIFICATE_GET_QUERY,
 } from './queries';
 import { Route, Routes } from 'react-router-dom';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { AiOutlineProfile } from 'react-icons/ai';
 import { CustomAction } from '../../components/custom-actions';
 import { BaseRestClient } from '@util/BaseRestClient';

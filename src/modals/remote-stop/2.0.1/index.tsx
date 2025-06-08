@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
@@ -6,10 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { EvseDto } from '../../../dtos/evse.dto';
 import { OCPPVersion } from '@citrineos/base';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import {
-  triggerMessageAndHandleResponse,
-  responseSuccessCheck,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 
 export interface OCPP2_0_1_RemoteStopProps {
   station: ChargingStationDto;
@@ -31,20 +32,9 @@ export const OCPP2_0_1_RemoteStop = ({
   const onFinish = async ({ transactionId }: { transactionId: string }) => {
     const data = { transactionId };
 
-    const responseSuccessCheckAndCloseModal = (
-      confirmation: MessageConfirmation[],
-    ) => {
-      const success = responseSuccessCheck(confirmation);
-      if (success) {
-        dispatch(closeModal());
-      }
-      return success;
-    };
-
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       ocppVersion: OCPPVersion.OCPP2_0_1,
       setLoading,
     });

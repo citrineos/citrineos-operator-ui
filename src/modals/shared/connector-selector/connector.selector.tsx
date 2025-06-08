@@ -1,5 +1,8 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { ConnectorDto, ConnectorDtoProps } from '../../../dtos/connector.dto';
-import { ResourceType } from '../../../resource-type';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
@@ -7,6 +10,7 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { BaseOption } from '@refinedev/core';
 import { CONNECTOR_ID_LIST_FOR_STATION_QUERY } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
+import { ResourceType } from '@util/auth';
 
 export interface ConnectorSelectorProps {
   onSelect: (value: BaseOption) => void;

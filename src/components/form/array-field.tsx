@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Button, Form } from 'antd';
 import { AssociationSelection } from '../data-model-table/association-selection';
 import { PlusOutlined } from '@ant-design/icons';

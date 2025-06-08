@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { DocumentNode } from 'graphql';
 
 export const CLASS_GQL_CREATE_MUTATION = 'classGqlCreateMutation';
