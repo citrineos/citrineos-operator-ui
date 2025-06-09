@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { useForm, useSelect } from '@refinedev/antd';
 import {
   CHARGING_STATIONS_CREATE_MUTATION,
@@ -24,6 +28,7 @@ import { useSearchParams } from 'react-router-dom';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { debounce } from 'lodash';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import config from '@util/config';
 
 export const ChargingStationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -191,6 +196,9 @@ export const ChargingStationUpsert = () => {
     async (input: any) => {
       delete input.locationName; // placeholder for AutoComplete input
       const newItem: any = getSerializedValues(input, ChargingStationDto);
+      if (!stationId) {
+        newItem.tenantId = config.tenantId;
+      }
       formProps.onFinish?.(newItem);
     },
     [formProps],

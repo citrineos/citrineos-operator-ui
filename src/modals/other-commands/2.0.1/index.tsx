@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { instanceToPlain } from 'class-transformer';
 import { Button, Flex, Form } from 'antd';
 import { ModalComponentType } from '../../../AppModal';
@@ -49,10 +53,9 @@ export const OCPP2_0_1_Commands = ({ station }: OCPP2_0_1_CommandsProps) => {
 
   const { data } = useCan({
     resource: ResourceType.CHARGING_STATIONS,
-    action: ActionType.ACCESS,
+    action: ActionType.COMMAND,
     params: {
       id: station.id,
-      accessType: ChargingStationAccessType.COMMANDS,
       commandType: 'otherCommands',
     },
   });

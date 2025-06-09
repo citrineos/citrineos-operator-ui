@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Button, Flex, message, Tooltip, Typography } from 'antd';
 import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
 import {
@@ -334,10 +338,9 @@ export const ChargingStationDetailCardContent = ({
         <Flex style={{ marginTop: '32px' }}>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
-            action={ActionType.ACCESS}
+            action={ActionType.COMMAND}
             params={{
               id: station.id,
-              accessType: ChargingStationAccessType.COMMANDS,
             }}
           >
             <Flex
@@ -352,10 +355,9 @@ export const ChargingStationDetailCardContent = ({
                     {!hasActiveTransactions && (
                       <CanAccess
                         resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.ACCESS}
+                        action={ActionType.COMMAND}
                         params={{
                           id: station.id,
-                          accessType: ChargingStationAccessType.COMMANDS,
                           commandType: CommandType.START_TRANSACTION,
                         }}
                       >
@@ -367,10 +369,9 @@ export const ChargingStationDetailCardContent = ({
                     {hasActiveTransactions && (
                       <CanAccess
                         resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.ACCESS}
+                        action={ActionType.COMMAND}
                         params={{
                           id: station.id,
-                          accessType: ChargingStationAccessType.COMMANDS,
                           commandType: CommandType.STOP_TRANSACTION,
                         }}
                       >
@@ -383,10 +384,9 @@ export const ChargingStationDetailCardContent = ({
                     )}
                     <CanAccess
                       resource={ResourceType.CHARGING_STATIONS}
-                      action={ActionType.ACCESS}
+                      action={ActionType.COMMAND}
                       params={{
                         id: station.id,
-                        accessType: ChargingStationAccessType.COMMANDS,
                         commandType: CommandType.RESET,
                       }}
                     >

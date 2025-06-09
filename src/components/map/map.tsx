@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, {
   useEffect,
   useMemo,
@@ -20,8 +24,9 @@ import { ClusterInfo, LocationGroup, MapMarkerData, MapProps } from './types';
 import './style.scss';
 import { CanAccess } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
+import config from '@util/config';
 
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const apiKey = config.googleMapsApiKey;
 
 /**
  * Main map component that supports marker clustering

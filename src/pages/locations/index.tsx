@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { LocationsList } from './list/locations.list';

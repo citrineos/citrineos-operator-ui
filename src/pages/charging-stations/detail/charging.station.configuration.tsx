@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Select,
@@ -11,8 +15,6 @@ import {
   Button,
 } from 'antd';
 import { useList, type CrudFilter, useOne } from '@refinedev/core';
-import { VARIABLE_ATTRIBUTE_LIST_QUERY } from '../../variable-attributes/queries';
-import { CHANGE_CONFIGURATION_LIST_QUERY } from './queries';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ChangeConfiguration as ChargingStationConfigurationChange } from '../../../message/1.6/change-configuration';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
@@ -20,6 +22,15 @@ import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { CHARGING_STATION_ONLINE_STATUS_QUERY } from '../queries';
 import { ChargingStation } from '../ChargingStation';
+import {
+  VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_QUERY,
+} from '../../variable-attributes/queries';
+import {
+  CHANGE_CONFIGURATION_DOWNLOAD_QUERY,
+  CHANGE_CONFIGURATION_LIST_QUERY,
+} from './queries';
+import { downloadCSV } from '@util/download';
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -183,6 +194,34 @@ export const ChargingStationConfiguration: React.FC<
     },
   });
 
+  const {
+    data: variableAttributesForDownload,
+    isLoading: isAttributesDownloadLoading,
+  } = useList<VariableAttribute>({
+    resource: 'VariableAttributes',
+    meta: {
+      gqlQuery: VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
+      gqlVariables: { stationId },
+    },
+    pagination: {
+      mode: 'off',
+    },
+  });
+
+  const {
+    data: changeConfigurationsForDownload,
+    isLoading: isDownloadChangeConfigurationsLoading,
+  } = useList<ChangeConfiguration>({
+    resource: 'ChangeConfigurations',
+    meta: {
+      gqlQuery: CHANGE_CONFIGURATION_DOWNLOAD_QUERY,
+      gqlVariables: { stationId },
+    },
+    pagination: {
+      mode: 'off',
+    },
+  });
+
   const { data } = useOne<ChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     id: stationId,
@@ -203,7 +242,7 @@ export const ChargingStationConfiguration: React.FC<
           value: attribute.value,
           component: `${attribute.Component?.name ?? '-'}:${attribute.Component?.instance ?? '-'}`,
           variable: `${attribute.Variable?.name ?? '-'}:${attribute.Variable?.instance ?? '-'}`,
-          evse: `${attribute.Evse.id}:${attribute.Evse.connectorId}`,
+          evse: `${attribute.Evse?.id ?? '-'}:${attribute.Evse?.connectorId ?? '-'}`,
         })),
       );
     } else if (version === '1.6' && changeConfigurationsResult?.data) {
@@ -242,6 +281,39 @@ export const ChargingStationConfiguration: React.FC<
       );
     });
   }, [dataSource, searchTerm, version]);
+
+  const handleDownloadConfigurations = () => {
+    if (version === '1.6') {
+      if (!changeConfigurationsForDownload?.data) {
+        message.error('No data available for download');
+        return;
+      }
+      downloadCSV(
+        `configurations_${stationId}_${version}_${new Date().toISOString()}`,
+        ['Station Id', ...CONFIG_1_6_COLUMNS.map((col) => col.title)],
+        changeConfigurationsForDownload.data,
+        (item) => [item.stationId, item.key, item.value ?? ''],
+      );
+    } else {
+      if (!variableAttributesForDownload?.data) {
+        message.error('No data available for download');
+        return;
+      }
+      downloadCSV(
+        `configurations_${stationId}_${version}_${new Date().toISOString()}`,
+        ['Station Id', ...CONFIG_2_0_1_COLUMNS.map((col) => col.title)],
+        variableAttributesForDownload.data,
+        (item) => [
+          stationId,
+          item.type,
+          item.value,
+          `${item.Component?.name ?? '-'}:${item.Component?.instance ?? '-'}`,
+          `${item.Variable?.name ?? '-'}:${item.Variable?.instance ?? '-'}`,
+          `${item.Evse?.id ?? '-'}:${item.Evse?.connectorId ?? '-'}`,
+        ],
+      );
+    }
+  };
 
   // Add/Edit button handlers
   const handleAddConfig = () => {
@@ -283,14 +355,30 @@ export const ChargingStationConfiguration: React.FC<
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={12}>
           <Text>Select OCPP Version</Text>
-          <Select
-            value={version}
-            onChange={(v) => setVersion(v)}
-            style={{ width: '100%' }}
-          >
-            <Select.Option value="1.6">OCPP 1.6</Select.Option>
-            <Select.Option value="2.0.1">OCPP 2.0.1</Select.Option>
-          </Select>
+          <Row gutter={8} align="middle">
+            <Col flex="auto">
+              <Select
+                value={version}
+                onChange={(v) => setVersion(v)}
+                style={{ width: '100%' }}
+              >
+                <Select.Option value="1.6">OCPP 1.6</Select.Option>
+                <Select.Option value="2.0.1">OCPP 2.0.1</Select.Option>
+              </Select>
+            </Col>
+            <Col>
+              <Button
+                type="default"
+                onClick={handleDownloadConfigurations}
+                loading={
+                  isDownloadChangeConfigurationsLoading &&
+                  isAttributesDownloadLoading
+                }
+              >
+                Download CSV
+              </Button>
+            </Col>
+          </Row>
         </Col>
         <Col span={12}>
           <Text>Search</Text>

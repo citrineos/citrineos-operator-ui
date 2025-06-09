@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { Button, Flex, Table, Typography } from 'antd';
 import {
   ChargingStationDto,
@@ -115,20 +119,18 @@ export const getChargingStationColumns = (
         return record.isOnline ? (
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
-            action={ActionType.ACCESS}
+            action={ActionType.COMMAND}
             params={{
               id: record.id,
-              accessType: ChargingStationAccessType.COMMANDS,
             }}
           >
             <Flex gap={16} flex="1 1 auto">
               {!hasActiveTransactions && (
                 <CanAccess
                   resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.ACCESS}
+                  action={ActionType.COMMAND}
                   params={{
                     id: record.id,
-                    accessType: ChargingStationAccessType.COMMANDS,
                     commandType: CommandType.START_TRANSACTION,
                   }}
                 >
@@ -140,10 +142,9 @@ export const getChargingStationColumns = (
               {hasActiveTransactions && (
                 <CanAccess
                   resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.ACCESS}
+                  action={ActionType.COMMAND}
                   params={{
                     id: record.id,
-                    accessType: ChargingStationAccessType.COMMANDS,
                     commandType: CommandType.STOP_TRANSACTION,
                   }}
                 >
@@ -154,10 +155,9 @@ export const getChargingStationColumns = (
               )}
               <CanAccess
                 resource={ResourceType.CHARGING_STATIONS}
-                action={ActionType.ACCESS}
+                action={ActionType.COMMAND}
                 params={{
                   id: record.id,
-                  accessType: ChargingStationAccessType.COMMANDS,
                   commandType: CommandType.RESET,
                 }}
               >

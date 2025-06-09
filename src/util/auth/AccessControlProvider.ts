@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { AccessControlProvider, CanReturnType } from '@refinedev/core';
 import {
   ActionType,
@@ -32,8 +36,7 @@ export const createAccessProvider = (
 
       const check =
         resource === ResourceType.CHARGING_STATIONS &&
-        action === ActionType.ACCESS &&
-        params?.accessType === ChargingStationAccessType.COMMANDS &&
+        action === ActionType.COMMAND &&
         params?.commandType === CommandType.OTHER_COMMANDS;
 
       if (check) {
@@ -50,19 +53,6 @@ export const createAccessProvider = (
           },
         };
       }
-
-      const check2 =
-        resource === ResourceType.CHARGING_STATIONS &&
-        action === ActionType.LIST;
-
-      if (check2) {
-        canResponse = {
-          can: false,
-        };
-      }
-
-      console.log(`AccessProvider: ${action} on ${resource}`);
-      console.log(`AccessProvider: canResponse`, canResponse);
 
       return canResponse;
     },

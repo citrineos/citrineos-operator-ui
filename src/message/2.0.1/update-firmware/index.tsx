@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useCallback, useMemo } from 'react';
 import { Form, Spin } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
@@ -12,8 +16,9 @@ import { OCPPVersion } from '@citrineos/base';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import { UpdateFirmwareRequest, UpdateFirmwareRequestProps } from './model';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../../pages/charging-station-sequences/queries';
+import config from '@util/config';
 
-const FILE_SERVER_URL = import.meta.env.VITE_FILE_SERVER_URL;
+const FILE_SERVER_URL = config.fileServer;
 
 export interface UpdateFirmwareProps {
   station: ChargingStation;

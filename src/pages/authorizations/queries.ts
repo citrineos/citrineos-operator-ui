@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { gql } from 'graphql-tag';
 
 export const AUTHORIZATIONS_LIST_QUERY = gql`
@@ -227,7 +231,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
           idToken
         }
       }
-      StartTransactions {
+      StartTransaction {
         IdToken {
           idToken
         }

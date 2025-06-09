@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
 import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../../components/custom-actions';
