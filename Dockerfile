@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM refinedev/node:20
+FROM refinedev/node:22
 WORKDIR /app/refine
 COPY . .
 RUN npm i && npm run build
