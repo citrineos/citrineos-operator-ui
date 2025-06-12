@@ -2,20 +2,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ConnectorDto, ConnectorDtoProps } from '../../../dtos/connector.dto';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { BaseOption } from '@refinedev/core';
 import { CONNECTOR_ID_LIST_FOR_STATION_QUERY } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { ResourceType } from '@util/auth';
+import { IChargingStationDto } from '@citrineos/base';
+import { ConnectorDtoProps, IConnectorDto } from '@citrineos/base';
 
 export interface ConnectorSelectorProps {
   onSelect: (value: BaseOption) => void;
   onLoading: Dispatch<SetStateAction<boolean>>;
-  station: ChargingStationDto;
+  station: IChargingStationDto;
   isOptional?: boolean;
 }
 export const ConnectorSelector = ({
@@ -24,7 +23,7 @@ export const ConnectorSelector = ({
   onLoading,
   isOptional = false,
 }: ConnectorSelectorProps) => {
-  const { selectProps } = useSelect<ConnectorDto>({
+  const { selectProps } = useSelect<IConnectorDto>({
     resource: ResourceType.CONNECTORS,
     optionLabel: (connector) => String(connector.connectorId),
     optionValue: (connector) => String(connector.connectorId),

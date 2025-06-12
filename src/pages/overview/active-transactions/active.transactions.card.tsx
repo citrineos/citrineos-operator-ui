@@ -4,23 +4,24 @@
 
 import { AutoComplete, Flex } from 'antd';
 import { CanAccess, useList, useNavigation } from '@refinedev/core';
-import {
-  TransactionDto,
-  TransactionDtoProps,
-} from '../../../dtos/transaction.dto';
+import { TransactionDto } from '../../../dtos/transaction.dto';
 import { TRANSACTION_LIST_QUERY } from '../../transactions/queries';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { useSelect } from '@refinedev/antd';
 import React from 'react';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ActionType, ResourceType } from '@util/auth';
+import {
+  BaseDtoProps,
+  ITransactionDto,
+  TransactionDtoProps,
+} from '@citrineos/base';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useNavigation();
 
-  const { data, isLoading, isError } = useList<TransactionDto>({
+  const { data, isLoading, isError } = useList<ITransactionDto>({
     resource: ResourceType.TRANSACTIONS,
     meta: {
       gqlQuery: TRANSACTION_LIST_QUERY,
@@ -38,7 +39,7 @@ export const ActiveTransactionsCard = () => {
   });
 
   const { selectProps: activeTransactionSelectProps } =
-    useSelect<TransactionDto>({
+    useSelect<ITransactionDto>({
       resource: ResourceType.TRANSACTIONS,
       optionLabel: (transaction) => transaction.transactionId,
       optionValue: (transaction) => `${transaction.id}`,

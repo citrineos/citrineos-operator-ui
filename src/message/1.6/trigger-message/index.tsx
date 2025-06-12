@@ -11,7 +11,6 @@ import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
-import { ConnectorDtoProps } from '../../../dtos/connector.dto';
 import { Type } from 'class-transformer';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import {
@@ -21,6 +20,7 @@ import {
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { Connector } from '../../../pages/connectors/connector';
+import { ConnectorDtoProps } from '@citrineos/base';
 
 enum TriggerMessageDataProps {
   requestedMessage = 'requestedMessage',

@@ -8,15 +8,16 @@ import { Form, Input, Button, Select } from 'antd';
 
 import { EvseDto } from '../../../dtos/evse.dto';
 import { ResourceType } from '@util/auth';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { getSerializedValues } from '@util/middleware';
-import { ConnectorDto } from '../../../dtos/connector.dto';
 import { EVSE_CREATE_MUTATION, EVSE_EDIT_MUTATION } from '../queries';
 import { CONNECTOR_LIST_QUERY } from '../../../pages/connectors/queries';
+import { BaseDtoProps } from '@citrineos/base';
+import { IConnectorDto } from '@citrineos/base';
+import { IEvseDto } from '@citrineos/base';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
-  evse: EvseDto | null;
+  evse: IEvseDto | null;
 }
 
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
@@ -50,7 +51,7 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
     [formProps],
   );
 
-  const { selectProps: connectors } = useSelect<ConnectorDto>({
+  const { selectProps: connectors } = useSelect<IConnectorDto>({
     resource: ResourceType.CONNECTORS,
     optionLabel: (connector) =>
       `${connector.connectorId} "-" ${connector.status?.valueOf()}`,
