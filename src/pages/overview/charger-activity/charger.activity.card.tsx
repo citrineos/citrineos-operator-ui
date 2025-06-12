@@ -12,13 +12,16 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ChargerRow } from '../charger.row';
 import { AnimatePresence, motion } from 'framer-motion';
 import { IoClose } from 'react-icons/io5';
-import { TransactionDto } from 'src/dtos/transaction.dto';
-import { EvseDto } from 'src/dtos/evse.dto';
 import { plainToInstance } from 'class-transformer';
-import { LatestStatusNotificationDto } from 'src/dtos/latest.status.notification.dto';
 import { CanAccess } from '@refinedev/core';
 import { ResourceType, ActionType } from '@util/auth';
 import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
+import {
+  IChargingStationDto,
+  ILatestStatusNotificationDto,
+  ITransactionDto,
+  IEvseDto,
+} from '@citrineos/base';
 
 export enum ChargerStatusEnum {
   CHARGING = 'Charging',
@@ -29,8 +32,8 @@ export enum ChargerStatusEnum {
 }
 
 interface ChargerItem {
-  station: ChargingStationDto;
-  evse: EvseDto;
+  station: IChargingStationDto;
+  evse: IEvseDto;
 }
 
 interface OnlineStatusCounts {
@@ -65,14 +68,17 @@ const getNewCounts = (): OnlineStatusCounts => ({
 });
 
 const getOnlineStatusCountsForStation = (
-  chargingStation: ChargingStationDto,
+  chargingStation: IChargingStationDto,
 ): OnlineStatusCounts => {
-  chargingStation = plainToInstance(ChargingStationDto, chargingStation);
+  chargingStation = plainToInstance(
+    ChargingStationDto,
+    chargingStation,
+  ) as IChargingStationDto;
   const counts: OnlineStatusCounts = getNewCounts();
 
   chargingStation.evses?.forEach((evse) => {
     const latestStatus = chargingStation.latestStatusNotifications?.find(
-      (latest: LatestStatusNotificationDto) =>
+      (latest: ILatestStatusNotificationDto) =>
         latest.statusNotification &&
         (latest.statusNotification.evseId === undefined ||
           latest.statusNotification.evseId === evse.id) &&
@@ -92,7 +98,7 @@ const getOnlineStatusCountsForStation = (
 
         case ConnectorStatusEnumType.Occupied: {
           const activeTx = chargingStation.transactions?.find(
-            (tx: TransactionDto) => tx.evseDatabaseId === evse.databaseId,
+            (tx: ITransactionDto) => tx.evseDatabaseId === evse.databaseId,
           );
           if (activeTx) {
             if (activeTx.chargingState === ChargingStateEnumType.Charging) {
@@ -155,7 +161,7 @@ export const ChargerActivityCard: React.FC = () => {
       GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS,
   });
 
-  const stations: ChargingStationDto[] = data?.data.ChargingStations || [];
+  const stations: IChargingStationDto[] = data?.data.ChargingStations || [];
 
   if (isLoading) return <Spin />;
   if (error) return <p>Error loading counts</p>;

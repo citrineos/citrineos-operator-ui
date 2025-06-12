@@ -3,28 +3,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button, Flex, Table, Typography } from 'antd';
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../dtos/charging.station.dto';
 import React from 'react';
 import { CanAccess, CrudFilter } from '@refinedev/core';
-import { LocationDtoProps } from '../../dtos/location.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import {
-  AccessDeniedFallback,
-  ActionType,
-  ChargingStationAccessType,
-  CommandType,
-  ResourceType,
-} from '@util/auth';
+import { ActionType, CommandType, ResourceType } from '@util/auth';
+import { ChargingStationDtoProps, IChargingStationDto } from '@citrineos/base';
+import { LocationDtoProps } from '@citrineos/base';
 
 export const getChargingStationColumns = (
   push: (path: string, ...rest: unknown[]) => void,
-  showRemoteStartModal: (station: ChargingStationDto) => void,
-  handleStopTransactionClick: (station: ChargingStationDto) => void,
-  showResetStartModal: (station: ChargingStationDto) => void,
+  showRemoteStartModal: (station: IChargingStationDto) => void,
+  handleStopTransactionClick: (station: IChargingStationDto) => void,
+  showResetStartModal: (station: IChargingStationDto) => void,
   options?: {
     includeLocationColumn?: boolean;
   },
@@ -53,7 +44,7 @@ export const getChargingStationColumns = (
         },
         style: { cursor: 'pointer' },
       })}
-      render={(_: any, record: ChargingStationDto) => {
+      render={(_: any, record: IChargingStationDto) => {
         return <h4>{record.id}</h4>;
       }}
     />,
@@ -81,7 +72,7 @@ export const getChargingStationColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: ChargingStationDto) => {
+        render={(_: any, record: IChargingStationDto) => {
           return <h4>{record.location?.name}</h4>;
         }}
       />,
@@ -97,7 +88,7 @@ export const getChargingStationColumns = (
       onCell={() => ({
         className: `column-${ChargingStationDtoProps.latestStatusNotifications}`,
       })}
-      render={(_: any, record: ChargingStationDto) => {
+      render={(_: any, record: IChargingStationDto) => {
         return (
           <span className={record.isOnline ? 'online' : 'offline'}>
             {record.isOnline ? 'Online' : 'Offline'}
@@ -112,7 +103,7 @@ export const getChargingStationColumns = (
       onCell={() => ({
         className: 'column-actions',
       })}
-      render={(_: any, record: ChargingStationDto) => {
+      render={(_: any, record: IChargingStationDto) => {
         const hasActiveTransactions =
           record.transactions && record.transactions.length > 0;
 

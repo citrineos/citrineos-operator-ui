@@ -4,20 +4,15 @@
 
 import { Button, Flex, Form } from 'antd';
 import { ModalComponentType } from '../../../AppModal';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { chargingStationActionMap } from '../../../message/1.6';
 import { openModal, closeModal } from '../../../redux/modal.slice';
 import { useDispatch } from 'react-redux';
 import { useCan } from '@refinedev/core';
-import {
-  ActionType,
-  ChargingStationAccessType,
-  ListCanReturnType,
-  ResourceType,
-} from '@util/auth';
+import { ActionType, ListCanReturnType, ResourceType } from '@util/auth';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP1_6_CommandsProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP1_6_Commands = ({ station }: OCPP1_6_CommandsProps) => {
