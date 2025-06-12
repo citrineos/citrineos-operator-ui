@@ -23,5 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clone citrineos-core for @citrineos/base
+        run: |
+          git clone --depth 1 --branch rc-1.8.0 https://github.com/citrineos/citrineos-core.git ../citrineos-core
+
       - name: Docker Build
         run: docker compose -f docker-compose.yml build
