@@ -2,25 +2,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { AutoComplete, Flex, Input } from 'antd';
+import { Flex, Input } from 'antd';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { useNavigation } from '@refinedev/core';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useSelect } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import React from 'react';
 import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
-import { LocationDto } from '../../../dtos/location.dto';
 import { getLocationsFilters } from '../../locations/columns';
-import { LocationsMap } from '../../../pages/locations/map/locations.map';
+import { LocationsMap } from '../../locations/map/locations.map';
+import { BaseDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/base.dto';
+import { ILocationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 const { Search } = Input;
 
 export const LocationsCard = () => {
   const { push } = useNavigation();
 
-  const { selectProps: locationsSelectProps } = useSelect<LocationDto>({
+  const { selectProps: locationsSelectProps } = useSelect<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     optionLabel: (location) => location.name,
     optionValue: (location) => `${location.id}`,

@@ -3,22 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button, Flex, Table, Typography } from 'antd';
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../dtos/charging.station.dto';
+import { ChargingStationDto } from '../../dtos/charging.station.dto';
 import React from 'react';
 import { CanAccess, CrudFilter } from '@refinedev/core';
-import { LocationDtoProps } from '../../dtos/location.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { ActionType, CommandType, ResourceType } from '@util/auth';
 import {
-  AccessDeniedFallback,
-  ActionType,
-  ChargingStationAccessType,
-  CommandType,
-  ResourceType,
-} from '@util/auth';
+  ChargingStationDtoProps,
+  IChargingStationDto,
+} from '../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import { LocationDtoProps } from '../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export const getChargingStationColumns = (
   push: (path: string, ...rest: unknown[]) => void,
@@ -53,7 +48,7 @@ export const getChargingStationColumns = (
         },
         style: { cursor: 'pointer' },
       })}
-      render={(_: any, record: ChargingStationDto) => {
+      render={(_: any, record: IChargingStationDto) => {
         return <h4>{record.id}</h4>;
       }}
     />,
@@ -81,7 +76,7 @@ export const getChargingStationColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: ChargingStationDto) => {
+        render={(_: any, record: IChargingStationDto) => {
           return <h4>{record.location?.name}</h4>;
         }}
       />,
@@ -97,7 +92,7 @@ export const getChargingStationColumns = (
       onCell={() => ({
         className: `column-${ChargingStationDtoProps.latestStatusNotifications}`,
       })}
-      render={(_: any, record: ChargingStationDto) => {
+      render={(_: any, record: IChargingStationDto) => {
         return (
           <span className={record.isOnline ? 'online' : 'offline'}>
             {record.isOnline ? 'Online' : 'Offline'}
@@ -112,7 +107,7 @@ export const getChargingStationColumns = (
       onCell={() => ({
         className: 'column-actions',
       })}
-      render={(_: any, record: ChargingStationDto) => {
+      render={(_: any, record: IChargingStationDto) => {
         const hasActiveTransactions =
           record.transactions && record.transactions.length > 0;
 

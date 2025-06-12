@@ -5,22 +5,9 @@
 import React, { useMemo, useCallback } from 'react';
 import { Card, Flex, Table, Tabs, TabsProps } from 'antd';
 import { useNavigation, useOne, CanAccess } from '@refinedev/core';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
-import {
-  TransactionDto,
-  TransactionDtoProps,
-} from '../../../dtos/transaction.dto';
+import { TransactionDto } from '../../../dtos/transaction.dto';
 import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import {
   AUTHORIZATIONS_SHOW_QUERY,
@@ -32,12 +19,14 @@ import { AuthorizationDetailCard } from './authorization.detail.card';
 import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
+import { TransactionDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/transaction.dto';
+import { IAuthorizationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/authorization.dto';
 
 export const AuthorizationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { push } = useNavigation();
 
-  const { data: authData, isLoading: authLoading } = useOne<AuthorizationDto>({
+  const { data: authData, isLoading: authLoading } = useOne<IAuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
     id,
     meta: { gqlQuery: AUTHORIZATIONS_SHOW_QUERY },

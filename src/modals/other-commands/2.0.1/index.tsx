@@ -5,7 +5,6 @@
 import { instanceToPlain } from 'class-transformer';
 import { Button, Flex, Form } from 'antd';
 import { ModalComponentType } from '../../../AppModal';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { chargingStationActionMap } from '../../../message/2.0.1';
 import { openModal, closeModal } from '../../../redux/modal.slice';
 import { useDispatch } from 'react-redux';
@@ -16,9 +15,10 @@ import {
   ChargingStationAccessType,
   ListCanReturnType,
 } from '@util/auth';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 export interface OCPP2_0_1_CommandsProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP2_0_1_Commands = ({ station }: OCPP2_0_1_CommandsProps) => {

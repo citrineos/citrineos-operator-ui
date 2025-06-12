@@ -4,22 +4,23 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { EvseDto } from '../../../dtos/evse.dto';
 import { OCPPVersion } from '@citrineos/base';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import { IEvseDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/evse.dto';
 
 export interface OCPP2_0_1_RemoteStopProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP2_0_1_RemoteStop = ({
   station,
 }: OCPP2_0_1_RemoteStopProps) => {
-  const evseMap: Map<number, EvseDto> = useMemo(() => {
+  const evseMap: Map<number, IEvseDto> = useMemo(() => {
     if (!station.evses) return new Map<number, EvseDto>();
     return new Map(station.evses.map((evse) => [evse.databaseId, evse]));
   }, [station.evses]);

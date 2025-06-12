@@ -15,19 +15,19 @@ import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
+import { IdTokenDto } from '../../../dtos/id.token.dto';
 import { AuthorizationStatusEnumType, IdTokenEnumType } from '@OCPP2_0_1';
-import {
-  IdTokenInfoDto,
-  IdTokenInfoDtoProps,
-} from '../../../dtos/id.token.info.dto';
+import { IdTokenInfoDto } from '../../../dtos/id.token.info.dto';
 import { renderEnumSelectOptions } from '@util/renderUtil';
-import {
-  AuthorizationDto,
-  AuthorizationDtoProps,
-} from '../../../dtos/authoriation.dto';
+import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import {
+  AuthorizationDtoProps,
+  IAuthorizationDto,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/authorization.dto';
+import { IdTokenDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/id.token.dto';
+import { IdTokenInfoDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/id.token.info.dto';
 
 export const AuthorizationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -51,7 +51,7 @@ export const AuthorizationUpsert = () => {
     id: authorizationId,
     queryOptions: {
       enabled: !!authorizationId,
-      onSuccess: (data: GetOneResponse<AuthorizationDto>) => {
+      onSuccess: (data: GetOneResponse<IAuthorizationDto>) => {
         // Set the initial values for the edit mutation when data is loaded
         if (data?.data.idTokenId) {
           setIdTokenId(data?.data.idTokenId);

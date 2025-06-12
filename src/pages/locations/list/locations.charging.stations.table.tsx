@@ -2,25 +2,22 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { LocationDto } from '../../../dtos/location.dto';
-import { Flex, Row, Table } from 'antd';
+import { Table } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { CanAccess, useNavigation } from '@refinedev/core';
-import { formatDate } from '../../../components/timestamp-display';
-import { MenuSection } from '../../../components/main-menu/main.menu';
-import { ChargingStationStatusTag } from '../../charging-stations/charging.station.status.tag';
 import { useDispatch } from 'react-redux';
 import { instanceToPlain } from 'class-transformer';
 import { ModalComponentType } from '../../../AppModal';
 import { getChargingStationColumns } from '../../charging-stations/columns';
 import { openModal } from '../../../redux/modal.slice';
 import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
+import { ILocationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 export interface LocationsChargingStationsTableProps {
-  location: LocationDto;
-  filteredStations?: ChargingStationDto[]; // Added prop for filtered stations
+  location: ILocationDto;
+  filteredStations?: IChargingStationDto[]; // Added prop for filtered stations
 }
 
 export const LocationsChargingStationsTable = ({

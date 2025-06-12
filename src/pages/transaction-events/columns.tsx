@@ -4,11 +4,8 @@
 
 import { Table } from 'antd';
 import React from 'react';
-import { TransactionEventDtoProps } from '../../dtos/transaction.event.dto';
-import {
-  formatDate,
-  TimestampDisplay,
-} from '../../components/timestamp-display';
+import { TimestampDisplay } from '../../components/timestamp-display';
+import { TransactionEventDtoProps } from '../../../../citrineos-core/00_Base/src/interfaces/dto/transaction.event.dto';
 
 export const getTransactionEventColumns = () => {
   return (

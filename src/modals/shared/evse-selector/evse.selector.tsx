@@ -2,20 +2,22 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { EvseDto, EvseDtoProps } from '../../../dtos/evse.dto';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { BaseOption } from '@refinedev/core';
 import { GET_EVSE_ID_LIST_FOR_STATION } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { ResourceType } from '@util/auth';
+import {
+  EvseDtoProps,
+  IEvseDto,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/evse.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 export interface EvseSelectorProps {
   onSelect: (value: BaseOption) => void;
   onLoading: Dispatch<SetStateAction<boolean>>;
-  station: ChargingStationDto;
+  station: IChargingStationDto;
   isOptional?: boolean;
 }
 export const EvseSelector = ({
@@ -24,7 +26,7 @@ export const EvseSelector = ({
   onLoading,
   isOptional = false,
 }: EvseSelectorProps) => {
-  const { selectProps } = useSelect<EvseDto>({
+  const { selectProps } = useSelect<IEvseDto>({
     resource: ResourceType.EVSES,
     optionLabel: (evse) => String(evse.id),
     optionValue: (evse) => String(evse.id),

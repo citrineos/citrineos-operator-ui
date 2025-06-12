@@ -2,52 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { BaseDto } from './base.dto';
+import { IIdTokenInfoDto } from '../../../citrineos-core/00_Base/src/interfaces/dto/id.token.info.dto';
 import { AuthorizationStatusEnumType } from '@OCPP2_0_1';
-import { TransformDate } from '@util/TransformDate';
 
-export enum IdTokenInfoDtoProps {
-  id = 'id',
-  status = 'status',
-  cacheExpiryDateTime = 'cacheExpiryDateTime',
-  chargingPriority = 'chargingPriority',
-  language1 = 'language1',
-  language2 = 'language2',
-  groupIdTokenId = 'groupIdTokenId',
-  personalMessage = 'personalMessage',
-}
-
-export class IdTokenInfoDto extends BaseDto {
-  @IsInt()
-  @IsNotEmpty()
-  id!: number;
-
-  @IsString()
-  @IsNotEmpty()
+export class IdTokenInfoDto implements Partial<IIdTokenInfoDto> {
   status!: AuthorizationStatusEnumType;
-
-  @TransformDate()
-  @IsOptional()
-  cacheExpiryDateTime?: Date;
-
-  @IsInt()
-  @IsOptional()
-  chargingPriority?: number;
-
-  @IsString()
-  @IsOptional()
-  language1?: string;
-
-  @IsString()
-  @IsOptional()
-  language2?: string;
-
-  @IsInt()
-  @IsOptional()
-  groupIdTokenId?: number;
-
-  @IsString()
-  @IsOptional()
-  personalMessage?: string;
 }

@@ -6,13 +6,13 @@ import { Flex } from 'antd';
 import { useNavigation } from '@refinedev/core';
 import { Circle, CircleStatusEnum } from './circle/circle';
 import React from 'react';
-import { ChargingStationDto } from '../../dtos/charging.station.dto';
-import { EvseDto } from 'src/dtos/evse.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
+import { IChargingStationDto } from '../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import { IEvseDto } from '../../../../citrineos-core/00_Base/src/interfaces/dto/evse.dto';
 
 export interface ChargerRowProps {
-  chargingStation: ChargingStationDto;
-  evse?: EvseDto;
+  chargingStation: IChargingStationDto;
+  evse?: IEvseDto;
   circleColor?: string;
 }
 
@@ -46,12 +46,12 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
         <Flex
           justify="space-between"
           onClick={() =>
-            push(`/${MenuSection.LOCATIONS}/${chargingStation.Location?.id}`)
+            push(`/${MenuSection.LOCATIONS}/${chargingStation.location?.id}`)
           }
         >
           <div>
             Location:{' '}
-            <span className="link">{chargingStation.Location?.name}</span>
+            <span className="link">{chargingStation.location?.name}</span>
           </div>
         </Flex>
       </Flex>

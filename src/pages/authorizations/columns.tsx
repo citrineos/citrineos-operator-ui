@@ -3,18 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Flex, Table } from 'antd';
-import { CanAccess, CrudFilter } from '@refinedev/core';
-import {
-  AuthorizationDto,
-  AuthorizationDtoProps,
-} from '../../dtos/authoriation.dto';
+import { Table } from 'antd';
+import { CrudFilter } from '@refinedev/core';
 import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
 import GenericTag from '../../components/tag';
-import { IdTokenDtoProps } from '../../dtos/id.token.dto';
-import { IdTokenInfoDtoProps } from '../../dtos/id.token.info.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { ActionType, AccessDeniedFallback, ResourceType } from '@util/auth';
+import {
+  AuthorizationDtoProps,
+  IAuthorizationDto,
+} from '../../../../citrineos-core/00_Base/src/interfaces/dto/authorization.dto';
+import { IdTokenDtoProps } from '../../../../citrineos-core/00_Base/src/interfaces/dto/id.token.dto';
+import { IdTokenInfoDtoProps } from '../../../../citrineos-core/00_Base/src/interfaces/dto/id.token.info.dto';
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>
@@ -23,7 +22,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
       dataIndex={IdTokenDtoProps.idToken}
       title="Authorization ID"
       sorter={true}
-      onCell={(record: AuthorizationDto) => ({
+      onCell={(record: IAuthorizationDto) => ({
         className: `column-${IdTokenDtoProps.idToken}`,
         onClick: (e: React.MouseEvent) => {
           const path = `/${MenuSection.AUTHORIZATIONS}/${record.id}`;
@@ -43,7 +42,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
       dataIndex={IdTokenDtoProps.type}
       title="Type"
       sorter={true}
-      onCell={(record: AuthorizationDto) => ({
+      onCell={(record: IAuthorizationDto) => ({
         className: `view-authorizations column-${IdTokenDtoProps.type}`,
       })}
       render={(_, record) => (
@@ -59,7 +58,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
       dataIndex={IdTokenInfoDtoProps.status}
       title="Status"
       sorter={true}
-      onCell={(record: AuthorizationDto) => ({
+      onCell={(record: IAuthorizationDto) => ({
         className: `view-authorizations column-${IdTokenInfoDtoProps.status}`,
       })}
       render={(_, record) => (

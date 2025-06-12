@@ -12,7 +12,6 @@ import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
-import { ConnectorDtoProps } from '../../../dtos/connector.dto';
 import {
   CONNECTORS_FOR_STATION_QUERY,
   CONNECTOR_LIST_FOR_STATION_QUERY,
@@ -20,6 +19,7 @@ import {
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { Connector } from '../../../pages/connectors/connector';
+import { ConnectorDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/connector.dto';
 
 enum RemoteStartTransactionDataProps {
   connector = 'connector',

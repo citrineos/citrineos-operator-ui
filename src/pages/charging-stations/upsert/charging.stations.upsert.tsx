@@ -11,15 +11,12 @@ import {
 import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { AutoComplete, Button, Flex, Form, Input, Modal, Select } from 'antd';
-import { LocationDto, LocationDtoProps } from '../../../dtos/location.dto';
+import { LocationDto } from '../../../dtos/location.dto';
 import {
   LOCATIONS_LIST_QUERY,
   LOCATIONS_GET_QUERY_BY_ID,
 } from '../../locations/queries';
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../../dtos/charging.station.dto';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { LocationIcon } from '../../../components/icons/location.icon';
 import { useParams } from 'react-router-dom';
@@ -29,6 +26,11 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { debounce } from 'lodash';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import { ChargingStationDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import {
+  ILocationDto,
+  LocationDtoProps,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export const ChargingStationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -64,7 +66,7 @@ export const ChargingStationUpsert = () => {
 
   const station = formProps.initialValues;
 
-  const { selectProps } = useSelect<LocationDto>({
+  const { selectProps } = useSelect<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     optionLabel: (location: LocationDto) => {
       return JSON.stringify(location);
@@ -118,7 +120,7 @@ export const ChargingStationUpsert = () => {
       );
 
       if (selected) {
-        const location = JSON.parse(selected.label as string) as LocationDto;
+        const location = JSON.parse(selected.label as string) as ILocationDto;
         formProps.form?.setFieldsValue({
           locationId: selected.value,
           locationName: getLocationNameFromLocation(location),
@@ -135,7 +137,7 @@ export const ChargingStationUpsert = () => {
       );
 
       if (selected) {
-        const location = JSON.parse(selected.label as string) as LocationDto;
+        const location = JSON.parse(selected.label as string) as ILocationDto;
         formProps.form?.setFieldsValue({
           locationId: locationId,
           locationName: getLocationNameFromLocation(location),
@@ -149,7 +151,7 @@ export const ChargingStationUpsert = () => {
     resetSelectedLocation,
   ]);
 
-  const getLocationNameFromLocation = useCallback((location: LocationDto) => {
+  const getLocationNameFromLocation = useCallback((location: ILocationDto) => {
     return `${location.name} - ${location.address}, ${location.city}, ${location.state} ${location.postalCode}`;
   }, []);
 
@@ -159,7 +161,7 @@ export const ChargingStationUpsert = () => {
         (option) => option.value?.toString() === value,
       );
       if (selected) {
-        const location = JSON.parse(selected.label as string) as LocationDto;
+        const location = JSON.parse(selected.label as string) as ILocationDto;
         formProps.form?.setFieldsValue({
           locationId: value,
           locationName: getLocationNameFromLocation(location),
@@ -206,7 +208,7 @@ export const ChargingStationUpsert = () => {
 
   const memoizedOptions = useMemo(() => {
     return selectProps.options?.map((option) => {
-      const item = JSON.parse(option.label as string) as LocationDto;
+      const item = JSON.parse(option.label as string) as ILocationDto;
       return {
         value: option.value?.toString(), // AutoComplete expects string
         label: (

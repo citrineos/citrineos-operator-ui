@@ -8,13 +8,9 @@ import { useSelect } from '@refinedev/antd';
 import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
 import { useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../../pages/charging-station-sequences/queries';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ChargingStationSequenceType } from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { ChargingStationSequenceDto } from '../../../dtos/charging.station.sequence.dto';
-import { EvseDto } from '../../../dtos/evse.dto';
-import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
@@ -22,9 +18,16 @@ import { EvseSelector } from '../../shared/evse-selector/evse.selector';
 
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { ResourceType } from '@util/auth';
+import { BaseDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/base.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import { IChargingStationSequenceDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.sequence.dto';
+import {
+  IdTokenDtoProps,
+  IIdTokenDto,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/id.token.dto';
 
 export interface OCPP2_0_1_RemoteStartProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP2_0_1_RemoteStart = ({
@@ -38,11 +41,11 @@ export const OCPP2_0_1_RemoteStart = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [evseSelectorLoading, setEvseSelectorLoading] =
     useState<boolean>(false);
-  const [idToken, setIdToken] = useState<IdTokenDto | null>(null);
+  const [idToken, setIdToken] = useState<IIdTokenDto | null>(null);
   const isModalOpen = useSelector(selectIsModalOpen);
 
   const { data: requestIdResponse, isLoading: isLoadingRequestId } =
-    useCustom<ChargingStationSequenceDto>({
+    useCustom<IChargingStationSequenceDto>({
       meta: {
         gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
         variables: {
@@ -64,7 +67,7 @@ export const OCPP2_0_1_RemoteStart = ({
       },
     } as any);
 
-  const { selectProps: idTokenSelectProps } = useSelect<IdTokenDto>({
+  const { selectProps: idTokenSelectProps } = useSelect<IIdTokenDto>({
     resource: ResourceType.ID_TOKENS,
     optionLabel: (idToken) => idToken.idToken,
     optionValue: (idToken) => JSON.stringify(idToken),

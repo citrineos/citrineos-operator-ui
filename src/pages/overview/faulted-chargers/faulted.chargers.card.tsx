@@ -9,15 +9,16 @@ import { ResourceType } from '@util/auth';
 import { FAULTED_CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { useList, useNavigation } from '@refinedev/core';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import React from 'react';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ChargerRow } from '../charger.row';
+import { BaseDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/base.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 export const FaultedChargersCard = () => {
   const { push } = useNavigation();
 
-  const { data, isLoading, isError } = useList<ChargingStationDto>({
+  const { data, isLoading, isError } = useList<IChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     meta: {
       gqlQuery: FAULTED_CHARGING_STATIONS_LIST_QUERY,
@@ -33,7 +34,7 @@ export const FaultedChargersCard = () => {
     },
   });
 
-  const chargingStations: ChargingStationDto[] = data?.data ?? [];
+  const chargingStations: IChargingStationDto[] = data?.data ?? [];
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -55,7 +56,7 @@ export const FaultedChargersCard = () => {
         </Flex>
       </Flex>
       <Flex vertical gap={16}>
-        {chargingStations.map((chargingStation: ChargingStationDto) => (
+        {chargingStations.map((chargingStation: IChargingStationDto) => (
           <ChargerRow
             chargingStation={chargingStation}
             key={chargingStation.id}

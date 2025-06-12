@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Form, Spin } from 'antd';
+import { Flex, Spin } from 'antd';
 import { useSelector } from 'react-redux';
 import { selectIsModalOpen } from '../../redux/modal.slice';
 import { plainToInstance } from 'class-transformer';
@@ -11,15 +11,16 @@ import { ChargingStationDto } from '../../dtos/charging.station.dto';
 import { OCPPVersion } from '@citrineos/base';
 import { OCPP1_6_Commands } from './1.6';
 import { OCPP2_0_1_Commands } from './2.0.1';
+import { IChargingStationDto } from '../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 export interface OtherCommandsModalProps {
   station: any;
 }
 
 export const OtherCommandsModal = ({ station }: OtherCommandsModalProps) => {
-  const parsedStation: ChargingStationDto = useMemo(
+  const parsedStation: IChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationDto, station),
     [station],
-  );
+  ) as IChargingStationDto;
   const [loading, setLoading] = useState<boolean>(false);
   const isModalOpen = useSelector(selectIsModalOpen);
 
