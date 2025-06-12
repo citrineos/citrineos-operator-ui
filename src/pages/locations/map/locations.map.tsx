@@ -5,7 +5,6 @@
 import { AutoComplete, Input, Row } from 'antd';
 import React, { useState, useMemo } from 'react';
 import { LocationDto } from '../../../dtos/location.dto';
-import { LocationMarker } from './location-marker';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
@@ -13,7 +12,8 @@ import { LOCATIONS_LIST_QUERY } from '../queries';
 import { plainToInstance } from 'class-transformer';
 import './style.scss';
 // Import the new LocationMap component instead of GoogleMapWithMarkers
-import { LocationMap } from '../../../components/map/map';
+import { LocationMap } from '../../../components/map';
+import { ILocationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export interface LocationsMapProps {
   mapOnly?: boolean;
@@ -22,7 +22,9 @@ export interface LocationsMapProps {
 export const LocationsMap: React.FC<LocationsMapProps> = ({
   mapOnly = false,
 }: LocationsMapProps) => {
-  const [filteredLocations, setFilteredLocations] = useState<LocationDto[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<ILocationDto[]>(
+    [],
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocationId, setSelectedLocationId] = useState<
     string | undefined
@@ -47,8 +49,8 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const lowerCaseQuery = query.toLowerCase();
 
     const filtered =
-      (tableProps.dataSource as unknown as LocationDto[])?.filter(
-        (location: LocationDto) =>
+      (tableProps.dataSource as unknown as ILocationDto[])?.filter(
+        (location: ILocationDto) =>
           location.chargingStations?.some((station) =>
             station.id.includes(lowerCaseQuery),
           ) ||
@@ -64,7 +66,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const locationsData =
       (searchQuery.length > 0
         ? filteredLocations
-        : (tableProps.dataSource as unknown as LocationDto[])) || [];
+        : (tableProps.dataSource as unknown as ILocationDto[])) || [];
 
     // Enhance locations with custom react content for markers
     return locationsData.map((location) => {

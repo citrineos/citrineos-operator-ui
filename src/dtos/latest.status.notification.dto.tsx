@@ -2,23 +2,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsInt, IsOptional, IsString } from 'class-validator';
-import { BaseDto } from './base.dto';
-import { Expose, Type } from 'class-transformer';
-import { StatusNotificationDto } from './status.notification.dto';
+import { ILatestStatusNotificationDto } from '../../../citrineos-core/00_Base/src/interfaces/dto/latest.status.notification.dto';
+import * as statusNotificationDto from '../../../citrineos-core/00_Base/src/interfaces/dto/status.notification.dto';
+import { Expose } from 'class-transformer';
 
-export class LatestStatusNotificationDto extends BaseDto {
-  @IsInt()
-  id!: number;
-
-  @IsString()
-  stationId!: string;
-
-  @IsInt()
-  statusNotificationId!: number;
-
-  @IsOptional()
-  @Type(() => StatusNotificationDto)
+export class LatestStatusNotificationDto
+  implements Partial<ILatestStatusNotificationDto>
+{
   @Expose({ name: 'StatusNotification' })
-  statusNotification?: StatusNotificationDto;
+  statusNotification?: statusNotificationDto.IStatusNotificationDto;
 }

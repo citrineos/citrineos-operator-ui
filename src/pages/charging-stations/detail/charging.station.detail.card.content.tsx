@@ -11,7 +11,6 @@ import {
   useNavigation,
   useOne,
   CanAccess,
-  useCan,
 } from '@refinedev/core';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import React, { useCallback } from 'react';
@@ -25,10 +24,7 @@ import { TransactionDto } from '../../../dtos/transaction.dto';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import {
-  OCPPMessageDto,
-  OCPPMessageDtoProps,
-} from '../../../dtos/ocpp.message.dto';
+import { OCPPMessageDto } from '../../../dtos/ocpp.message.dto';
 import { ChargingStationStatusTag } from '../charging.station.status.tag';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { useLocation } from 'react-router-dom';
@@ -37,6 +33,11 @@ import {
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
 import { ActionType, ChargingStationAccessType, CommandType } from '@util/auth';
+import {
+  IOCPPMessageDto,
+  OCPPMessageDtoProps,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/ocpp.message.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 const { Text } = Typography;
 
@@ -53,7 +54,7 @@ export const ChargingStationDetailCardContent = ({
   const pageLocation = useLocation();
   const dispatch = useDispatch();
 
-  const { data, isLoading } = useOne<ChargingStationDto>({
+  const { data, isLoading } = useOne<IChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     id: stationId,
     meta: {
@@ -64,7 +65,7 @@ export const ChargingStationDetailCardContent = ({
 
   const station = data?.data;
 
-  const { data: latestLogsData } = useList<OCPPMessageDto>({
+  const { data: latestLogsData } = useList<IOCPPMessageDto>({
     resource: ResourceType.OCPP_MESSAGES,
     meta: {
       fields: [OCPPMessageDtoProps.id, OCPPMessageDtoProps.timestamp],
@@ -109,7 +110,7 @@ export const ChargingStationDetailCardContent = ({
   }, [station, mutate, push]);
 
   const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Start',
@@ -122,7 +123,7 @@ export const ChargingStationDetailCardContent = ({
   );
 
   const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Stop',
@@ -137,7 +138,7 @@ export const ChargingStationDetailCardContent = ({
   );
 
   const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Reset',

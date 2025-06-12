@@ -6,20 +6,22 @@ import { useEffect, useState } from 'react';
 import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { OCPPVersion } from '@citrineos/base';
-import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
-import { ConnectorDto } from '../../../dtos/connector.dto';
 import { ConnectorSelector } from '../../shared/connector-selector/connector.selector';
 import { ResourceType } from '@util/auth';
+import { BaseDtoProps } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/base.dto';
+import {
+  IdTokenDtoProps,
+  IIdTokenDto,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/id.token.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 export interface OCPP1_6_RemoteStartProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
@@ -33,7 +35,7 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
     useState<boolean>(false);
   const isModalOpen = useSelector(selectIsModalOpen);
 
-  const { selectProps: idTokenSelectProps } = useSelect<IdTokenDto>({
+  const { selectProps: idTokenSelectProps } = useSelect<IIdTokenDto>({
     resource: ResourceType.ID_TOKENS,
     optionLabel: (idToken) => idToken.idToken,
     optionValue: (idToken) => JSON.stringify(idToken),

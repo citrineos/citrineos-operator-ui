@@ -9,12 +9,12 @@ import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { LocationIcon } from '../../../components/map';
 import { CanAccess, useNavigation } from '@refinedev/core';
-import { LocationDto } from '../../../dtos/location.dto';
 import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ActionType, ResourceType } from '@util/auth';
+import { ILocationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export interface LocationDetailCardProps {
-  location: LocationDto;
+  location: ILocationDto;
 }
 
 export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {

@@ -13,11 +13,12 @@ import { LOCATIONS_GET_QUERY } from '../queries';
 import { LocationsChargingStationsTable } from '../list/locations.charging.stations.table';
 import { LocationDetailCard } from './location.detail.card';
 import { ActionType, ResourceType } from '@util/auth';
+import { ILocationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export const LocationsDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data, isLoading } = useOne<LocationDto>({
+  const { data, isLoading } = useOne<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     id,
     meta: {

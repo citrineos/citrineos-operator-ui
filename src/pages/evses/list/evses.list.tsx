@@ -10,12 +10,15 @@ import { EvseUpsert } from '../upsert/evses.upsert';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { ConnectorsUpsert } from '../../../pages/connectors/upsert/connectors.upsert';
+import { ConnectorsUpsert } from '../../connectors/upsert/connectors.upsert';
 import { setSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { useOne } from '@refinedev/core';
-import { CHARGING_STATIONS_GET_QUERY } from '../../../pages/charging-stations/queries';
+import { CHARGING_STATIONS_GET_QUERY } from '../../charging-stations/queries';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import { IEvseDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/evse.dto';
+import { IConnectorDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/connector.dto';
 
 interface EVSESListProps {
   stationId: string;
@@ -29,7 +32,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     EvseDto | ConnectorDto | null
   >(null);
 
-  const { data, isLoading } = useOne<ChargingStationDto>({
+  const { data, isLoading } = useOne<IChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     id: stationId,
     meta: {
@@ -127,7 +130,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
       return (
         <EvseUpsert
           onSubmit={handleFormSubmit}
-          evse={selectedItem as EvseDto | null}
+          evse={selectedItem as IEvseDto | null}
         />
       );
     }
@@ -135,7 +138,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
       return (
         <ConnectorsUpsert
           onSubmit={handleFormSubmit}
-          connector={selectedItem as ConnectorDto | null}
+          connector={selectedItem as IConnectorDto | null}
         />
       );
     }

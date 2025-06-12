@@ -5,7 +5,6 @@
 import { Button, Flex, GetProps, Input, Row, Table } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import { LOCATIONS_LIST_QUERY } from '../queries';
-import { LocationDto } from '../../../dtos/location.dto';
 import './style.scss';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { LocationsChargingStationsTable } from './locations.charging.stations.table';
@@ -18,8 +17,10 @@ import { DebounceSearch } from '../../../components/debounce-search';
 import { getLocationAndStationsFilters, getLocationsColumns } from '../columns';
 import { EMPTY_FILTER } from '@util/consts';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import { ILocationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import { LocationDto } from '../../../dtos/location.dto';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -27,12 +28,12 @@ export const LocationsList = () => {
   const [expandedRowByToggle, setExpandedRowByToggle] = useState<string>();
   const [searchValue, setSearchValue] = useState<string>('');
   const [filteredStationsByLocation, setFilteredStationsByLocation] = useState<
-    Record<string, ChargingStationDto[]>
+    Record<string, IChargingStationDto[]>
   >({});
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const { push } = useNavigation();
 
-  const { tableProps, setFilters } = useTable<LocationDto>({
+  const { tableProps, setFilters } = useTable<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     sorters: DEFAULT_SORTERS,
     meta: {
@@ -41,7 +42,7 @@ export const LocationsList = () => {
     queryOptions: getPlainToInstanceOptions(LocationDto),
   });
 
-  const handleExpandToggle = (record: LocationDto) => {
+  const handleExpandToggle = (record: ILocationDto) => {
     const isCurrentlyExpanded = expandedRowKeys.includes(record.id);
 
     if (isCurrentlyExpanded) {
@@ -69,7 +70,7 @@ export const LocationsList = () => {
 
       // Ensure all rows are collapsed when search is reset
       if (tableProps.dataSource) {
-        const allLocations = tableProps.dataSource as LocationDto[];
+        const allLocations = tableProps.dataSource as ILocationDto[];
         setExpandedRowKeys([]);
       }
     } else {
@@ -89,16 +90,16 @@ export const LocationsList = () => {
       return;
     }
 
-    const matchedStations: Record<string, ChargingStationDto[]> = {};
+    const matchedStations: Record<string, IChargingStationDto[]> = {};
     const newExpandedKeys: React.Key[] = [];
     const lowercaseValue = value.toLowerCase();
 
     // Find matching stations for each location
-    tableProps.dataSource?.forEach((location: LocationDto) => {
+    tableProps.dataSource?.forEach((location: ILocationDto) => {
       if (!location.chargingStations?.length) return;
 
       const matchingStations = location.chargingStations.filter(
-        (station) =>
+        (station: IChargingStationDto) =>
           // Match against station ID
           (station.id && station.id.toLowerCase().includes(lowercaseValue)) ||
           // Match against online status
@@ -135,13 +136,13 @@ export const LocationsList = () => {
   }, [searchValue]);
 
   // Determine if a location should be highlighted based on search results
-  const shouldHighlightLocation = (record: LocationDto): boolean => {
+  const shouldHighlightLocation = (record: ILocationDto): boolean => {
     return !!filteredStationsByLocation[record.id]?.length;
   };
 
   // With backend filtering, all returned locations should be shown
   // This function is kept for compatibility but is simplified
-  const shouldShowLocation = (record: LocationDto): boolean => {
+  const shouldShowLocation = (record: ILocationDto): boolean => {
     return true; // Backend filtering handles which locations to show
   };
 
@@ -198,7 +199,7 @@ export const LocationsList = () => {
           showHeader={true}
           expandable={{
             expandIconColumnIndex: -1,
-            expandedRowRender: (record: LocationDto) => {
+            expandedRowRender: (record: ILocationDto) => {
               return (
                 <LocationsChargingStationsTable
                   location={record}
@@ -219,7 +220,7 @@ export const LocationsList = () => {
               }
             },
           }}
-          rowClassName={(record: LocationDto) =>
+          rowClassName={(record: ILocationDto) =>
             shouldHighlightLocation(record) ? 'selected-row' : ''
           }
         >
@@ -231,7 +232,7 @@ export const LocationsList = () => {
             onCell={() => ({
               className: 'column-actions',
             })}
-            render={(_: any, record: LocationDto) => (
+            render={(_: any, record: ILocationDto) => (
               <Row
                 className="view-charging-stations"
                 justify="end"

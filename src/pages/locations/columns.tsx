@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { LocationDtoProps } from '../../dtos/location.dto';
-import { CanAccess, ConditionalFilter, CrudFilters } from '@refinedev/core';
+import { ConditionalFilter, CrudFilters } from '@refinedev/core';
 import { Table } from 'antd';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import { LocationDtoProps } from '../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 /**
  * Get column definitions for locations table

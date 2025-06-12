@@ -4,9 +4,8 @@
 
 // types.tsx - Refactored types
 import { GeoPoint } from '@util/GeoPoint';
-import { ChargingStationDto } from '../../dtos/charging.station.dto';
-import { LocationDto } from '../../dtos/location.dto';
 import { ReactNode } from 'react';
+import { ILocationDto } from '../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export interface MapMarkerData {
   position: google.maps.LatLngLiteral;
@@ -48,7 +47,7 @@ export type MapMarkerProps =
   | ClusterMapMarkerProps;
 
 export interface MapProps {
-  locations?: LocationDto[];
+  locations?: ILocationDto[];
   defaultCenter?: google.maps.LatLngLiteral;
   zoom?: number;
   onMarkerClick?: (id: string, type: 'station' | 'location' | 'mixed') => void;

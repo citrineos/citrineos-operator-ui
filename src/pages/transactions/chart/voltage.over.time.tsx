@@ -12,15 +12,13 @@ import {
   YAxis,
 } from 'recharts';
 import { useMemo } from 'react';
-import {
-  getTimestampToMeasurandArray,
-  MeterValueDto,
-} from '../../../dtos/meter.value.dto';
+import { getTimestampToMeasurandArray } from '../../../dtos/meter.value.dto';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { formatTimeLabel, generateTimeTicks } from './util';
+import { IMeterValueDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/meter.value.dto';
 
 export interface VoltageOverTimeProps {
-  meterValues: MeterValueDto[];
+  meterValues: IMeterValueDto[];
   validContexts: ReadingContextEnumType[];
 }
 

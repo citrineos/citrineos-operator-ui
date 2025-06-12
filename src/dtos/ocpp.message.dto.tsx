@@ -2,21 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsEnum, IsString } from 'class-validator';
-import { BaseDto } from './base.dto';
-import { Sortable } from '@util/decorators/Sortable';
-import { TransformDate } from '@util/TransformDate';
-import { OCPPVersion } from '@citrineos/base';
-
-export enum OCPPMessageDtoProps {
-  id = 'id',
-  stationId = 'stationId',
-  correlationId = 'correlationId',
-  origin = 'origin',
-  action = 'action',
-  message = 'message',
-  timestamp = 'timestamp',
-}
+import { IOCPPMessageDto } from '../../../citrineos-core/00_Base/src/interfaces/dto/ocpp.message.dto';
+import { OCPPVersion } from '../../../citrineos-core/00_Base';
 
 export enum OCPPMessageOriginEnumType {
   CS = 'cs',
@@ -98,29 +85,8 @@ export enum OCPPMessageActionEnumType {
   UpdateFirmware = 'UpdateFirmware',
 }
 
-export class OCPPMessageDto extends BaseDto {
-  @IsString()
-  id!: string;
-
-  @IsString()
-  stationId!: string;
-
-  @IsString()
-  correlationId!: string;
-
-  @IsEnum(OCPPMessageOriginEnumType)
+export class OCPPMessageDto implements Partial<IOCPPMessageDto> {
   origin!: OCPPMessageOriginEnumType;
-
-  @IsEnum(OCPPVersion)
   protocol!: OCPPVersion;
-
-  @IsEnum(OCPPMessageActionEnumType)
   action?: OCPPMessageActionEnumType;
-
-  @IsString()
-  message!: any;
-
-  @Sortable()
-  @TransformDate()
-  timestamp!: Date;
 }

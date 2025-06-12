@@ -9,7 +9,6 @@ import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '../queries';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
   OCPPMessageDto,
-  OCPPMessageDtoProps,
   OCPPMessageOriginEnumType,
   OCPPMessageActionEnumType,
 } from '../../../dtos/ocpp.message.dto';
@@ -28,6 +27,10 @@ import { Dayjs } from 'dayjs';
 import { CrudFilter } from '@refinedev/core';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { LinkOutlined } from '@ant-design/icons';
+import {
+  IOCPPMessageDto,
+  OCPPMessageDtoProps,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/ocpp.message.dto';
 const { Text } = Typography;
 
 export interface OCPPMessagesProps {
@@ -45,7 +48,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   const [selectedActions, setSelectedActions] = useState<string[]>(['all']);
   const [selectedOrigins, setSelectedOrigins] = useState<string[]>(['all']);
 
-  const { tableProps, setFilters } = useTable<OCPPMessageDto>({
+  const { tableProps, setFilters } = useTable<IOCPPMessageDto>({
     resource: ResourceType.OCPP_MESSAGES,
     sorters: {
       permanent: [{ field: OCPPMessageDtoProps.timestamp, order: 'desc' }],
@@ -120,7 +123,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
     updateFilters();
   }, [startDate, endDate, searchCid, selectedActions, selectedOrigins]);
 
-  const filteredData: OCPPMessageDto[] = (tableProps.dataSource ?? []).filter(
+  const filteredData: IOCPPMessageDto[] = (tableProps.dataSource ?? []).filter(
     (item) =>
       searchContent.trim()
         ? JSON.stringify(item.message)
@@ -130,7 +133,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   );
 
   const findRelatedMessages = useCallback(
-    (record: OCPPMessageDto) => {
+    (record: IOCPPMessageDto) => {
       setHighlightedCorrelationId(record.correlationId);
       // Find and select the row with the same correlationId but different origin
       const relatedMessage = tableProps.dataSource?.find(
@@ -152,13 +155,13 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   );
 
   // This function now applies the class directly to the row element
-  const getRowClassName = (record: OCPPMessageDto) =>
+  const getRowClassName = (record: IOCPPMessageDto) =>
     record.origin === OCPPMessageOriginEnumType.CS
       ? 'row-origin-cs'
       : 'row-origin-csms';
 
   // Add row ID for scrolling to related messages
-  const onRow = (record: OCPPMessageDto) => ({
+  const onRow = (record: IOCPPMessageDto) => ({
     id: `ocpp-row-${record.id}`,
   });
 
@@ -232,7 +235,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         className="ocpp-table-container"
         style={{ width: '100%', overflowX: 'auto' }}
       >
-        <Table<OCPPMessageDto>
+        <Table<IOCPPMessageDto>
           {...tableProps}
           dataSource={filteredData}
           rowKey="id"
@@ -240,7 +243,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
           onRow={onRow}
           scroll={{ x: 'max-content' }}
         >
-          <Table.Column<OCPPMessageDto>
+          <Table.Column<IOCPPMessageDto>
             key="correlationId"
             dataIndex="correlationId"
             title="Correlation ID"
@@ -265,13 +268,13 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             )}
             width={200}
           />
-          <Table.Column<OCPPMessageDto>
+          <Table.Column<IOCPPMessageDto>
             key="action-origin"
             title="Action-Origin"
             render={(_, record) => `${record.action}-${record.origin}`}
             width={180}
           />
-          <Table.Column<OCPPMessageDto>
+          <Table.Column<IOCPPMessageDto>
             key="message"
             dataIndex="message"
             title="Content"

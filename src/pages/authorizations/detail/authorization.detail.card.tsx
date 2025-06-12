@@ -7,21 +7,20 @@ import { Button, Flex, message, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useDelete, useNavigation } from '@refinedev/core';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { ClipboardIcon } from '../../../components/icons/clipboard.icon';
 import GenericTag from '../../../components/tag';
 import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
 import { useLocation, Link } from 'react-router-dom';
-import { EditOutlined } from '@ant-design/icons';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
-import { ID_TOKEN_INFOS_DELETE_MUTATION } from '../../../pages/id-tokens-infos/queries';
-import { ID_TOKENS_DELETE_MUTATION } from '../../../pages/id-tokens/queries';
+import { ID_TOKEN_INFOS_DELETE_MUTATION } from '../../id-tokens-infos/queries';
+import { ID_TOKENS_DELETE_MUTATION } from '../../id-tokens/queries';
 import { ResourceType } from '@util/auth';
+import { IAuthorizationDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/authorization.dto';
 
 const { Text } = Typography;
 
 export interface AuthorizationDetailCardProps {
-  authorization: AuthorizationDto;
+  authorization: IAuthorizationDto;
 }
 
 export const AuthorizationDetailCard: React.FC<

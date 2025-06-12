@@ -25,7 +25,7 @@ import { Country, countryStateData } from '../country.state.data';
 import { MapLocationPicker } from '../../../components/map/map.location.picker';
 import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
 import { getSerializedValues } from '@util/middleware';
-import { LocationDto, LocationDtoProps } from '../../../dtos/location.dto';
+import { LocationDto } from '../../../dtos/location.dto';
 import {
   BaseKey,
   CanAccess,
@@ -35,14 +35,18 @@ import {
 import { UploadOutlined } from '@ant-design/icons';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { SelectedChargingStations } from './selected.charging.stations';
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../../dtos/charging.station.dto';
 import { useParams } from 'react-router-dom';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import {
+  ChargingStationDtoProps,
+  IChargingStationDto,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
+import {
+  ILocationDto,
+  LocationDtoProps,
+} from '../../../../../citrineos-core/00_Base/src/interfaces/dto/location.dto';
 
 export const LocationsUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -53,7 +57,7 @@ export const LocationsUpsert = () => {
   const { replace, goBack } = useNavigation();
   const { mutate } = useUpdateMany();
 
-  const { form, formProps, query } = useForm<LocationDto>({
+  const { form, formProps, query } = useForm<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     id: locationId,
     queryOptions: {
@@ -69,10 +73,10 @@ export const LocationsUpsert = () => {
         form.getFieldValue(LocationDtoProps.chargingStations) || [];
 
       const currentIds = new Set(
-        currentStations.map((cs: ChargingStationDto) => cs.id),
+        currentStations.map((cs: IChargingStationDto) => cs.id),
       );
       const prevIds = new Set(
-        prevStations.map((cs: ChargingStationDto) => cs.id),
+        prevStations.map((cs: IChargingStationDto) => cs.id),
       );
       const addedIds = [...currentIds].filter(
         (id) => !prevIds.has(id),

@@ -6,14 +6,14 @@ import { Flex, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useNavigation } from '@refinedev/core';
-import { TransactionDto } from '../../../dtos/transaction.dto';
 import { BiDirectionsArrowsIcon } from '../../../components/icons/bi.directional.arrows.icon';
 import { useLocation } from 'react-router-dom';
+import { ITransactionDto } from '../../../../../citrineos-core/00_Base/src/interfaces/dto/transaction.dto';
 
 const { Text } = Typography;
 
 export interface TransactionDetailCardProps {
-  transaction: TransactionDto;
+  transaction: ITransactionDto;
 }
 
 export const TransactionDetailCard = ({

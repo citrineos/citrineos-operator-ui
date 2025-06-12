@@ -4,14 +4,14 @@
 
 import {
   ChargignStationStatus,
-  ChargingStationDto,
   getChargingStationStatus,
 } from '../../dtos/charging.station.dto';
 import GenericTag from '../../components/tag';
 import React from 'react';
+import { IChargingStationDto } from '../../../../citrineos-core/00_Base/src/interfaces/dto/charging.station.dto';
 
 export interface ChargingStationStatusTagProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 export const ChargingStationStatusTag = ({
   station,
