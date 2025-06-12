@@ -4,6 +4,7 @@
 
 import { LocationDto } from '../dtos/location.dto';
 import config from './config';
+import { GeoPoint } from '@util/GeoPoint';
 
 export interface GoogleGeocodingResponse {
   results: GeocodingResult[];
@@ -82,4 +83,12 @@ export const getFullAddress = (location: Partial<LocationDto>) => {
   return `${location.address || ''}, ${location.city || ''}, ${
     location.state || ''
   } ${location.postalCode || ''}, ${location.country || ''}`.trim();
+};
+
+export const getCoordinates = (coordinates: GeoPoint | null | undefined) => {
+  if (coordinates) {
+    return `${coordinates.latitude.toFixed(5)}, ${coordinates.longitude.toFixed(5)}`;
+  } else {
+    return 'N/A';
+  }
 };

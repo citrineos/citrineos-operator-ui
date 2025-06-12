@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { getFullAddress } from '@util/geocoding';
+import { getCoordinates, getFullAddress } from '@util/geocoding';
 import { Button, Flex } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
@@ -66,9 +66,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
                   <td>
                     <strong>Geocoordinates</strong>
                   </td>
-                  <td>
-                    {`${location.coordinates.latitude} ${location.coordinates.longitude}`}
-                  </td>
+                  <td>{getCoordinates(location.coordinates)}</td>
                 </tr>
                 <tr>
                   <td>
