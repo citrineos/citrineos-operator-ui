@@ -43,7 +43,7 @@ export class LocationDto extends BaseDto {
   @Type(() => GeoPoint)
   @ToPlain<GeoPoint>((value) => (value ? value.json : value))
   @ToClass<GeoPoint>(GeoPoint.parse)
-  coordinates!: GeoPoint;
+  coordinates?: GeoPoint;
 
   @IsArray()
   @Type(() => ChargingStationDto)

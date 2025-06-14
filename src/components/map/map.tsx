@@ -63,8 +63,8 @@ export const LocationMap: React.FC<MapProps> = ({
       .filter((location) => location.coordinates)
       .map((location) => {
         const position = {
-          lat: location.coordinates.latitude,
-          lng: location.coordinates.longitude,
+          lat: location.coordinates!.latitude,
+          lng: location.coordinates!.longitude,
         };
 
         const status = determineLocationStatus(location);
@@ -464,7 +464,7 @@ function createLocationGroups(
   return Array.from(markersByLocation.entries())
     .map(([locationId, stationMarkers]) => {
       const location = locations.find((l) => l.id === locationId);
-      if (!location) return null;
+      if (!location || !location.coordinates) return null;
 
       // Create a marker for this location
       const locationMarker: MapMarkerData = {

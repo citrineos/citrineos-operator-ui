@@ -31,7 +31,7 @@ export const TRANSACTION_LIST_QUERY = gql`
           idToken
         }
       }
-      StartTransactions {
+      StartTransaction {
         IdToken {
           idToken
         }

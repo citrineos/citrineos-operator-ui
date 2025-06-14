@@ -221,7 +221,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
           idToken
         }
       }
-      StartTransactions {
+      StartTransaction {
         IdToken {
           idToken
         }
