@@ -8,7 +8,7 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { EvseDtoProps, OCPPVersion } from '@citrineos/base';
 import { ResetEnumType } from '@OCPP2_0_1';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty } from 'class-validator';
@@ -16,7 +16,7 @@ import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Evse } from '../../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
-import { EvseProps } from '../../../pages/evses/EvseProps';
+
 import {
   GET_EVSE_LIST_FOR_STATION,
   GET_EVSES_FOR_STATION,
@@ -35,7 +35,7 @@ export interface ResetChargingStationProps {
 class ResetData {
   @GqlAssociation({
     parentIdFieldName: ResetDataProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.databaseId,
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -71,7 +71,7 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
 
   const resetData = new ResetData();
   resetData[ResetDataProps.evse] = new Evse();
-  resetData[ResetDataProps.evse][EvseProps.databaseId] =
+  resetData[ResetDataProps.evse][EvseDtoProps.databaseId] =
     NEW_IDENTIFIER as unknown as number;
 
   const handleSubmit = async (request: ResetData) => {

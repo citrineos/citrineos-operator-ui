@@ -9,10 +9,13 @@ import { Certificates } from '../../graphql/schema.types';
 import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
-import { CountryNameEnumType, SignatureAlgorithmEnumType } from './Certificate';
 import { TruncateDisplay } from '../../components/truncate-display';
 import { CustomAction } from '../../components/custom-actions';
 import { ColumnAction, DefaultColors } from '@enums';
+import {
+  CountryNameEnumType,
+  SignatureAlgorithmEnumType,
+} from '@citrineos/base';
 
 export const CERTIFICATES_COLUMNS = (
   withActions: boolean,

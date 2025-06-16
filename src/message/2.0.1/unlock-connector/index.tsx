@@ -8,7 +8,7 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { EvseDtoProps, IEvseDto, OCPPVersion } from '@citrineos/base';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { Evse } from '../../../pages/evses/Evse';
@@ -17,7 +17,7 @@ import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { GET_EVSE_LIST_FOR_STATION } from '../../queries';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { EVSE_LIST_QUERY } from '../../../pages/evses/queries';
-import { EvseProps } from '../../../pages/evses/EvseProps';
+import * as base from '@citrineos/base';
 
 enum UnlockConnectorFormProps {
   evse = 'evse',
@@ -26,7 +26,7 @@ enum UnlockConnectorFormProps {
 export class UnlockConnectorForm {
   @GqlAssociation({
     parentIdFieldName: UnlockConnectorFormProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.databaseId,
     gqlQuery: {
       query: EVSE_LIST_QUERY,
     },
@@ -43,7 +43,7 @@ export class UnlockConnectorForm {
   @Type(() => Evse)
   @ValidateNested()
   @IsNotEmpty()
-  evse!: Evse;
+  evse!: base.IEvseDto;
 
   constructor() {
     Object.assign(this, {
@@ -83,13 +83,13 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
   const handleSubmit = async (request: UnlockConnectorForm) => {
     const evse = request[UnlockConnectorFormProps.evse];
 
-    if (!evse[EvseProps.connectorId]) {
+    if (!evse[EvseDtoProps.connectorId]) {
       throw new Error('Please select an EVSE with a connector');
     }
 
     const data: UnlockConnectorRequest = {
-      evseId: evse[EvseProps.id],
-      connectorId: evse[EvseProps.connectorId],
+      evseId: evse[EvseDtoProps.id],
+      connectorId: evse[EvseDtoProps.connectorId],
     };
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({

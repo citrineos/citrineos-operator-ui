@@ -8,7 +8,7 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { EvseDtoProps, IEvseDto, OCPPVersion } from '@citrineos/base';
 import { AttributeEnumType, GetVariableStatusEnumType } from '@OCPP2_0_1';
 import {
   ArrayMinSize,
@@ -28,7 +28,7 @@ import { StatusInfoType } from '../model/StatusInfoType';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
-import { EvseProps } from '../../../pages/evses/EvseProps';
+
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
 import {
   Variable,
@@ -63,7 +63,7 @@ const GetVariablesDataCustomConstructor = () => {
   const evse = new Evse();
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  evse[EvseProps.databaseId] = NEW_IDENTIFIER as unknown as number;
+  evse[EvseDtoProps.databaseId] = NEW_IDENTIFIER as unknown as number;
   const getVariablesData = new GetVariablesData();
   getVariablesData[GetVariablesDataProps.component] = component;
   getVariablesData[GetVariablesDataProps.variable] = variable;
@@ -131,7 +131,7 @@ export class GetVariablesData {
 
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.databaseId,
     gqlQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
     },
@@ -241,18 +241,18 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
         GetVariablesRequestProps.getVariableData
       ].map((item: GetVariablesData) => {
         if (item && item[GetVariablesDataProps.evse]) {
-          const evse: Evse = item[GetVariablesDataProps.evse]!;
+          const evse: IEvseDto = item[GetVariablesDataProps.evse]!;
           const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
           let evsePayload: any = undefined;
-          if (evse[EvseProps.databaseId]) {
+          if (evse[EvseDtoProps.databaseId]) {
             evsePayload = {
-              id: evse[EvseProps.databaseId],
+              id: evse[EvseDtoProps.databaseId],
               // customData: null // todo
             };
           }
-          if (evsePayload && evse[EvseProps.connectorId]) {
-            evsePayload.connectorId = evse[EvseProps.connectorId];
+          if (evsePayload && evse[EvseDtoProps.connectorId]) {
+            evsePayload.connectorId = evse[EvseDtoProps.connectorId];
           }
           const data: any = {
             component: {

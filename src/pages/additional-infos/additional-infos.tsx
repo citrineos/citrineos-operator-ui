@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { BaseModel } from '@util/BaseModel';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
@@ -19,6 +17,7 @@ import {
   ADDITIONAL_INFOS_SHOW_QUERY,
 } from '../../queries/additionalInfo';
 import { ResourceType } from '@util/auth';
+import { IAdditionalInfosDto } from '@citrineos/base';
 
 export enum AdditionalInfosProps {
   id = 'id',
@@ -33,16 +32,4 @@ export enum AdditionalInfosProps {
 @ClassGqlEditMutation(ADDITIONAL_INFOS_EDIT_MUTATION)
 @ClassGqlDeleteMutation(ADDITIONAL_INFOS_DELETE_MUTATION)
 @PrimaryKeyFieldName(AdditionalInfosProps.id)
-export class AdditionalInfos extends BaseModel {
-  @IsInt()
-  @IsNotEmpty()
-  id!: number;
-
-  @IsString()
-  @IsNotEmpty()
-  additionalIdToken!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  type!: string;
-}
+export class AdditionalInfos implements Partial<IAdditionalInfosDto> {}

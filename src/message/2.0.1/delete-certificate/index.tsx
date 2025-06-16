@@ -8,7 +8,11 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import {
+  IInstalledCertificateDto,
+  InstalledCertificateDtoProps,
+  OCPPVersion,
+} from '@citrineos/base';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
@@ -20,10 +24,7 @@ import { DeleteCertificateStatusEnumType } from '@OCPP2_0_1';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '@util/consts';
-import {
-  InstalledCertificate,
-  InstalledCertificateProps,
-} from '../../../pages/installed-certificates/InstalledCertificate';
+import { InstalledCertificate } from '../../../pages/installed-certificates/InstalledCertificate';
 import {
   INSTALLED_CERTIFICATE_GET_QUERY,
   INSTALLED_CERTIFICATE_LIST_QUERY,
@@ -36,7 +37,7 @@ enum DeleteCertificateDataProps {
 class DeleteCertificateData {
   @GqlAssociation({
     parentIdFieldName: DeleteCertificateDataProps.installedCertificate,
-    associatedIdFieldName: InstalledCertificateProps.id,
+    associatedIdFieldName: InstalledCertificateDtoProps.id,
     gqlQuery: {
       query: INSTALLED_CERTIFICATE_GET_QUERY,
     },
@@ -73,14 +74,15 @@ export const DeleteCertificate: React.FC<DeleteCertificateProps> = ({
 
   const deleteCertificateData = new DeleteCertificateData();
   const installCertificate = new InstalledCertificate();
-  installCertificate[InstalledCertificateProps.id] =
+  installCertificate[InstalledCertificateDtoProps.id] =
     NEW_IDENTIFIER as unknown as number;
   deleteCertificateData[DeleteCertificateDataProps.installedCertificate] =
     installCertificate as InstalledCertificate;
 
   const handleSubmit = async (request: DeleteCertificateData) => {
-    const installedCertificate: InstalledCertificate =
-      request[DeleteCertificateDataProps.installedCertificate]!;
+    const installedCertificate: IInstalledCertificateDto = request[
+      DeleteCertificateDataProps.installedCertificate
+    ]! as IInstalledCertificateDto;
 
     if (station.id != installedCertificate.stationId) {
       throw new Error('This certificate does not belong to this station');

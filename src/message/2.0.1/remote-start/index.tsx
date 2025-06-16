@@ -8,7 +8,12 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import {
+  EvseDtoProps,
+  IdTokenDtoProps,
+  IIdTokenDto,
+  OCPPVersion,
+} from '@citrineos/base';
 import { useApiUrl, useCustom } from '@refinedev/core';
 import {
   RequestStartTransactionRequest,
@@ -16,9 +21,8 @@ import {
 } from './model';
 import { Evse } from '../../../pages/evses/Evse';
 import { NEW_IDENTIFIER } from '@util/consts';
-import { IdToken, IdTokenProps } from '../../../pages/id-tokens/id-token';
+import { IdToken } from '../../../pages/id-tokens/id-token';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../../pages/charging-station-sequences/queries';
-import { EvseProps } from '../../../pages/evses/EvseProps';
 
 export interface RemoteStartProps {
   station: ChargingStation;
@@ -52,16 +56,16 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
 
   const handleSubmit = async (request: RequestStartTransactionRequest) => {
     (request as any).evseId =
-      request[RequestStartTransactionRequestProps.evse]![EvseProps.id];
+      request[RequestStartTransactionRequestProps.evse]![EvseDtoProps.id];
     delete (request as any)[RequestStartTransactionRequestProps.evse];
 
     request[RequestStartTransactionRequestProps.idToken] = {
       idToken:
         request[RequestStartTransactionRequestProps.idToken]![
-          IdTokenProps.idToken
+          IdTokenDtoProps.idToken
         ],
       type: request[RequestStartTransactionRequestProps.idToken]![
-        IdTokenProps.type
+        IdTokenDtoProps.type
       ],
     } as any;
 
@@ -79,13 +83,13 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
     RequestStartTransactionRequestProps.remoteStartId
   ] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   const evse = new Evse();
-  const idToken = new IdToken();
-  evse[EvseProps.databaseId] = NEW_IDENTIFIER as any;
-  idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
+  evse[EvseDtoProps.databaseId] = NEW_IDENTIFIER as any;
   requestStartTransactionRequest[RequestStartTransactionRequestProps.evse] =
     evse;
   requestStartTransactionRequest[RequestStartTransactionRequestProps.idToken] =
-    idToken;
+    {
+      idToken: NEW_IDENTIFIER as any,
+    } as IIdTokenDto;
 
   return (
     <GenericForm
