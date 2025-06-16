@@ -2,75 +2,28 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  MaxLength,
-  validateSync,
-} from 'class-validator';
-import { Expose, plainToInstance, Type } from 'class-transformer';
-import { StatusNotificationDto } from './status.notification.dto';
-import { EvseDto } from './evse.dto';
-import { BaseDto } from './base.dto';
-import { TransactionDto } from './transaction.dto';
-import { LatestStatusNotificationDto } from './latest.status.notification.dto';
-import { LocationDto } from './location.dto';
 import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
-import { ToClass } from '@util/Transformers';
-import { OCPPMessageDto } from './ocpp.message.dto';
+import { IChargingStationDto } from '@citrineos/base';
 import { OCPPVersion } from '@citrineos/base';
+import { OCPPMessageDto } from './ocpp.message.dto';
+import { Expose, plainToInstance } from 'class-transformer';
+import { ToClass } from '@util/Transformers';
+import { EvseDto } from './evse.dto';
+import { validateSync } from 'class-validator';
+import { IEvseDto } from '@citrineos/base';
+import * as locationDto from '@citrineos/base';
+import { ITransactionDto } from '@citrineos/base';
+import { IStatusNotificationDto } from '@citrineos/base';
+import { ILatestStatusNotificationDto } from '@citrineos/base';
 
-export enum ChargingStationDtoProps {
-  id = 'id',
-  isOnline = 'isOnline',
-  protocol = 'protocol',
-  locationId = 'locationId',
-  statusNotifications = 'statusNotifications',
-  latestStatusNotifications = 'latestStatusNotifications',
-  evses = 'evses',
-  transactions = 'transactions',
-  ocppLogs = 'ocppLogs',
-  location = 'Location',
-  chargePointVendor = 'chargePointVendor',
-  chargePointModel = 'chargePointModel',
-  chargePointSerialNumber = 'chargePointSerialNumber',
-  chargeBoxSerialNumber = 'chargeBoxSerialNumber',
-  firmwareVersion = 'firmwareVersion',
-  iccid = 'iccid',
-  imsi = 'imsi',
-  meterSerialNumber = 'meterSerialNumber',
-}
-
-export class ChargingStationDto extends BaseDto {
-  @IsString()
-  id!: string;
-
-  @IsBoolean()
-  isOnline!: boolean;
-
-  @IsEnum(OCPPVersion)
+export class ChargingStationDto implements Partial<IChargingStationDto> {
   protocol?: OCPPVersion;
-
-  @IsOptional()
-  locationId?: string;
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => StatusNotificationDto)
+  ocppLogs?: OCPPMessageDto[];
   @Expose({ name: 'StatusNotifications' })
-  statusNotifications?: StatusNotificationDto[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => LatestStatusNotificationDto)
+  statusNotifications?: IStatusNotificationDto[];
   @Expose({ name: 'LatestStatusNotifications' })
-  latestStatusNotifications?: LatestStatusNotificationDto[];
+  latestStatusNotifications?: ILatestStatusNotificationDto[];
 
-  @IsArray()
-  @IsOptional()
   @Expose({ name: 'Evses' })
   @ToClass((value: { Evse: EvseDto }[]) => {
     if (value === null || value === undefined) {
@@ -90,10 +43,7 @@ export class ChargingStationDto extends BaseDto {
       }
     });
   })
-  evses?: EvseDto[];
-
-  @IsArray()
-  @IsOptional()
+  evses?: IEvseDto[];
   @Expose({ name: 'ConnectorTypes' })
   @ToClass((value: { value: string }[]) => {
     if (value === null || value === undefined) {
@@ -104,68 +54,10 @@ export class ChargingStationDto extends BaseDto {
       .map((val: { value: string }) => val.value);
   })
   connectorTypes?: string[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => TransactionDto)
   @Expose({ name: 'Transactions' })
-  transactions?: TransactionDto[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => OCPPMessageDto)
-  ocppLogs?: OCPPMessageDto[];
-
-  @IsOptional()
-  @Type(() => LocationDto)
+  transactions?: ITransactionDto[];
   @Expose({ name: 'Location' })
-  location?: Partial<LocationDto>;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  chargePointVendor?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  chargePointModel?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  chargePointSerialNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  chargeBoxSerialNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  firmwareVersion?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  iccid?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  imsi?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  meterType?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  meterSerialNumber?: string;
-  Location: any;
+  location?: locationDto.ILocationDto;
 }
 
 export enum ChargignStationStatus {
@@ -185,7 +77,7 @@ export interface ChargingStationStatusCounts {
 }
 
 export const getChargingStationStatus = (
-  chargingStation: ChargingStationDto,
+  chargingStation: IChargingStationDto,
 ) => {
   const counts = getChargingStationStatusCounts(chargingStation);
 
@@ -203,7 +95,7 @@ export const getChargingStationStatus = (
 };
 
 export const getChargingStationStatusCounts = (
-  chargingStation: ChargingStationDto,
+  chargingStation: IChargingStationDto,
 ) => {
   const counts: ChargingStationStatusCounts = {
     [ChargignStationStatus.CHARGING]: 0,

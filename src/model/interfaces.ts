@@ -18,7 +18,7 @@ import {
   GenericViewState,
   SelectionType,
   SelectMode,
-} from './enums';
+} from '@enums';
 import { isDefined } from 'class-validator';
 import { Constructable } from '@util/Constructable';
 import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
@@ -107,6 +107,9 @@ export interface GenericFormProps extends GenericProps {
   ref?: React.Ref<FormInstance>;
   initialValues?: any;
   fieldAnnotations?: FieldAnnotations;
+  fieldsProps?: {
+    [fieldName: string]: any;
+  };
 }
 
 export interface GenericViewProps extends GenericProps {
