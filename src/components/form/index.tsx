@@ -731,6 +731,7 @@ export const GenericForm = forwardRef(function GenericForm(
     submitDisabled = false,
     parentRecord,
     fieldAnnotations,
+    fieldsProps = {},
   } = props;
 
   const [visibleOptionalFields, setVisibleOptionalFields] = useState<Flags>(
@@ -781,10 +782,11 @@ export const GenericForm = forwardRef(function GenericForm(
       data-testid="generic-form"
     >
       {schema.map((field) => {
+        const customFieldProps = fieldsProps[field.name] || {};
         return renderField({
           schema: field,
           preFieldPath: FieldPath.empty(),
-          disabled: disabled,
+          disabled: customFieldProps.disabled ?? disabled,
           visibleOptionalFields: visibleOptionalFields,
           hideLabels: false,
           enableOptionalField: enableOptionalField,

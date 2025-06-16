@@ -413,3 +413,12 @@ export const CHARGING_STATIONS_STATUS_COUNT_QUERY = gql`
     }
   }
 `;
+
+export const CHARGING_STATION_ONLINE_STATUS_QUERY = gql`
+  query ChargingStationOnlineStatus($id: String!) {
+    ChargingStations_by_pk(id: $id) {
+      id
+      isOnline
+    }
+  }
+`;

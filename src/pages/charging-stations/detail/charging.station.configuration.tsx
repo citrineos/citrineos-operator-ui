@@ -11,9 +11,17 @@ import {
   Typography,
   message,
   Input,
+  Modal,
   Button,
 } from 'antd';
-import { useList, type CrudFilter } from '@refinedev/core';
+import { useList, type CrudFilter, useOne } from '@refinedev/core';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
+import { ChangeConfiguration as ChargingStationConfigurationChange } from '../../../message/1.6/change-configuration';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { ResourceType } from '@util/auth';
+import { getPlainToInstanceOptions } from '@util/tables';
+import { CHARGING_STATION_ONLINE_STATUS_QUERY } from '../queries';
+import { ChargingStation } from '../ChargingStation';
 import {
   VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
   VARIABLE_ATTRIBUTE_LIST_QUERY,
@@ -139,6 +147,12 @@ export const ChargingStationConfiguration: React.FC<
     useState(1);
   const [pageSizeChangeConfigurations, setPageSizeChangeConfigurations] =
     useState(20);
+  const [isChangeConfigModalOpen, setIsChangeConfigModalOpen] = useState(false);
+  const [changeConfigMode, setChangeConfigMode] = useState<'add' | 'edit'>(
+    'add',
+  );
+  const [editKey, setEditKey] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string | null>(null);
 
   const attributeFilters = useMemo<CrudFilter[]>(
     () => [{ field: 'stationId', operator: 'eq', value: stationId }],
@@ -207,6 +221,17 @@ export const ChargingStationConfiguration: React.FC<
       mode: 'off',
     },
   });
+
+  const { data } = useOne<ChargingStationDto>({
+    resource: ResourceType.CHARGING_STATIONS,
+    id: stationId,
+    meta: {
+      gqlQuery: CHARGING_STATION_ONLINE_STATUS_QUERY,
+    },
+    queryOptions: getPlainToInstanceOptions(ChargingStationDto, true),
+  });
+  const station = data?.data;
+  const isConnected = !!station?.isOnline;
 
   useEffect(() => {
     if (version === '2.0.1' && variableAttributesResult?.data) {
@@ -290,6 +315,41 @@ export const ChargingStationConfiguration: React.FC<
     }
   };
 
+  // Add/Edit button handlers
+  const handleAddConfig = () => {
+    setChangeConfigMode('add');
+    setEditKey(null);
+    setEditValue(null);
+    setIsChangeConfigModalOpen(true);
+  };
+  const handleEditConfig = (key: string, value: string) => {
+    setChangeConfigMode('edit');
+    setEditKey(key);
+    setEditValue(value);
+    setIsChangeConfigModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setIsChangeConfigModalOpen(false);
+  };
+
+  // Add Edit button to 1.6 columns
+  const config16Columns = [
+    ...CONFIG_1_6_COLUMNS,
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_: any, record: any) => (
+        <Button
+          icon={<EditOutlined />}
+          onClick={() => handleEditConfig(record.key, record.value)}
+          disabled={!isConnected}
+        >
+          Edit
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div>
       <Row gutter={16} style={{ marginBottom: 16 }}>
@@ -330,10 +390,22 @@ export const ChargingStationConfiguration: React.FC<
           />
         </Col>
       </Row>
+      {version === '1.6' && (
+        <div style={{ marginBottom: 16, textAlign: 'right' }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAddConfig}
+            disabled={!isConnected}
+          >
+            Add Configuration
+          </Button>
+        </div>
+      )}
       <Table
         bordered
         dataSource={filteredDataSource}
-        columns={version === '1.6' ? CONFIG_1_6_COLUMNS : CONFIG_2_0_1_COLUMNS}
+        columns={version === '1.6' ? config16Columns : CONFIG_2_0_1_COLUMNS}
         pagination={
           version === '2.0.1'
             ? {
@@ -359,6 +431,27 @@ export const ChargingStationConfiguration: React.FC<
           version === '2.0.1' ? isAttributesLoading : isConfigurationsLoading
         }
       />
+      <Modal
+        open={isChangeConfigModalOpen}
+        onCancel={handleModalClose}
+        footer={null}
+        title={
+          changeConfigMode === 'add'
+            ? 'Add Configuration'
+            : 'Edit Configuration'
+        }
+      >
+        <ChargingStationConfigurationChange
+          station={station as ChargingStation}
+          initialValues={
+            changeConfigMode === 'edit' && editKey != null
+              ? { key: editKey, value: editValue ?? '' }
+              : undefined
+          }
+          keyDisabled={changeConfigMode === 'edit'}
+          onFinish={handleModalClose}
+        />
+      </Modal>
     </div>
   );
 };
