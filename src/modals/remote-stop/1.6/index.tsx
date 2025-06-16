@@ -4,15 +4,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { OCPPVersion } from '@citrineos/base';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP1_6_RemoteStopProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {

@@ -13,12 +13,13 @@ import { ConnectorDto } from '../../../dtos/connector.dto';
 import { CONNECTOR_CREATE_MUTATION, CONNECTOR_EDIT_MUTATION } from '../queries';
 import { ErrorCodes, ConnectorStatusEnumType } from '@OCPP2_0_1';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
+import { IConnectorDto } from '@citrineos/base';
 
 const { Option } = Select;
 
 interface ConnectorUpsertProps {
   onSubmit: () => void;
-  connector: ConnectorDto | null;
+  connector: IConnectorDto | null;
 }
 
 export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({

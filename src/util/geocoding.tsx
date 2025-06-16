@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { LocationDto } from '../dtos/location.dto';
 import config from './config';
+import { ILocationDto } from '@citrineos/base';
 
 export interface GoogleGeocodingResponse {
   results: GeocodingResult[];
@@ -78,7 +78,7 @@ export const getAddressComponent = (
   return found ? found.long_name : '';
 };
 
-export const getFullAddress = (location: Partial<LocationDto>) => {
+export const getFullAddress = (location: Partial<ILocationDto>) => {
   return `${location.address || ''}, ${location.city || ''}, ${
     location.state || ''
   } ${location.postalCode || ''}, ${location.country || ''}`.trim();

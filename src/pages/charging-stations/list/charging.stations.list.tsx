@@ -25,6 +25,7 @@ import { ModalComponentType } from '../../../AppModal';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../redux/modal.slice';
 import { ActionType } from '@util/auth';
+import { IChargingStationDto } from '../../../../../citrineos-core/00_Base';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -50,7 +51,7 @@ export const ChargingStationsList = () => {
   };
 
   const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Start',
@@ -63,7 +64,7 @@ export const ChargingStationsList = () => {
   );
 
   const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Stop',
@@ -78,7 +79,7 @@ export const ChargingStationsList = () => {
   );
 
   const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Reset',

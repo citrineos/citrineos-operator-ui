@@ -18,16 +18,14 @@ import {
   ResourceType,
 } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
-import {
-  TransactionDto,
-  TransactionDtoProps,
-} from '../../../dtos/transaction.dto';
+import { TransactionDto } from '../../../dtos/transaction.dto';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '../../../message/queries';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { getTransactionColumns } from '../../../pages/transactions/columns';
 import { useNavigation } from '@refinedev/core';
 import { useTable } from '@refinedev/antd';
 import { AggregatedMeterValuesData } from './charging.station.aggregated.data';
+import { TransactionDtoProps } from '@citrineos/base';
 
 export const ChargingStationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
