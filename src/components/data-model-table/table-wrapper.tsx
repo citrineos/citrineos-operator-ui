@@ -189,12 +189,19 @@ export const TableWrapper = forwardRef(function TableWrapper<
   };
 
   return (
-    <Col className="table-wrapper">
+    <Col
+      className="table-wrapper"
+      data-testId={`${dtoResourceType}-table-wrapper`}
+    >
       {searchableKeys && searchableKeys.size > 0 && (
         <Form {...searchFormProps} className="search-form">
           <Row align="middle" justify="start">
             <Form.Item name="search">
-              <Input placeholder="Search" onChange={handleSearchInputChange} />
+              <Input
+                placeholder="Search"
+                onChange={handleSearchInputChange}
+                data-testId={`${dtoResourceType}-table-search`}
+              />
             </Form.Item>
             <Col className="search-icon">
               <SearchOutlined />
@@ -210,6 +217,18 @@ export const TableWrapper = forwardRef(function TableWrapper<
             ? passedUseTableProps.rowSelection
             : rowSelection) as TableRowSelection<Model> | undefined
         }
+        components={{
+          body: {
+            row: ({ children, ...props }: any) => (
+              <tr
+                {...props}
+                data-testid={`row-primarykey-${props['data-row-key']}`}
+              >
+                {children}
+              </tr>
+            ),
+          },
+        }}
         dataSource={dataWithKeys}
         columns={columns as any}
         rowClassName={(record: Model) => {
@@ -242,6 +261,7 @@ export const TableWrapper = forwardRef(function TableWrapper<
           }
         }}
         className="editable-table"
+        data-testid={`${dtoResourceType}-editable-table`}
       />
     </Col>
   ) as any;

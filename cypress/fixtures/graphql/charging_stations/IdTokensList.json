@@ -1,0 +1,46 @@
+{
+  "data": {
+    "IdTokens": [
+      {
+        "id": 1,
+        "idToken": "DEADBEEF",
+        "type": "ISO14443",
+        "Authorization": {
+          "id": 1
+        },
+        "IdTokenInfos": [],
+        "TransactionEvents": [
+          {
+            "id": 1
+          },
+          {
+            "id": 4
+          },
+          {
+            "id": 7
+          },
+          {
+            "id": 10
+          },
+          {
+            "id": 13
+          },
+          {
+            "id": 19
+          },
+          {
+            "id": 22
+          },
+          {
+            "id": 26
+          }
+        ]
+      }
+    ],
+    "IdTokens_aggregate": {
+      "aggregate": {
+        "count": 1
+      }
+    }
+  }
+}

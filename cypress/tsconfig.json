@@ -1,5 +1,7 @@
 {
-  "include": ["./**/*.ts", "cypress.config.ts"],
+  "include": ["./**/*.ts",
+    "../cypress.config.ts"
+  ],
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": false,
