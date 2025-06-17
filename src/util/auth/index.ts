@@ -4,5 +4,9 @@
 
 export * from './AccessControlProvider';
 export * from './AuthProvider';
+export * from './OAuthAuthProvider';
+export * from './OAuthProviders';
+export * from './OAuthService';
+export * from './JWTMiddleware';
 export * from './types';
 export * from './fallbacks';

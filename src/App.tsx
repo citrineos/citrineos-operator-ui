@@ -9,7 +9,6 @@ import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import './style.scss';
 
 import {
-  AuthPage,
   ErrorComponent,
   ThemedLayoutContextProvider,
   useNotificationProvider,
@@ -26,7 +25,6 @@ import dataProvider, {
 } from '@refinedev/hasura';
 import routerBindings, {
   DocumentTitleHandler,
-  NavigateToResource,
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
@@ -70,27 +68,22 @@ import {
 } from '@util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
-import { authProvider, createAccessProvider } from '@util/auth';
+import {
+  oauthAuthProvider,
+  createAccessProvider,
+  createJWTMiddleware,
+} from '@util/auth';
+import { OAuthLoginPage } from './components/auth/OAuthLoginPage';
+import { OAuthCallbackHandler } from './components/auth/OAuthCallbackHandler';
 import config from '@util/config';
 
 const accessControlProvider = createAccessProvider({});
-
-const requestMiddleware = async (request: any) => {
-  return {
-    ...request,
-    headers: {
-      ...request.headers,
-      'x-hasura-role': 'admin',
-      'x-hasura-admin-secret': config.hasuraAdminSecret,
-    },
-  };
-};
 
 const API_URL = config.apiUrl;
 const WS_URL = config.wsUrl;
 
 const client = new GraphQLClient(API_URL, {
-  requestMiddleware,
+  requestMiddleware: createJWTMiddleware(),
 });
 
 const webSocketClient = graphqlWS.createClient({
@@ -159,7 +152,7 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
         />
 
         <Refine
-          authProvider={authProvider}
+          authProvider={oauthAuthProvider}
           accessControlProvider={accessControlProvider}
           dataProvider={hasuraDataProvider}
           liveProvider={liveProvider(
@@ -178,7 +171,15 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
           }}
         >
           <Routes>
-            <Route path="/login" element={<AuthPage type="login" />} />
+            {/* OAuth Login Page */}
+            <Route path="/login" element={<OAuthLoginPage />} />
+
+            {/* OAuth Callback Routes */}
+            <Route
+              path="/auth/callback/:provider"
+              element={<OAuthCallbackHandler />}
+            />
+
             <Route
               element={
                 <Authenticated key="login">
@@ -256,7 +257,7 @@ export default function App() {
   }, []);
 
   /**
-   * Handle user’s choice:
+   * Handle user's choice:
    */
   const handleModalDecision = (agreed: boolean) => {
     saveTelemetryConsent(agreed);

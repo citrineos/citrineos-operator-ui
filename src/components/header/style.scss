@@ -28,3 +28,14 @@
     vertical-align: middle;
   }
 }
+
+.avatar-button {
+  display: flex !important;
+  align-items: center;
+  border: none !important;
+  box-shadow: none !important;
+
+  &:hover {
+    background-color: var(--ant-color-bg-text-hover) !important;
+  }
+}

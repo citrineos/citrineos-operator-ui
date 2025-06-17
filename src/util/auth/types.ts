@@ -9,6 +9,7 @@ import {
   IResourceItem,
   ITreeMenu,
 } from '@refinedev/core';
+import { IconType } from 'react-icons';
 
 export type AuthenticationContextProvider = {
   getToken: () => Promise<string | null>;
@@ -19,7 +20,38 @@ export type User = {
   name: string;
   email: string;
   roles: string[];
+  avatar?: string;
+  provider?: string;
 };
+
+// OAuth provider configuration
+export interface OAuthProvider {
+  name: string;
+  clientId: string;
+  redirectUri: string;
+  scope: string;
+  authUrl: string;
+  tokenUrl: string;
+  userInfoUrl: string;
+  icon?: IconType;
+  displayName: string;
+}
+
+// JWT payload structure
+export interface JWTPayload {
+  sub: string;
+  email: string;
+  name: string;
+  roles: string[];
+  provider: string;
+  iat: number;
+  exp: number;
+  'https://hasura.io/jwt/claims': {
+    'x-hasura-default-role': string;
+    'x-hasura-allowed-roles': string[];
+    'x-hasura-user-id': string;
+  };
+}
 
 export enum ResourceType {
   ADDITIONAL_INFOS = 'AdditionalInfos',

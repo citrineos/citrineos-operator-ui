@@ -1,0 +1,36 @@
+{
+  "name": "citrineos-oauth-server",
+  "version": "1.0.0",
+  "description": "OAuth backend service for CitrineOS",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only server.ts",
+    "prod": "npm run build && npm run start"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.10.0",
+    "nodemon": "^3.0.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.0"
+  },
+  "keywords": [
+    "oauth",
+    "jwt",
+    "google",
+    "authentication",
+    "typescript"
+  ],
+  "author": "CitrineOS Project",
+  "license": "Apache-2.0"
+}
