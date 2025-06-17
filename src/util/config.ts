@@ -11,6 +11,7 @@ declare global {
       VITE_API_URL?: string;
       VITE_WS_URL?: string;
       VITE_CITRINE_CORE_URL?: string;
+      VITE_OAUTH_SERVER_URL?: string;
       VITE_FILE_SERVER_URL?: string;
       VITE_LOGO_URL?: string;
       VITE_METRICS_URL?: string;
@@ -27,6 +28,7 @@ const getConfig: () => {
   apiUrl: string;
   wsUrl: string;
   citrineCoreUrl: string;
+  oauthServerUrl: string;
   fileServer: string;
   logoUrl: string;
   metricsUrl: string;
@@ -47,6 +49,9 @@ const getConfig: () => {
     citrineCoreUrl:
       window.APP_CONFIG?.VITE_CITRINE_CORE_URL ||
       import.meta.env.VITE_CITRINE_CORE_URL,
+    oauthServerUrl:
+      window.APP_CONFIG?.VITE_OAUTH_SERVER_URL ||
+      import.meta.env.VITE_OAUTH_SERVER_URL,
     fileServer:
       window.APP_CONFIG?.VITE_FILE_SERVER_URL ||
       import.meta.env.VITE_FILE_SERVER_URL,
