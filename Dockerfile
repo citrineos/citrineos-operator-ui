@@ -4,6 +4,7 @@
 
 FROM refinedev/node:22
 WORKDIR /app/refine
+COPY 00_Base ./00_Base
 COPY . .
 RUN npm i && npm run build
 RUN npm install -g serve

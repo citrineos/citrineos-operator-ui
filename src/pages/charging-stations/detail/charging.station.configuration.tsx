@@ -442,7 +442,7 @@ export const ChargingStationConfiguration: React.FC<
         }
       >
         <ChargingStationConfigurationChange
-          station={station as ChargingStation}
+          station={station as unknown as ChargingStation}
           initialValues={
             changeConfigMode === 'edit' && editKey != null
               ? { key: editKey, value: editValue ?? '' }

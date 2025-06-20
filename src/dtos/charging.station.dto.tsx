@@ -9,7 +9,7 @@ import { OCPPMessageDto } from './ocpp.message.dto';
 import { Expose, plainToInstance } from 'class-transformer';
 import { ToClass } from '@util/Transformers';
 import { EvseDto } from './evse.dto';
-import { validateSync } from 'class-validator';
+import { IsBoolean, validateSync } from 'class-validator';
 import { IEvseDto } from '@citrineos/base';
 import * as locationDto from '@citrineos/base';
 import { ITransactionDto } from '@citrineos/base';
@@ -17,6 +17,8 @@ import { IStatusNotificationDto } from '@citrineos/base';
 import { ILatestStatusNotificationDto } from '@citrineos/base';
 
 export class ChargingStationDto implements Partial<IChargingStationDto> {
+  @IsBoolean()
+  isOnline!: boolean;
   protocol?: OCPPVersion;
   ocppLogs?: OCPPMessageDto[];
   @Expose({ name: 'StatusNotifications' })
