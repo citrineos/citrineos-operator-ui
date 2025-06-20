@@ -8,7 +8,7 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { OCPPVersion, ServerNetworkProfileDtoProps } from '@citrineos/base';
 import { SetNetworkProfileStatusEnumType } from '@OCPP2_0_1';
 import {
   IsEnum,
@@ -21,10 +21,7 @@ import { Type } from 'class-transformer';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { NetworkConnectionProfileType } from '../model/NetworkConnectionProfileType';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import {
-  ServerNetworkProfile,
-  ServerNetworkProfileProps,
-} from '../../../pages/server-network-profiles/ServerNetworkProfile';
+import { ServerNetworkProfile } from '../../../pages/server-network-profiles/ServerNetworkProfile';
 import {
   SERVER_NETWORK_PROFILE_GET_QUERY,
   SERVER_NETWORK_PROFILE_LIST_QUERY,
@@ -76,7 +73,7 @@ export enum SetNetworkProfileDataProps {
 export class SetNetworkProfileData {
   @GqlAssociation({
     parentIdFieldName: SetNetworkProfileDataProps.websocketServerConfig,
-    associatedIdFieldName: ServerNetworkProfileProps.id,
+    associatedIdFieldName: ServerNetworkProfileDtoProps.id,
     gqlQuery: {
       query: SERVER_NETWORK_PROFILE_GET_QUERY,
     },
@@ -108,7 +105,7 @@ export const SetNetworkProfile: React.FC<SetNetworkProfileProps> = ({
 
   const setNetworkProfileData = new SetNetworkProfileData();
   const serverNetworkProfile = new ServerNetworkProfile();
-  serverNetworkProfile[ServerNetworkProfileProps.id] = NEW_IDENTIFIER;
+  serverNetworkProfile[ServerNetworkProfileDtoProps.id] = NEW_IDENTIFIER;
   const setNetworkProfileRequest = new SetNetworkProfileRequest();
   setNetworkProfileRequest[SetNetworkProfileRequestProps.connectionData] =
     new NetworkConnectionProfileType();

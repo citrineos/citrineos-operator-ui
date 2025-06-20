@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { Descriptions, Divider, Typography } from 'antd';
-import { SampledValue, SignedMeterValue, UnitOfMeasure } from '../SampledValue';
 import {
   LocationEnumType,
   MeasurandEnumType,
@@ -12,18 +11,23 @@ import {
   ReadingContextEnumType,
 } from '@OCPP2_0_1';
 import GenericTag from '../../../components/tag';
+import {
+  ISampledValueDto,
+  ISignedMeterValue,
+  IUnitOfMeasure,
+} from '@citrineos/base';
 
 const { Text } = Typography;
 
 interface SampledValueProps {
-  sampledValue: SampledValue;
+  sampledValue: ISampledValueDto;
 }
 
 export const SampledValueView: React.FC<SampledValueProps> = ({
   sampledValue,
 }) => {
   const renderSignedMeterValue = (
-    signedMeterValue?: SignedMeterValue | null | undefined,
+    signedMeterValue?: ISignedMeterValue | null | undefined,
   ) => {
     if (!signedMeterValue) return <Text type="secondary">N/A</Text>;
 
@@ -46,7 +50,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
   };
 
   const renderUnitOfMeasure = (
-    unitOfMeasure?: UnitOfMeasure | undefined | null,
+    unitOfMeasure?: IUnitOfMeasure | undefined | null,
   ) => {
     if (!unitOfMeasure) return <Text type="secondary">N/A</Text>;
 
@@ -130,7 +134,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
 };
 
 interface SampledValuesListProps {
-  sampledValues: SampledValue[];
+  sampledValues: ISampledValueDto[];
 }
 
 export const SampledValuesListView: React.FC<SampledValuesListProps> = ({

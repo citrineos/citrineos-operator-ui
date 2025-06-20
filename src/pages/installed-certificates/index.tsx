@@ -24,17 +24,21 @@ import {
   responseSuccessCheck,
 } from '../../message/util';
 import { notification } from 'antd';
+import { IInstalledCertificateDto } from '@citrineos/base';
 
-export const DeleteCertificateCustomAction: CustomAction<InstalledCertificate> =
+export const DeleteCertificateCustomAction: CustomAction<IInstalledCertificateDto> =
   {
     label: 'Delete Certificate',
-    execOrRender: (installedCertificate: InstalledCertificate, setLoading) => {
+    execOrRender: (
+      installedCertificate: IInstalledCertificateDto,
+      setLoading,
+    ) => {
       requestDeleteCertificate(installedCertificate, setLoading).then(() => {});
     },
   };
 
 export const requestDeleteCertificate = async (
-  installedCertificate: InstalledCertificate,
+  installedCertificate: IInstalledCertificateDto,
   setLoading: (loading: boolean) => void,
 ) => {
   try {

@@ -10,7 +10,7 @@ import { ChargingStation } from '../../../pages/charging-stations/ChargingStatio
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { type IConnectorDto, OCPPVersion } from '@citrineos/base';
 import { Type } from 'class-transformer';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import {
@@ -54,7 +54,7 @@ class TriggerMessageData {
   @Type(() => Connector)
   @ValidateNested()
   @IsNotEmpty()
-  connector!: Connector | null;
+  connector!: IConnectorDto | null;
 
   //   @IsOptional()
   //   @IsNumber()
@@ -68,9 +68,11 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
   };
 
   const triggerMessageData = new TriggerMessageData();
-  triggerMessageData[TriggerMessageDataProps.connector] = new Connector();
-  triggerMessageData[TriggerMessageDataProps.connector][ConnectorDtoProps.id] =
-    NEW_IDENTIFIER as unknown as number;
+  triggerMessageData[TriggerMessageDataProps.connector] = {
+    id: NEW_IDENTIFIER as unknown as number,
+    stationId: station.id,
+    connectorId: undefined,
+  } as IConnectorDto;
 
   const handleSubmit = async (request: TriggerMessageData) => {
     const data: any = { requestedMessage: request.requestedMessage };

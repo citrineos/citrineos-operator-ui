@@ -18,10 +18,14 @@ jobs:
     runs-on: ubuntu-22.04 # todo: to prevent needing to run npm i we can have our own image where everything is installed
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [22]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Clone citrineos-core for @citrineos/base
+        run: |
+          git clone --depth 1 --branch rc-1.8.0 https://github.com/citrineos/citrineos-core.git ../citrineos-core
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
