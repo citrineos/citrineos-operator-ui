@@ -34,15 +34,15 @@ jobs:
 
       - name: Build @citrineos/base
         run: |
-          cd ../citrineos-core/00_Base
+          cd ../citrineos-core
           npm install
           npm run build
-          cd ../../citrineos-operator-ui
+          cd ../citrineos-operator-ui
 
       - name: Copy and prepare @citrineos/base
         run: |
-          cp -r ../citrineos-core/00_Base ./00_Base
-          cp ../citrineos-core/00_Base/dist ./00_Base/
+          mkdir -p ./00_Base
+          cp -r ../citrineos-core/00_Base/. ./00_Base/
 
       - name: Docker Build
         run: docker compose -f docker-compose.yml build
