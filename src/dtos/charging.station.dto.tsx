@@ -58,6 +58,8 @@ export class ChargingStationDto implements Partial<IChargingStationDto> {
   transactions?: ITransactionDto[];
   @Expose({ name: 'Location' })
   location?: locationDto.ILocationDto;
+  @Expose({ name: 'isOnline' })
+  isOnline?: boolean;
 }
 
 export enum ChargignStationStatus {

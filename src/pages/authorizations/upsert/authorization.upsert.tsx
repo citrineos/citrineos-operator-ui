@@ -9,54 +9,38 @@ import {
   AUTHORIZATIONS_SHOW_QUERY,
 } from '../queries';
 import { CanAccess, GetOneResponse, useNavigation } from '@refinedev/core';
-import { getSerializedValues } from '@util/middleware';
-import { Button, Flex, Form, Input, Modal, Select, Switch } from 'antd';
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Switch,
+  InputNumber,
+  DatePicker,
+} from 'antd';
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { IdTokenDto } from '../../../dtos/id.token.dto';
 import { AuthorizationStatusEnumType, IdTokenEnumType } from '@OCPP2_0_1';
-import { IdTokenInfoDto } from '../../../dtos/id.token.info.dto';
 import { renderEnumSelectOptions } from '@util/renderUtil';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
-import { AuthorizationDtoProps, IAuthorizationDto } from '@citrineos/base';
-import { IdTokenDtoProps } from '@citrineos/base';
-import { IdTokenInfoDtoProps } from '@citrineos/base';
 
 export const AuthorizationUpsert = () => {
   const params: any = useParams<{ id: string }>();
   const authorizationId = params.id ? params.id : undefined;
   const [isFormChanged, setIsFormChanged] = useState(false);
-
-  // Add these state variables for the edit mutation
-  const [updateIdToken, setUpdateIdToken] = useState(false);
-  const [idTokenId, setIdTokenId] = useState<number | undefined>(undefined);
-  const [idTokenData, setIdTokenData] = useState<any>(undefined);
-  const [updateIdTokenInfo, setUpdateIdTokenInfo] = useState(false);
-  const [idTokenInfoId, setIdTokenInfoId] = useState<number | undefined>(
-    undefined,
-  );
-  const [idTokenInfoData, setIdTokenInfoData] = useState<any>(undefined);
-
   const { replace, goBack } = useNavigation();
 
-  const { formProps } = useForm({
+  // UseForm must be declared before any usage
+  const formResult = useForm({
     resource: ResourceType.AUTHORIZATIONS,
     id: authorizationId,
     queryOptions: {
       enabled: !!authorizationId,
-      onSuccess: (data: GetOneResponse<IAuthorizationDto>) => {
-        // Set the initial values for the edit mutation when data is loaded
-        if (data?.data.idTokenId) {
-          setIdTokenId(data?.data.idTokenId);
-        }
-        if (data?.data?.idTokenInfoId) {
-          setIdTokenInfoId(data?.data?.idTokenInfoId);
-        }
-      },
     },
     redirect: false,
     onMutationSuccess: (result) => {
@@ -69,17 +53,8 @@ export const AuthorizationUpsert = () => {
         ? AUTHORIZATIONS_EDIT_MUTATION
         : AUTHORIZATIONS_CREATE_MUTATION,
     },
-    mutationMeta: {
-      gqlVariables: {
-        updateIdToken,
-        idTokenId,
-        idTokenData,
-        updateIdTokenInfo,
-        idTokenInfoId,
-        idTokenInfoData,
-      },
-    },
   });
+  const formProps = formResult.formProps;
 
   const handleOnChange = useCallback(() => {
     setIsFormChanged(true);
@@ -104,90 +79,12 @@ export const AuthorizationUpsert = () => {
 
   const onFinish = useCallback(
     async (input: any) => {
-      if (!authorizationId) {
-        const newIdToken = getSerializedValues(
-          input[AuthorizationDtoProps.idToken],
-          IdTokenDto,
-        );
-        newIdToken.tenantId = config.tenantId;
-        const newIdTokenInfo = getSerializedValues(
-          input[AuthorizationDtoProps.idTokenInfo],
-          IdTokenInfoDto,
-        );
-        newIdTokenInfo.tenantId = config.tenantId;
-        newIdTokenInfo.cacheExpiryDateTime = undefined;
-        const concurrentTx = input[
-          AuthorizationDtoProps.concurrentTransaction
-        ] as boolean;
-        const authoriationInput = {
-          [AuthorizationDtoProps.idToken]: newIdToken,
-          [AuthorizationDtoProps.idTokenInfo]: newIdTokenInfo,
-          [AuthorizationDtoProps.concurrentTransaction]: concurrentTx,
-        };
-        const newAuthorization: any = getSerializedValues(
-          authoriationInput,
-          AuthorizationDto,
-        );
-        newAuthorization.tenantId = config.tenantId;
-        const newItem = {
-          ...newAuthorization,
-          [AuthorizationDtoProps.idToken]: {
-            data: {
-              ...newIdToken,
-            },
-          },
-          [AuthorizationDtoProps.idTokenInfo]: {
-            data: {
-              ...newIdTokenInfo,
-            },
-          },
-        };
-        formProps.onFinish?.(newItem);
-      } else {
-        const idTokenInput = input[AuthorizationDtoProps.idToken];
-        const idTokenInfoInput = input[AuthorizationDtoProps.idTokenInfo];
-
-        if (idTokenInput && Object.keys(idTokenInput).length > 0 && idTokenId) {
-          setUpdateIdToken(true);
-          const processedIdTokenData = getSerializedValues(
-            idTokenInput,
-            IdTokenDto,
-          );
-          setIdTokenData(processedIdTokenData);
-        } else {
-          setUpdateIdToken(false);
-        }
-
-        if (
-          idTokenInfoInput &&
-          Object.keys(idTokenInfoInput).length > 0 &&
-          idTokenInfoId
-        ) {
-          setUpdateIdTokenInfo(true);
-          const processedIdTokenInfoData = getSerializedValues(
-            idTokenInfoInput,
-            IdTokenInfoDto,
-          );
-          setIdTokenInfoData(processedIdTokenInfoData);
-        } else {
-          setUpdateIdTokenInfo(false);
-        }
-
-        const concurrentTx = input[
-          AuthorizationDtoProps.concurrentTransaction
-        ] as boolean;
-
-        const authorizationInput = {
-          [AuthorizationDtoProps.concurrentTransaction]: concurrentTx,
-        };
-
-        const updatedAuthorization = getSerializedValues(
-          authorizationInput,
-          AuthorizationDto,
-        );
-
-        formProps.onFinish?.(updatedAuthorization);
-      }
+      // Compose flat Authorization object
+      const flatAuth: any = {
+        ...input,
+        tenantId: config.tenantId,
+      };
+      formProps.onFinish?.(flatAuth);
     },
     [formProps],
   );
@@ -228,45 +125,100 @@ export const AuthorizationUpsert = () => {
               </h3>
             </Flex>
             <Form.Item
-              key={IdTokenDtoProps.idToken}
-              label="Authorization IdToken"
-              name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.idToken]}
-              rules={[{ required: true, message: 'IdToken is required' }]}
-              data-testid={IdTokenDtoProps.idToken}
+              key="idToken"
+              label="ID Token"
+              name="idToken"
+              rules={[{ required: true, message: 'ID Token is required' }]}
+              data-testid="idToken"
             >
               <Input />
             </Form.Item>
             <Form.Item
-              key={AuthorizationDtoProps.concurrentTransaction}
-              label="Allow Concurrent Transaction"
-              name={AuthorizationDtoProps.concurrentTransaction}
-              valuePropName="checked"
-              data-testid={AuthorizationDtoProps.concurrentTransaction}
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              key={IdTokenDtoProps.type}
-              label="IdToken Type"
-              name={[AuthorizationDtoProps.idToken, IdTokenDtoProps.type]}
-              data-testid={IdTokenDtoProps.type}
+              key="idTokenType"
+              label="ID Token Type"
+              name="idTokenType"
+              rules={[{ required: true, message: 'ID Token Type is required' }]}
+              data-testid="idTokenType"
             >
               <Select onChange={handleOnChange}>
                 {renderEnumSelectOptions(IdTokenEnumType)}
               </Select>
             </Form.Item>
             <Form.Item
-              key={IdTokenInfoDtoProps.status}
-              label="IdToken Status"
-              name={[
-                AuthorizationDtoProps.idTokenInfo,
-                IdTokenInfoDtoProps.status,
-              ]}
-              data-testid={IdTokenInfoDtoProps.status}
+              key="status"
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: 'Status is required' }]}
+              data-testid="status"
             >
               <Select onChange={handleOnChange}>
                 {renderEnumSelectOptions(AuthorizationStatusEnumType)}
               </Select>
+            </Form.Item>
+            <Form.Item
+              key="cacheExpiryDateTime"
+              label="Cache Expiry DateTime"
+              name="cacheExpiryDateTime"
+              data-testid="cacheExpiryDateTime"
+            >
+              <DatePicker showTime />
+            </Form.Item>
+            <Form.Item
+              key="chargingPriority"
+              label="Charging Priority"
+              name="chargingPriority"
+              data-testid="chargingPriority"
+            >
+              <InputNumber min={0} />
+            </Form.Item>
+            <Form.Item
+              key="language1"
+              label="Language 1"
+              name="language1"
+              data-testid="language1"
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key="language2"
+              label="Language 2"
+              name="language2"
+              data-testid="language2"
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key="personalMessage"
+              label="Personal Message"
+              name="personalMessage"
+              data-testid="personalMessage"
+            >
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item
+              key="groupIdTokenId"
+              label="Group ID Token (Authorization ID)"
+              name="groupIdTokenId"
+              data-testid="groupIdTokenId"
+            >
+              <InputNumber min={1} />
+            </Form.Item>
+            <Form.Item
+              key="additionalInfo"
+              label="Additional Info (JSON)"
+              name="additionalInfo"
+              data-testid="additionalInfo"
+            >
+              <Input.TextArea placeholder="{ }" />
+            </Form.Item>
+            <Form.Item
+              key="concurrentTransaction"
+              label="Allow Concurrent Transaction"
+              name="concurrentTransaction"
+              valuePropName="checked"
+              data-testid="concurrentTransaction"
+            >
+              <Switch />
             </Form.Item>
             <Form.Item>
               <Flex gap={16}>
