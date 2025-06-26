@@ -58,11 +58,10 @@ export class ChargingStationDto implements Partial<IChargingStationDto> {
   transactions?: ITransactionDto[];
   @Expose({ name: 'Location' })
   location?: locationDto.ILocationDto;
-  @Expose({ name: 'isOnline' })
   isOnline?: boolean;
 }
 
-export enum ChargignStationStatus {
+export enum ChargingStationStatus {
   CHARGING = 'CHARGING',
   CHARGING_SUSPENDED = 'CHARGING_SUSPENDED',
   AVAILABLE = 'AVAILABLE',
@@ -71,11 +70,11 @@ export enum ChargignStationStatus {
 }
 
 export interface ChargingStationStatusCounts {
-  [ChargignStationStatus.CHARGING]: number;
-  [ChargignStationStatus.CHARGING_SUSPENDED]: number;
-  [ChargignStationStatus.AVAILABLE]: number;
-  [ChargignStationStatus.UNAVAILABLE]: number;
-  [ChargignStationStatus.FAULTED]: number;
+  [ChargingStationStatus.CHARGING]: number;
+  [ChargingStationStatus.CHARGING_SUSPENDED]: number;
+  [ChargingStationStatus.AVAILABLE]: number;
+  [ChargingStationStatus.UNAVAILABLE]: number;
+  [ChargingStationStatus.FAULTED]: number;
 }
 
 export const getChargingStationStatus = (
@@ -83,15 +82,15 @@ export const getChargingStationStatus = (
 ) => {
   const counts = getChargingStationStatusCounts(chargingStation);
 
-  if (counts[ChargignStationStatus.FAULTED] > 0) {
-    return ChargignStationStatus.FAULTED;
-  } else if (counts[ChargignStationStatus.AVAILABLE] > 0) {
-    return ChargignStationStatus.AVAILABLE;
+  if (counts[ChargingStationStatus.FAULTED] > 0) {
+    return ChargingStationStatus.FAULTED;
+  } else if (counts[ChargingStationStatus.AVAILABLE] > 0) {
+    return ChargingStationStatus.AVAILABLE;
   } else {
-    if (counts[ChargignStationStatus.CHARGING_SUSPENDED] > 0) {
-      return ChargignStationStatus.CHARGING_SUSPENDED;
-    } else if (counts[ChargignStationStatus.UNAVAILABLE] > 0) {
-      return ChargignStationStatus.UNAVAILABLE;
+    if (counts[ChargingStationStatus.CHARGING_SUSPENDED] > 0) {
+      return ChargingStationStatus.CHARGING_SUSPENDED;
+    } else if (counts[ChargingStationStatus.UNAVAILABLE] > 0) {
+      return ChargingStationStatus.UNAVAILABLE;
     }
   }
 };
@@ -100,11 +99,11 @@ export const getChargingStationStatusCounts = (
   chargingStation: IChargingStationDto,
 ) => {
   const counts: ChargingStationStatusCounts = {
-    [ChargignStationStatus.CHARGING]: 0,
-    [ChargignStationStatus.CHARGING_SUSPENDED]: 0,
-    [ChargignStationStatus.AVAILABLE]: 0,
-    [ChargignStationStatus.UNAVAILABLE]: 0,
-    [ChargignStationStatus.FAULTED]: 0,
+    [ChargingStationStatus.CHARGING]: 0,
+    [ChargingStationStatus.CHARGING_SUSPENDED]: 0,
+    [ChargingStationStatus.AVAILABLE]: 0,
+    [ChargingStationStatus.UNAVAILABLE]: 0,
+    [ChargingStationStatus.FAULTED]: 0,
   };
   const evses = chargingStation?.evses;
   if (evses && evses.length > 0) {
@@ -122,7 +121,7 @@ export const getChargingStationStatusCounts = (
             ?.connectorStatus || ConnectorStatusEnumType.Unavailable;
         switch (connectorStatus) {
           case ConnectorStatusEnumType.Available:
-            counts[ChargignStationStatus.AVAILABLE]++;
+            counts[ChargingStationStatus.AVAILABLE]++;
             break;
           case ConnectorStatusEnumType.Occupied: {
             const activeTransaction = chargingStation?.transactions?.find(
@@ -131,18 +130,18 @@ export const getChargingStationStatusCounts = (
             if (activeTransaction && activeTransaction.isActive) {
               const chargingState = activeTransaction.chargingState;
               if (chargingState === ChargingStateEnumType.Charging) {
-                counts[ChargignStationStatus.CHARGING]++;
+                counts[ChargingStationStatus.CHARGING]++;
               } else {
-                counts[ChargignStationStatus.CHARGING_SUSPENDED]++;
+                counts[ChargingStationStatus.CHARGING_SUSPENDED]++;
               }
             }
             break;
           }
           case ConnectorStatusEnumType.Faulted:
-            counts[ChargignStationStatus.FAULTED]++;
+            counts[ChargingStationStatus.FAULTED]++;
             break;
           case ConnectorStatusEnumType.Unavailable:
-            counts[ChargignStationStatus.UNAVAILABLE]++;
+            counts[ChargingStationStatus.UNAVAILABLE]++;
             break;
           case ConnectorStatusEnumType.Reserved:
           default:
@@ -150,7 +149,7 @@ export const getChargingStationStatusCounts = (
             break;
         }
       } else {
-        counts[ChargignStationStatus.UNAVAILABLE]++;
+        counts[ChargingStationStatus.UNAVAILABLE]++;
       }
     }
   }

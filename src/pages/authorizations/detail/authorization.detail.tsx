@@ -8,7 +8,6 @@ import { useNavigation, useOne, CanAccess } from '@refinedev/core';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { TransactionDto } from '../../../dtos/transaction.dto';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import {
   AUTHORIZATIONS_SHOW_QUERY,
   GET_TRANSACTIONS_FOR_AUTHORIZATION,
@@ -29,7 +28,7 @@ export const AuthorizationDetail: React.FC = () => {
     resource: ResourceType.AUTHORIZATIONS,
     id,
     meta: { gqlQuery: AUTHORIZATIONS_SHOW_QUERY },
-    queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
+    queryOptions: getPlainToInstanceOptions({}, true),
   });
   const authorization = authData?.data;
 

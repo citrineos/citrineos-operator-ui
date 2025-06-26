@@ -24,7 +24,7 @@ import {
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
 import { MeterValueDto } from '../../../dtos/meter.value.dto';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 import { getAuthorizationColumns } from '../../authorizations/columns';
 import {
   ResourceType,
@@ -104,7 +104,7 @@ export const TransactionDetail = () => {
       gqlQuery: GET_TRANSACTIONS_BY_AUTHORIZATION,
       gqlVariables: { limit: 10000 },
     },
-    queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
+    queryOptions: getPlainToInstanceOptions(),
   });
 
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);

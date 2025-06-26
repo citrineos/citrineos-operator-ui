@@ -28,6 +28,7 @@ import { AuthorizationStatusEnumType, IdTokenEnumType } from '@OCPP2_0_1';
 import { renderEnumSelectOptions } from '@util/renderUtil';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 
 export const AuthorizationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -79,8 +80,7 @@ export const AuthorizationUpsert = () => {
 
   const onFinish = useCallback(
     async (input: any) => {
-      // Compose flat Authorization object
-      const flatAuth: any = {
+      const flatAuth: AuthorizationDto = {
         ...input,
         tenantId: config.tenantId,
       };
@@ -156,10 +156,10 @@ export const AuthorizationUpsert = () => {
               </Select>
             </Form.Item>
             <Form.Item
-              key="cacheExpiryDateTime"
+              key="expiryDateTime"
               label="Cache Expiry DateTime"
-              name="cacheExpiryDateTime"
-              data-testid="cacheExpiryDateTime"
+              name="expiryDateTime"
+              data-testid="expiryDateTime"
             >
               <DatePicker showTime />
             </Form.Item>
@@ -196,10 +196,10 @@ export const AuthorizationUpsert = () => {
               <Input.TextArea />
             </Form.Item>
             <Form.Item
-              key="groupIdTokenId"
-              label="Group ID Token (Authorization ID)"
-              name="groupIdTokenId"
-              data-testid="groupIdTokenId"
+              key="groupAuthorizationId"
+              label="Group Authorization ID"
+              name="groupAuthorizationId"
+              data-testid="groupAuthorizationId"
             >
               <InputNumber min={1} />
             </Form.Item>
