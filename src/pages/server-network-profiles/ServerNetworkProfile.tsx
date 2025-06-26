@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   IsBoolean,
   IsInt,
@@ -6,7 +10,7 @@ import {
   IsString,
 } from 'class-validator';
 import { BaseModel } from '@util/BaseModel';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';

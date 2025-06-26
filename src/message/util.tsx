@@ -1,8 +1,14 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { HttpMethod, OCPPVersion } from '@citrineos/base';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { notification } from 'antd';
 import { Expose } from 'class-transformer';
 import { MessageConfirmation } from './MessageConfirmation';
+import { store } from '../redux/store';
+import { closeModal } from '../redux/modal.slice';
 
 export const showSuccess = (payload?: string | object) => {
   const payloadString = payload ? JSON.stringify(payload) : '.';
@@ -30,7 +36,6 @@ export const showError = (msg: string) => {
 export interface TriggerMessageAndHandleResponseProps<T> {
   url: string;
   data: any;
-  responseSuccessCheck: (response: T) => boolean;
   ocppVersion?: OCPPVersion | null;
   method?: HttpMethod;
   setLoading?: (loading: boolean) => void;
@@ -43,15 +48,13 @@ export const triggerMessageAndHandleResponse = async <
 >({
   url,
   data,
-  responseSuccessCheck,
   ocppVersion = OCPPVersion.OCPP2_0_1,
   method = HttpMethod.Post,
   setLoading,
 }: TriggerMessageAndHandleResponseProps<T>) => {
   try {
-    if (setLoading) {
-      setLoading(true);
-    }
+    setLoading?.(true);
+
     const client = new BaseRestClient(ocppVersion);
     let response = undefined;
     switch (method) {
@@ -66,11 +69,13 @@ export const triggerMessageAndHandleResponse = async <
     }
 
     if (responseSuccessCheck(response.data)) {
+      store.dispatch(closeModal());
       const payload = Array.isArray(response.data)
         ? response.data.length > 0 && response.data[0].payload
           ? response.data[0].payload
           : undefined
         : response.data.payload;
+
       showSuccess(payload);
     } else {
       let msg = 'The request did not receive a successful response.';
@@ -82,9 +87,7 @@ export const triggerMessageAndHandleResponse = async <
   } catch (error: any) {
     showError('The request failed with message: ' + error.message);
   } finally {
-    if (setLoading) {
-      setLoading(false);
-    }
+    setLoading?.(false);
   }
 };
 

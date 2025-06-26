@@ -1,9 +1,15 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
 import { OCPPVersion } from '@citrineos/base';
+import { authProvider } from '@util/auth';
+import config from './config';
 
-const CITRINE_CORE_URL = import.meta.env.VITE_CITRINE_CORE_URL;
+const CITRINE_CORE_URL = config.citrineCoreUrl;
 
 export class MissingRequiredParamException extends Error {
   override name = 'MissingRequiredParamException' as const;
@@ -160,6 +166,16 @@ export class BaseRestClient {
       headers: {
         'Content-Type': 'application/json',
       },
+    });
+    this.axiosInstance.interceptors.request.use(async (config) => {
+      // Get token and add to headers if it exists
+      const token = await authProvider.getToken();
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      return config;
     });
   }
 }

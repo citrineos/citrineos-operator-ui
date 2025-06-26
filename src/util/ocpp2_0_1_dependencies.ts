@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { OCPP1_6, OCPP2_0_1 } from '@citrineos/base';
 
 export const MonitorEnumType = OCPP2_0_1.MonitorEnumType;

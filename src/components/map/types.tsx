@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 // types.tsx - Refactored types
 import { GeoPoint } from '@util/GeoPoint';
 import { ChargingStationDto } from '../../dtos/charging.station.dto';

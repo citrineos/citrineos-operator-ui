@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { gql } from 'graphql-tag';
 
 export const AUTHORIZATIONS_LIST_QUERY = gql`
@@ -18,6 +22,7 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       IdToken {
         createdAt
         id
@@ -54,6 +59,7 @@ export const AUTHORIZATIONS_CREATE_MUTATION = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       createdAt
       updatedAt
       IdToken {
@@ -95,6 +101,7 @@ export const AUTHORIZATIONS_EDIT_MUTATION = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       createdAt
       updatedAt
     }
@@ -129,6 +136,7 @@ export const AUTHORIZATIONS_DELETE_MUTATION = gql`
       id
       allowedConnectorTypes
       disallowedEvseIdPrefixes
+      concurrentTransaction
       createdAt
       updatedAt
     }
@@ -143,6 +151,7 @@ export const AUTHORIZATIONS_SHOW_QUERY = gql`
       disallowedEvseIdPrefixes
       idTokenId
       idTokenInfoId
+      concurrentTransaction
       createdAt
       updatedAt
       IdToken {
@@ -204,6 +213,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
         createdAt
         updatedAt
         Location {
+          id
           name
           address
           city
@@ -221,7 +231,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
           idToken
         }
       }
-      StartTransactions {
+      StartTransaction {
         IdToken {
           idToken
         }

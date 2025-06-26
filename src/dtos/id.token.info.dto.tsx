@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BaseDto } from './base.dto';
 import { AuthorizationStatusEnumType } from '@OCPP2_0_1';

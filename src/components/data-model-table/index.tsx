@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import './style.scss';
 import { CreateButton, List } from '@refinedev/antd';
 import { BaseRecord } from '@refinedev/core';

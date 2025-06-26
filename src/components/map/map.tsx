@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, {
   useEffect,
   useMemo,
@@ -18,8 +22,11 @@ import { mapStyles } from './map.styles';
 import { ClusterIcon } from './marker.icons';
 import { ClusterInfo, LocationGroup, MapMarkerData, MapProps } from './types';
 import './style.scss';
+import { CanAccess } from '@refinedev/core';
+import { ActionType, ResourceType } from '@util/auth';
+import config from '@util/config';
 
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const apiKey = config.googleMapsApiKey;
 
 /**
  * Main map component that supports marker clustering
@@ -63,8 +70,8 @@ export const LocationMap: React.FC<MapProps> = ({
       .filter((location) => location.coordinates)
       .map((location) => {
         const position = {
-          lat: location.coordinates.latitude,
-          lng: location.coordinates.longitude,
+          lat: location.coordinates!.latitude,
+          lng: location.coordinates!.longitude,
         };
 
         const status = determineLocationStatus(location);
@@ -96,19 +103,21 @@ export const LocationMap: React.FC<MapProps> = ({
   }, [stationMarkers, locationMarkers, defaultCenter]);
 
   return (
-    <div className="map-wrapper">
-      <APIProvider apiKey={apiKey}>
-        <MapWithClustering
-          locations={locations}
-          markers={allMarkers}
-          defaultCenter={defaultCenter}
-          zoom={zoom}
-          onMarkerClick={onMarkerClick}
-          selectedMarkerId={selectedMarkerId}
-          clusterByLocation={clusterByLocation}
-        />
-      </APIProvider>
-    </div>
+    <CanAccess resource={ResourceType.LOCATIONS} action={ActionType.LIST}>
+      <div className="map-wrapper">
+        <APIProvider apiKey={apiKey}>
+          <MapWithClustering
+            locations={locations}
+            markers={allMarkers}
+            defaultCenter={defaultCenter}
+            zoom={zoom}
+            onMarkerClick={onMarkerClick}
+            selectedMarkerId={selectedMarkerId}
+            clusterByLocation={clusterByLocation}
+          />
+        </APIProvider>
+      </div>
+    </CanAccess>
   );
 };
 
@@ -464,7 +473,7 @@ function createLocationGroups(
   return Array.from(markersByLocation.entries())
     .map(([locationId, stationMarkers]) => {
       const location = locations.find((l) => l.id === locationId);
-      if (!location) return null;
+      if (!location || !location.coordinates) return null;
 
       // Create a marker for this location
       const locationMarker: MapMarkerData = {

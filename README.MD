@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 ![CitrineOS Logo](public/logo_white.png#gh-dark-mode-only)
 ![CitrineOS Logo](public/logo_black.png#gh-light-mode-only)
 
