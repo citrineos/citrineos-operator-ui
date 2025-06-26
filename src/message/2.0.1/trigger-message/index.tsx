@@ -11,7 +11,7 @@ import {
   triggerMessageAndHandleResponse,
 } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { EvseDtoProps, type IEvseDto, OCPPVersion } from '@citrineos/base';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { MessageTriggerEnumType } from '@OCPP2_0_1';
@@ -29,7 +29,6 @@ import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { CustomAction } from '../../../components/custom-actions';
 import { ChargingStationProps } from '../../../pages/charging-stations/ChargingStationProps';
-import { EvseProps } from '../../../pages/evses/EvseProps';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
@@ -55,7 +54,7 @@ export class TriggerMessageRequest {
     gqlListQuery: {
       query: GET_CHARGING_STATION_LIST_FOR_EVSE,
       getQueryVariables: (_: TriggerMessageRequest) => ({
-        [EvseProps.databaseId]: 1,
+        [EvseDtoProps.databaseId]: 1,
       }),
     },
   })
@@ -66,7 +65,7 @@ export class TriggerMessageRequest {
   @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.databaseId,
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -82,7 +81,7 @@ export class TriggerMessageRequest {
   })
   @Type(() => Evse)
   @IsNotEmpty()
-  evse!: Evse | null;
+  evse!: IEvseDto | null;
 
   @IsEnum(MessageTriggerEnumType)
   @IsNotEmpty()
@@ -128,8 +127,9 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
-    NEW_IDENTIFIER as unknown as number;
+  triggerMessageRequest[TriggerMessageRequestProps.evse][
+    EvseDtoProps.databaseId
+  ] = NEW_IDENTIFIER as unknown as number;
 
   const triggerMessageRequestWithoutEvse =
     new TriggerMessageRequestWithoutEvse() as Omit<
@@ -158,12 +158,12 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: request[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && evse[EvseProps.id]) {
+    if (evse && evse[EvseDtoProps.id]) {
       data.evse = {
-        id: evse[EvseProps.id],
+        id: evse[EvseDtoProps.id],
       };
-      if (evse[EvseProps.connectorId]) {
-        data.evse.connectorId = evse[EvseProps.connectorId];
+      if (evse[EvseDtoProps.connectorId]) {
+        data.evse.connectorId = evse[EvseDtoProps.connectorId];
       }
     }
 

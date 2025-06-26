@@ -32,10 +32,14 @@ import { Dayjs } from 'dayjs';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Evse } from '../../../pages/evses/Evse';
 import { GET_EVSE_LIST_FOR_STATION } from '../../queries';
-import { IdToken, IdTokenProps } from '../../../pages/id-tokens/id-token';
+import { IdToken } from '../../../pages/id-tokens/id-token';
 import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
-import { EvseProps } from '../../../pages/evses/EvseProps';
+import {
+  EvseDtoProps,
+  IdTokenDtoProps,
+  type IIdTokenDto,
+} from '@citrineos/base';
 
 export class IdTokenType {
   @IsString()
@@ -161,7 +165,7 @@ export class RequestStartTransactionRequest {
 
   @GqlAssociation({
     parentIdFieldName: RequestStartTransactionRequestProps.idToken,
-    associatedIdFieldName: IdTokenProps.id,
+    associatedIdFieldName: IdTokenDtoProps.id,
     gqlQuery: {
       query: ID_TOKENS_LIST_QUERY,
     },
@@ -171,11 +175,11 @@ export class RequestStartTransactionRequest {
   })
   @Type(() => IdToken)
   @IsNotEmpty()
-  idToken!: IdToken | null;
+  idToken!: IIdTokenDto | null;
 
   @GqlAssociation({
     parentIdFieldName: RequestStartTransactionRequestProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.databaseId,
     gqlQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
     },

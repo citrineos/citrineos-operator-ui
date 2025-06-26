@@ -10,7 +10,7 @@ import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { ChangeAvailabilityRequestType } from '@OCPP1_6';
-import { OCPPVersion } from '@citrineos/base';
+import * as base from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import {
@@ -20,7 +20,7 @@ import {
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { Connector } from '../../../pages/connectors/connector';
-import { ConnectorDtoProps } from '@citrineos/base';
+import { ConnectorDtoProps, IConnectorDto } from '@citrineos/base';
 
 enum ChangeAvailabilityDataProps {
   connector = 'connector',
@@ -55,7 +55,7 @@ class ChangeAvailabilityData {
   @Type(() => Connector)
   @ValidateNested()
   @IsNotEmpty()
-  connector!: Connector;
+  connector!: base.IConnectorDto;
 
   @IsEnum(ChangeAvailabilityRequestType)
   type!: ChangeAvailabilityRequestType;
@@ -70,11 +70,11 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   };
 
   const changeAvailabilityData = new ChangeAvailabilityData();
-  changeAvailabilityData[ChangeAvailabilityDataProps.connector] =
-    new Connector();
-  changeAvailabilityData[ChangeAvailabilityDataProps.connector][
-    ConnectorDtoProps.id
-  ] = NEW_IDENTIFIER as unknown as number;
+  changeAvailabilityData[ChangeAvailabilityDataProps.connector] = {
+    id: NEW_IDENTIFIER as unknown as number,
+    stationId: station.id,
+    connectorId: undefined,
+  } as IConnectorDto;
 
   const handleSubmit = async (request: ChangeAvailabilityData) => {
     const data: any = {
@@ -85,7 +85,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/changeAvailability?identifier=${station.id}&tenantId=1`,
       data,
-      ocppVersion: OCPPVersion.OCPP1_6,
+      ocppVersion: base.OCPPVersion.OCPP1_6,
     });
   };
 

@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { BaseModel } from '@util/BaseModel';
-import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { IdTokenEnumType } from '@OCPP2_0_1';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '@util/auth';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
@@ -20,12 +17,8 @@ import {
   ID_TOKENS_LIST_QUERY,
   ID_TOKENS_SHOW_QUERY,
 } from './queries';
-
-export enum IdTokenProps {
-  id = 'id',
-  idToken = 'idToken',
-  type = 'type',
-}
+import { IdTokenDtoProps, IIdTokenDto } from '@citrineos/base';
+import { IsInt, IsNotEmpty } from 'class-validator';
 
 @ClassResourceType(ResourceType.ID_TOKENS)
 @ClassGqlListQuery(ID_TOKENS_LIST_QUERY)
@@ -33,17 +26,9 @@ export enum IdTokenProps {
 @ClassGqlCreateMutation(ID_TOKENS_CREATE_MUTATION)
 @ClassGqlEditMutation(ID_TOKENS_EDIT_MUTATION)
 @ClassGqlDeleteMutation(ID_TOKENS_DELETE_MUTATION)
-@PrimaryKeyFieldName(IdTokenProps.id)
-export class IdToken extends BaseModel {
+@PrimaryKeyFieldName(IdTokenDtoProps.id)
+export class IdToken implements Partial<IIdTokenDto> {
   @IsInt()
   @IsNotEmpty()
   id!: number;
-
-  @IsString()
-  @IsNotEmpty()
-  idToken!: string;
-
-  @IsEnum(IdTokenEnumType)
-  @IsNotEmpty()
-  type!: IdTokenEnumType;
 }

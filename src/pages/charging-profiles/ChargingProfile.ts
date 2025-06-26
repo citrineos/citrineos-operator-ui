@@ -2,45 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsOptional } from 'class-validator';
 import TransformDatetime from '@util/TransformDatetime';
 import { Type } from 'class-transformer';
-import {
-  ChargingLimitSourceEnumType,
-  ChargingProfileKindEnumType,
-  ChargingProfilePurposeEnumType,
-  RecurrencyKindEnumType,
-} from '@OCPP2_0_1';
+import { IChargingProfileDto } from '@citrineos/base';
 
-export class ChargingProfile {
-  @IsInt()
-  databaseId!: number;
-
-  @IsInt()
-  id!: number;
-
-  @IsString()
-  stationId!: string;
-
-  @IsEnum(ChargingProfileKindEnumType)
-  chargingProfileKind!: ChargingProfileKindEnumType;
-
-  @IsEnum(ChargingProfilePurposeEnumType)
-  chargingProfilePurpose!: ChargingProfilePurposeEnumType;
-
-  @IsOptional()
-  @IsEnum(RecurrencyKindEnumType)
-  recurrencyKind?: RecurrencyKindEnumType;
-
-  @IsInt()
-  stackLevel!: number;
-
+export class ChargingProfile implements Partial<IChargingProfileDto> {
   @Type(() => Date)
   @TransformDatetime()
   @IsOptional()
@@ -51,37 +18,23 @@ export class ChargingProfile {
   @IsOptional()
   validTo: Date | null = null;
 
-  @IsInt()
-  @IsOptional()
-  evseId?: number | null = null;
-
-  @IsBoolean()
-  @IsOptional()
-  isActive: boolean | null = null;
-
-  @IsOptional()
-  @IsEnum(ChargingLimitSourceEnumType)
-  chargingLimitSource: ChargingLimitSourceEnumType | null = null;
-
-  @IsInt()
-  @IsOptional()
-  transactionDatabaseId: number | null = null;
-
-  constructor(data: ChargingProfile) {
+  constructor(data: Partial<IChargingProfileDto>) {
     if (data) {
-      this.id = data.id;
-      this.databaseId = data.databaseId;
-      this.stationId = data.stationId;
-      this.chargingProfileKind = data.chargingProfileKind;
-      this.chargingProfilePurpose = data.chargingProfilePurpose;
-      this.recurrencyKind = data.recurrencyKind;
-      this.stackLevel = data.stackLevel;
-      this.validFrom = data.validFrom;
-      this.validTo = data.validTo;
-      this.evseId = data.evseId;
-      this.isActive = data.isActive;
-      this.chargingLimitSource = data.chargingLimitSource;
-      this.transactionDatabaseId = data.transactionDatabaseId;
+      Object.assign(this, {
+        id: data.id,
+        databaseId: data.databaseId,
+        stationId: data.stationId,
+        chargingProfileKind: data.chargingProfileKind,
+        chargingProfilePurpose: data.chargingProfilePurpose,
+        recurrencyKind: data.recurrencyKind,
+        stackLevel: data.stackLevel,
+        validFrom: data.validFrom,
+        validTo: data.validTo,
+        evseId: data.evseId,
+        isActive: data.isActive,
+        chargingLimitSource: data.chargingLimitSource,
+        transactionDatabaseId: data.transactionDatabaseId,
+      });
     }
   }
 }

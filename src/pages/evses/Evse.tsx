@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, ValidateNested } from 'class-validator';
 
 import { Type } from 'class-transformer';
 import { FieldLabel } from '@util/decorators/FieldLabel';
@@ -23,17 +23,17 @@ import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
-import { BaseModel } from '@util/BaseModel';
-import { EvseProps } from './EvseProps';
-import {
-  VariableAttribute,
-  VariableAttributeProps,
-} from '../variable-attributes/VariableAttributes';
+import { VariableAttribute } from '../variable-attributes/VariableAttributes';
 import {
   VARIABLE_ATTRIBUTE_GET_QUERY,
   VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
   VARIABLE_ATTRIBUTE_LIST_QUERY,
 } from '../variable-attributes/queries';
+import {
+  EvseDtoProps,
+  IEvseDto,
+  VariableAttributeDtoProps,
+} from '@citrineos/base';
 
 @ClassResourceType(ResourceType.EVSES)
 @ClassGqlListQuery(EVSE_LIST_QUERY)
@@ -41,30 +41,21 @@ import {
 @ClassGqlCreateMutation(EVSE_CREATE_MUTATION)
 @ClassGqlEditMutation(EVSE_EDIT_WITH_VARIABLE_ATTRIBUTES_MUTATION)
 @ClassGqlDeleteMutation(EVSE_DELETE_MUTATION)
-@PrimaryKeyFieldName(EvseProps.databaseId)
-export class Evse extends BaseModel {
+@PrimaryKeyFieldName(EvseDtoProps.databaseId)
+export class Evse implements Partial<IEvseDto> {
   @IsNumber()
   databaseId!: number;
 
   @IsNumber()
   id!: number;
 
-  @IsOptional()
-  @IsNumber()
-  connectorId?: number | null;
-
-  /* @Type(() => CustomDataType)
-  @IsOptional()
-  customData: CustomDataType | null = null;
-  */
-
   @IsArray()
   @Type(() => VariableAttribute)
   @ValidateNested({ each: true })
   @FieldLabel('Device Model')
   @GqlAssociation({
-    parentIdFieldName: EvseProps.databaseId,
-    associatedIdFieldName: VariableAttributeProps.evseDatabaseId,
+    parentIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: VariableAttributeDtoProps.evseDatabaseId,
     hasNewAssociatedIdsVariable: true,
     gqlQuery: {
       query: VARIABLE_ATTRIBUTE_GET_QUERY,
@@ -74,21 +65,20 @@ export class Evse extends BaseModel {
     },
     gqlListSelectedQuery: {
       query: VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-      getQueryVariables: (evse: Evse) => ({
-        [VariableAttributeProps.evseDatabaseId]: evse.databaseId,
+      getQueryVariables: (evse: IEvseDto) => ({
+        [VariableAttributeDtoProps.evseDatabaseId]: evse.databaseId,
       }),
     },
   })
   VariableAttributes?: VariableAttribute[];
 
-  constructor(data?: Partial<Evse>) {
-    super();
+  constructor(data?: Partial<IEvseDto>) {
     if (data) {
       Object.assign(this, {
-        [EvseProps.databaseId]: data.databaseId,
-        [EvseProps.id]: data.id,
-        [EvseProps.connectorId]: data.connectorId,
-        [EvseProps.VariableAttributes]: data.VariableAttributes,
+        [EvseDtoProps.databaseId]: data.databaseId,
+        [EvseDtoProps.id]: data.id,
+        [EvseDtoProps.connectorId]: data.connectorId,
+        [EvseDtoProps.VariableAttributes]: data.VariableAttributes,
       });
     }
   }
