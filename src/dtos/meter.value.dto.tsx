@@ -2,55 +2,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsArray, IsInt, IsOptional, ValidateNested } from 'class-validator';
-import { Sortable } from '@util/decorators/Sortable';
-import { Type } from 'class-transformer';
-import { TransformDate } from '@util/TransformDate';
-import { BaseDto } from './base.dto';
-import { SampledValueDto } from './sampled.value.dto';
 import {
   MeasurandEnumType,
   PhaseEnumType,
   ReadingContextEnumType,
 } from '@OCPP2_0_1';
-import { UnitOfMeasure } from 'src/pages/meter-values/SampledValue';
+import { IMeterValueDto, ISampledValueDto } from '@citrineos/base';
 
-export enum MeterValueDtoProps {
-  id = 'id',
-  transactionEventId = 'transactionEventId',
-  transactionDatabaseId = 'transactionDatabaseId',
-  sampledValue = 'sampledValue',
-  timestamp = 'timestamp',
-}
-
-export class MeterValueDto extends BaseDto {
-  @IsInt()
-  id!: number;
-
-  @IsInt()
-  @IsOptional()
-  transactionEventId?: number | null;
-
-  @IsInt()
-  @IsOptional()
-  transactionDatabaseId?: number | null;
-
-  @IsArray()
-  @Type(() => SampledValueDto)
-  @ValidateNested({ each: true })
-  sampledValue!: SampledValueDto[];
-
-  @Sortable()
-  @TransformDate()
-  timestamp!: Date;
-
-  @IsInt()
-  @IsOptional()
-  connectorId?: number | null;
-
-  // todo: handle custom data
-  // customData?: CustomDataType | null;
-}
+export class MeterValueDto implements Partial<IMeterValueDto> {}
 
 // todo share below code with @citrineos/base
 const TWO_HOURS = 60 * 60 * 2;
@@ -62,7 +21,7 @@ const validContexts = new Set([
 ]);
 
 export const getTimestampToMeasurandArray = (
-  sortedMeterValues: MeterValueDto[],
+  sortedMeterValues: IMeterValueDto[],
   measurand: MeasurandEnumType,
   validContextsArg: Set<ReadingContextEnumType>,
 ): [number, string][] => {
@@ -100,9 +59,9 @@ export const getTimestampToMeasurandArray = (
 };
 
 export const findOverallValue = (
-  sampledValues: SampledValueDto[],
+  sampledValues: ISampledValueDto[],
   measurand: MeasurandEnumType,
-): SampledValueDto | undefined => {
+): ISampledValueDto | undefined => {
   const measurandSampledValues = sampledValues.filter(
     (sv) =>
       sv.measurand === measurand ||
@@ -142,7 +101,7 @@ export const findOverallValue = (
 };
 
 export const normalizeValue = (
-  overallValue: SampledValueDto,
+  overallValue: ISampledValueDto,
 ): string | null => {
   let powerOfTen = overallValue.unitOfMeasure?.multiplier ?? 0;
   const unit = overallValue.unitOfMeasure?.unit?.toUpperCase();

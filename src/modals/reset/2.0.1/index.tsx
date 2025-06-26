@@ -4,16 +4,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
 import { ResetEnumType } from '@OCPP2_0_1';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP2_0_1_ResetProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {

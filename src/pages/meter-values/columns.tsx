@@ -4,10 +4,10 @@
 
 import { Table } from 'antd';
 import React from 'react';
-import { MeterValueDtoProps } from '../../dtos/meter.value.dto';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { SampledValuesListView } from './sampled-value';
 import { TimestampDisplay } from '../../components/timestamp-display';
+import { MeterValueDtoProps } from '@citrineos/base';
 
 export const getMeterValueColumns = () => {
   return (

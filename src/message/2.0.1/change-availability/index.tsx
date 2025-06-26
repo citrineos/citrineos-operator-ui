@@ -8,12 +8,12 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
 import {
-  ChangeAvailabilityRequest,
-  ChangeAvailabilityRequestProps,
-} from './model';
-import { EvseProps } from '../../../pages/evses/EvseProps';
+  ChangeAvailabilityRequestDtoProps,
+  EvseDtoProps,
+  OCPPVersion,
+} from '@citrineos/base';
+import { ChangeAvailabilityRequest } from './model';
 
 export interface ChangeAvailabilityProps {
   station: ChargingStation;
@@ -30,18 +30,17 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   const changeAvailabilityRequest = new ChangeAvailabilityRequest();
 
   const handleSubmit = async (request: ChangeAvailabilityRequest) => {
-    const evse = request[ChangeAvailabilityRequestProps.evse];
+    const evse = (request as any).evse;
     const data: any = {
-      operationalStatus:
-        request[ChangeAvailabilityRequestProps.operationalStatus],
-      customData: (request as any)[ChangeAvailabilityRequestProps.customData],
+      operationalStatus: (request as any).operationalStatus,
+      customData: (request as any).customData,
     };
 
-    if (evse && evse[EvseProps.id]) {
-      data[ChangeAvailabilityRequestProps.evse] = {
-        id: evse[EvseProps.id],
-        ...(evse[EvseProps.connectorId]
-          ? { connectorId: evse[EvseProps.connectorId] }
+    if (evse && evse[EvseDtoProps.id]) {
+      data[ChangeAvailabilityRequestDtoProps.evse] = {
+        id: evse[EvseDtoProps.id],
+        ...(evse[EvseDtoProps.connectorId]
+          ? { connectorId: evse[EvseDtoProps.connectorId] }
           : {}),
       };
     }

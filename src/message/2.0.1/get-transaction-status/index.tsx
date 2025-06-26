@@ -8,15 +8,12 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { OCPPVersion, TransactionDtoProps } from '@citrineos/base';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '@util/consts';
-import {
-  Transaction,
-  TransactionProps,
-} from '../../../pages/transactions/Transaction';
+import { Transaction } from '../../../pages/transactions/Transaction';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '../../queries';
 
@@ -32,7 +29,7 @@ export class GetTransactionStatusRequest {
 
   @GqlAssociation({
     parentIdFieldName: GetTransactionStatusRequestProps.transaction,
-    associatedIdFieldName: TransactionProps.id,
+    associatedIdFieldName: TransactionDtoProps.id,
     gqlListQuery: {
       query: GET_TRANSACTION_LIST_FOR_STATION,
       getQueryVariables: (_: GetTransactionStatusRequest, selector: any) => {
@@ -74,13 +71,13 @@ export const GetTransactionStatus: React.FC<GetTransactionStatusProps> = ({
       request &&
       request[GetTransactionStatusRequestProps.transaction] &&
       request[GetTransactionStatusRequestProps.transaction][
-        TransactionProps.transactionId
+        TransactionDtoProps.transactionId
       ] != NEW_IDENTIFIER
     ) {
       data = {
         transactionId:
           request[GetTransactionStatusRequestProps.transaction][
-            TransactionProps.transactionId
+            TransactionDtoProps.transactionId
           ],
       };
     }

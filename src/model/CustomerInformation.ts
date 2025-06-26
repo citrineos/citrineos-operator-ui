@@ -4,7 +4,7 @@
 
 import { Type } from 'class-transformer';
 import { CustomDataType } from './CustomData';
-import { IdToken, IdTokenProps } from '../pages/id-tokens/id-token';
+import { IdToken } from '../pages/id-tokens/id-token';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { ChargingStation } from '../pages/charging-stations/ChargingStation';
 import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';
@@ -18,6 +18,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { IdTokenDtoProps } from '@citrineos/base';
 
 const ID_TOKEN_FIELD = 'idToken';
 
@@ -44,7 +45,7 @@ export class CustomerInformationRequest {
 
   @GqlAssociation({
     parentIdFieldName: ID_TOKEN_FIELD,
-    associatedIdFieldName: IdTokenProps.id,
+    associatedIdFieldName: IdTokenDtoProps.id,
     gqlQuery: {
       query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
     },

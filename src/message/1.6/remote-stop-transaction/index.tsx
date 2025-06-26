@@ -9,14 +9,11 @@ import { ChargingStation } from '../../../pages/charging-stations/ChargingStatio
 import { IsNotEmpty } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { OCPPVersion, TransactionDtoProps } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { GET_ACTIVE_TRANSACTION_LIST_FOR_STATION } from '../../queries';
-import {
-  TransactionProps,
-  Transaction,
-} from '../../../pages/transactions/Transaction';
+import { Transaction } from '../../../pages/transactions/Transaction';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 
 enum RemoteStopTransactionDataProps {
@@ -30,7 +27,7 @@ export interface RemoteStopTransactionProps {
 class RemoteStopTransactionData {
   @GqlAssociation({
     parentIdFieldName: RemoteStopTransactionDataProps.transaction,
-    associatedIdFieldName: TransactionProps.id,
+    associatedIdFieldName: TransactionDtoProps.id,
     gqlListQuery: {
       query: GET_ACTIVE_TRANSACTION_LIST_FOR_STATION,
       getQueryVariables: (_: RemoteStopTransactionData, selector: any) => {

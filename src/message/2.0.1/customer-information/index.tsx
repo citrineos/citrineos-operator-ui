@@ -8,7 +8,7 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import { IdTokenDtoProps, OCPPVersion } from '@citrineos/base';
 import {
   CustomerInformationRequest,
   CustomerPayload,
@@ -16,7 +16,7 @@ import {
   GetCustomerProps,
 } from '../../../model/CustomerInformation';
 import { NEW_IDENTIFIER } from '@util/consts';
-import { IdToken, IdTokenProps } from '../../../pages/id-tokens/id-token';
+import { IdToken } from '../../../pages/id-tokens/id-token';
 
 export interface CustomerInformationProps {
   station: ChargingStation;
@@ -32,11 +32,10 @@ export const CustomerInformation: React.FC<GetCustomerProps> = ({
 
   const getCustomersRequest = new CustomerInformationRequest();
   const idToken = new IdToken();
-  idToken[IdTokenProps.id] = NEW_IDENTIFIER as any;
+  idToken[IdTokenDtoProps.id] = NEW_IDENTIFIER as any;
   getCustomersRequest[GetCustomerInformationDataProps.clear] = false;
   getCustomersRequest[GetCustomerInformationDataProps.report] = false;
   getCustomersRequest[GetCustomerInformationDataProps.idToken] = idToken;
-
   const handleSubmit = async (request: CustomerInformationRequest) => {
     const payload = CustomerPayload(request);
 

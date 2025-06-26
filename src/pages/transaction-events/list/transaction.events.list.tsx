@@ -8,10 +8,6 @@ import { useTable } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
-  TransactionEventDto,
-  TransactionEventDtoProps,
-} from '../../../dtos/transaction.event.dto';
-import {
   GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
   GET_OCPPMESSAGES_FOR_TRANSACTION_LIST_QUERY,
@@ -21,6 +17,11 @@ import { MeterValuesList } from '../../meter-values/list/meter.values.list';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { OCPPMessageDto } from '../../../dtos/ocpp.message.dto';
 import { TransactionEventEnumType } from '@OCPP2_0_1';
+import {
+  ITransactionEventDto,
+  TransactionEventDtoProps,
+} from '@citrineos/base';
+import { TransactionEventDto } from '../../../dtos/transaction.event.dto';
 
 type SortField =
   | TransactionEventDtoProps.timestamp
@@ -28,7 +29,7 @@ type SortField =
 type SortOrder = 'ascend' | 'descend';
 
 export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
-  const { tableProps } = useTable<TransactionEventDto>({
+  const { tableProps } = useTable<ITransactionEventDto>({
     resource: ResourceType.TRANSACTION_EVENTS,
     sorters: {
       initial: [{ field: TransactionEventDtoProps.timestamp, order: 'desc' }],
@@ -63,24 +64,24 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
 
   const [expandedRow, setExpandedRow] = useState<string | number>();
 
-  const merged = useMemo<TransactionEventDto[]>(() => {
-    const messageRows: TransactionEventDto[] = (msgTable.dataSource || []).map(
+  const merged = useMemo<ITransactionEventDto[]>(() => {
+    const messageRows: ITransactionEventDto[] = (msgTable.dataSource || []).map(
       (m: any) => ({
         id: -Number(m.id),
         stationId: String(m.stationId ?? ''),
         evseId: m.message?.connectorId ?? null,
         transactionDatabaseId: String(transactionDatabaseId),
-        eventType: 'OCPPMessage' as TransactionEventDto['eventType'],
+        eventType: 'OCPPMessage' as ITransactionEventDto['eventType'],
         meterValues: [],
         timestamp: new Date(m.timestamp),
-        triggerReason: m.action as TransactionEventDto['triggerReason'],
-        seqNo: -1 as TransactionEventDto['seqNo'],
-        offline: false as TransactionEventDto['offline'],
-        numberOfPhasesUsed: 0 as TransactionEventDto['numberOfPhasesUsed'],
-        cableMaxCurrent: 0 as TransactionEventDto['cableMaxCurrent'],
-        reservationId: 0 as TransactionEventDto['reservationId'],
-        idTokenId: null as TransactionEventDto['idTokenId'],
-        idToken: undefined as TransactionEventDto['idToken'],
+        triggerReason: m.action as ITransactionEventDto['triggerReason'],
+        seqNo: -1 as ITransactionEventDto['seqNo'],
+        offline: false as ITransactionEventDto['offline'],
+        numberOfPhasesUsed: 0 as ITransactionEventDto['numberOfPhasesUsed'],
+        cableMaxCurrent: 0 as ITransactionEventDto['cableMaxCurrent'],
+        reservationId: 0 as ITransactionEventDto['reservationId'],
+        idTokenId: null as ITransactionEventDto['idTokenId'],
+        idToken: undefined as ITransactionEventDto['idToken'],
       }),
     );
     return [...events, ...messageRows];
@@ -91,7 +92,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
     order: 'descend',
   });
 
-  const sorted = useMemo<TransactionEventDto[]>(() => {
+  const sorted = useMemo<ITransactionEventDto[]>(() => {
     return [...merged].sort((a, b) => {
       const { field, order } = sorter;
       let diff = 0;
@@ -112,7 +113,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
       : 10,
   );
 
-  const pagedData = useMemo<TransactionEventDto[]>(() => {
+  const pagedData = useMemo<ITransactionEventDto[]>(() => {
     const start = (current - 1) * pageSize;
     return sorted.slice(start, start + pageSize);
   }, [sorted, current, pageSize]);
@@ -125,7 +126,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
           key="meterValues"
           dataIndex={TransactionEventDtoProps.meterValues}
           title="Meter Values"
-          render={(_: any, record: TransactionEventDto) =>
+          render={(_: any, record: ITransactionEventDto) =>
             record.eventType! in TransactionEventEnumType ? (
               <Row
                 className="view-meter-values"
