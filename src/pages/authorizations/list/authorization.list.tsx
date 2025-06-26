@@ -11,7 +11,7 @@ import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AUTHORIZATIONS_LIST_QUERY } from '../queries';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 import { getAuthorizationFilters, getAuthorizationColumns } from '../columns';
 import './style.scss';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
@@ -27,7 +27,7 @@ export const AuthorizationsList: React.FC = () => {
     resource: ResourceType.AUTHORIZATIONS,
     sorters: DEFAULT_SORTERS,
     meta: { gqlQuery: AUTHORIZATIONS_LIST_QUERY },
-    queryOptions: getPlainToInstanceOptions(AuthorizationDto),
+    queryOptions: getPlainToInstanceOptions({}),
   });
 
   const onSearch: SearchProps['onSearch'] = useCallback(

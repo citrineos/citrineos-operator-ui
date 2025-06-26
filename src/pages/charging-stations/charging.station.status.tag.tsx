@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  ChargignStationStatus,
+  ChargingStationStatus,
   getChargingStationStatus,
 } from '../../dtos/charging.station.dto';
 import GenericTag from '../../components/tag';
@@ -20,13 +20,13 @@ export const ChargingStationStatusTag = ({
   return (
     <GenericTag
       colorMap={{
-        [ChargignStationStatus.AVAILABLE]: 'green',
-        [ChargignStationStatus.CHARGING]: 'blue',
-        [ChargignStationStatus.CHARGING_SUSPENDED]: 'violet',
-        [ChargignStationStatus.UNAVAILABLE]: 'gray',
-        [ChargignStationStatus.FAULTED]: 'red',
+        [ChargingStationStatus.AVAILABLE]: 'green',
+        [ChargingStationStatus.CHARGING]: 'blue',
+        [ChargingStationStatus.CHARGING_SUSPENDED]: 'violet',
+        [ChargingStationStatus.UNAVAILABLE]: 'gray',
+        [ChargingStationStatus.FAULTED]: 'red',
       }}
-      enumType={ChargignStationStatus}
+      enumType={ChargingStationStatus}
       enumValue={status}
     />
   );
