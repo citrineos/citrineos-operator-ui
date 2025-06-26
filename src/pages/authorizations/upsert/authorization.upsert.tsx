@@ -156,10 +156,10 @@ export const AuthorizationUpsert = () => {
               </Select>
             </Form.Item>
             <Form.Item
-              key="expiryDateTime"
+              key="cacheExpiryDateTime"
               label="Cache Expiry DateTime"
-              name="expiryDateTime"
-              data-testid="expiryDateTime"
+              name="cacheExpiryDateTime"
+              data-testid="cacheExpiryDateTime"
             >
               <DatePicker showTime />
             </Form.Item>

@@ -8,7 +8,7 @@ export interface AuthorizationDto {
   idToken: string;
   idTokenType: string;
   status: string;
-  expiryDateTime?: string;
+  cacheExpiryDateTime?: string;
   parentIdToken?: string;
   groupAuthorizationId?: string;
   additionalInfo?: Record<string, any>;
