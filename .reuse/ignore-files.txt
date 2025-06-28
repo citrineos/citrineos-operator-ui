@@ -26,3 +26,7 @@ public/OCPP_201_Logo_core_and_advanced_security.png
 public/online.png
 tsconfig.json
 tsconfig.node.json
+oauth-server/.gitignore
+oauth-server/tsconfig.json
+oauth-server/package.json
+oauth-server/package-lock.json
