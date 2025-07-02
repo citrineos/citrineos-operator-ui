@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { IsArray, IsString } from 'class-validator';
 import { GeoPoint, IsGeoPoint } from '@util/GeoPoint';
 import { Expose, Type } from 'class-transformer';
@@ -43,7 +47,7 @@ export class LocationDto extends BaseDto {
   @Type(() => GeoPoint)
   @ToPlain<GeoPoint>((value) => (value ? value.json : value))
   @ToClass<GeoPoint>(GeoPoint.parse)
-  coordinates!: GeoPoint;
+  coordinates?: GeoPoint;
 
   @IsArray()
   @Type(() => ChargingStationDto)

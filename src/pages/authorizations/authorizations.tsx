@@ -1,6 +1,11 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   ValidateNested,
@@ -13,7 +18,7 @@ import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation'
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
 import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import {
   AUTHORIZATIONS_CREATE_MUTATION,
   AUTHORIZATIONS_DELETE_MUTATION,
@@ -44,6 +49,7 @@ export enum AuthorizationsProps {
   disallowedEvseIdPrefixes = 'disallowedEvseIdPrefixes',
   idTokenId = 'idTokenId',
   idTokenInfoId = 'idTokenInfoId',
+  concurrentTransaction = 'concurrentTransaction',
 }
 
 @ClassResourceType(ResourceType.AUTHORIZATIONS)
@@ -99,4 +105,7 @@ export class Authorizations extends BaseModel {
   @Type(() => IdTokenInfos)
   @IsNotEmpty()
   idTokenInfoId!: IdTokenInfos;
+
+  @IsBoolean()
+  concurrentTransaction?: boolean;
 }

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
@@ -5,10 +9,7 @@ import { plainToInstance } from 'class-transformer';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { LogEnumType } from '@OCPP2_0_1';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 
 export interface GetLogsModalProps {
@@ -49,7 +50,6 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=1`,
       data,
-      responseSuccessCheck,
       setLoading,
     });
   };

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
@@ -5,10 +9,7 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { EvseSelector } from '../../shared/evse-selector/evse.selector';
 import { ResetEnumType } from '@OCPP2_0_1';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 
 export interface OCPP2_0_1_ResetProps {
@@ -31,21 +32,10 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
   }) => {
     const data = { type, evseId };
 
-    const responseSuccessCheckAndCloseModal = (
-      confirmation: MessageConfirmation[],
-    ) => {
-      const success = responseSuccessCheck(confirmation);
-      if (success) {
-        dispatch(closeModal());
-      }
-      return success;
-    };
-
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
       data,
       setLoading,
-      responseSuccessCheck: responseSuccessCheckAndCloseModal,
     });
   };
 

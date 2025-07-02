@@ -1,5 +1,10 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   IsArray,
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -19,6 +24,7 @@ export enum AuthorizationDtoProps {
   idTokenId = 'idTokenId',
   idTokenInfo = 'IdTokenInfo',
   idTokenInfoId = 'idTokenInfoId',
+  concurrentTransaction = 'concurrentTransaction',
 }
 
 export class AuthorizationDto extends BaseDto {
@@ -51,4 +57,7 @@ export class AuthorizationDto extends BaseDto {
   @Type(() => IdTokenInfoDto)
   @Expose({ name: 'IdTokenInfo' })
   idTokenInfo?: Partial<IdTokenInfoDto>;
+
+  @IsBoolean()
+  concurrentTransaction?: boolean;
 }

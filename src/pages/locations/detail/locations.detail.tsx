@@ -1,14 +1,18 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Card, Tabs, TabsProps } from 'antd';
 import './style.scss';
 import { useParams } from 'react-router-dom';
-import { useOne } from '@refinedev/core';
-import { ResourceType } from '../../../resource-type';
+import { CanAccess, useOne } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { LocationDto } from '../../../dtos/location.dto';
 import { LOCATIONS_GET_QUERY } from '../queries';
 import { LocationsChargingStationsTable } from '../list/locations.charging.stations.table';
 import { LocationDetailCard } from './location.detail.card';
+import { ActionType, ResourceType } from '@util/auth';
 
 export const LocationsDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,14 +45,20 @@ export const LocationsDetail = () => {
   ];
 
   return (
-    <div style={{ padding: '16px' }}>
-      <Card className="location-details">
-        <LocationDetailCard location={location} />
-      </Card>
+    <CanAccess
+      resource={ResourceType.LOCATIONS}
+      action={ActionType.SHOW}
+      params={{ id: location.id }}
+    >
+      <div style={{ padding: '16px' }}>
+        <Card className="location-details">
+          <LocationDetailCard location={location} />
+        </Card>
 
-      <Card>
-        <Tabs defaultActiveKey="1" items={tabItems} />
-      </Card>
-    </div>
+        <Card>
+          <Tabs defaultActiveKey="1" items={tabItems} />
+        </Card>
+      </div>
+    </CanAccess>
   );
 };

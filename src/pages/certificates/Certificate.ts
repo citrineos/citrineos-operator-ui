@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   IsBoolean,
   IsDate,
@@ -10,7 +14,7 @@ import { Type } from 'class-transformer';
 import { TransformDate } from '@util/TransformDate';
 import { Dayjs } from 'dayjs';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';

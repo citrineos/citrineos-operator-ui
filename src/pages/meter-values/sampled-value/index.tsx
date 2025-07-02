@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Descriptions, Divider, Typography } from 'antd';
 import { SampledValue, SignedMeterValue, UnitOfMeasure } from '../SampledValue';

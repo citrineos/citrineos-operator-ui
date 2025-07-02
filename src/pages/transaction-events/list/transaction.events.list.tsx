@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { useMemo, useState } from 'react';
 import { Table, Row } from 'antd';
 import { useTable } from '@refinedev/antd';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
   TransactionEventDto,

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintPluginReact from 'eslint-plugin-react';

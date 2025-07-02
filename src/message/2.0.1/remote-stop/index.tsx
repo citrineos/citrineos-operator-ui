@@ -1,11 +1,12 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { Type } from 'class-transformer';
@@ -63,7 +64,6 @@ export const RemoteStop: React.FC<RemoteStopProps> = ({ station }) => {
       await triggerMessageAndHandleResponse<MessageConfirmation[]>({
         url: `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=1`,
         data: { transactionId: selectedTransaction.transactionId },
-        responseSuccessCheck,
         ocppVersion: OCPPVersion.OCPP2_0_1,
       });
     }

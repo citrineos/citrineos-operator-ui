@@ -1,5 +1,10 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { BaseRecord, useCustom } from '@refinedev/core';
 import { DocumentNode, OperationDefinitionNode } from 'graphql';
+import config from './config';
 
 interface UseGqlCustomProps {
   gqlQuery: DocumentNode;
@@ -28,7 +33,7 @@ export const useGqlCustom = <T extends BaseRecord>({
   }
 
   return useCustom<T>({
-    url: import.meta.env.VITE_API_URL,
+    url: config.apiUrl,
     method: 'post',
     config: {
       headers: {

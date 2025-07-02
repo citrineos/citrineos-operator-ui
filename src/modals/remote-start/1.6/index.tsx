@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from 'react';
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+import { useEffect, useState } from 'react';
 import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { OCPPVersion } from '@citrineos/base';
-import { ResourceType } from '../../../resource-type';
 import { IdTokenDto, IdTokenDtoProps } from '../../../dtos/id.token.dto';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import {
-  triggerMessageAndHandleResponse,
-  responseSuccessCheck,
-} from '../../../message/util';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { ConnectorSelector } from '../../shared/connector-selector/connector.selector';
+import { ResourceType } from '@util/auth';
 
 export interface OCPP1_6_RemoteStartProps {
   station: ChargingStationDto;
@@ -78,20 +79,9 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
       idTag,
     };
 
-    const responseSuccessCheckAndCloseModal = (
-      confirmation: MessageConfirmation[],
-    ) => {
-      const success = responseSuccessCheck(confirmation);
-      if (success) {
-        dispatch(closeModal());
-      }
-      return success;
-    };
-
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/remoteStartTransaction?identifier=${station.id}&tenantId=1`,
       data,
-      responseSuccessCheck: responseSuccessCheckAndCloseModal,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,
     });

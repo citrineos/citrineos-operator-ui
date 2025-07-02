@@ -1,12 +1,17 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { getFullAddress } from '@util/geocoding';
 import { Button, Flex } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { LocationIcon } from '../../../components/map';
-import { useNavigation } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import { LocationDto } from '../../../dtos/location.dto';
 import { PlusIcon } from '../../../components/icons/plus.icon';
+import { ActionType, ResourceType } from '@util/auth';
 
 export interface LocationDetailCardProps {
   location: LocationDto;
@@ -62,7 +67,9 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
                     <strong>Geocoordinates</strong>
                   </td>
                   <td>
-                    {`${location.coordinates.latitude} ${location.coordinates.longitude}`}
+                    {location.coordinates
+                      ? `${location.coordinates.latitude} ${location.coordinates.longitude}`
+                      : 'Not available'}
                   </td>
                 </tr>
                 <tr>
@@ -96,28 +103,39 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
         <Flex style={{ marginTop: '32px' }}>
           <Flex gap={16} justify="space-between" align="center" flex="1 1 auto">
             <Flex>
-              <Button
-                className="secondary"
-                onClick={() =>
-                  push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
-                }
+              <CanAccess
+                resource={ResourceType.LOCATIONS}
+                action={ActionType.EDIT}
+                params={{ id: location.id }}
               >
-                Edit Charging Location
-              </Button>
+                <Button
+                  className="secondary"
+                  onClick={() =>
+                    push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
+                  }
+                >
+                  Edit Charging Location
+                </Button>
+              </CanAccess>
             </Flex>
           </Flex>
           <Flex>
-            <Button
-              className="secondary"
-              onClick={() =>
-                push(
-                  `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
-                )
-              }
+            <CanAccess
+              resource={ResourceType.CHARGING_STATIONS}
+              action={ActionType.CREATE}
             >
-              Add New Charging Station
-              <PlusIcon />
-            </Button>
+              <Button
+                className="secondary"
+                onClick={() =>
+                  push(
+                    `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
+                  )
+                }
+              >
+                Add New Charging Station
+                <PlusIcon />
+              </Button>
+            </CanAccess>
           </Flex>
         </Flex>
       </Flex>

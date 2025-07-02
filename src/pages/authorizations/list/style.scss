@@ -1,9 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 @use '../../../mixins' as mixins;
 
 main[class*='content-authorizations-']:not(
-  .content-authorizations-new,
-  [class*='-edit']
-) {
+    .content-authorizations-new,
+    [class*='-edit']
+  ) {
   @include mixins.inner-content-no-padding;
 }
 

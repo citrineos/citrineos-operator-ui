@@ -1,10 +1,15 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import './telemetry';
 import type { ResourceProps } from '@refinedev/core';
-import { Refine } from '@refinedev/core';
+import { Authenticated, Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import './style.scss';
 
 import {
+  AuthPage,
   ErrorComponent,
   ThemedLayoutContextProvider,
   useNotificationProvider,
@@ -21,6 +26,7 @@ import dataProvider, {
 } from '@refinedev/hasura';
 import routerBindings, {
   DocumentTitleHandler,
+  NavigateToResource,
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
@@ -61,18 +67,30 @@ import {
   checkTelemetryConsent,
   saveTelemetryConsent,
   TelemetryConsentModal,
-} from './util/TelemetryConsentModal';
+} from '@util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
+import { authProvider, createAccessProvider } from '@util/auth';
+import config from '@util/config';
 
-const API_URL = import.meta.env.VITE_API_URL;
-const WS_URL = import.meta.env.VITE_WS_URL;
+const accessControlProvider = createAccessProvider({});
+
+const requestMiddleware = async (request: any) => {
+  return {
+    ...request,
+    headers: {
+      ...request.headers,
+      'x-hasura-role': 'admin',
+      'x-hasura-admin-secret': config.hasuraAdminSecret,
+    },
+  };
+};
+
+const API_URL = config.apiUrl;
+const WS_URL = config.wsUrl;
 
 const client = new GraphQLClient(API_URL, {
-  headers: {
-    'x-hasura-role': 'admin',
-    'x-hasura-admin-secret': import.meta.env.VITE_HASURA_ADMIN_SECRET,
-  },
+  requestMiddleware,
 });
 
 const webSocketClient = graphqlWS.createClient({
@@ -141,6 +159,8 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
         />
 
         <Refine
+          authProvider={authProvider}
+          accessControlProvider={accessControlProvider}
           dataProvider={hasuraDataProvider}
           liveProvider={liveProvider(
             webSocketClient,
@@ -158,31 +178,37 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
           }}
         >
           <Routes>
+            <Route path="/login" element={<AuthPage type="login" />} />
             <Route
               element={
-                <div style={{ position: 'relative' }}>
-                  <ThemedLayoutContextProvider initialSiderCollapsed={true}>
-                    <AntdLayout style={{ minHeight: '100vh' }} hasSider={true}>
-                      <MainMenu activeSection={activeSection} />
-                      <AntdLayout>
-                        <AppModal />
-                        <Header activeSection={activeSection} />
-                        <AntdLayout.Content
-                          className={`content-container ${routeClassName}`}
-                        >
-                          <div className="content-outer-wrap">
-                            <div className="content-inner-wrap">
-                              <Outlet />
+                <Authenticated key="login">
+                  <div style={{ position: 'relative' }}>
+                    <ThemedLayoutContextProvider initialSiderCollapsed={true}>
+                      <AntdLayout
+                        style={{ minHeight: '100vh' }}
+                        hasSider={true}
+                      >
+                        <MainMenu activeSection={activeSection} />
+                        <AntdLayout>
+                          <AppModal />
+                          <Header activeSection={activeSection} />
+                          <AntdLayout.Content
+                            className={`content-container ${routeClassName}`}
+                          >
+                            <div className="content-outer-wrap">
+                              <div className="content-inner-wrap">
+                                <Outlet />
+                              </div>
                             </div>
-                          </div>
-                        </AntdLayout.Content>
+                          </AntdLayout.Content>
+                        </AntdLayout>
                       </AntdLayout>
-                    </AntdLayout>
-                  </ThemedLayoutContextProvider>
-                  <div
-                    className={`gradient ${mode === 'dark' ? 'dark' : ''}`}
-                  />
-                </div>
+                    </ThemedLayoutContextProvider>
+                    <div
+                      className={`gradient ${mode === 'dark' ? 'dark' : ''}`}
+                    />
+                  </div>
+                </Authenticated>
               }
             >
               <Route path="/" element={<Navigate to="/overview" replace />} />

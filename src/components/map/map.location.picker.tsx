@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useState } from 'react';
 import {
   APIProvider,
@@ -9,12 +13,13 @@ import {
   APILoadingStatus,
 } from '@vis.gl/react-google-maps';
 import { mapStyles } from './map.styles';
+import config from '@util/config';
 import { GeoPoint } from '@util/GeoPoint';
 import { LocationPickerMapProps } from './types';
 import { MarkerIconCircle } from './marker.icons';
 import './style.scss';
 
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const apiKey = config.googleMapsApiKey;
 
 // A wrapper component that has access to the map context
 const MarkerWithMap = ({

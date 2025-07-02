@@ -1,11 +1,12 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Form } from 'antd';
 import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
-import {
-  responseSuccessCheck,
-  triggerMessageAndHandleResponse,
-} from '../../util';
+import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { IsNotEmpty } from 'class-validator';
 
@@ -56,7 +57,6 @@ export const UpdateAuthPassword: React.FC<UpdateAuthPasswordProps> = ({
       url: `/configuration/password`,
       data,
       ocppVersion: null,
-      responseSuccessCheck,
     });
   };
 

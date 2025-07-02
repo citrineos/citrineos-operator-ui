@@ -1,9 +1,13 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState } from 'react';
 import { Button, Row, Space, Tabs, Tooltip } from 'antd';
 import { LocationDto } from '../../../dtos/location.dto';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { useList } from '@refinedev/core';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { plainToInstance } from 'class-transformer';
 import { LocationMap } from '../../../components/map';
 import { LOCATIONS_LIST_QUERY } from '../../locations/queries';

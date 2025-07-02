@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { AdditionalInfos } from './additional-infos';
@@ -10,8 +14,8 @@ import {
 import { IDataModelListProps } from '../../model/interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { Route, Routes } from 'react-router-dom';
-import { ResourceType } from '../../resource-type';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ResourceType } from '@util/auth';
 
 export const AdditionalInfosView: React.FC = () => {
   return (

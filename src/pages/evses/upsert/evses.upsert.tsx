@@ -1,9 +1,13 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useCallback, useState } from 'react';
 import { useForm, useSelect } from '@refinedev/antd';
 import { Form, Input, Button, Select } from 'antd';
 
 import { EvseDto } from '../../../dtos/evse.dto';
-import { ResourceType } from '../../../resource-type';
+import { ResourceType } from '@util/auth';
 import { BaseDtoProps } from '../../../dtos/base.dto';
 import { getSerializedValues } from '@util/middleware';
 import { ConnectorDto } from '../../../dtos/connector.dto';

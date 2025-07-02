@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useCallback } from 'react';
 import { Button, Flex, message, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
@@ -9,10 +13,10 @@ import GenericTag from '../../../components/tag';
 import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
 import { useLocation, Link } from 'react-router-dom';
 import { EditOutlined } from '@ant-design/icons';
-import { ResourceType } from '../../../resource-type';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
 import { ID_TOKEN_INFOS_DELETE_MUTATION } from '../../../pages/id-tokens-infos/queries';
 import { ID_TOKENS_DELETE_MUTATION } from '../../../pages/id-tokens/queries';
+import { ResourceType } from '@util/auth';
 
 const { Text } = Typography;
 
@@ -154,6 +158,10 @@ export const AuthorizationDetailCard: React.FC<
               {authorization.disallowedEvseIdPrefixes?.length
                 ? authorization.disallowedEvseIdPrefixes.join(', ')
                 : '—'}
+            </Text>
+            <Text className="nowrap">
+              <strong>Allowing Concurrent Transactions:</strong>{' '}
+              {authorization.concurrentTransaction ? 'True' : 'False'}
             </Text>
           </Flex>
 

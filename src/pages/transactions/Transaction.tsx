@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { ChargingStateEnumType, ReasonEnumType } from '@OCPP2_0_1';
 import {
   IsArray,
@@ -10,7 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';

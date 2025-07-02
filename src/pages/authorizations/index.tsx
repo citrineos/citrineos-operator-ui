@@ -1,8 +1,12 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { AuthorizationsList } from './list/authorization.list';
 import { AuthorizationDetail } from './detail/authorization.detail';
-import { ResourceType } from '../../resource-type';
+import { ResourceType } from '@util/auth';
 import { ContainerOutlined } from '@ant-design/icons';
 import { AuthorizationUpsert } from './upsert/authorization.upsert';
 
