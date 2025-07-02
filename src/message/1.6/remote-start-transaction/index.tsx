@@ -9,16 +9,19 @@ import { ChargingStation } from '../../../pages/charging-stations/ChargingStatio
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
-import { ConnectorDtoProps } from '../../../dtos/connector.dto';
 import {
   CONNECTORS_FOR_STATION_QUERY,
   CONNECTOR_LIST_FOR_STATION_QUERY,
 } from '../../queries';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { NEW_IDENTIFIER } from '@util/consts';
+import {
+  ConnectorDtoProps,
+  type IConnectorDto,
+  OCPPVersion,
+} from '@citrineos/base';
 import { Connector } from '../../../pages/connectors/connector';
 
 enum RemoteStartTransactionDataProps {
@@ -55,7 +58,7 @@ class RemoteStartTransactionData {
   @Type(() => Connector)
   @ValidateNested()
   @IsNotEmpty()
-  connector!: Connector | null;
+  connector!: IConnectorDto | null;
 
   @IsString()
   idTag!: string;
@@ -75,11 +78,11 @@ export const RemoteStartTransaction: React.FC<RemoteStartTransactionProps> = ({
   };
 
   const remoteStartTransactionData = new RemoteStartTransactionData();
-  remoteStartTransactionData[RemoteStartTransactionDataProps.connector] =
-    new Connector();
-  remoteStartTransactionData[RemoteStartTransactionDataProps.connector][
-    ConnectorDtoProps.id
-  ] = NEW_IDENTIFIER as unknown as number;
+  remoteStartTransactionData[RemoteStartTransactionDataProps.connector] = {
+    id: NEW_IDENTIFIER as unknown as number,
+    stationId: station.id,
+    connectorId: undefined,
+  } as IConnectorDto;
 
   const handleSubmit = async (request: RemoteStartTransactionData) => {
     const data: any = { idTag: request.idTag };

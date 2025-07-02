@@ -2,17 +2,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsEnum, IsInt, IsString } from 'class-validator';
-import { ChargingStationSequenceType } from '@citrineos/base';
-import { BaseDto } from './base.dto';
+import {
+  ChargingStationSequenceType,
+  IChargingStationSequenceDto,
+} from '@citrineos/base';
 
-export class ChargingStationSequenceDto extends BaseDto {
-  @IsString()
-  stationId!: string;
-
-  @IsEnum(ChargingStationSequenceType)
-  type!: string;
-
-  @IsInt()
-  value!: number;
+export class ChargingStationSequenceDto
+  implements Partial<IChargingStationSequenceDto>
+{
+  type!: ChargingStationSequenceType;
 }

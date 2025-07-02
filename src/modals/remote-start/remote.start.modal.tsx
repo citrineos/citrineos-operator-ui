@@ -9,6 +9,7 @@ import { OCPPVersion } from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { OCPP2_0_1_RemoteStart } from './2.0.1';
 import { OCPP1_6_RemoteStart } from './1.6';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface RemoteStartTransactionModalProps {
   station: any;
@@ -17,10 +18,10 @@ export interface RemoteStartTransactionModalProps {
 export const RemoteStartTransactionModal = ({
   station,
 }: RemoteStartTransactionModalProps) => {
-  const parsedStation: ChargingStationDto = useMemo(
+  const parsedStation: IChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationDto, station),
     [station],
-  );
+  ) as IChargingStationDto;
 
   // Dynamically render the appropriate component based on protocol version
   const renderCommandsByProtocol = () => {

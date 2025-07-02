@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Flex, Form, Select, Spin } from 'antd';
+import { Button, Flex, Form, Select } from 'antd';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { plainToInstance } from 'class-transformer';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LogEnumType } from '@OCPP2_0_1';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface GetLogsModalProps {
   station: any;
@@ -22,10 +23,10 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  const parsedStation: ChargingStationDto = useMemo(
+  const parsedStation: IChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationDto, station),
     [station],
-  );
+  ) as IChargingStationDto;
 
   const remoteLocation = 'http://localhost:4566/citrineos-s3-bucket/';
 

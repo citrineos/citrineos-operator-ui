@@ -11,12 +11,10 @@ import {
   GET_METER_VALUES_FOR_TRANSACTION_EVENT,
   METER_VALUE_LIST_QUERY,
 } from '../queries';
-import {
-  MeterValueDto,
-  MeterValueDtoProps,
-} from '../../../dtos/meter.value.dto';
+import { MeterValueDto } from '../../../dtos/meter.value.dto';
 import { getMeterValueColumns } from '../columns';
 import { Table } from 'antd';
+import { MeterValueDtoProps } from '@citrineos/base';
 
 export const MeterValuesList = ({ transactionEventId }: any) => {
   const { tableProps } = useTable<MeterValueDto>({

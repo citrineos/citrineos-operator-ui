@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsEnum, IsInt, IsString } from 'class-validator';
-import { BaseModel } from '@util/BaseModel';
 import { ResourceType } from '@util/auth';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { ClassGqlDeleteMutation } from '@util/decorators/ClassGqlDeleteMutation';
@@ -18,13 +16,10 @@ import {
   CHARGING_STATION_SEQUENCES_GET_QUERY,
   CHARGING_STATION_SEQUENCES_LIST_QUERY,
 } from './queries';
-import { ChargingStationSequenceType } from '@citrineos/base';
-
-export enum ChargingStationSequenceProps {
-  stationId = 'stationId',
-  type = 'type',
-  value = 'value',
-}
+import {
+  ChargingStationSequenceDtoProps,
+  IChargingStationSequenceDto,
+} from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CHARGING_STATION_SEQUENCES)
 @ClassGqlListQuery(CHARGING_STATION_SEQUENCES_LIST_QUERY)
@@ -32,25 +27,15 @@ export enum ChargingStationSequenceProps {
 @ClassGqlCreateMutation(CHARGING_STATION_SEQUENCES_CREATE_MUTATION)
 @ClassGqlEditMutation(CHARGING_STATION_SEQUENCES_EDIT_MUTATION)
 @ClassGqlDeleteMutation(CHARGING_STATION_SEQUENCES_DELETE_MUTATION)
-export class ChargingStationSequence extends BaseModel {
-  // Unique index on stationId + type
-
-  @IsString()
-  stationId!: string;
-
-  @IsEnum(ChargingStationSequenceType)
-  type!: string;
-
-  @IsInt()
-  value!: number;
-
-  constructor(data: Partial<ChargingStationSequence>) {
-    super();
+export class ChargingStationSequence
+  implements Partial<IChargingStationSequenceDto>
+{
+  constructor(data: Partial<IChargingStationSequenceDto>) {
     if (data) {
       Object.assign(this, {
-        [ChargingStationSequenceProps.stationId]: data.stationId,
-        [ChargingStationSequenceProps.type]: data.type,
-        [ChargingStationSequenceProps.value]: data.value,
+        [ChargingStationSequenceDtoProps.stationId]: data.stationId,
+        [ChargingStationSequenceDtoProps.type]: data.type,
+        [ChargingStationSequenceDtoProps.value]: data.value,
       });
     }
   }
