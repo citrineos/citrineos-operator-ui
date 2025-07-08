@@ -25,7 +25,7 @@ import { ModalComponentType } from '../../../AppModal';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../redux/modal.slice';
 import { ActionType } from '@util/auth';
-import { IChargingStationDto } from '../../../../../citrineos-core/00_Base';
+import { IChargingStationDto } from '@citrineos/base';
 
 type SearchProps = GetProps<typeof Input.Search>;
 

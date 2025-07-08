@@ -18,7 +18,6 @@ import {
   CHARGING_STATIONS_GET_QUERY,
   CHARGING_STATIONS_LIST_QUERY,
 } from './queries';
-import { BaseModel } from '@util/BaseModel';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Type } from 'class-transformer';
 import { Location, LocationProps } from '../locations/Location';
@@ -26,10 +25,7 @@ import {
   LOCATIONS_GET_QUERY,
   LOCATIONS_LIST_QUERY,
 } from '../locations/queries';
-import {
-  StatusNotification,
-  StatusNotificationProps,
-} from '../status-notifications/StatusNotification';
+import { StatusNotification } from '../status-notifications/StatusNotification';
 import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY,
@@ -42,16 +38,22 @@ import {
   GET_TRANSACTION_LIST_FOR_STATION,
   GET_TRANSACTIONS_FOR_STATION,
 } from '../../message/queries';
-import { Transaction, TransactionProps } from '../transactions/Transaction';
+import { Transaction } from '../transactions/Transaction';
 import { ChargingStationProps } from './ChargingStationProps';
 import { TRANSACTION_LIST_QUERY } from '../transactions/queries';
 import { EVSE_LIST_QUERY } from '../evses/queries';
-import { Searchable } from '@util/decorators/Searcheable';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
-import { EvseProps } from '../evses/EvseProps';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
-import { OCPPVersion } from '@citrineos/base';
+import * as base from '@citrineos/base';
+import { Searchable } from '@util/decorators/Searcheable';
+import {
+  ChargingStationDtoProps,
+  IStatusNotificationDto,
+  ITransactionDto,
+  StatusNotificationDtoProps,
+  TransactionDtoProps,
+} from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)
@@ -64,21 +66,13 @@ import { OCPPVersion } from '@citrineos/base';
   const chargingStation = new ChargingStation();
   const location = new Location();
   location[LocationProps.id] = NEW_IDENTIFIER as unknown as string;
-  chargingStation[ChargingStationProps.locationId] = location;
+  chargingStation[ChargingStationDtoProps.locationId] = location;
   return chargingStation;
 })
-export class ChargingStation extends BaseModel {
+export class ChargingStation implements Partial<base.IChargingStationDto> {
   @IsString()
   @Searchable()
   id!: string;
-
-  @IsBoolean()
-  isOnline!: boolean;
-
-  @IsString()
-  @IsOptional()
-  protocol?: OCPPVersion;
-
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.locationId,
     associatedIdFieldName: LocationProps.id,
@@ -97,7 +91,7 @@ export class ChargingStation extends BaseModel {
   @IsOptional()
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
-    associatedIdFieldName: StatusNotificationProps.stationId,
+    associatedIdFieldName: StatusNotificationDtoProps.stationId,
     gqlQuery: {
       query: STATUS_NOTIFICATIONS_GET_QUERY,
     },
@@ -112,13 +106,13 @@ export class ChargingStation extends BaseModel {
     },
   })
   @Type(() => StatusNotification)
-  statusNotifications?: StatusNotification[];
+  statusNotifications?: IStatusNotificationDto[];
 
   @IsArray()
   @IsOptional()
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
-    associatedIdFieldName: EvseProps.id,
+    associatedIdFieldName: base.EvseDtoProps.id,
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -127,19 +121,19 @@ export class ChargingStation extends BaseModel {
     },
     gqlListSelectedQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
-      getQueryVariables: (station: ChargingStation) => ({
+      getQueryVariables: (station: base.IChargingStationDto) => ({
         stationId: station.id,
       }),
     },
   })
   @Type(() => Evse)
-  evses?: Evse[];
+  evses?: base.IEvseDto[];
 
   @IsArray()
   @IsOptional()
   @GqlAssociation({
     parentIdFieldName: ChargingStationProps.id,
-    associatedIdFieldName: TransactionProps.transactionId,
+    associatedIdFieldName: TransactionDtoProps.transactionId,
     gqlQuery: {
       query: GET_TRANSACTIONS_FOR_STATION,
     },
@@ -148,7 +142,7 @@ export class ChargingStation extends BaseModel {
     },
     gqlListSelectedQuery: {
       query: GET_TRANSACTION_LIST_FOR_STATION,
-      getQueryVariables: (station: ChargingStation) => ({
+      getQueryVariables: (station: base.IChargingStationDto) => ({
         stationId: station.id,
       }),
     },
@@ -157,10 +151,9 @@ export class ChargingStation extends BaseModel {
     return record;
   })
   @Type(() => Transaction)
-  transactions?: Transaction[];
+  transactions?: ITransactionDto[];
 
-  constructor(data?: ChargingStation) {
-    super();
+  constructor(data?: Partial<base.IChargingStationDto>) {
     if (data) {
       Object.assign(this, {
         [ChargingStationProps.id]: data.id,

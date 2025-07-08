@@ -5,7 +5,6 @@
 import { ChargingStateEnumType, ReasonEnumType } from '@OCPP2_0_1';
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -31,10 +30,7 @@ import {
 import { Type } from 'class-transformer';
 import { FieldLabel } from '@util/decorators/FieldLabel';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import {
-  TransactionEvent,
-  TransactionEventProps,
-} from '../transaction-events/TransactionEvent';
+import { TransactionEvent } from '../transaction-events/TransactionEvent';
 import {
   GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
   TRANSACTION_EVENT_GET_QUERY,
@@ -48,21 +44,12 @@ import React from 'react';
 import { Searchable } from '@util/decorators/Searcheable';
 import { Sortable } from '@util/decorators/Sortable';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
-
-export enum TransactionProps {
-  id = 'id',
-  stationId = 'stationId',
-  evseDatabaseId = 'evseDatabaseId',
-  transactionId = 'transactionId',
-  isActive = 'isActive',
-  chargingState = 'chargingState',
-  timeSpentCharging = 'timeSpentCharging',
-  totalKwh = 'totalKwh',
-  stoppedReason = 'stoppedReason',
-  remoteStartId = 'remoteStartId',
-  events = 'events',
-  // customData = 'customData',
-}
+import {
+  ITransactionDto,
+  ITransactionEventDto,
+  TransactionDtoProps,
+  TransactionEventDtoProps,
+} from '@citrineos/base';
 
 @ClassResourceType(ResourceType.TRANSACTIONS)
 @ClassGqlListQuery(TRANSACTION_LIST_QUERY)
@@ -70,11 +57,11 @@ export enum TransactionProps {
 @ClassGqlCreateMutation(TRANSACTION_CREATE_MUTATION)
 @ClassGqlEditMutation(TRANSACTION_EDIT_MUTATION)
 @ClassGqlDeleteMutation(TRANSACTION_DELETE_MUTATION)
-@PrimaryKeyFieldName(TransactionProps.id)
+@PrimaryKeyFieldName(TransactionDtoProps.id)
 @ClassCustomActions([
   {
     label: 'Remote Stop',
-    isVisible: (transaction) => transaction[TransactionProps.isActive],
+    isVisible: (transaction) => transaction[TransactionDtoProps.isActive],
     execOrRender: (transaction: Transaction, setLoading) => {
       // requestStopTransaction(
       //   transaction[TransactionProps.stationId],
@@ -86,7 +73,7 @@ export enum TransactionProps {
     },
   },
 ])
-export class Transaction {
+export class Transaction implements Partial<ITransactionDto> {
   @HiddenWhen(() => true)
   id!: number;
 
@@ -101,21 +88,13 @@ export class Transaction {
   @IsNotEmpty()
   stationId!: string;
 
-  @IsInt()
-  @IsOptional()
-  evseDatabaseId?: number;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isActive!: boolean;
-
   @IsArray()
   @Type(() => TransactionEvent)
   @ValidateNested({ each: true })
   @FieldLabel('Events')
   @GqlAssociation({
-    parentIdFieldName: TransactionProps.id,
-    associatedIdFieldName: TransactionEventProps.transactionDatabaseId,
+    parentIdFieldName: TransactionDtoProps.id,
+    associatedIdFieldName: TransactionEventDtoProps.transactionDatabaseId,
     gqlQuery: {
       query: TRANSACTION_EVENT_GET_QUERY,
     },
@@ -132,16 +111,12 @@ export class Transaction {
   @HiddenWhen((record) => {
     return record;
   })
-  events?: TransactionEvent[];
+  events?: ITransactionEventDto[];
 
   @Searchable()
   @IsEnum(ChargingStateEnumType)
   @IsOptional()
   chargingState?: ChargingStateEnumType | null;
-
-  @IsInt()
-  @IsOptional()
-  timeSpentCharging?: number | null;
 
   @IsInt()
   @IsOptional()
@@ -154,13 +129,6 @@ export class Transaction {
   @IsEnum(ReasonEnumType)
   @IsOptional()
   stoppedReason?: ReasonEnumType | null;
-
-  @IsInt()
-  @IsOptional()
-  remoteStartId?: number | null;
-
-  // todo: handle custom data
-  // customData?: CustomDataType | null;
 
   @TransformDate()
   @IsOptional()

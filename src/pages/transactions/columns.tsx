@@ -9,7 +9,6 @@ import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { ChargingStateEnumType, TransactionEventEnumType } from '@OCPP2_0_1';
-import { IdTokenProps } from '../id-tokens/id-token';
 import { CrudFilters } from '@refinedev/core';
 import { BaseDtoProps } from '@citrineos/base';
 import { ITransactionDto, TransactionDtoProps } from '@citrineos/base';
@@ -139,11 +138,11 @@ export const getTransactionColumns = (
         )}
       />
       <Table.Column
-        key={IdTokenProps.idToken}
-        dataIndex={IdTokenProps.idToken}
+        key={IdTokenDtoProps.idToken}
+        dataIndex={IdTokenDtoProps.idToken}
         title="ID Token"
         onCell={() => ({
-          className: `column-${IdTokenProps.idToken}`,
+          className: `column-${IdTokenDtoProps.idToken}`,
         })}
         render={(_: any, record: ITransactionDto) => {
           if (record.transactionEvents) {
