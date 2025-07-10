@@ -22,6 +22,7 @@ import {
 } from './remote-stop-transaction';
 import { ResetChargingStation, ResetChargingStationProps } from './reset';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
+import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
 import { CustomAction } from '../../components/custom-actions';
 import { setSelectedChargingStation } from '../../redux/selected.charging.station.slice';
 import { instanceToPlain } from 'class-transformer';
@@ -39,6 +40,7 @@ export const chargingStationActionMap: {
     ChangeConfiguration as React.FC<ChangeConfigurationProps>,
   'Get Configuration': GetConfiguration as React.FC<GetConfigurationProps>,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,
+  'Update Firmware': UpdateFirmware as React.FC<UpdateFirmwareProps>,
 };
 
 export const CUSTOM_CHARGING_STATION_ACTIONS: CustomAction<ChargingStation>[] =
