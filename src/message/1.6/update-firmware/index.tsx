@@ -19,10 +19,6 @@ import { GenericForm } from '../../../components/form';
 import { OCPPVersion } from '@citrineos/base';
 import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { TransformDate } from '@util/TransformDate';
-import {
-  UpdateFirmwareRequestProps,
-  FirmwareTypeProps,
-} from 'src/message/2.0.1/update-firmware/model';
 
 enum UpdateFirmwareDataProps {
   location = 'location',
@@ -43,7 +39,7 @@ class UpdateFirmwareData {
     return (
       <Form.Item
         label={'Location'}
-        name={[UpdateFirmwareRequestProps.firmware, FirmwareTypeProps.location]}
+        name={UpdateFirmwareDataProps.location}
         rules={[
           {
             required: true,
@@ -85,13 +81,13 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
   const handleSubmit = async (request: UpdateFirmwareData) => {
     const data = {
       location: request.location,
-      retrieveDateTime: request.retrieveDate,
+      retrieveDate: request.retrieveDate,
       retries: request.retries,
       retryInterval: request.retryInterval,
     };
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/UpdateFirmware?identifier=${station.id}&tenantId=1`,
+      url: `/configuration/updateFirmware?identifier=${station.id}&tenantId=1`,
       data,
       ocppVersion: OCPPVersion.OCPP1_6,
     });
