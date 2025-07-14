@@ -240,20 +240,28 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       [GetVariablesRequestProps.getVariableData]: request[
         GetVariablesRequestProps.getVariableData
       ].map((item: GetVariablesData) => {
-        if (item && item[GetVariablesDataProps.evse]) {
-          const evse: IEvseDto = item[GetVariablesDataProps.evse]!;
+        if (item) {
           const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
+          const evse: IEvseDto | null =
+            item[GetVariablesDataProps.evse] || null;
+
           let evsePayload: any = undefined;
-          if (evse[EvseDtoProps.databaseId]) {
+          // Only include EVSE if it has a valid ID (not the placeholder NEW_IDENTIFIER)
+          if (
+            evse &&
+            evse[EvseDtoProps.databaseId] &&
+            evse[EvseDtoProps.databaseId] !== (NEW_IDENTIFIER as any)
+          ) {
             evsePayload = {
               id: evse[EvseDtoProps.databaseId],
               // customData: null // todo
             };
+            if (evse[EvseDtoProps.connectorId]) {
+              evsePayload.connectorId = evse[EvseDtoProps.connectorId];
+            }
           }
-          if (evsePayload && evse[EvseDtoProps.connectorId]) {
-            evsePayload.connectorId = evse[EvseDtoProps.connectorId];
-          }
+
           const data: any = {
             component: {
               name: component[ComponentProps.name],
