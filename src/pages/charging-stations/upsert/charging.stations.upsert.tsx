@@ -11,7 +11,6 @@ import {
 import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { AutoComplete, Button, Flex, Form, Input, Modal, Select } from 'antd';
-import { LocationDto } from '../../../dtos/location.dto';
 import {
   LOCATIONS_LIST_QUERY,
   LOCATIONS_GET_QUERY_BY_ID,
@@ -26,8 +25,13 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { debounce } from 'lodash';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
-import { ChargingStationDtoProps } from '@citrineos/base';
-import { ILocationDto, LocationDtoProps } from '@citrineos/base';
+import {
+  ChargingStationCapability,
+  ChargingStationDtoProps,
+  ChargingStationParkingRestriction,
+  ILocationDto,
+  LocationDtoProps,
+} from '@citrineos/base';
 
 export const ChargingStationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -65,7 +69,7 @@ export const ChargingStationUpsert = () => {
 
   const { selectProps } = useSelect<ILocationDto>({
     resource: ResourceType.LOCATIONS,
-    optionLabel: (location: LocationDto) => {
+    optionLabel: (location: ILocationDto) => {
       return JSON.stringify(location);
     },
     optionValue: 'id',
@@ -299,6 +303,48 @@ export const ChargingStationUpsert = () => {
                 filterOption={false}
                 placeholder="Select a location"
               />
+            </Form.Item>
+            <Form.Item
+              key={ChargingStationDtoProps.floorLevel}
+              label="Floor Level"
+              name={ChargingStationDtoProps.floorLevel}
+              data-testid={ChargingStationDtoProps.floorLevel}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key={ChargingStationDtoProps.parkingRestrictions}
+              label="Parking Restrictions"
+              name={ChargingStationDtoProps.parkingRestrictions}
+              data-testid={ChargingStationDtoProps.parkingRestrictions}
+            >
+              <Select
+                mode="tags"
+                placeholder="Select parking restrictions"
+                allowClear
+              >
+                {Object.keys(ChargingStationParkingRestriction).map(
+                  (restriction) => (
+                    <Select.Option key={restriction} value={restriction}>
+                      {restriction}
+                    </Select.Option>
+                  ),
+                )}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              key={ChargingStationDtoProps.capabilities}
+              label="Capabilities"
+              name={ChargingStationDtoProps.capabilities}
+              data-testid={ChargingStationDtoProps.capabilities}
+            >
+              <Select mode="tags" placeholder="Select capabilities" allowClear>
+                {Object.keys(ChargingStationCapability).map((capability) => (
+                  <Select.Option key={capability} value={capability}>
+                    {capability}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item>
               <Flex gap={16}>
