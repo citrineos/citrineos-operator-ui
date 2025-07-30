@@ -261,6 +261,9 @@ export const CHARGING_STATIONS_CREATE_MUTATION = gql`
       locationId
       createdAt
       updatedAt
+      floorLevel
+      parkingRestrictions
+      capabilities
     }
   }
 `;

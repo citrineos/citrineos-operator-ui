@@ -256,6 +256,8 @@ export const LOCATIONS_CREATE_MUTATION = gql`
       coordinates
       createdAt
       updatedAt
+      timeZone
+      parkingType
     }
   }
 `;

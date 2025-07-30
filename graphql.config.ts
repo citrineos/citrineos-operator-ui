@@ -1,9 +1,17 @@
 import type { IGraphQLConfig } from 'graphql-config';
 
 // See https://refine.dev/docs/data/packages/hasura/#developer-experience for usage
-
+const HASURA_GRAPHQL_ENDPOINT =
+  process.env.HASURA_GRAPHQL_ENDPOINT || 'http://localhost:8090/v1/graphql';
+const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET || 'CitrineOS!';
 const config: IGraphQLConfig = {
-  schema: 'http://localhost:8090/v1/graphql',
+  schema: {
+    [HASURA_GRAPHQL_ENDPOINT]: {
+      headers: {
+        'x-hasura-admin-secret': HASURA_ADMIN_SECRET,
+      },
+    },
+  },
   extensions: {
     codegen: {
       // Optional, you can use this to format your generated files.

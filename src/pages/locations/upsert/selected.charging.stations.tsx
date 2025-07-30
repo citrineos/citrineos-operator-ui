@@ -42,9 +42,7 @@ export const SelectedChargingStations = ({
   const params: any = useParams<{ id: string }>();
   const locationId = params.id ? params.id : undefined;
 
-  const chargingStations = form.getFieldValue(
-    LocationDtoProps.chargingStations,
-  );
+  const chargingStations = form.getFieldValue(LocationDtoProps.chargingPool);
 
   const [selectedChargingStations, setSelectedChargingStations] = useState<
     IChargingStationDto[]
@@ -56,9 +54,9 @@ export const SelectedChargingStations = ({
 
   useEffect(() => {
     setSelectedChargingStations(
-      form.getFieldValue(LocationDtoProps.chargingStations) || [],
+      form.getFieldValue(LocationDtoProps.chargingPool) || [],
     );
-  }, [form.getFieldValue(LocationDtoProps.chargingStations)]);
+  }, [form.getFieldValue(LocationDtoProps.chargingPool)]);
 
   const [
     chargingStationAutoCompleteValue,
