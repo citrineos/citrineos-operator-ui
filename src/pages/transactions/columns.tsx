@@ -145,19 +145,11 @@ export const getTransactionColumns = (
           className: `column-${IdTokenDtoProps.idToken}`,
         })}
         render={(_: any, record: ITransactionDto) => {
-          if (record.transactionEvents) {
-            const startedEvent = record.transactionEvents.find(
+          const idToken =
+            record.transactionEvents?.find(
               (event) => event.eventType === TransactionEventEnumType.Started,
-            );
-            if (startedEvent && startedEvent.idToken) {
-              return <h4>{startedEvent.idToken.idToken}</h4>;
-            }
-          } else if (record.startTransaction) {
-            if (record.startTransaction.idToken) {
-              return <h4>{record.startTransaction.idToken.idToken}</h4>;
-            }
-          }
-          return '';
+            )?.idToken || record.startTransaction?.idToken;
+          return idToken ? <h4>{idToken.idToken ?? 'N/A'}</h4> : '';
         }}
       />
       <Table.Column

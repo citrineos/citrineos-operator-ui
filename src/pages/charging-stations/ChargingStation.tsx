@@ -85,7 +85,7 @@ export class ChargingStation implements Partial<base.IChargingStationDto> {
   })
   @Type(() => Location)
   @IsOptional()
-  locationId?: Location;
+  locationId?: number | null;
 
   @IsArray()
   @IsOptional()

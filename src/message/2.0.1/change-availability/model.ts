@@ -29,7 +29,7 @@ export class ChangeAvailabilityRequest
 {
   @GqlAssociation({
     parentIdFieldName: ChangeAvailabilityRequestDtoProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },

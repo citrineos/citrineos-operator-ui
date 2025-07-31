@@ -82,6 +82,12 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
         reservationId: 0 as ITransactionEventDto['reservationId'],
         idTokenId: null as ITransactionEventDto['idTokenId'],
         idToken: undefined as ITransactionEventDto['idToken'],
+        tenantId: 1, // Assuming a default tenantId for now, adjust as needed
+        tenantId: 1, // Assuming a default tenantId for now, adjust as needed
+        tenantId: 1, // Assuming a default tenantId for now, adjust as needed
+        tenantId: 1, // Assuming a default tenantId for now, adjust as needed
+        tenantId: 1, // Assuming a default tenantId for now, adjust as needed
+        tenantId: 1, // Assuming a default tenantId for now, adjust as needed
       }),
     );
     return [...events, ...messageRows];

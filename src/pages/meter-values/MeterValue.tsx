@@ -44,5 +44,5 @@ export class MeterValue implements Partial<IMeterValueDto> {
       }
     />
   ))
-  sampledValue!: ISampledValueDto[];
+  sampledValue!: SampledValue[];
 }

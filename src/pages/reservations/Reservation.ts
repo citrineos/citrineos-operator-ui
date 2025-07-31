@@ -12,7 +12,7 @@ export class Reservation implements Partial<IReservationDto> {
   @Type(() => Date)
   @IsDate()
   @TransformDate()
-  expiryDateTime!: Dayjs;
+  expiryDateTime!: string;
 
   constructor(data: Reservation) {
     if (data) {

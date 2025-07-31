@@ -179,7 +179,7 @@ export class RequestStartTransactionRequest {
 
   @GqlAssociation({
     parentIdFieldName: RequestStartTransactionRequestProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
     },

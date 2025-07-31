@@ -95,9 +95,9 @@ export const LocationsList = () => {
 
     // Find matching stations for each location
     tableProps.dataSource?.forEach((location: ILocationDto) => {
-      if (!location.chargingStations?.length) return;
+      if (!location.chargingPool?.length) return;
 
-      const matchingStations = location.chargingStations.filter(
+      const matchingStations = location.chargingPool.filter(
         (station: IChargingStationDto) =>
           // Match against station ID
           (station.id && station.id.toLowerCase().includes(lowercaseValue)) ||
@@ -107,13 +107,13 @@ export const LocationsList = () => {
               lowercaseValue,
             )) ||
           // Match against status notifications if available
-          station.latestStatusNotifications?.[0]?.statusNotification?.connectorStatus
+          station.statusNotifications?.[0]?.connectorStatus
             ?.toLowerCase()
             .includes(lowercaseValue),
       );
 
-      if (matchingStations.length > 0) {
-        matchedStations[location.id] = matchingStations;
+      if (matchingStations.length > 0 && location.id !== undefined) {
+        matchedStations[location.id.toString()] = matchingStations;
         // Automatically expand locations with matching stations
         newExpandedKeys.push(location.id);
       }
@@ -244,7 +244,7 @@ export const LocationsList = () => {
                 View All Charging Stations
                 <ArrowDownIcon
                   className={
-                    expandedRowKeys.includes(record.id)
+                    expandedRowKeys.includes(record.id!)
                       ? 'arrow rotate'
                       : 'arrow'
                   }

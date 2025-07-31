@@ -68,7 +68,7 @@ export class VariableAttribute implements Partial<IVariableAttributeDto> {
   })
   @Type(() => Component)
   @IsOptional()
-  componentId?: Component | null;
+  componentId?: number | null;
 
   @IsOptional()
   @IsNumber()

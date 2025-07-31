@@ -35,7 +35,7 @@ export interface ResetChargingStationProps {
 class ResetData {
   @GqlAssociation({
     parentIdFieldName: ResetDataProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -71,7 +71,7 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
 
   const resetData = new ResetData();
   resetData[ResetDataProps.evse] = new Evse();
-  resetData[ResetDataProps.evse][EvseDtoProps.databaseId] =
+  resetData[ResetDataProps.evse].databaseId =
     NEW_IDENTIFIER as unknown as number;
 
   const handleSubmit = async (request: ResetData) => {

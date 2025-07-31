@@ -104,12 +104,12 @@ export const SelectedChargingStations = ({
     });
 
   const handleCheckboxSelection = (newSelectedRowKeys: React.Key[]) => {
-    const prev = form.getFieldValue(LocationDtoProps.chargingStations);
+    const prev = form.getFieldValue(LocationDtoProps.chargingPool);
     const newValue = prev.filter((chargingStation: IChargingStationDto) =>
       newSelectedRowKeys.includes(chargingStation.id),
     );
     form.setFieldsValue({
-      [LocationDtoProps.chargingStations]: newValue,
+      [LocationDtoProps.chargingPool]: newValue,
     });
     setSelectedChargingStations(newValue);
   };
@@ -122,10 +122,10 @@ export const SelectedChargingStations = ({
 
   const handleAutoCompleteSelection = (value: string) => {
     const chargingStation = JSON.parse(value) as ChargingStationDto;
-    const prev = form.getFieldValue(LocationDtoProps.chargingStations);
+    const prev = form.getFieldValue(LocationDtoProps.chargingPool);
     const newValue = [...prev, chargingStation];
     form.setFieldsValue({
-      [LocationDtoProps.chargingStations]: newValue,
+      [LocationDtoProps.chargingPool]: newValue,
     });
     setSelectedChargingStations(newValue);
     setChargingStationAutoCompleteValue({

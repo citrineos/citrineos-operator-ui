@@ -21,7 +21,7 @@ export const OCPP2_0_1_RemoteStop = ({
 }: OCPP2_0_1_RemoteStopProps) => {
   const evseMap: Map<number, IEvseDto> = useMemo(() => {
     if (!station.evses) return new Map<number, IEvseDto>();
-    return new Map(station.evses.map((evse) => [evse.databaseId, evse]));
+    return new Map(station.evses.map((evse) => [evse.id, evse]));
   }, [station.evses]);
 
   const [form] = Form.useForm();
@@ -59,8 +59,11 @@ export const OCPP2_0_1_RemoteStop = ({
     return <Spin />;
   }
 
+  // Filter out inactive transactions
+  const activeTransactions = station.transactions.filter((tx) => tx.isActive);
+
   // Handle the case when there are no active transactions
-  if (station.transactions.length === 0) {
+  if (activeTransactions.length === 0) {
     return (
       <Flex vertical gap={16}>
         <div>No active transactions found for this charging station.</div>
@@ -81,7 +84,7 @@ export const OCPP2_0_1_RemoteStop = ({
             rules={[{ required: true, message: 'Please select a transaction' }]}
           >
             <Select className="full-width" placeholder="Select a transaction">
-              {station.transactions.map((transaction) => {
+              {activeTransactions.map((transaction) => {
                 const evse = transaction.evseDatabaseId
                   ? evseMap.get(transaction.evseDatabaseId)
                   : null;

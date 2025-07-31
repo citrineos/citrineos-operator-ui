@@ -55,7 +55,7 @@ export class Evse implements Partial<IEvseDto> {
   @FieldLabel('Device Model')
   @GqlAssociation({
     parentIdFieldName: EvseDtoProps.databaseId,
-    associatedIdFieldName: VariableAttributeDtoProps.evseDatabaseId,
+    associatedIdFieldName: 'databaseId',
     hasNewAssociatedIdsVariable: true,
     gqlQuery: {
       query: VARIABLE_ATTRIBUTE_GET_QUERY,

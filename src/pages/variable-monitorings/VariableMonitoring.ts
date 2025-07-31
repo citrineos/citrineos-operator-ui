@@ -5,7 +5,7 @@
 import { IVariableMonitoring } from '@citrineos/base';
 
 export class VariableMonitoring implements Partial<IVariableMonitoring> {
-  constructor(data: Partial<IVariableMonitoring>) {
+  constructor(data: Partial<IVariableMonitoringDto>) {
     if (data) {
       Object.assign(this, data);
     }

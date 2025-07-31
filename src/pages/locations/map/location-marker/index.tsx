@@ -17,7 +17,7 @@ export const LocationMarker: React.FC<LocationMarkerProps> = ({ location }) => {
   const { show } = useNavigation();
 
   const handleShowClick = () => {
-    show(ResourceType.LOCATIONS, location.id);
+    show(ResourceType.LOCATIONS, location.id!); // Use non-null assertion
   };
 
   return (

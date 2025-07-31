@@ -14,6 +14,9 @@ import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import './style.scss';
 import { ILocationDto } from '@citrineos/base';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
+import { useState } from 'react';
+import { LocationDto } from '../../../dtos/location.dto';
 
 export interface CombinedMapProps {
   defaultCenter?: google.maps.LatLngLiteral;
@@ -161,15 +164,15 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
 const determineLocationStatus = (
   location: ILocationDto,
 ): 'online' | 'offline' | 'partial' => {
-  if (!location.chargingStations || location.chargingStations.length === 0) {
+  if (!location.chargingPool || location.chargingPool.length === 0) {
     return 'offline';
   }
 
-  const onlineCount = location.chargingStations.filter(
+  const onlineCount = location.chargingPool.filter(
     (station) => station.isOnline,
   ).length;
 
-  if (onlineCount === location.chargingStations.length) {
+  if (onlineCount === location.chargingPool.length) {
     return 'online';
   } else if (onlineCount === 0) {
     return 'offline';

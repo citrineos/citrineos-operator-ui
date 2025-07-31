@@ -65,7 +65,7 @@ export class TriggerMessageRequest {
   @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -127,21 +127,8 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
 
   const triggerMessageRequest = new TriggerMessageRequest();
   triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse][
-    EvseDtoProps.databaseId
-  ] = NEW_IDENTIFIER as unknown as number;
-
-  const triggerMessageRequestWithoutEvse =
-    new TriggerMessageRequestWithoutEvse() as Omit<
-      TriggerMessageRequest,
-      'evse'
-    >;
-  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation] =
-    new ChargingStation();
-  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation][
-    ChargingStationProps.id
-  ] = NEW_IDENTIFIER;
-
+  triggerMessageRequest[TriggerMessageRequestProps.evse].databaseId =
+    NEW_IDENTIFIER as unknown as number;
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
     : stationId
@@ -158,12 +145,12 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: request[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && evse[EvseDtoProps.id]) {
+    if (evse && evse.id) {
       data.evse = {
-        id: evse[EvseDtoProps.id],
+        id: evse.id,
       };
-      if (evse[EvseDtoProps.connectorId]) {
-        data.evse.connectorId = evse[EvseDtoProps.connectorId];
+      if (evse.connectors?.[0]?.id) {
+        data.evse.connectorId = evse.connectors[0].id;
       }
     }
 

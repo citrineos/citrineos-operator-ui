@@ -1,30 +1,40 @@
-// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
-//
-// SPDX-License-Identifier: Apache-2.0
-
-import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
-import { IChargingStationDto } from '@citrineos/base';
-import { OCPPVersion } from '@citrineos/base';
-import { OCPPMessageDto } from './ocpp.message.dto';
 import { Expose, plainToInstance } from 'class-transformer';
-import { ToClass } from '@util/Transformers';
-import { EvseDto } from './evse.dto';
 import { IsBoolean, validateSync } from 'class-validator';
-import { IEvseDto } from '@citrineos/base';
-import * as locationDto from '@citrineos/base';
-import { ITransactionDto } from '@citrineos/base';
-import { IStatusNotificationDto } from '@citrineos/base';
-import { ILatestStatusNotificationDto } from '@citrineos/base';
+import { EvseDto } from './evse.dto';
+import { OCPPMessageDto } from './ocpp.message.dto';
+import { ToClass } from '../util/Transformers';
+import {
+  IChargingStationDto,
+  IStatusNotificationDto,
+  IEvseDto,
+  ILocationDto,
+  IConnectorDto,
+  ChargingStationParkingRestriction,
+  ChargingStationCapability,
+} from '@citrineos/base';
+import { Point } from 'geojson';
 
 export class ChargingStationDto implements Partial<IChargingStationDto> {
+  id!: string;
   @IsBoolean()
   isOnline!: boolean;
-  protocol?: OCPPVersion;
-  ocppLogs?: OCPPMessageDto[];
+  protocol?: any;
+  chargePointVendor?: string | null;
+  chargePointModel?: string | null;
+  chargePointSerialNumber?: string | null;
+  chargeBoxSerialNumber?: string | null;
+  firmwareVersion?: string | null;
+  iccid?: string | null;
+  imsi?: string | null;
+  meterType?: string | null;
+  meterSerialNumber?: string | null;
+  coordinates?: Point | null;
+  floorLevel?: string | null;
+  parkingRestrictions?: ChargingStationParkingRestriction[] | null;
+  capabilities?: ChargingStationCapability[] | null;
+  locationId?: number | null;
   @Expose({ name: 'StatusNotifications' })
-  statusNotifications?: IStatusNotificationDto[];
-  @Expose({ name: 'LatestStatusNotifications' })
-  latestStatusNotifications?: ILatestStatusNotificationDto[];
+  statusNotifications?: IStatusNotificationDto[] | null;
 
   @Expose({ name: 'Evses' })
   @ToClass((value: { Evse: EvseDto }[]) => {
@@ -45,7 +55,8 @@ export class ChargingStationDto implements Partial<IChargingStationDto> {
       }
     });
   })
-  evses?: IEvseDto[];
+  evses?: IEvseDto[] | null;
+
   @Expose({ name: 'ConnectorTypes' })
   @ToClass((value: { value: string }[]) => {
     if (value === null || value === undefined) {
@@ -55,14 +66,15 @@ export class ChargingStationDto implements Partial<IChargingStationDto> {
       .filter((val: { value: string }) => !!val.value)
       .map((val: { value: string }) => val.value);
   })
-  connectorTypes?: string[];
-  @Expose({ name: 'Transactions' })
-  transactions?: ITransactionDto[];
-  @Expose({ name: 'Location' })
-  location?: locationDto.ILocationDto;
-  isOnline?: boolean;
+  connectors?: IConnectorDto[] | null;
+
+  // Add missing properties from IChargingStationDto
+  location?: ILocationDto;
+  networkProfiles?: any;
+  transactions?: any[] | null;
 }
 
+// Add missing enums and types for local use
 export enum ChargingStationStatus {
   CHARGING = 'CHARGING',
   CHARGING_SUSPENDED = 'CHARGING_SUSPENDED',
@@ -71,12 +83,25 @@ export enum ChargingStationStatus {
   FAULTED = 'FAULTED',
 }
 
+export enum ConnectorStatusEnumType {
+  Available = 'Available',
+  Occupied = 'Occupied',
+  Faulted = 'Faulted',
+  Unavailable = 'Unavailable',
+  Reserved = 'Reserved',
+}
+
 export interface ChargingStationStatusCounts {
   [ChargingStationStatus.CHARGING]: number;
   [ChargingStationStatus.CHARGING_SUSPENDED]: number;
   [ChargingStationStatus.AVAILABLE]: number;
   [ChargingStationStatus.UNAVAILABLE]: number;
   [ChargingStationStatus.FAULTED]: number;
+}
+
+export enum ChargingStateEnumType {
+  Charging = 'Charging',
+  Suspended = 'Suspended',
 }
 
 export const getChargingStationStatus = (
@@ -111,23 +136,24 @@ export const getChargingStationStatusCounts = (
   if (evses && evses.length > 0) {
     for (const evse of evses) {
       const latestStatusNotificationForEvse =
-        chargingStation?.latestStatusNotifications?.find(
+        chargingStation?.statusNotifications?.find(
           (latestStatusNotification) =>
-            latestStatusNotification?.statusNotification?.evseId === evse.id &&
-            latestStatusNotification?.statusNotification?.connectorId ===
-              evse.connectorId,
+            latestStatusNotification?.evseId === evse.id &&
+            latestStatusNotification?.connectorId === evse.connectors?.[0]?.id,
         );
       if (latestStatusNotificationForEvse) {
         const connectorStatus: ConnectorStatusEnumType =
-          latestStatusNotificationForEvse?.statusNotification
-            ?.connectorStatus || ConnectorStatusEnumType.Unavailable;
+          latestStatusNotificationForEvse?.connectorStatus ||
+          ConnectorStatusEnumType.Unavailable;
         switch (connectorStatus) {
           case ConnectorStatusEnumType.Available:
             counts[ChargingStationStatus.AVAILABLE]++;
             break;
           case ConnectorStatusEnumType.Occupied: {
-            const activeTransaction = chargingStation?.transactions?.find(
-              (transaction) => transaction.evseDatabaseId === evse.databaseId,
+            const activeTransaction = (
+              chargingStation as ChargingStationDto
+            )?.transactions?.find(
+              (transaction) => transaction.evse?.id === evse.id,
             );
             if (activeTransaction && activeTransaction.isActive) {
               const chargingState = activeTransaction.chargingState;

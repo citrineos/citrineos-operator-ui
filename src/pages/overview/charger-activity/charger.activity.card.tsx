@@ -98,7 +98,7 @@ const getOnlineStatusCountsForStation = (
 
         case ConnectorStatusEnumType.Occupied: {
           const activeTx = chargingStation.transactions?.find(
-            (tx: ITransactionDto) => tx.evseDatabaseId === evse.databaseId,
+            (tx: ITransactionDto) => tx.evseId === evse.id,
           );
           if (activeTx) {
             if (activeTx.chargingState === ChargingStateEnumType.Charging) {

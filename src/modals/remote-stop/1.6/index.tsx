@@ -51,8 +51,11 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
     return <Spin />;
   }
 
+  // Filter out inactive transactions
+  const activeTransactions = station.transactions.filter((tx) => tx.isActive);
+
   // Handle the case when there are no active transactions
-  if (station.transactions.length === 0) {
+  if (activeTransactions.length === 0) {
     return (
       <Flex vertical gap={16}>
         <div>No active transactions found for this charging station.</div>
@@ -73,7 +76,7 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
             rules={[{ required: true, message: 'Please select a transaction' }]}
           >
             <Select className="full-width" placeholder="Select a transaction">
-              {station.transactions.map((transaction) => {
+              {activeTransactions.map((transaction) => {
                 return (
                   <Select.Option
                     key={transaction.transactionId}

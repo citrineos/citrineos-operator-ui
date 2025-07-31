@@ -219,7 +219,7 @@ export const ChargingStationDetailCardContent = ({
               Latitude: {station.location?.coordinates?.latitude}
             </Text>
             <Text className="nowrap">
-              Longitude: {station.location?.coordinates?.longitude}
+              Longitude: {station.location?.coordinates?.coordinates[0]}
             </Text>
           </Flex>
 
@@ -289,9 +289,11 @@ export const ChargingStationDetailCardContent = ({
                   </td>
                   <td>
                     <Text>
-                      {station.connectorTypes &&
-                      station.connectorTypes.length > 0
-                        ? station.connectorTypes.join(', ')
+                      {station.connectors && station.connectors.length > 0
+                        ? station.connectors
+                            .map((c) => c.type)
+                            .filter(Boolean)
+                            .join(', ')
                         : 'N/A'}
                     </Text>
                   </td>

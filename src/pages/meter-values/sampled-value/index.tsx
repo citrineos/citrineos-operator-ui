@@ -134,7 +134,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
 };
 
 interface SampledValuesListProps {
-  sampledValues: ISampledValueDto[];
+  sampledValues: SampledValue[];
 }
 
 export const SampledValuesListView: React.FC<SampledValuesListProps> = ({

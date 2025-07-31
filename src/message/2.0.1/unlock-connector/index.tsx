@@ -26,7 +26,7 @@ enum UnlockConnectorFormProps {
 export class UnlockConnectorForm {
   @GqlAssociation({
     parentIdFieldName: UnlockConnectorFormProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: EVSE_LIST_QUERY,
     },
@@ -83,13 +83,13 @@ export const UnlockConnector: React.FC<UnlockConnectorProps> = ({
   const handleSubmit = async (request: UnlockConnectorForm) => {
     const evse = request[UnlockConnectorFormProps.evse];
 
-    if (!evse[EvseDtoProps.connectorId]) {
+    if (!evse.connectors?.[0]?.id) {
       throw new Error('Please select an EVSE with a connector');
     }
 
     const data: UnlockConnectorRequest = {
-      evseId: evse[EvseDtoProps.id],
-      connectorId: evse[EvseDtoProps.connectorId],
+      evseId: evse.id!,
+      connectorId: evse.connectors[0].id,
     };
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
