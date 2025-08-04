@@ -42,18 +42,18 @@ export const LocationsList = () => {
   });
 
   const handleExpandToggle = (record: ILocationDto) => {
-    const isCurrentlyExpanded = expandedRowKeys.includes(record.id);
+    const isCurrentlyExpanded = expandedRowKeys.includes(String(record.id)); // Fix: ensure id is string
 
     if (isCurrentlyExpanded) {
       // Remove this location from expanded rows
       setExpandedRowKeys((prevKeys) =>
-        prevKeys.filter((key) => key !== record.id),
+        prevKeys.filter((key) => key !== String(record.id)),
       );
       setExpandedRowByToggle(undefined);
     } else {
       // Add this location to expanded rows
-      setExpandedRowKeys((prevKeys) => [...prevKeys, record.id]);
-      setExpandedRowByToggle(record.id);
+      setExpandedRowKeys((prevKeys) => [...prevKeys, String(record.id)]);
+      setExpandedRowByToggle(String(record.id));
     }
   };
 
@@ -136,7 +136,7 @@ export const LocationsList = () => {
 
   // Determine if a location should be highlighted based on search results
   const shouldHighlightLocation = (record: ILocationDto): boolean => {
-    return !!filteredStationsByLocation[record.id]?.length;
+    return !!filteredStationsByLocation[String(record.id)]?.length;
   };
 
   // With backend filtering, all returned locations should be shown
@@ -202,7 +202,9 @@ export const LocationsList = () => {
               return (
                 <LocationsChargingStationsTable
                   location={record}
-                  filteredStations={filteredStationsByLocation[record.id]}
+                  filteredStations={
+                    filteredStationsByLocation[String(record.id)]
+                  }
                 />
               );
             },

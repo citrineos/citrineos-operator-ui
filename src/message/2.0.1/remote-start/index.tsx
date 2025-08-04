@@ -83,7 +83,7 @@ export const RemoteStart: React.FC<RemoteStartProps> = ({ station }) => {
     RequestStartTransactionRequestProps.remoteStartId
   ] = requestIdResponse?.data?.ChargingStationSequences[0]?.value ?? 0;
   const evse = new Evse();
-  evse.databaseId = NEW_IDENTIFIER as any;
+  evse.id = NEW_IDENTIFIER as any;
   requestStartTransactionRequest[RequestStartTransactionRequestProps.evse] =
     evse;
   requestStartTransactionRequest[RequestStartTransactionRequestProps.idToken] =

@@ -71,8 +71,7 @@ export const ResetChargingStation: React.FC<ResetChargingStationProps> = ({
 
   const resetData = new ResetData();
   resetData[ResetDataProps.evse] = new Evse();
-  resetData[ResetDataProps.evse].databaseId =
-    NEW_IDENTIFIER as unknown as number;
+  resetData[ResetDataProps.evse].id = NEW_IDENTIFIER as unknown as number;
 
   const handleSubmit = async (request: ResetData) => {
     const data = { type: request.type, evseId: request.evse?.id };

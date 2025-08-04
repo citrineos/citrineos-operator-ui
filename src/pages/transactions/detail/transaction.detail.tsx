@@ -84,8 +84,8 @@ export const TransactionDetail = () => {
 
   let idTokenDatabaseId =
     transaction?.transactionEvents && transaction.transactionEvents.length > 0
-      ? transaction.transactionEvents[0].idToken?.id
-      : transaction?.startTransaction?.idToken?.id;
+      ? transaction.transactionEvents[0].idTokenValue
+      : transaction?.startTransaction?.idTokenDatabaseId;
   idTokenDatabaseId = Number(idTokenDatabaseId) || null;
 
   const { tableProps } = useTable<AuthorizationDto>({

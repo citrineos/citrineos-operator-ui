@@ -14,9 +14,6 @@ import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import './style.scss';
 import { ILocationDto } from '@citrineos/base';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { useState } from 'react';
-import { LocationDto } from '../../../dtos/location.dto';
 
 export interface CombinedMapProps {
   defaultCenter?: google.maps.LatLngLiteral;

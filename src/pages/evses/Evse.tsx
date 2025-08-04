@@ -41,11 +41,8 @@ import {
 @ClassGqlCreateMutation(EVSE_CREATE_MUTATION)
 @ClassGqlEditMutation(EVSE_EDIT_WITH_VARIABLE_ATTRIBUTES_MUTATION)
 @ClassGqlDeleteMutation(EVSE_DELETE_MUTATION)
-@PrimaryKeyFieldName(EvseDtoProps.databaseId)
+@PrimaryKeyFieldName(EvseDtoProps.id)
 export class Evse implements Partial<IEvseDto> {
-  @IsNumber()
-  databaseId!: number;
-
   @IsNumber()
   id!: number;
 
@@ -54,8 +51,8 @@ export class Evse implements Partial<IEvseDto> {
   @ValidateNested({ each: true })
   @FieldLabel('Device Model')
   @GqlAssociation({
-    parentIdFieldName: EvseDtoProps.databaseId,
-    associatedIdFieldName: 'databaseId',
+    parentIdFieldName: EvseDtoProps.id,
+    associatedIdFieldName: 'id',
     hasNewAssociatedIdsVariable: true,
     gqlQuery: {
       query: VARIABLE_ATTRIBUTE_GET_QUERY,
@@ -66,7 +63,7 @@ export class Evse implements Partial<IEvseDto> {
     gqlListSelectedQuery: {
       query: VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
       getQueryVariables: (evse: IEvseDto) => ({
-        [VariableAttributeDtoProps.evseDatabaseId]: evse.databaseId,
+        id: evse.id,
       }),
     },
   })
@@ -75,10 +72,9 @@ export class Evse implements Partial<IEvseDto> {
   constructor(data?: Partial<IEvseDto>) {
     if (data) {
       Object.assign(this, {
-        [EvseDtoProps.databaseId]: data.databaseId,
-        [EvseDtoProps.id]: data.id,
-        [EvseDtoProps.connectorId]: data.connectorId,
-        [EvseDtoProps.VariableAttributes]: data.VariableAttributes,
+        id: data.id,
+        connectors: data.connectors,
+        VariableAttributes: (data as any).VariableAttributes,
       });
     }
   }

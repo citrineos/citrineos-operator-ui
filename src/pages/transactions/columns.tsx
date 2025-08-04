@@ -44,12 +44,12 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: `${TransactionDtoProps.transactionEvents}.${TransactionEventDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          field: `${TransactionDtoProps.transactionEvents}.${TransactionEventDtoProps.idTokenValue}`,
           operator: 'contains',
           value,
         },
         {
-          field: `${TransactionDtoProps.startTransaction}.${StartTransactionDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          field: `${TransactionDtoProps.startTransaction}.${StartTransactionDtoProps.idTokenDatabaseId}`,
           operator: 'contains',
           value,
         },
@@ -148,8 +148,8 @@ export const getTransactionColumns = (
           const idToken =
             record.transactionEvents?.find(
               (event) => event.eventType === TransactionEventEnumType.Started,
-            )?.idToken || record.startTransaction?.idToken;
-          return idToken ? <h4>{idToken.idToken ?? 'N/A'}</h4> : '';
+            )?.idTokenValue || record.startTransaction?.idTokenDatabaseId;
+          return idToken ? <h4>{idToken ?? 'N/A'}</h4> : '';
         }}
       />
       <Table.Column

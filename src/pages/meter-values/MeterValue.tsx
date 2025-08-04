@@ -23,7 +23,7 @@ import { SampledValuesListView } from './sampled-value';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import {
   IMeterValueDto,
-  ISampledValueDto,
+  SampledValue,
   MeterValueDtoProps,
 } from '@citrineos/base';
 
@@ -44,5 +44,5 @@ export class MeterValue implements Partial<IMeterValueDto> {
       }
     />
   ))
-  sampledValue!: SampledValue[];
+  sampledValue!: [SampledValue, ...SampledValue[]];
 }

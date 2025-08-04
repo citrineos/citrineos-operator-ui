@@ -163,6 +163,19 @@ export const LocationsUpsert = () => {
       if (isSubmitting) return;
       setIsSubmitting(true);
       const input = { ...formValuesRef.current };
+      // Ensure coordinates has type: 'Point' and is in GeoJSON format
+      if (input[LocationDtoProps.coordinates]) {
+        const coords = input[LocationDtoProps.coordinates];
+        input[LocationDtoProps.coordinates] = {
+          type: 'Point',
+          coordinates: [coords.longitude, coords.latitude],
+        };
+      }
+      // Convert facilities array to comma-separated string for Hasura
+      if (Array.isArray(input[LocationDtoProps.facilities])) {
+        input[LocationDtoProps.facilities] =
+          input[LocationDtoProps.facilities].join(',');
+      }
       delete input[LocationDtoProps.chargingPool];
       const newItem: any = getSerializedValues(input, LocationDto);
       if (!locationId) {

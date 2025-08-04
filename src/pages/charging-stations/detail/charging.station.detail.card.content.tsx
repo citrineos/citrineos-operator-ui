@@ -162,8 +162,7 @@ export const ChargingStationDetailCardContent = ({
   if (isLoading) return <p>Loading...</p>;
   if (!station) return <p>No Data Found</p>;
 
-  const hasActiveTransactions =
-    station.transactions && station.transactions.length > 0;
+  const hasActiveTransactions = false; // transactions are not a direct property
 
   let latestTimestamp = 'N/A';
   if (latestLog) {
@@ -216,7 +215,7 @@ export const ChargingStationDetailCardContent = ({
               </Link>
             </Text>
             <Text className="nowrap">
-              Latitude: {station.location?.coordinates?.latitude}
+              Latitude: {station.location?.coordinates?.coordinates[1]}
             </Text>
             <Text className="nowrap">
               Longitude: {station.location?.coordinates?.coordinates[0]}

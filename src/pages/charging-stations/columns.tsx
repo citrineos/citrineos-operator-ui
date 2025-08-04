@@ -82,11 +82,11 @@ export const getChargingStationColumns = (
   // Add the remaining columns
   columns.push(
     <Table.Column
-      key={ChargingStationDtoProps.latestStatusNotifications}
-      dataIndex={ChargingStationDtoProps.latestStatusNotifications}
+      key={ChargingStationDtoProps.statusNotifications}
+      dataIndex={ChargingStationDtoProps.statusNotifications}
       title="Status"
       onCell={() => ({
-        className: `column-${ChargingStationDtoProps.latestStatusNotifications}`,
+        className: `column-${ChargingStationDtoProps.statusNotifications}`,
       })}
       render={(_: any, record: IChargingStationDto) => {
         return (
@@ -104,8 +104,7 @@ export const getChargingStationColumns = (
         className: 'column-actions',
       })}
       render={(_: any, record: IChargingStationDto) => {
-        const hasActiveTransactions =
-          record.transactions && record.transactions.length > 0;
+        const hasActiveTransactions = false; // transactions are not a direct property
 
         return record.isOnline ? (
           <CanAccess

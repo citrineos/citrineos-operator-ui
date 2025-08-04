@@ -198,6 +198,16 @@ export const ChargingStationUpsert = () => {
   const onFinish = useCallback(
     async (input: any) => {
       delete input.locationName; // placeholder for AutoComplete input
+      // Convert parkingRestrictions array to comma-separated string for Hasura
+      if (Array.isArray(input[ChargingStationDtoProps.parkingRestrictions])) {
+        input[ChargingStationDtoProps.parkingRestrictions] =
+          input[ChargingStationDtoProps.parkingRestrictions].join(',');
+      }
+      // Convert capabilities array to comma-separated string for Hasura
+      if (Array.isArray(input[ChargingStationDtoProps.capabilities])) {
+        input[ChargingStationDtoProps.capabilities] =
+          input[ChargingStationDtoProps.capabilities].join(',');
+      }
       const newItem: any = getSerializedValues(input, ChargingStationDto);
       if (!stationId) {
         newItem.tenantId = config.tenantId;

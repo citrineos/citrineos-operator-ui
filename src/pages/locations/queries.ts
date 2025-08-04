@@ -35,18 +35,11 @@ export const LOCATIONS_LIST_QUERY = gql`
         updatedAt
         Evses: VariableAttributes(
           distinct_on: evseDatabaseId
-          where: {
-            evseDatabaseId: { _is_null: false }
-            Evse: { connectorId: { _is_null: false } }
-          }
+          where: { evseDatabaseId: { _is_null: false } }
         ) {
-          Evse {
-            databaseId
-            id
-            connectorId
-            createdAt
-            updatedAt
-          }
+          id
+          createdAt
+          updatedAt
         }
         LatestStatusNotifications {
           id
@@ -121,18 +114,11 @@ export const LOCATIONS_GET_QUERY = gql`
         updatedAt
         Evses: VariableAttributes(
           distinct_on: evseDatabaseId
-          where: {
-            evseDatabaseId: { _is_null: false }
-            Evse: { connectorId: { _is_null: false } }
-          }
+          where: { evseDatabaseId: { _is_null: false } }
         ) {
-          Evse {
-            databaseId
-            id
-            connectorId
-            createdAt
-            updatedAt
-          }
+          id
+          createdAt
+          updatedAt
         }
         LatestStatusNotifications {
           id

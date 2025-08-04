@@ -99,7 +99,7 @@ export const findOverallValue = (
       ...measurandSampledValues[0],
       value: summedPhasesValue,
       phase: null,
-    };
+    } as unknown as SampledValue;
   }
   return summedPhasesSampledValue;
 };

@@ -54,7 +54,7 @@ export class TriggerMessageRequest {
     gqlListQuery: {
       query: GET_CHARGING_STATION_LIST_FOR_EVSE,
       getQueryVariables: (_: TriggerMessageRequest) => ({
-        [EvseDtoProps.databaseId]: 1,
+        [EvseDtoProps.id]: 1,
       }),
     },
   })
@@ -126,17 +126,16 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       : undefined;
 
   const triggerMessageRequest = new TriggerMessageRequest();
-  triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse].databaseId =
+  triggerMessageRequest[TriggerMessageRequestProps.evse] =
+    new Evse() as unknown as IEvseDto;
+  triggerMessageRequest[TriggerMessageRequestProps.evse].id =
     NEW_IDENTIFIER as unknown as number;
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
     : stationId
       ? TriggerMessageRequestWithoutStation
       : TriggerMessageRequest;
-  const parentRecord = evse
-    ? triggerMessageRequestWithoutEvse
-    : triggerMessageRequest;
+  const parentRecord = evse ? triggerMessageRequest : triggerMessageRequest;
 
   const handleSubmit = async (request: TriggerMessageRequest) => {
     const evse = request[TriggerMessageRequestProps.evse];

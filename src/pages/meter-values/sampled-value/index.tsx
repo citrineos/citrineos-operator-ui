@@ -11,66 +11,30 @@ import {
   ReadingContextEnumType,
 } from '@OCPP2_0_1';
 import GenericTag from '../../../components/tag';
-import {
-  ISampledValueDto,
-  ISignedMeterValue,
-  IUnitOfMeasure,
-} from '@citrineos/base';
+import { SampledValue } from '@citrineos/base';
+// Define types based on ISampledValueDto structure
+// These should ideally be imported from a shared types package if available
+interface SignedMeterValueType {
+  signedMeterData: string;
+  signingMethod: string;
+  encodingMethod: string;
+  publicKey: string;
+}
+
+interface UnitOfMeasureType {
+  unit?: string;
+  multiplier?: number | null;
+}
 
 const { Text } = Typography;
 
 interface SampledValueProps {
-  sampledValue: ISampledValueDto;
+  sampledValue: SampledValue;
 }
 
 export const SampledValueView: React.FC<SampledValueProps> = ({
   sampledValue,
 }) => {
-  const renderSignedMeterValue = (
-    signedMeterValue?: ISignedMeterValue | null | undefined,
-  ) => {
-    if (!signedMeterValue) return <Text type="secondary">N/A</Text>;
-
-    return (
-      <Descriptions size="small" bordered column={1}>
-        <Descriptions.Item label="Signed Meter Data">
-          {signedMeterValue.signedMeterData}
-        </Descriptions.Item>
-        <Descriptions.Item label="Signing Method">
-          {signedMeterValue.signingMethod}
-        </Descriptions.Item>
-        <Descriptions.Item label="Encoding Method">
-          {signedMeterValue.encodingMethod}
-        </Descriptions.Item>
-        <Descriptions.Item label="Public Key">
-          {signedMeterValue.publicKey}
-        </Descriptions.Item>
-      </Descriptions>
-    );
-  };
-
-  const renderUnitOfMeasure = (
-    unitOfMeasure?: IUnitOfMeasure | undefined | null,
-  ) => {
-    if (!unitOfMeasure) return <Text type="secondary">N/A</Text>;
-
-    return (
-      <Descriptions size="small" bordered column={1}>
-        <Descriptions.Item label="Unit">
-          {unitOfMeasure.unit ?? <Text type="secondary">N/A</Text>}
-        </Descriptions.Item>
-        <Descriptions.Item label="Multiplier">
-          {unitOfMeasure.multiplier !== null &&
-          unitOfMeasure.multiplier !== undefined ? (
-            unitOfMeasure.multiplier
-          ) : (
-            <Text type="secondary">N/A</Text>
-          )}
-        </Descriptions.Item>
-      </Descriptions>
-    );
-  };
-
   return (
     <Descriptions bordered size="small" column={1}>
       <Descriptions.Item label="Value">
@@ -84,7 +48,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
       <Descriptions.Item label="Context">
         {sampledValue.context ? (
           <GenericTag
-            enumValue={sampledValue.context}
+            enumValue={sampledValue.context as ReadingContextEnumType}
             enumType={ReadingContextEnumType}
           />
         ) : (
@@ -95,7 +59,7 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
       <Descriptions.Item label="Measurand">
         {sampledValue.measurand ? (
           <GenericTag
-            enumValue={sampledValue.measurand}
+            enumValue={sampledValue.measurand as MeasurandEnumType}
             enumType={MeasurandEnumType}
           />
         ) : (
@@ -105,7 +69,10 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
 
       <Descriptions.Item label="Phase">
         {sampledValue.phase ? (
-          <GenericTag enumValue={sampledValue.phase} enumType={PhaseEnumType} />
+          <GenericTag
+            enumValue={sampledValue.phase as PhaseEnumType}
+            enumType={PhaseEnumType}
+          />
         ) : (
           <Text type="secondary">N/A</Text>
         )}
@@ -114,20 +81,12 @@ export const SampledValueView: React.FC<SampledValueProps> = ({
       <Descriptions.Item label="Location">
         {sampledValue.location ? (
           <GenericTag
-            enumValue={sampledValue.location}
+            enumValue={sampledValue.location as LocationEnumType}
             enumType={LocationEnumType}
           />
         ) : (
           <Text type="secondary">N/A</Text>
         )}
-      </Descriptions.Item>
-
-      <Descriptions.Item label="Signed Meter Value">
-        {renderSignedMeterValue(sampledValue.signedMeterValue)}
-      </Descriptions.Item>
-
-      <Descriptions.Item label="Unit Of Measure">
-        {renderUnitOfMeasure(sampledValue.unitOfMeasure)}
       </Descriptions.Item>
     </Descriptions>
   );

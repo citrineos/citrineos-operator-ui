@@ -11,7 +11,7 @@ export class MessageInfo implements Partial<IMessageInfoDto> {
   @Type(() => Date)
   @IsDate()
   @TransformDate()
-  startDateTime: Dayjs | null = null;
+  startDateTime: string | null = null;
 
   @Type(() => Date)
   @IsDate()

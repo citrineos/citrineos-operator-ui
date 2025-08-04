@@ -11,7 +11,7 @@ export class ChargingProfile implements Partial<IChargingProfileDto> {
   @Type(() => Date)
   @TransformDatetime()
   @IsOptional()
-  validFrom: Date | null = null;
+  validFrom: string | null = null;
 
   @Type(() => Date)
   @TransformDatetime()
