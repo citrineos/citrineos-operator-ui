@@ -174,6 +174,9 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       chargePointModel
       createdAt
       updatedAt
+      floorLevel
+      parkingRestrictions
+      capabilities
       Location {
         id
         name
@@ -193,18 +196,11 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       }
       Evses: VariableAttributes(
         distinct_on: evseDatabaseId
-        where: {
-          evseDatabaseId: { _is_null: false }
-          Evse: { connectorId: { _is_null: false } }
-        }
+        where: { evseDatabaseId: { _is_null: false } }
       ) {
-        Evse {
-          databaseId
-          id
-          connectorId
-          createdAt
-          updatedAt
-        }
+        id
+        createdAt
+        updatedAt
       }
       LatestStatusNotifications {
         id

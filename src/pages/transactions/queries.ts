@@ -31,14 +31,11 @@ export const TRANSACTION_LIST_QUERY = gql`
       updatedAt
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
-        IdToken {
-          idToken
-        }
+        idTokenValue
+        idTokenType
       }
       StartTransaction {
-        IdToken {
-          idToken
-        }
+        idTokenDatabaseId
       }
       ChargingStation {
         id
@@ -105,9 +102,8 @@ export const TRANSACTION_GET_QUERY = gql`
       }
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
-        IdToken {
-          idToken
-        }
+        idTokenValue
+        idTokenType
         idTokenId
       }
     }

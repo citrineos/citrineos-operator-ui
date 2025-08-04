@@ -27,7 +27,9 @@ export const LOCATIONS_LIST_QUERY = gql`
       coordinates
       createdAt
       updatedAt
-      ChargingStations {
+      timeZone
+      parkingType
+      chargingPool: ChargingStations {
         id
         isOnline
         protocol
@@ -106,7 +108,9 @@ export const LOCATIONS_GET_QUERY = gql`
       coordinates
       createdAt
       updatedAt
-      ChargingStations {
+      timeZone
+      parkingType
+      chargingPool: ChargingStations {
         id
         isOnline
         protocol
@@ -169,7 +173,9 @@ export const LOCATIONS_GET_QUERY_BY_ID = gql`
       coordinates
       createdAt
       updatedAt
-      ChargingStations {
+      timeZone
+      parkingType
+      chargingPool: ChargingStations {
         id
         isOnline
         protocol

@@ -68,18 +68,11 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
       }
       Evses: VariableAttributes(
         distinct_on: evseDatabaseId
-        where: {
-          evseDatabaseId: { _is_null: false }
-          Evse: { connectorId: { _is_null: false } }
-        }
+        where: { evseDatabaseId: { _is_null: false } }
       ) {
-        Evse {
-          databaseId
-          id
-          connectorId
-          createdAt
-          updatedAt
-        }
+        id
+        createdAt
+        updatedAt
       }
     }
   }

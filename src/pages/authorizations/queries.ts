@@ -174,14 +174,12 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       }
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
-        IdToken {
-          idToken
-        }
+        idTokenId
+        idTokenValue
+        idTokenType
       }
       StartTransaction {
-        IdToken {
-          idToken
-        }
+        idTokenDatabaseId
       }
     }
     Transactions_aggregate(

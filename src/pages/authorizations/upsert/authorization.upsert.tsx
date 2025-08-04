@@ -8,7 +8,7 @@ import {
   AUTHORIZATIONS_EDIT_MUTATION,
   AUTHORIZATIONS_SHOW_QUERY,
 } from '../queries';
-import { CanAccess, GetOneResponse, useNavigation } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import {
   Button,
   Flex,
@@ -80,9 +80,12 @@ export const AuthorizationUpsert = () => {
 
   const onFinish = useCallback(
     async (input: any) => {
+      const now = new Date().toISOString();
       const flatAuth: AuthorizationDto = {
         ...input,
         tenantId: config.tenantId,
+        createdAt: input.createdAt ?? now,
+        updatedAt: input.updatedAt ?? now,
       };
       formProps.onFinish?.(flatAuth);
     },
