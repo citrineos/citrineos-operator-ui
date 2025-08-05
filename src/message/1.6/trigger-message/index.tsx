@@ -71,11 +71,8 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
   triggerMessageData[TriggerMessageDataProps.connector] = {
     id: NEW_IDENTIFIER as unknown as number,
     stationId: station.id,
-    evseId: '0', // Assuming evseId is string
-    connectorId: 0,
-    timestamp: new Date().toISOString(),
-    tenantId: 1,
-  } as IConnectorDto;
+    connectorId: undefined,
+  } as unknown as IConnectorDto;
 
   const handleSubmit = async (request: TriggerMessageData) => {
     const data: any = { requestedMessage: request.requestedMessage };

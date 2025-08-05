@@ -36,7 +36,7 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
       customData: (request as any).customData,
     };
 
-    if (evse && evse.id) {
+    if (evse && evse[EvseDtoProps.id]) {
       data[ChangeAvailabilityRequestDtoProps.evse] = {
         id: evse.id,
         ...(evse.connectors?.[0]?.id

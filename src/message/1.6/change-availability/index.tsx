@@ -73,11 +73,8 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   changeAvailabilityData[ChangeAvailabilityDataProps.connector] = {
     id: NEW_IDENTIFIER as unknown as number,
     stationId: station.id,
-    evseId: '0', // Assuming evseId is string
-    connectorId: 0,
-    timestamp: new Date().toISOString(),
-    tenantId: 1,
-  } as IConnectorDto;
+    connectorId: undefined,
+  } as unknown as IConnectorDto;
 
   const handleSubmit = async (request: ChangeAvailabilityData) => {
     const data: any = {

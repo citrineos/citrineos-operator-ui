@@ -1,7 +1,6 @@
 import { Expose, plainToInstance } from 'class-transformer';
 import { IsBoolean, validateSync } from 'class-validator';
 import { EvseDto } from './evse.dto';
-import { OCPPMessageDto } from './ocpp.message.dto';
 import { ToClass } from '../util/Transformers';
 import {
   IChargingStationDto,
@@ -13,6 +12,7 @@ import {
   ChargingStationCapability,
 } from '@citrineos/base';
 import { Point } from 'geojson';
+import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
 
 export class ChargingStationDto implements Partial<IChargingStationDto> {
   id!: string;
@@ -83,25 +83,12 @@ export enum ChargingStationStatus {
   FAULTED = 'FAULTED',
 }
 
-export enum ConnectorStatusEnumType {
-  Available = 'Available',
-  Occupied = 'Occupied',
-  Faulted = 'Faulted',
-  Unavailable = 'Unavailable',
-  Reserved = 'Reserved',
-}
-
 export interface ChargingStationStatusCounts {
   [ChargingStationStatus.CHARGING]: number;
   [ChargingStationStatus.CHARGING_SUSPENDED]: number;
   [ChargingStationStatus.AVAILABLE]: number;
   [ChargingStationStatus.UNAVAILABLE]: number;
   [ChargingStationStatus.FAULTED]: number;
-}
-
-export enum ChargingStateEnumType {
-  Charging = 'Charging',
-  Suspended = 'Suspended',
 }
 
 export const getChargingStationStatus = (

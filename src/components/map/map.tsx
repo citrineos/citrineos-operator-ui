@@ -54,7 +54,7 @@ export const LocationMap: React.FC<MapProps> = ({
             position,
             identifier: station.id.toString(),
             type: 'station' as const,
-            locationId: station.location!.id?.toString(), // Ensure locationId is string
+            locationId: station.location!.id?.toString(),
             status: station.isOnline ? 'online' : ('offline' as const),
             color: station.isOnline
               ? 'var(--primary-color-1)'
@@ -134,7 +134,7 @@ const MapWithClustering: React.FC<{
   markers,
   locations = [],
   defaultCenter,
-  zoom: initialZoom, // Renamed to initialZoom to avoid conflict with state variable
+  zoom: initialZoom,
   onMarkerClick,
   selectedMarkerId,
   clusterByLocation = true,
@@ -145,7 +145,7 @@ const MapWithClustering: React.FC<{
   const [visibleElements, setVisibleElements] = useState<
     (ClusterInfo | MapMarkerData)[]
   >([]);
-  const [currentZoom, setCurrentZoom] = useState(initialZoom || 10); // Use initialZoom here
+  const [currentZoom, setCurrentZoom] = useState(initialZoom || 10);
   const map = useMap();
   const boundsRef = useRef<google.maps.LatLngBounds | null>(null);
 

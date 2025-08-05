@@ -1,18 +1,11 @@
 import {
   IMeterValueDto,
-  SampledValue,
   MeasurandEnumType,
+  ISampledValueDto,
 } from '@citrineos/base';
-import { ReadingContextEnumType } from '@OCPP2_0_1';
+import { PhaseEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 
-export class MeterValueDto implements Partial<IMeterValueDto> {
-  id?: number;
-  transactionEventId?: number | null;
-  transactionDatabaseId?: number | null;
-  sampledValue!: [SampledValue, ...SampledValue[]];
-  timestamp!: string;
-  connectorId?: number | null;
-}
+export class MeterValueDto implements Partial<IMeterValueDto> {}
 
 // todo share below code with @citrineos/base
 const TWO_HOURS = 60 * 60 * 2;
@@ -41,7 +34,10 @@ export const getTimestampToMeasurandArray = (
           meterValue.sampledValue[0].context as ReadingContextEnumType,
         ))
     ) {
-      const overallValue = findOverallValue(meterValue.sampledValue, measurand);
+      const overallValue = findOverallValue(
+        meterValue.sampledValue as unknown as ISampledValueDto[],
+        measurand,
+      );
       if (overallValue) {
         const timestampEpoch = meterValue.timestamp;
         // @ts-expect-error timestamp is moment object
@@ -65,13 +61,13 @@ export const getTimestampToMeasurandArray = (
 };
 
 export const findOverallValue = (
-  sampledValues: SampledValue[],
+  sampledValues: ISampledValueDto[],
   measurand: MeasurandEnumType,
-): SampledValue | undefined => {
+): ISampledValueDto | undefined => {
   const measurandSampledValues = sampledValues.filter(
     (sv) =>
       sv.measurand === measurand ||
-      (!sv.measurand &&
+      (!sv.measurand && // Measurand defaults to Energy.Active.Import.Register
         measurand === MeasurandEnumType.Energy_Active_Import_Register),
   );
   if (measurandSampledValues.length === 0) {
@@ -80,13 +76,13 @@ export const findOverallValue = (
   let summedPhasesSampledValue = measurandSampledValues.find((sv) => !sv.phase);
   if (!summedPhasesSampledValue) {
     // Manually sum all phases if no summed phase is found
-    const summablePhases = ['L1', 'L2', 'L3'];
+    const summablePhases = new Set<PhaseEnumType>([
+      PhaseEnumType.L1,
+      PhaseEnumType.L2,
+      PhaseEnumType.L3,
+    ]);
     const summableSampledValues = measurandSampledValues.filter(
-      (sv) =>
-        sv.phase &&
-        summablePhases.includes(sv.phase as string) &&
-        typeof sv.value === 'number' &&
-        !isNaN(Number(sv.value)),
+      (sv) => sv.phase && summablePhases.has(sv.phase),
     );
     if (summableSampledValues.length < 3) {
       return undefined; // Not all phases are present, cannot sum
@@ -99,12 +95,35 @@ export const findOverallValue = (
       ...measurandSampledValues[0],
       value: summedPhasesValue,
       phase: null,
-    } as unknown as SampledValue;
+    };
   }
   return summedPhasesSampledValue;
 };
 
-export const normalizeValue = (overallValue: SampledValue): string | null => {
-  if (typeof overallValue.value !== 'number') return null;
-  return overallValue.value.toFixed(2);
+export const normalizeValue = (
+  overallValue: ISampledValueDto,
+): string | null => {
+  let powerOfTen = overallValue.unitOfMeasure?.multiplier ?? 0;
+  const unit = overallValue.unitOfMeasure?.unit?.toUpperCase();
+  switch (unit) {
+    case 'KWH':
+      break;
+    case 'WH':
+    case 'W':
+    case undefined:
+      powerOfTen -= 3;
+      break;
+    case 'PERCENT':
+      powerOfTen -= 2;
+      break;
+    case 'V':
+    case 'A':
+      break;
+    default:
+      throw new Error(
+        `Unknown unit for measurand ${overallValue.measurand} unit ${unit} `,
+      );
+  }
+
+  return (overallValue.value * 10 ** powerOfTen).toFixed(2);
 };
