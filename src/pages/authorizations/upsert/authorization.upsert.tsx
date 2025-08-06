@@ -25,6 +25,7 @@ import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { AuthorizationStatusEnumType, IdTokenEnumType } from '@OCPP2_0_1';
+import { AuthorizationWhitelistType } from '@citrineos/base';
 import { renderEnumSelectOptions } from '@util/renderUtil';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
@@ -82,6 +83,12 @@ export const AuthorizationUpsert = () => {
     async (input: any) => {
       const flatAuth: AuthorizationDto = {
         ...input,
+        allowedConnectorTypes: input.allowedConnectorTypes
+          ?.split(',')
+          .map((s: string) => s.trim()),
+        disallowedEvseIdPrefixes: input.disallowedEvseIdPrefixes
+          ?.split(',')
+          .map((s: string) => s.trim()),
         tenantId: config.tenantId,
       };
       formProps.onFinish?.(flatAuth);
@@ -202,6 +209,40 @@ export const AuthorizationUpsert = () => {
               data-testid="groupAuthorizationId"
             >
               <InputNumber min={1} />
+            </Form.Item>
+            <Form.Item
+              key="allowedConnectorTypes"
+              label="Allowed Connector Types (comma-separated)"
+              name="allowedConnectorTypes"
+              data-testid="allowedConnectorTypes"
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key="disallowedEvseIdPrefixes"
+              label="Disallowed EVSE ID Prefixes (comma-separated)"
+              name="disallowedEvseIdPrefixes"
+              data-testid="disallowedEvseIdPrefixes"
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key="realTimeAuth"
+              label="Real-Time Authentication"
+              name="realTimeAuth"
+              data-testid="realTimeAuth"
+            >
+              <Select onChange={handleOnChange}>
+                {renderEnumSelectOptions(AuthorizationWhitelistType)}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              key="realTimeAuthUrl"
+              label="Real-Time Authentication URL"
+              name="realTimeAuthUrl"
+              data-testid="realTimeAuthUrl"
+            >
+              <Input />
             </Form.Item>
             <Form.Item
               key="additionalInfo"

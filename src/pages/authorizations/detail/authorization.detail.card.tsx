@@ -162,6 +162,14 @@ export const AuthorizationDetailCard: React.FC<
               <strong>Allowing Concurrent Transactions:</strong>{' '}
               {authorization.concurrentTransaction ? 'True' : 'False'}
             </Text>
+            <Text className="nowrap">
+              <strong>Real-Time Authentication:</strong>{' '}
+              {authorization.realTimeAuth || '—'}
+            </Text>
+            <Text className="nowrap">
+              <strong>Real-Time Authentication URL:</strong>{' '}
+              {authorization.realTimeAuthUrl || '—'}
+            </Text>
           </Flex>
 
           <Flex vertical>
