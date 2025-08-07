@@ -118,6 +118,10 @@ export const AUTHORIZATIONS_SHOW_QUERY = gql`
       language2
       personalMessage
       cacheExpiryDateTime
+      allowedConnectorTypes
+      disallowedEvseIdPrefixes
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
     }
@@ -137,7 +141,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       limit: $limit
       order_by: $order_by
       where: {
-        _and: [{ TransactionEvents: { IdToken: { id: { _eq: $id } } } }, $where]
+        _and: [{ TransactionEvents: { idTokenId: { _eq: $id } } }, $where]
       }
     ) {
       id
@@ -186,7 +190,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
     }
     Transactions_aggregate(
       where: {
-        _and: [{ TransactionEvents: { IdToken: { id: { _eq: $id } } } }, $where]
+        _and: [{ TransactionEvents: { idTokenId: { _eq: $id } } }, $where]
       }
     ) {
       aggregate {
