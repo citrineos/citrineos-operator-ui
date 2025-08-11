@@ -82,11 +82,7 @@ export const TransactionDetail = () => {
   });
   const meterValues = meterValuesData?.data ?? [];
 
-  let idTokenDatabaseId =
-    transaction?.transactionEvents && transaction.transactionEvents.length > 0
-      ? transaction.transactionEvents[0].idTokenId
-      : transaction?.startTransaction?.idTokenDatabaseId;
-  idTokenDatabaseId = Number(idTokenDatabaseId) || null;
+  const authorization = transaction?.authorization;
 
   const { tableProps } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
@@ -94,9 +90,9 @@ export const TransactionDetail = () => {
     filters: {
       permanent: [
         {
-          field: 'IdToken.id',
+          field: 'id',
           operator: 'eq',
-          value: idTokenDatabaseId,
+          value: authorization?.id,
         },
       ],
     },
