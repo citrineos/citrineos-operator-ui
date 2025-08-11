@@ -19,6 +19,7 @@ import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
 import { TransactionDtoProps, IAuthorizationDto } from '@citrineos/base';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 
 export const AuthorizationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
