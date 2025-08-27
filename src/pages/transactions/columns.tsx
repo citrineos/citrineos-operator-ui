@@ -8,15 +8,13 @@ import { TimestampDisplay } from '../../components/timestamp-display';
 import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { ChargingStateEnumType, TransactionEventEnumType } from '@OCPP2_0_1';
+import { ChargingStateEnumType } from '@OCPP2_0_1';
 import { CrudFilters } from '@refinedev/core';
 import { BaseDtoProps } from '@citrineos/base';
 import { ITransactionDto, TransactionDtoProps } from '@citrineos/base';
 import { ChargingStationDtoProps } from '@citrineos/base';
 import { IdTokenDtoProps } from '@citrineos/base';
-import { StartTransactionDtoProps } from '@citrineos/base';
 import { LocationDtoProps } from '@citrineos/base';
-import { TransactionEventDtoProps } from '@citrineos/base';
 
 export const getTransactionsFilters = (value: string): CrudFilters => {
   return [
@@ -29,7 +27,7 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: `${TransactionDtoProps.chargingStation}.${ChargingStationDtoProps.location}.${LocationDtoProps.name}`,
+          field: `${TransactionDtoProps.location}.${LocationDtoProps.name}`,
           operator: 'contains',
           value,
         },
@@ -44,12 +42,7 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: `${TransactionDtoProps.transactionEvents}.${TransactionEventDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
-          operator: 'contains',
-          value,
-        },
-        {
-          field: `${TransactionDtoProps.startTransaction}.${StartTransactionDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          field: `${TransactionDtoProps.authorization}.${IdTokenDtoProps.idToken}`,
           operator: 'contains',
           value,
         },
@@ -145,19 +138,8 @@ export const getTransactionColumns = (
           className: `column-${IdTokenDtoProps.idToken}`,
         })}
         render={(_: any, record: ITransactionDto) => {
-          if (record.transactionEvents) {
-            const startedEvent = record.transactionEvents.find(
-              (event) => event.eventType === TransactionEventEnumType.Started,
-            );
-            if (startedEvent && startedEvent.idToken) {
-              return <h4>{startedEvent.idToken.idToken}</h4>;
-            }
-          } else if (record.startTransaction) {
-            if (record.startTransaction.idToken) {
-              return <h4>{record.startTransaction.idToken.idToken}</h4>;
-            }
-          }
-          return '';
+          const idToken = record.authorization?.idToken;
+          return idToken ? <h4>{idToken ?? 'N/A'}</h4> : '';
         }}
       />
       <Table.Column

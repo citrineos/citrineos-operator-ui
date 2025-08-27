@@ -29,16 +29,47 @@ export const TRANSACTION_LIST_QUERY = gql`
       totalKwh
       createdAt
       updatedAt
-      TransactionEvents(where: { eventType: { _eq: "Started" } }) {
-        eventType
-        IdToken {
-          idToken
-        }
+      Location {
+        id
+        name
+        address
+        city
+        postalCode
+        state
+        country
+        coordinates
+        createdAt
+        updatedAt
       }
-      StartTransaction {
-        IdToken {
-          idToken
-        }
+      Evse {
+        id
+        databaseId
+        connectorId
+        createdAt
+        updatedAt
+      }
+      Connector {
+        id
+        connectorId
+        type
+        createdAt
+        updatedAt
+      }
+      Authorization {
+        id
+        idToken
+        idTokenType
+        status
+        groupAuthorizationId
+        additionalInfo
+        concurrentTransaction
+        chargingPriority
+        language1
+        language2
+        personalMessage
+        cacheExpiryDateTime
+        createdAt
+        updatedAt
       }
       ChargingStation {
         id
@@ -84,31 +115,46 @@ export const TRANSACTION_GET_QUERY = gql`
       totalKwh
       createdAt
       updatedAt
-      ChargingStation {
-        id
-        isOnline
-        protocol
-        locationId
+      Location {
+        name
+        address
+        city
+        postalCode
+        state
+        country
+        coordinates
         createdAt
         updatedAt
-        Location {
-          name
-          address
-          city
-          postalCode
-          state
-          country
-          coordinates
-          createdAt
-          updatedAt
-        }
       }
-      TransactionEvents(where: { eventType: { _eq: "Started" } }) {
-        eventType
-        IdToken {
-          idToken
-        }
-        idTokenId
+      Evse {
+        id
+        databaseId
+        connectorId
+        createdAt
+        updatedAt
+      }
+      Connector {
+        id
+        connectorId
+        type
+        createdAt
+        updatedAt
+      }
+      Authorization {
+        id
+        idToken
+        idTokenType
+        status
+        groupAuthorizationId
+        additionalInfo
+        concurrentTransaction
+        chargingPriority
+        language1
+        language2
+        personalMessage
+        cacheExpiryDateTime
+        createdAt
+        updatedAt
       }
     }
   }
