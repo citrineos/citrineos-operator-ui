@@ -13,7 +13,7 @@ export class LocationDto implements Partial<ILocationDto> {
   @Type(() => GeoPoint)
   @ToPlain<GeoPoint>((value) => (value ? value.json : value))
   @ToClass<GeoPoint>(GeoPoint.parse)
-  coordinates!: GeoPoint;
+  coordinates?: GeoPoint;
 
   @Expose({ name: 'ChargingStations' })
   chargingStations!: IChargingStationDto[];
