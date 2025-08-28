@@ -240,22 +240,28 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       [GetVariablesRequestProps.getVariableData]: request[
         GetVariablesRequestProps.getVariableData
       ].map((item: GetVariablesData) => {
-        if (item && item[GetVariablesDataProps.evse]) {
-          // Use type assertion via unknown to avoid type overlap error
-          const evse = item[GetVariablesDataProps.evse] as unknown as IEvseDto;
+        if (item) {
           const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
+          const evse: IEvseDto | null =
+            item[GetVariablesDataProps.evse] || null;
+
           let evsePayload: any = undefined;
-          // Use EvseDtoProps.id instead of databaseId
-          if (evse[EvseDtoProps.id]) {
+          // Only include EVSE if it has a valid ID (not the placeholder NEW_IDENTIFIER)
+          if (
+            evse &&
+            evse[EvseDtoProps.databaseId] &&
+            evse[EvseDtoProps.databaseId] !== (NEW_IDENTIFIER as any)
+          ) {
             evsePayload = {
               id: evse[EvseDtoProps.id],
               // customData: null // todo
             };
+            if (evse[EvseDtoProps.connectorId]) {
+              evsePayload.connectorId = evse[EvseDtoProps.connectorId];
+            }
           }
-          if (evsePayload && evse.connectors?.[0]?.id) {
-            evsePayload.connectorId = evse.connectors[0].id;
-          }
+
           const data: any = {
             component: {
               name: component[ComponentProps.name],
