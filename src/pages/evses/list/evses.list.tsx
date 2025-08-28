@@ -92,11 +92,6 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         key: 'databaseId',
       },
       {
-        title: 'Evse Status',
-        dataIndex: 'status',
-        key: 'status',
-      },
-      {
         title: 'Actions',
         key: 'actions',
         render: (_: any, record: EvseDto) => (
@@ -171,7 +166,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         rowKey="id"
         columns={columns}
         pagination={false}
-        dataSource={station.evses}
+        dataSource={station.evses || []}
       />
       <Modal
         centered

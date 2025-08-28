@@ -72,7 +72,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({ station }) => {
     id: NEW_IDENTIFIER as unknown as number,
     stationId: station.id,
     connectorId: undefined,
-  } as IConnectorDto;
+  } as unknown as IConnectorDto;
 
   const handleSubmit = async (request: TriggerMessageData) => {
     const data: any = { requestedMessage: request.requestedMessage };

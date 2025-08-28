@@ -1,13 +1,9 @@
-// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
-//
-// SPDX-License-Identifier: Apache-2.0
-
 import {
+  IMeterValueDto,
   MeasurandEnumType,
-  PhaseEnumType,
-  ReadingContextEnumType,
-} from '@OCPP2_0_1';
-import { IMeterValueDto, ISampledValueDto } from '@citrineos/base';
+  ISampledValueDto,
+} from '@citrineos/base';
+import { PhaseEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 
 export class MeterValueDto implements Partial<IMeterValueDto> {}
 
@@ -33,9 +29,15 @@ export const getTimestampToMeasurandArray = (
   for (const meterValue of sortedMeterValues) {
     if (
       !meterValue.sampledValue[0].context ||
-      validContextsArg.has(meterValue.sampledValue[0].context)
+      (typeof meterValue.sampledValue[0].context === 'string' &&
+        validContextsArg.has(
+          meterValue.sampledValue[0].context as ReadingContextEnumType,
+        ))
     ) {
-      const overallValue = findOverallValue(meterValue.sampledValue, measurand);
+      const overallValue = findOverallValue(
+        meterValue.sampledValue as unknown as ISampledValueDto[],
+        measurand,
+      );
       if (overallValue) {
         const timestampEpoch = meterValue.timestamp;
         // @ts-expect-error timestamp is moment object
@@ -85,12 +87,10 @@ export const findOverallValue = (
     if (summableSampledValues.length < 3) {
       return undefined; // Not all phases are present, cannot sum
     }
-    const summedPhasesValue = summableSampledValues.reduce((acc, sv) => {
-      if (sv.phase) {
-        return acc + sv.value;
-      }
-      return acc;
-    }, 0);
+    const summedPhasesValue = summableSampledValues.reduce(
+      (acc, sv) => acc + Number(sv.value),
+      0,
+    );
     summedPhasesSampledValue = {
       ...measurandSampledValues[0],
       value: summedPhasesValue,

@@ -54,7 +54,7 @@ export class TriggerMessageRequest {
     gqlListQuery: {
       query: GET_CHARGING_STATION_LIST_FOR_EVSE,
       getQueryVariables: (_: TriggerMessageRequest) => ({
-        [EvseDtoProps.databaseId]: 1,
+        [EvseDtoProps.id]: 1,
       }),
     },
   })
@@ -65,7 +65,7 @@ export class TriggerMessageRequest {
   @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -126,30 +126,16 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       : undefined;
 
   const triggerMessageRequest = new TriggerMessageRequest();
-  triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse][
-    EvseDtoProps.databaseId
-  ] = NEW_IDENTIFIER as unknown as number;
-
-  const triggerMessageRequestWithoutEvse =
-    new TriggerMessageRequestWithoutEvse() as Omit<
-      TriggerMessageRequest,
-      'evse'
-    >;
-  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation] =
-    new ChargingStation();
-  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation][
-    ChargingStationProps.id
-  ] = NEW_IDENTIFIER;
-
+  triggerMessageRequest[TriggerMessageRequestProps.evse] =
+    new Evse() as unknown as IEvseDto;
+  triggerMessageRequest[TriggerMessageRequestProps.evse].id =
+    NEW_IDENTIFIER as unknown as number;
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
     : stationId
       ? TriggerMessageRequestWithoutStation
       : TriggerMessageRequest;
-  const parentRecord = evse
-    ? triggerMessageRequestWithoutEvse
-    : triggerMessageRequest;
+  const parentRecord = evse ? triggerMessageRequest : triggerMessageRequest;
 
   const handleSubmit = async (request: TriggerMessageRequest) => {
     const evse = request[TriggerMessageRequestProps.evse];
@@ -158,12 +144,12 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: request[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && evse[EvseDtoProps.id]) {
+    if (evse && evse.id) {
       data.evse = {
-        id: evse[EvseDtoProps.id],
+        id: evse.id,
       };
-      if (evse[EvseDtoProps.connectorId]) {
-        data.evse.connectorId = evse[EvseDtoProps.connectorId];
+      if (evse.connectors?.[0]?.id) {
+        data.evse.connectorId = evse.connectors[0].id;
       }
     }
 

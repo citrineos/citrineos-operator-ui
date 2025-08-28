@@ -51,7 +51,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const filtered =
       (tableProps.dataSource as unknown as ILocationDto[])?.filter(
         (location: ILocationDto) =>
-          location.chargingStations?.some((station) =>
+          location.chargingPool?.some((station) =>
             station.id.includes(lowerCaseQuery),
           ) ||
           location.address?.toLowerCase().includes(lowerCaseQuery) ||
@@ -74,7 +74,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
       const enhancedLocation = { ...location };
 
       // Add react content to the location's charging stations if needed
-      enhancedLocation.chargingStations = enhancedLocation.chargingStations.map(
+      enhancedLocation.chargingPool = enhancedLocation.chargingPool.map(
         (station) => ({
           ...station,
           reactContent: null, // If you need custom content for station markers

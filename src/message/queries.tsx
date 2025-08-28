@@ -264,14 +264,11 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       updatedAt
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
-        IdToken {
-          idToken
-        }
+        idTokenValue
+        idTokenType
       }
       StartTransaction {
-        IdToken {
-          idToken
-        }
+        idTokenDatabaseId
       }
       ChargingStation {
         id

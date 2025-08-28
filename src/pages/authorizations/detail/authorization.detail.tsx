@@ -19,6 +19,7 @@ import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
 import { TransactionDtoProps, IAuthorizationDto } from '@citrineos/base';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 
 export const AuthorizationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,14 +29,11 @@ export const AuthorizationDetail: React.FC = () => {
     resource: ResourceType.AUTHORIZATIONS,
     id,
     meta: { gqlQuery: AUTHORIZATIONS_SHOW_QUERY },
-    queryOptions: getPlainToInstanceOptions({}, true),
+    queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
   });
   const authorization = authData?.data;
 
-  const authIdTokenId =
-    authorization && authorization.idTokenId != null
-      ? Number(authorization.idTokenId)
-      : undefined;
+  const authIdToken = authorization?.idToken;
 
   const { tableProps: transactionTableProps } = useTable<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -43,11 +41,11 @@ export const AuthorizationDetail: React.FC = () => {
       gqlQuery: GET_TRANSACTIONS_FOR_AUTHORIZATION,
       gqlVariables: {
         limit: 10000, // trying to get all the authorized transactions
-        id: Number(authorization?.idTokenId),
+        id: authorization?.id,
       },
     },
     queryOptions: {
-      enabled: !!authIdTokenId,
+      enabled: !!authIdToken,
       ...getPlainToInstanceOptions(TransactionDto, true),
     },
   });
