@@ -8,10 +8,15 @@ import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useDelete, useNavigation } from '@refinedev/core';
 import { ClipboardIcon } from '../../../components/icons/clipboard.icon';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
 import { ResourceType } from '@util/auth';
-import { IAuthorizationDto } from '@citrineos/base';
+import {
+  IAuthorizationDto,
+  AuthorizationStatusType,
+  IdTokenType,
+} from '@citrineos/base';
+import GenericTag from '../../../components/tag';
 
 const { Text } = Typography;
 
@@ -39,8 +44,7 @@ export const AuthorizationDetailCard: React.FC<
       },
       {
         onSuccess: () => {
-          // Remove deletion of idTokenId and idTokenInfo, as these do not exist
-          goBack();
+          push(`/${MenuSection.AUTHORIZATIONS}`);
         },
         onError: () => {
           message.error('Failed to delete authorization.');
@@ -67,6 +71,16 @@ export const AuthorizationDetailCard: React.FC<
             style={{ cursor: 'pointer' }}
           />
           <h3>Authorization {authorization.id}</h3>
+          <Text
+            style={{ marginLeft: 8 }}
+            type={
+              authorization.status === AuthorizationStatusType.Accepted
+                ? 'success'
+                : 'danger'
+            }
+          >
+            {authorization.status}
+          </Text>
         </Flex>
 
         <Flex justify="space-between" gap={32}>
@@ -75,11 +89,32 @@ export const AuthorizationDetailCard: React.FC<
               <strong>ID:</strong> {authorization.id}
             </Text>
             <Text className="nowrap">
-              <strong>ID Token:</strong> {authorization.idToken}
+              <strong>Type:</strong>{' '}
+              <GenericTag
+                enumValue={
+                  authorization.idTokenType
+                    ? authorization.idTokenType
+                    : undefined
+                }
+                enumType={IdTokenType}
+              />
+            </Text>
+            <Text className="nowrap">
+              <strong>Status:</strong>{' '}
+              <GenericTag
+                enumValue={authorization.status}
+                enumType={AuthorizationStatusType}
+              />
             </Text>
           </Flex>
 
           <Flex vertical gap={16} className="border-left">
+            <Text className="nowrap">
+              <strong>ID Token:</strong> {authorization.idToken}
+            </Text>
+          </Flex>
+
+          <Flex vertical gap={16} className="border-left column-right">
             <Text className="nowrap">
               <strong>Allowed Types:</strong>{' '}
               {authorization.allowedConnectorTypes?.length
@@ -95,6 +130,14 @@ export const AuthorizationDetailCard: React.FC<
             <Text className="nowrap">
               <strong>Allowing Concurrent Transactions:</strong>{' '}
               {authorization.concurrentTransaction ? 'True' : 'False'}
+            </Text>
+            <Text className="nowrap">
+              <strong>Real-Time Authentication:</strong>{' '}
+              {authorization.realTimeAuth || '—'}
+            </Text>
+            <Text className="nowrap">
+              <strong>Real-Time Authentication URL:</strong>{' '}
+              {authorization.realTimeAuthUrl || '—'}
             </Text>
           </Flex>
 
