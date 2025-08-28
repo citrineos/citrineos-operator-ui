@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChargingStationIcon } from '../icons/charging.station.icon';
 import { ClipboardIcon } from '../icons/clipboard.icon';
 import { BiDirectionsArrowsIcon } from '../icons/bi.directional.arrows.icon';
+import { PartnerIcon } from '../icons/partner.icon';
 
 const { Sider } = Layout;
 
@@ -24,6 +25,7 @@ export enum MenuSection {
   CHARGING_STATIONS = 'charging-stations',
   AUTHORIZATIONS = 'authorizations',
   TRANSACTIONS = 'transactions',
+  PARTNERS = 'partners',
 }
 
 export interface MainMenuProps {
@@ -117,6 +119,11 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
       key: `/${MenuSection.TRANSACTIONS}`,
       label: 'Transactions',
       icon: <BiDirectionsArrowsIcon />,
+    }),
+    MenuItem({
+      key: `/${MenuSection.PARTNERS}`,
+      label: 'Partners',
+      icon: <PartnerIcon />,
     }),
   ];
 
