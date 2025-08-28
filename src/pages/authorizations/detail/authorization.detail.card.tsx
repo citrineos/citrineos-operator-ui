@@ -51,7 +51,7 @@ export const AuthorizationDetailCard: React.FC<
         },
       },
     );
-  }, [authorization, mutate, push]);
+  }, [authorization, mutate, goBack]);
 
   return (
     <Flex gap={24}>

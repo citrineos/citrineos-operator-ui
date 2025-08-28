@@ -63,7 +63,7 @@ const GetVariablesDataCustomConstructor = () => {
   const evse = new Evse();
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  evse[EvseDtoProps.databaseId] = NEW_IDENTIFIER as unknown as number;
+  evse[EvseDtoProps.id] = NEW_IDENTIFIER as unknown as number;
   const getVariablesData = new GetVariablesData();
   getVariablesData[GetVariablesDataProps.component] = component;
   getVariablesData[GetVariablesDataProps.variable] = variable;
@@ -80,7 +80,7 @@ export class GetVariablesData {
 
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.component,
-    associatedIdFieldName: ComponentProps.id,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: COMPONENT_GET_QUERY,
     },
@@ -131,7 +131,7 @@ export class GetVariablesData {
 
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.id,
     gqlQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
     },
@@ -240,20 +240,28 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
       [GetVariablesRequestProps.getVariableData]: request[
         GetVariablesRequestProps.getVariableData
       ].map((item: GetVariablesData) => {
-        if (item && item[GetVariablesDataProps.evse]) {
-          const evse: IEvseDto = item[GetVariablesDataProps.evse]!;
+        if (item) {
           const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
+          const evse: IEvseDto | null =
+            item[GetVariablesDataProps.evse] || null;
+
           let evsePayload: any = undefined;
-          if (evse[EvseDtoProps.databaseId]) {
+          // Only include EVSE if it has a valid ID (not the placeholder NEW_IDENTIFIER)
+          if (
+            evse &&
+            evse[EvseDtoProps.databaseId] &&
+            evse[EvseDtoProps.databaseId] !== (NEW_IDENTIFIER as any)
+          ) {
             evsePayload = {
-              id: evse[EvseDtoProps.databaseId],
+              id: evse[EvseDtoProps.id],
               // customData: null // todo
             };
+            if (evse[EvseDtoProps.connectorId]) {
+              evsePayload.connectorId = evse[EvseDtoProps.connectorId];
+            }
           }
-          if (evsePayload && evse[EvseDtoProps.connectorId]) {
-            evsePayload.connectorId = evse[EvseDtoProps.connectorId];
-          }
+
           const data: any = {
             component: {
               name: component[ComponentProps.name],

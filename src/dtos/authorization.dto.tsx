@@ -1,15 +1,27 @@
-// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
-//
-// SPDX-License-Identifier: Apache-2.0
+import {
+  IAuthorizationDto,
+  AdditionalInfo,
+  AuthorizationStatusType,
+  IdTokenType,
+  AuthorizationWhitelistType,
+} from '@citrineos/base';
 
-// Flat Authorization DTO matching new backend model
-export interface AuthorizationDto {
-  id: string;
-  idToken: string;
-  idTokenType: string;
-  status: string;
-  cacheExpiryDateTime?: string;
-  parentIdToken?: string;
-  groupAuthorizationId?: string;
-  additionalInfo?: Record<string, any>;
+export class AuthorizationDto implements Partial<IAuthorizationDto> {
+  id?: number;
+  allowedConnectorTypes?: string[];
+  disallowedEvseIdPrefixes?: string[];
+  idToken!: string;
+  idTokenType?: IdTokenType | null;
+  additionalInfo?: [AdditionalInfo, ...AdditionalInfo[]] | null;
+  status!: AuthorizationStatusType;
+  cacheExpiryDateTime?: string | null;
+  chargingPriority?: number | null;
+  language1?: string | null;
+  language2?: string | null;
+  personalMessage?: any | null;
+  groupAuthorizationId?: number | null;
+  groupAuthorization?: IAuthorizationDto;
+  concurrentTransaction?: boolean;
+  realTimeAuth?: AuthorizationWhitelistType;
+  realTimeAuthUrl?: string;
 }

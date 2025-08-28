@@ -72,5 +72,5 @@ export class TransactionEvent implements Partial<ITransactionEventDto> {
 
   @TransformDate()
   @IsNotEmpty()
-  timestamp!: Date;
+  timestamp!: string;
 }

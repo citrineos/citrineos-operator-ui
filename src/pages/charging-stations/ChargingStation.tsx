@@ -66,7 +66,9 @@ import {
   const chargingStation = new ChargingStation();
   const location = new Location();
   location[LocationProps.id] = NEW_IDENTIFIER as unknown as string;
-  chargingStation[ChargingStationDtoProps.locationId] = location;
+  chargingStation[ChargingStationDtoProps.locationId] = Number(
+    location[LocationProps.id],
+  );
   return chargingStation;
 })
 export class ChargingStation implements Partial<base.IChargingStationDto> {
@@ -85,7 +87,7 @@ export class ChargingStation implements Partial<base.IChargingStationDto> {
   })
   @Type(() => Location)
   @IsOptional()
-  locationId?: Location;
+  locationId?: number | null;
 
   @IsArray()
   @IsOptional()

@@ -10,10 +10,10 @@ import { EvseDto } from '../../../dtos/evse.dto';
 import { ResourceType } from '@util/auth';
 import { getSerializedValues } from '@util/middleware';
 import { EVSE_CREATE_MUTATION, EVSE_EDIT_MUTATION } from '../queries';
-import { CONNECTOR_LIST_QUERY } from '../../../pages/connectors/queries';
+import { CONNECTOR_LIST_QUERY } from '../../connectors/queries';
 import { BaseDtoProps } from '@citrineos/base';
 import { IConnectorDto } from '@citrineos/base';
-import { IEvseDto } from '@citrineos/base';
+import { IEvseDto, EvseDtoProps } from '@citrineos/base';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
@@ -23,7 +23,11 @@ interface EvseUpsertProps {
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
   const [formData, setFormData] = useState({
     id: evse !== null ? evse.id : 0,
-    connectorId: evse !== null ? evse.connectorId : undefined,
+    evseId: evse !== null ? evse.evseId : '',
+    physicalReference: evse !== null ? evse.physicalReference : '',
+    removed: evse !== null ? evse.removed : false,
+    connectorId:
+      evse !== null ? evse.connectors?.at(0)?.connectorId : undefined,
   });
 
   const { formProps, form } = useForm({
@@ -36,6 +40,9 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
     onMutationSuccess: () => {
       setFormData({
         id: 0,
+        evseId: '',
+        physicalReference: '',
+        removed: false,
         connectorId: undefined,
       });
       form.resetFields();
@@ -76,11 +83,30 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       initialValues={formData}
     >
       <Form.Item
-        name="id"
+        name={EvseDtoProps.id}
         label="ID"
         rules={[{ required: true, message: 'Please input the ID!' }]}
       >
         <Input id="id" name="id" type="text" />
+      </Form.Item>
+      <Form.Item
+        name={EvseDtoProps.evseId}
+        label="EVSE ID"
+        rules={[{ required: true, message: 'Please input the EVSE ID!' }]}
+      >
+        <Input id="evseId" name="evseId" type="text" />
+      </Form.Item>
+      <Form.Item
+        name={EvseDtoProps.physicalReference}
+        label="Physical Reference"
+      >
+        <Input id="physicalReference" name="physicalReference" type="text" />
+      </Form.Item>
+      <Form.Item name={EvseDtoProps.removed} label="Removed">
+        <Select id="removed">
+          <Select.Option value={true}>Yes</Select.Option>
+          <Select.Option value={false}>No</Select.Option>
+        </Select>
       </Form.Item>
       <Form.Item label="Connector ID" name="connectorId">
         <Select {...connectors} id="connectorId" />

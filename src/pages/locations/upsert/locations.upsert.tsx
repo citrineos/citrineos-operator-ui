@@ -22,7 +22,7 @@ import {
 } from 'antd';
 import { useForm } from '@refinedev/antd';
 import { Country, countryStateData } from '../country.state.data';
-import { MapLocationPicker } from '../../../components/map/map.location.picker';
+import { MapLocationPicker } from '../../../components/map';
 import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
 import { getSerializedValues } from '@util/middleware';
 import { LocationDto } from '../../../dtos/location.dto';
@@ -39,8 +39,14 @@ import { useParams } from 'react-router-dom';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
-import { ChargingStationDtoProps, IChargingStationDto } from '@citrineos/base';
-import { ILocationDto, LocationDtoProps } from '@citrineos/base';
+import {
+  ChargingStationDtoProps,
+  IChargingStationDto,
+  ILocationDto,
+  LocationDtoProps,
+  LocationFacilityType,
+  LocationParkingType,
+} from '@citrineos/base';
 
 export const LocationsUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -62,9 +68,9 @@ export const LocationsUpsert = () => {
     successNotification: false,
     onMutationSuccess: async (locationResponse) => {
       const currentStations =
-        formValuesRef.current[LocationDtoProps.chargingStations] || [];
+        formValuesRef.current[LocationDtoProps.chargingPool] || [];
       const prevStations =
-        form.getFieldValue(LocationDtoProps.chargingStations) || [];
+        form.getFieldValue(LocationDtoProps.chargingPool) || [];
 
       const currentIds = new Set(
         currentStations.map((cs: IChargingStationDto) => cs.id),
@@ -157,7 +163,20 @@ export const LocationsUpsert = () => {
       if (isSubmitting) return;
       setIsSubmitting(true);
       const input = { ...formValuesRef.current };
-      delete input[LocationDtoProps.chargingStations];
+      // Ensure coordinates has type: 'Point' and is in GeoJSON format
+      if (input[LocationDtoProps.coordinates]) {
+        const coords = input[LocationDtoProps.coordinates];
+        input[LocationDtoProps.coordinates] = {
+          type: 'Point',
+          coordinates: [coords.longitude, coords.latitude],
+        };
+      }
+      // Convert facilities array to comma-separated string for Hasura
+      if (Array.isArray(input[LocationDtoProps.facilities])) {
+        input[LocationDtoProps.facilities] =
+          input[LocationDtoProps.facilities].join(',');
+      }
+      delete input[LocationDtoProps.chargingPool];
       const newItem: any = getSerializedValues(input, LocationDto);
       if (!locationId) {
         newItem.tenantId = config.tenantId;
@@ -367,6 +386,56 @@ export const LocationsUpsert = () => {
                         }
                       }}
                     />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    key={LocationDtoProps.timeZone}
+                    label="Timezone"
+                    name={LocationDtoProps.timeZone}
+                    data-testid={LocationDtoProps.timeZone}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    key={LocationDtoProps.parkingType}
+                    label="Parking Type"
+                    name={LocationDtoProps.parkingType}
+                    data-testid={LocationDtoProps.parkingType}
+                  >
+                    <Select placeholder="Select a parking type" allowClear>
+                      {Object.keys(LocationParkingType).map((parkingType) => (
+                        <Select.Option key={parkingType} value={parkingType}>
+                          {parkingType}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    key={LocationDtoProps.facilities}
+                    label="Facilities"
+                    name={LocationDtoProps.facilities}
+                    data-testid={LocationDtoProps.facilities}
+                  >
+                    <Select
+                      mode="tags"
+                      placeholder="Select facilities"
+                      allowClear
+                    >
+                      {Object.keys(LocationFacilityType).map((facility) => (
+                        <Select.Option key={facility} value={facility}>
+                          {facility}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>

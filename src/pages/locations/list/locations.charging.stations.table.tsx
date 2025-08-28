@@ -26,7 +26,7 @@ export const LocationsChargingStationsTable = ({
   const dispatch = useDispatch();
 
   // Use filteredStations if provided, otherwise use all stations from the location
-  const stationsToDisplay = filteredStations || location.chargingStations;
+  const stationsToDisplay = filteredStations || location.chargingPool;
 
   const showRemoteStartModal = useCallback(
     (station: IChargingStationDto) => {

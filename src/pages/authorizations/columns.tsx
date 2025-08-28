@@ -5,12 +5,12 @@
 import React from 'react';
 import { Table } from 'antd';
 import { CrudFilter } from '@refinedev/core';
-import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
-import GenericTag from '../../components/tag';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { AuthorizationDtoProps, IAuthorizationDto } from '@citrineos/base';
-import { IdTokenDtoProps } from '@citrineos/base';
-import { IdTokenInfoDtoProps } from '@citrineos/base';
+import {
+  AuthorizationDtoProps,
+  IAuthorizationDto,
+  IdTokenDtoProps,
+} from '@citrineos/base';
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>
@@ -31,40 +31,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
         },
         style: { cursor: 'pointer' },
       })}
-      render={(_, record) => <h4>{record.idToken?.idToken}</h4>}
-    />
-
-    <Table.Column
-      key={IdTokenDtoProps.type}
-      dataIndex={IdTokenDtoProps.type}
-      title="Type"
-      sorter={true}
-      onCell={(record: IAuthorizationDto) => ({
-        className: `view-authorizations column-${IdTokenDtoProps.type}`,
-      })}
-      render={(_, record) => (
-        <GenericTag
-          enumValue={record.idToken?.type}
-          enumType={IdTokenEnumType}
-        />
-      )}
-    />
-
-    <Table.Column
-      key={IdTokenInfoDtoProps.status}
-      dataIndex={IdTokenInfoDtoProps.status}
-      title="Status"
-      sorter={true}
-      onCell={(record: IAuthorizationDto) => ({
-        className: `view-authorizations column-${IdTokenInfoDtoProps.status}`,
-      })}
-      render={(_, record) => (
-        <GenericTag
-          enumValue={record.idTokenInfo?.status}
-          enumType={AuthorizationStatusEnumType}
-          colorMap={{ [AuthorizationStatusEnumType.Accepted]: 'green' }}
-        />
-      )}
+      render={(_, record) => <h4>{record.idToken}</h4>}
     />
   </>
 );
@@ -75,17 +42,12 @@ export const getAuthorizationFilters = (value: string): CrudFilter[] => {
       operator: 'or',
       value: [
         {
-          field: `${AuthorizationDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          field: `${AuthorizationDtoProps.idToken}.idToken`,
           operator: 'contains',
           value,
         },
         {
-          field: `${AuthorizationDtoProps.idToken}.${IdTokenDtoProps.type}`,
-          operator: 'contains',
-          value,
-        },
-        {
-          field: `${AuthorizationDtoProps.idTokenInfo}.${IdTokenInfoDtoProps.status}`,
+          field: `${AuthorizationDtoProps.idToken}.type`,
           operator: 'contains',
           value,
         },

@@ -86,9 +86,8 @@ export class Authorizations implements Partial<IAuthorizationDto> {
       query: ID_TOKENS_LIST_QUERY,
     },
   })
-  @Type(() => IdToken)
-  @IsNotEmpty()
-  idToken!: base.IIdTokenDto;
+  @Type(() => String)
+  idToken!: string;
 
   @GqlAssociation({
     parentIdFieldName: AuthorizationsProps.idTokenInfoId,

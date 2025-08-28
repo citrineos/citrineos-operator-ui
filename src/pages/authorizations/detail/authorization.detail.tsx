@@ -41,7 +41,7 @@ export const AuthorizationDetail: React.FC = () => {
       gqlQuery: GET_TRANSACTIONS_FOR_AUTHORIZATION,
       gqlVariables: {
         limit: 10000, // trying to get all the authorized transactions
-        id: authorization?.idToken,
+        id: authorization?.id,
       },
     },
     queryOptions: {
