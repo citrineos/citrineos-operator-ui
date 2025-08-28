@@ -60,7 +60,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         stationId
         stoppedReason
         transactionId
-        evseDatabaseId
+        evseId
         remoteStartId
         totalKwh
         createdAt
@@ -227,7 +227,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         stationId
         stoppedReason
         transactionId
-        evseDatabaseId
+        evseId
         remoteStartId
         totalKwh
         createdAt

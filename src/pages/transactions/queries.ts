@@ -24,7 +24,7 @@ export const TRANSACTION_LIST_QUERY = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -110,7 +110,7 @@ export const TRANSACTION_GET_QUERY = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -170,7 +170,7 @@ export const TRANSACTION_CREATE_MUTATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -189,7 +189,7 @@ export const TRANSACTION_EDIT_MUTATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -208,7 +208,7 @@ export const TRANSACTION_DELETE_MUTATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt

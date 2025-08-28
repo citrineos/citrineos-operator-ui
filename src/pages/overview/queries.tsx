@@ -48,7 +48,7 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
         stationId
         stoppedReason
         transactionId
-        evseDatabaseId
+        evseId
         remoteStartId
         totalKwh
         createdAt

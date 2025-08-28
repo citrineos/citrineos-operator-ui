@@ -140,9 +140,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: {
-        _and: [{ TransactionEvents: { idTokenId: { _eq: $id } } }, $where]
-      }
+      where: { _and: [{ authorizationId: { _eq: $id } }, $where] }
     ) {
       id
       timeSpentCharging
@@ -151,7 +149,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt

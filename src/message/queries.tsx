@@ -257,7 +257,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -310,7 +310,7 @@ export const GET_TRANSACTIONS_FOR_STATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -344,7 +344,7 @@ export const GET_ACTIVE_TRANSACTION_LIST_FOR_STATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
