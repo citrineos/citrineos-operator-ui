@@ -9,5 +9,5 @@ import { IBootDto } from '@citrineos/base';
 export class Boot implements Partial<IBootDto> {
   @IsOptional()
   @TransformDate()
-  lastBootTime?: Date;
+  lastBootTime?: string;
 }

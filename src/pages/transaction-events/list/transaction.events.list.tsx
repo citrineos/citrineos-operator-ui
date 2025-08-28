@@ -73,15 +73,14 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
         transactionDatabaseId: String(transactionDatabaseId),
         eventType: 'OCPPMessage' as ITransactionEventDto['eventType'],
         meterValues: [],
-        timestamp: new Date(m.timestamp),
+        timestamp: String(m.timestamp), // Fix: ensure timestamp is a string
         triggerReason: m.action as ITransactionEventDto['triggerReason'],
         seqNo: -1 as ITransactionEventDto['seqNo'],
         offline: false as ITransactionEventDto['offline'],
         numberOfPhasesUsed: 0 as ITransactionEventDto['numberOfPhasesUsed'],
         cableMaxCurrent: 0 as ITransactionEventDto['cableMaxCurrent'],
         reservationId: 0 as ITransactionEventDto['reservationId'],
-        idTokenId: null as ITransactionEventDto['idTokenId'],
-        idToken: undefined as ITransactionEventDto['idToken'],
+        tenantId: 1, // Only include tenantId once
       }),
     );
     return [...events, ...messageRows];

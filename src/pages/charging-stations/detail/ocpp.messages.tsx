@@ -131,7 +131,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   const findRelatedMessages = useCallback(
     (record: IOCPPMessageDto) => {
-      setHighlightedCorrelationId(record.correlationId);
+      setHighlightedCorrelationId(record.correlationId || null);
       // Find and select the row with the same correlationId but different origin
       const relatedMessage = tableProps.dataSource?.find(
         (msg) =>
@@ -139,7 +139,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
           msg.origin !== record.origin,
       );
       if (relatedMessage) {
-        setHighlightedCorrelationId(relatedMessage.correlationId);
+        setHighlightedCorrelationId(relatedMessage.correlationId || null);
         // Scroll to the related message
         const element = document.getElementById(
           `ocpp-row-${relatedMessage.id}`,

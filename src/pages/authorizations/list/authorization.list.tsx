@@ -27,7 +27,7 @@ export const AuthorizationsList: React.FC = () => {
     resource: ResourceType.AUTHORIZATIONS,
     sorters: DEFAULT_SORTERS,
     meta: { gqlQuery: AUTHORIZATIONS_LIST_QUERY },
-    queryOptions: getPlainToInstanceOptions({}),
+    queryOptions: getPlainToInstanceOptions(AuthorizationDto),
   });
 
   const onSearch: SearchProps['onSearch'] = useCallback(

@@ -52,9 +52,8 @@ export class VariableAttribute implements Partial<IVariableAttributeDto> {
       query: VARIABLE_LIST_QUERY,
     },
   })
-  @Type(() => Variable)
   @IsOptional()
-  variableId?: Variable | null;
+  variableId?: number | null | undefined;
 
   @GqlAssociation({
     parentIdFieldName: VariableAttributeDtoProps.componentId,
@@ -68,7 +67,7 @@ export class VariableAttribute implements Partial<IVariableAttributeDto> {
   })
   @Type(() => Component)
   @IsOptional()
-  componentId?: Component | null;
+  componentId?: number | null;
 
   @IsOptional()
   @IsNumber()

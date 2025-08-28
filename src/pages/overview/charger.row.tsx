@@ -23,7 +23,7 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
 }) => {
   const { push } = useNavigation();
   const label = evse
-    ? `${chargingStation.id}:EVSE ${evse.connectorId}`
+    ? `${chargingStation.id}:EVSE ${evse.id}`
     : chargingStation.id;
 
   return (

@@ -63,7 +63,7 @@ const GetVariablesDataCustomConstructor = () => {
   const evse = new Evse();
   variable[VariableProps.id] = NEW_IDENTIFIER as unknown as number;
   component[ComponentProps.id] = NEW_IDENTIFIER as unknown as number;
-  evse[EvseDtoProps.databaseId] = NEW_IDENTIFIER as unknown as number;
+  evse[EvseDtoProps.id] = NEW_IDENTIFIER as unknown as number;
   const getVariablesData = new GetVariablesData();
   getVariablesData[GetVariablesDataProps.component] = component;
   getVariablesData[GetVariablesDataProps.variable] = variable;
@@ -80,7 +80,7 @@ export class GetVariablesData {
 
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.component,
-    associatedIdFieldName: ComponentProps.id,
+    associatedIdFieldName: 'databaseId',
     gqlQuery: {
       query: COMPONENT_GET_QUERY,
     },
@@ -131,7 +131,7 @@ export class GetVariablesData {
 
   @GqlAssociation({
     parentIdFieldName: GetVariablesDataProps.evse,
-    associatedIdFieldName: EvseDtoProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.id,
     gqlQuery: {
       query: GET_EVSE_LIST_FOR_STATION,
     },
@@ -254,7 +254,7 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
             evse[EvseDtoProps.databaseId] !== (NEW_IDENTIFIER as any)
           ) {
             evsePayload = {
-              id: evse[EvseDtoProps.databaseId],
+              id: evse[EvseDtoProps.id],
               // customData: null // todo
             };
             if (evse[EvseDtoProps.connectorId]) {

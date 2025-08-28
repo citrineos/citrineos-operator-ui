@@ -11,12 +11,12 @@ export class ChargingProfile implements Partial<IChargingProfileDto> {
   @Type(() => Date)
   @TransformDatetime()
   @IsOptional()
-  validFrom: Date | null = null;
+  validFrom: string | null = null;
 
   @Type(() => Date)
   @TransformDatetime()
   @IsOptional()
-  validTo: Date | null = null;
+  validTo: string | null = null;
 
   constructor(data: Partial<IChargingProfileDto>) {
     if (data) {
