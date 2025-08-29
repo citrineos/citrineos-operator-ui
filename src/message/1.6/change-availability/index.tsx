@@ -20,7 +20,7 @@ import {
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { Connector } from '../../../pages/connectors/connector';
-import { ConnectorDtoProps, IConnectorDto } from '@citrineos/base';
+import { ConnectorDtoProps, type IConnectorDto } from '@citrineos/base';
 
 enum ChangeAvailabilityDataProps {
   connector = 'connector',
@@ -55,7 +55,7 @@ class ChangeAvailabilityData {
   @Type(() => Connector)
   @ValidateNested()
   @IsNotEmpty()
-  connector!: base.IConnectorDto;
+  connector!: IConnectorDto;
 
   @IsEnum(ChangeAvailabilityRequestType)
   type!: ChangeAvailabilityRequestType;

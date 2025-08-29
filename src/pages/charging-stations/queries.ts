@@ -87,7 +87,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
 `;
 
 export const FAULTED_CHARGING_STATIONS_LIST_QUERY = gql`
-  query ChargingStationsList(
+  query ChargingStationsFaultedList(
     $offset: Int!
     $limit: Int!
     $order_by: [ChargingStations_order_by!]
@@ -287,23 +287,6 @@ export const CHARGING_STATIONS_EDIT_MUTATION = gql`
       isOnline
       protocol
       locationId
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-export const GET_OCPP_MESSAGES = gql`
-  query GetOCPPMessages($id: String!) {
-    OCPPMessages(id: $id) {
-      id
-      stationId
-      correlationId
-      origin
-      protocol
-      action
-      message
-      timestamp
       createdAt
       updatedAt
     }

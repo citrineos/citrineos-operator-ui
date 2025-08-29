@@ -10,6 +10,7 @@ import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import {
   ChangeAvailabilityRequestDtoProps,
+  ConnectorDtoProps,
   EvseDtoProps,
   OCPPVersion,
 } from '@citrineos/base';
@@ -30,17 +31,18 @@ export const ChangeAvailability: React.FC<ChangeAvailabilityProps> = ({
   const changeAvailabilityRequest = new ChangeAvailabilityRequest();
 
   const handleSubmit = async (request: ChangeAvailabilityRequest) => {
-    const evse = (request as any).evse;
+    const evse = request.evse;
+    const connector = request.connector;
     const data: any = {
-      operationalStatus: (request as any).operationalStatus,
-      customData: (request as any).customData,
+      operationalStatus: request.operationalStatus,
+      // customData: request.customData,
     };
 
-    if (evse && evse[EvseDtoProps.id]) {
+    if (evse && evse[EvseDtoProps.evseTypeId]) {
       data[ChangeAvailabilityRequestDtoProps.evse] = {
-        id: evse.id,
-        ...(evse.connectors?.[0]?.id
-          ? { connectorId: evse.connectors[0].id }
+        id: evse.evseTypeId,
+        ...(connector && connector[ConnectorDtoProps.evseTypeConnectorId]
+          ? { connectorId: connector[ConnectorDtoProps.evseTypeConnectorId] }
           : {}),
       };
     }

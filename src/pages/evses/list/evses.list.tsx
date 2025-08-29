@@ -77,19 +77,14 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
   const columns = useMemo(
     () => [
       {
+        title: 'Evse Type ID',
+        dataIndex: 'evseTypeId',
+        key: 'evseTypeId',
+      },
+      {
         title: 'Evse ID',
-        dataIndex: 'id',
-        key: 'id',
-      },
-      {
-        title: 'Connector ID',
-        dataIndex: 'connectorId',
-        key: 'connectorId',
-      },
-      {
-        title: 'Database ID',
-        dataIndex: 'databaseId',
-        key: 'databaseId',
+        dataIndex: 'evseId',
+        key: 'evseId',
       },
       {
         title: 'Actions',

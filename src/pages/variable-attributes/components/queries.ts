@@ -23,7 +23,7 @@ export const COMPONENT_LIST_QUERY = gql`
       evseDatabaseId
       createdAt
       updatedAt
-      Evse {
+      EvseType {
         connectorId
         id
       }

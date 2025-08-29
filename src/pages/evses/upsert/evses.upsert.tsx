@@ -14,6 +14,8 @@ import { CONNECTOR_LIST_QUERY } from '../../connectors/queries';
 import { BaseDtoProps } from '@citrineos/base';
 import { IConnectorDto } from '@citrineos/base';
 import { IEvseDto, EvseDtoProps } from '@citrineos/base';
+import { useSelector } from 'react-redux';
+import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
@@ -23,13 +25,17 @@ interface EvseUpsertProps {
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
   const [formData, setFormData] = useState({
     id: evse !== null ? evse.id : 0,
+    stationId: evse !== null ? evse.stationId : '',
+    evseTypeId: evse !== null ? evse.evseTypeId : undefined,
     evseId: evse !== null ? evse.evseId : '',
     physicalReference: evse !== null ? evse.physicalReference : '',
     removed: evse !== null ? evse.removed : false,
+    chargingStation: evse !== null ? evse.chargingStation : undefined,
     connectorId:
       evse !== null ? evse.connectors?.at(0)?.connectorId : undefined,
   });
 
+  const selectedChargingStation = useSelector(getSelectedChargingStation());
   const { formProps, form } = useForm({
     resource: ResourceType.EVSES,
     id: formData.id,
@@ -40,7 +46,10 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
     onMutationSuccess: () => {
       setFormData({
         id: 0,
+        stationId: '',
+        evseTypeId: undefined,
         evseId: '',
+        chargingStation: undefined,
         physicalReference: '',
         removed: false,
         connectorId: undefined,
@@ -82,6 +91,9 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       onFinish={onFinish}
       initialValues={formData}
     >
+      <Form.Item name={EvseDtoProps.evseTypeId} label="EVSE Type ID">
+        <Input id="evseTypeId" name="evseTypeId" type="number" />
+      </Form.Item>
       <Form.Item
         name={EvseDtoProps.id}
         label="ID"

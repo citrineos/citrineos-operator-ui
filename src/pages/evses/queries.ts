@@ -14,42 +14,15 @@ export const EVSE_LIST_QUERY = gql`
     $variableAttributesOrder_by: [VariableAttributes_order_by!]
   ) {
     Evses(offset: $offset, limit: $limit, order_by: $order_by, where: $where) {
-      databaseId
       id
-      connectorId
+      evseTypeId
+      evseId
       createdAt
       updatedAt
-
-      # Join the VariableAttributes for each EVSE
-      VariableAttributes(
-        where: $variableAttributesWhere
-        order_by: $variableAttributesOrder_by
-      ) {
-        id
-        stationId
-        type
-        dataType
-        value
-        mutability
-        persistent
-        constant
-        variableId
-        componentId
-        evseDatabaseId
-        createdAt
-        updatedAt
-      }
     }
 
     # Aggregating EVSE records
     Evses_aggregate(where: $where) {
-      aggregate {
-        count
-      }
-    }
-
-    # Aggregating VariableAttributes
-    VariableAttributes_aggregate(where: $variableAttributesWhere) {
       aggregate {
         count
       }
@@ -59,29 +32,12 @@ export const EVSE_LIST_QUERY = gql`
 
 export const EVSE_GET_QUERY = gql`
   query GetEvseById($id: Int!) {
-    Evses_by_pk(databaseId: $id) {
-      databaseId
+    Evses_by_pk(id: $id) {
       id
-      connectorId
+      evseTypeId
+      evseId
       createdAt
       updatedAt
-
-      # Join the VariableAttributes for this EVSE
-      VariableAttributes {
-        id
-        stationId
-        type
-        dataType
-        value
-        mutability
-        persistent
-        constant
-        variableId
-        componentId
-        evseDatabaseId
-        createdAt
-        updatedAt
-      }
     }
   }
 `;
@@ -89,9 +45,9 @@ export const EVSE_GET_QUERY = gql`
 export const EVSE_CREATE_MUTATION = gql`
   mutation EvseCreate($object: Evses_insert_input!) {
     insert_Evses_one(object: $object) {
-      databaseId
       id
-      connectorId
+      evseTypeId
+      evseId
       createdAt
       updatedAt
     }
@@ -100,10 +56,10 @@ export const EVSE_CREATE_MUTATION = gql`
 
 export const EVSE_EDIT_MUTATION = gql`
   mutation EvseEdit($id: Int!, $object: Evses_set_input!) {
-    update_Evses_by_pk(pk_columns: { databaseId: $id }, _set: $object) {
-      databaseId
+    update_Evses_by_pk(pk_columns: { id: $id }, _set: $object) {
       id
-      connectorId
+      evseTypeId
+      evseId
       createdAt
       updatedAt
     }
@@ -117,38 +73,22 @@ export const EVSE_EDIT_WITH_VARIABLE_ATTRIBUTES_MUTATION = gql`
     $newAssociatedIds: [Int!]!
   ) {
     # Update the EVSE record
-    update_Evses_by_pk(pk_columns: { databaseId: $id }, _set: $object) {
-      databaseId
+    update_Evses_by_pk(pk_columns: { id: $id }, _set: $object) {
       id
-      connectorId
+      evseTypeId
+      evseId
       createdAt
       updatedAt
-    }
-
-    # Update VariableAttributes to associate them with the EVSE
-    update_VariableAttributes: update_VariableAttributes(
-      where: { id: { _in: $newAssociatedIds } }
-      _set: { evseDatabaseId: $id }
-    ) {
-      affected_rows
-    }
-
-    # Update VariableAttributes to dissociate old ones from this EVSE
-    removeOldVariableAttributes: update_VariableAttributes(
-      where: { evseDatabaseId: { _eq: $id }, id: { _nin: $newAssociatedIds } }
-      _set: { evseDatabaseId: null }
-    ) {
-      affected_rows
     }
   }
 `;
 
 export const EVSE_DELETE_MUTATION = gql`
   mutation EvseDelete($id: Int!) {
-    delete_Evses_by_pk(databaseId: $id) {
-      databaseId
+    delete_Evses_by_pk(id: $id) {
       id
-      connectorId
+      evseTypeId
+      evseId
       createdAt
       updatedAt
     }

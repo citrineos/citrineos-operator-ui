@@ -39,7 +39,7 @@ export const CONNECTOR_LIST_QUERY = gql`
 
 export const CONNECTOR_GET_QUERY = gql`
   query GetConnectorById($id: Int!) {
-    Connectors_by_pk(connectorId: $id) {
+    Connectors_by_pk(id: $id) {
       connectorId
       createdAt
       errorCode
@@ -74,8 +74,8 @@ export const CONNECTOR_CREATE_MUTATION = gql`
 `;
 
 export const CONNECTOR_EDIT_MUTATION = gql`
-  mutation ConnectorEdit($id: Int!, $object: Connectors_insert_input!) {
-    update_Connectors_by_pk(pk_columns: { connectorId: $id }, _set: $object) {
+  mutation ConnectorEdit($id: Int!, $object: Connectors_set_input!) {
+    update_Connectors_by_pk(pk_columns: { id: $id }, _set: $object) {
       connectorId
       createdAt
       errorCode
@@ -90,7 +90,7 @@ export const CONNECTOR_EDIT_MUTATION = gql`
 
 export const CONNECTOR_DELETE_MUTATION = gql`
   mutation ConnectorDelete($id: Int!) {
-    delete_Connectors_by_pk(connectorId: $id) {
+    delete_Connectors_by_pk(id: $id) {
       connectorId
       createdAt
       errorCode

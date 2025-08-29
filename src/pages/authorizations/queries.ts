@@ -176,7 +176,6 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       }
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
-        idTokenId
         idTokenValue
         idTokenType
       }
@@ -185,9 +184,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       }
     }
     Transactions_aggregate(
-      where: {
-        _and: [{ TransactionEvents: { idTokenId: { _eq: $id } } }, $where]
-      }
+      where: { _and: [{ authorizationId: { _eq: $id } }, $where] }
     ) {
       aggregate {
         count

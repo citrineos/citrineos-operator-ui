@@ -8,15 +8,15 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { IdTokenDtoProps, OCPPVersion } from '@citrineos/base';
+import { AuthorizationDtoProps, OCPPVersion } from '@citrineos/base';
 import {
   CustomerInformationRequest,
   CustomerPayload,
   GetCustomerInformationDataProps,
   GetCustomerProps,
-} from '../../../model/CustomerInformation';
+} from './CustomerInformation';
 import { NEW_IDENTIFIER } from '@util/consts';
-import { IdToken } from '../../../pages/id-tokens/id-token';
+import { Authorization } from '../../../pages/authorizations/authorizations';
 
 export interface CustomerInformationProps {
   station: ChargingStation;
@@ -31,11 +31,12 @@ export const CustomerInformation: React.FC<GetCustomerProps> = ({
   };
 
   const getCustomersRequest = new CustomerInformationRequest();
-  const idToken = new IdToken();
-  idToken[IdTokenDtoProps.id] = NEW_IDENTIFIER as any;
+  const authorization = new Authorization();
+  authorization[AuthorizationDtoProps.id] = NEW_IDENTIFIER as any;
   getCustomersRequest[GetCustomerInformationDataProps.clear] = false;
   getCustomersRequest[GetCustomerInformationDataProps.report] = false;
-  getCustomersRequest[GetCustomerInformationDataProps.idToken] = idToken;
+  getCustomersRequest[GetCustomerInformationDataProps.authorization] =
+    authorization;
   const handleSubmit = async (request: CustomerInformationRequest) => {
     const payload = CustomerPayload(request);
 

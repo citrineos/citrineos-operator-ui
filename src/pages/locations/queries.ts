@@ -161,7 +161,7 @@ export const LOCATIONS_GET_QUERY = gql`
 `;
 
 export const LOCATIONS_GET_QUERY_BY_ID = gql`
-  query GetLocationById($id: Int!, $where: Locations_bool_exp) {
+  query GetLocationByIdAndWhere($id: Int!, $where: Locations_bool_exp) {
     Locations_by_pk(id: $id) {
       id
       name
@@ -181,20 +181,12 @@ export const LOCATIONS_GET_QUERY_BY_ID = gql`
         protocol
         createdAt
         updatedAt
-        Evses: VariableAttributes(
-          distinct_on: evseDatabaseId
-          where: {
-            evseDatabaseId: { _is_null: false }
-            Evse: { connectorId: { _is_null: false } }
-          }
-        ) {
-          Evse {
-            databaseId
-            id
-            connectorId
-            createdAt
-            updatedAt
-          }
+        evses: Evses {
+          id
+          evseTypeId
+          evseId
+          createdAt
+          updatedAt
         }
         LatestStatusNotifications {
           id

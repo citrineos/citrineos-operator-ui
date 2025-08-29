@@ -11,7 +11,7 @@ import { readFileContent, triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { SupportedFileFormats } from '@util/decorators/SupportedFileFormats';
-import { MessageConfirmation } from 'src/message/MessageConfirmation';
+import { MessageConfirmation } from '../../../message/MessageConfirmation';
 
 enum CertificateSignedRequestProps {
   certificateType = 'certificateType',
