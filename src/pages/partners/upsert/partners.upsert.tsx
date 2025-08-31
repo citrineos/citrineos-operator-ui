@@ -48,7 +48,11 @@ export const PartnersUpsert = () => {
               credentials: {
                 versionsUrl:
                   partner.partnerProfileOCPI?.credentials?.versionsUrl,
+                token: partner.partnerProfileOCPI?.credentials?.token,
+                serverToken:
+                  partner.partnerProfileOCPI?.credentials?.serverToken,
               },
+              endpoints: partner.partnerProfileOCPI?.endpoints,
             },
           },
         };
@@ -93,7 +97,10 @@ export const PartnersUpsert = () => {
         ],
         credentials: {
           versionsUrl: partnerProfileOCPI?.credentials?.versionsUrl,
+          token: partnerProfileOCPI?.credentials?.token,
+          serverToken: partnerProfileOCPI?.credentials?.serverToken,
         },
+        endpoints: partnerProfileOCPI?.endpoints,
       },
     };
     const newItem: any = getSerializedValues(input, TenantPartnerDto);
@@ -105,15 +112,6 @@ export const PartnersUpsert = () => {
 
   return (
     <Form {...formProps} layout="vertical" onFinish={handleOnFinish}>
-      {!id && (
-        <Form.Item
-          label="Tenant Partner ID"
-          name={ITenantPartnerDtoProps.id}
-          rules={[{ required: true, message: 'Partner ID is required.' }]}
-        >
-          <InputNumber style={{ width: '100%' }} />
-        </Form.Item>
-      )}
       <Form.Item
         label="Country Code"
         name={ITenantPartnerDtoProps.countryCode}
@@ -168,12 +166,22 @@ export const PartnersUpsert = () => {
       <Form.Item
         label="Versions URL"
         name={['partnerProfileOCPI', 'credentials', 'versionsUrl']}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
       >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="Client Token"
+        name={['partnerProfileOCPI', 'credentials', 'token']}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="Server Token"
+        name={['partnerProfileOCPI', 'credentials', 'serverToken']}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item label="Endpoints" name={['partnerProfileOCPI', 'endpoints']}>
         <Input />
       </Form.Item>
       <SaveButton {...saveButtonProps} />
