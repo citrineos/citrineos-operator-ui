@@ -181,9 +181,6 @@ export const PartnersUpsert = () => {
       >
         <Input />
       </Form.Item>
-      <Form.Item label="Endpoints" name={['partnerProfileOCPI', 'endpoints']}>
-        <Input />
-      </Form.Item>
       <SaveButton {...saveButtonProps} />
     </Form>
   );
