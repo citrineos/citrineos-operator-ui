@@ -10,6 +10,7 @@ import { Card, Descriptions, Flex, Image, Tag, Typography } from 'antd';
 import { ResourceType } from '@util/auth';
 
 import { PartnerAuthorizations } from './partner.authorizations';
+import { EditButton } from '@refinedev/antd';
 
 const { Title, Text } = Typography;
 
@@ -46,6 +47,7 @@ export const PartnersDetail = () => {
           title="Partner Details"
           bordered
           style={{ marginTop: 16 }}
+          extra={<EditButton />}
         >
           <Descriptions.Item label="Country Code">
             {record?.countryCode}

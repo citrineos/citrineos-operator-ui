@@ -4,7 +4,8 @@
 
 import { useForm, SaveButton } from '@refinedev/antd';
 import { TenantPartnerDto } from '../../../dtos/tenant.partner.dto';
-import { Form, Input, Select, InputNumber } from 'antd';
+import { Form, Input, Select, Button, Space, Card } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { ResourceType } from '@util/auth';
 import {
   PARTNER_CREATE_MUTATION,
@@ -21,7 +22,7 @@ export const PartnersUpsert = () => {
   const { id } = useParams();
   const { form, formProps, saveButtonProps } = useForm<TenantPartnerDto>({
     resource: ResourceType.PARTNERS,
-    redirect: 'edit',
+    redirect: 'list',
     onMutationSuccess: (data, variables, context) => {
       console.log('Mutation successful:', data, variables, context);
     },
@@ -30,32 +31,7 @@ export const PartnersUpsert = () => {
     },
     queryOptions: {
       select: (data: GetOneResponse<TenantPartnerDto>) => {
-        const partner = data.data;
-        return {
-          data: {
-            ...partner,
-            partnerProfileOCPI: {
-              ...partner.partnerProfileOCPI,
-              roles: [
-                {
-                  businessDetails: {
-                    name: partner.partnerProfileOCPI?.roles[0]?.businessDetails
-                      ?.name,
-                  },
-                  role: partner.partnerProfileOCPI?.roles[0]?.role,
-                },
-              ],
-              credentials: {
-                versionsUrl:
-                  partner.partnerProfileOCPI?.credentials?.versionsUrl,
-                token: partner.partnerProfileOCPI?.credentials?.token,
-                serverToken:
-                  partner.partnerProfileOCPI?.credentials?.serverToken,
-              },
-              endpoints: partner.partnerProfileOCPI?.endpoints,
-            },
-          },
-        };
+        return data;
       },
     },
     mutationMode: 'pessimistic',
@@ -83,24 +59,19 @@ export const PartnersUpsert = () => {
   });
 
   const handleOnFinish = (values: any) => {
-    const { partnerProfileOCPI, ...rest } = values;
+    const { partnerProfileOCPI, businessName, role, ...rest } = values;
+    let roles;
+    if (id) {
+      roles = partnerProfileOCPI.roles;
+    } else {
+      roles = [{ role: role, businessDetails: { name: businessName } }];
+    }
+
     const input = {
       ...rest,
       partnerProfileOCPI: {
-        roles: [
-          {
-            role: partnerProfileOCPI?.roles[0]?.role,
-            businessDetails: {
-              name: partnerProfileOCPI?.roles[0]?.businessDetails?.name,
-            },
-          },
-        ],
-        credentials: {
-          versionsUrl: partnerProfileOCPI?.credentials?.versionsUrl,
-          token: partnerProfileOCPI?.credentials?.token,
-          serverToken: partnerProfileOCPI?.credentials?.serverToken,
-        },
-        endpoints: partnerProfileOCPI?.endpoints,
+        ...partnerProfileOCPI,
+        roles: roles,
       },
     };
     const newItem: any = getSerializedValues(input, TenantPartnerDto);
@@ -134,35 +105,94 @@ export const PartnersUpsert = () => {
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        label="Business Name"
-        name={['partnerProfileOCPI', 'roles', 0, 'businessDetails', 'name']}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Role"
-        name={['partnerProfileOCPI', 'roles', 0, 'role']}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Select>
-          <Select.Option value="CPO">CPO</Select.Option>
-          <Select.Option value="EMSP">EMSP</Select.Option>
-          <Select.Option value="HUB">HUB</Select.Option>
-          <Select.Option value="NAP">NAP</Select.Option>
-          <Select.Option value="NSP">NSP</Select.Option>
-          <Select.Option value="SCSP">SCSP</Select.Option>
-        </Select>
-      </Form.Item>
+      {id ? (
+        <Form.List name={['partnerProfileOCPI', 'roles']}>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Space
+                  key={key}
+                  style={{ display: 'flex', marginBottom: 8 }}
+                  align="baseline"
+                >
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'role']}
+                    rules={[{ required: true, message: 'Missing role' }]}
+                  >
+                    <Select style={{ width: 120 }}>
+                      <Select.Option value="CPO">CPO</Select.Option>
+                      <Select.Option value="EMSP">EMSP</Select.Option>
+                      <Select.Option value="HUB">HUB</Select.Option>
+                      <Select.Option value="NAP">NAP</Select.Option>
+                      <Select.Option value="NSP">NSP</Select.Option>
+                      <Select.Option value="SCSP">SCSP</Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'businessDetails', 'name']}
+                    rules={[
+                      { required: true, message: 'Missing business name' },
+                    ]}
+                  >
+                    <Input placeholder="Business Name" />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'businessDetails', 'website']}
+                  >
+                    <Input placeholder="Website" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Add Role
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+      ) : (
+        <>
+          <Form.Item
+            label="Business Name"
+            name="businessName"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Role"
+            name="role"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Select>
+              <Select.Option value="CPO">CPO</Select.Option>
+              <Select.Option value="EMSP">EMSP</Select.Option>
+              <Select.Option value="HUB">HUB</Select.Option>
+              <Select.Option value="NAP">NAP</Select.Option>
+              <Select.Option value="NSP">NSP</Select.Option>
+              <Select.Option value="SCSP">SCSP</Select.Option>
+            </Select>
+          </Form.Item>
+        </>
+      )}
       <Form.Item
         label="Versions URL"
         name={['partnerProfileOCPI', 'credentials', 'versionsUrl']}
@@ -181,6 +211,89 @@ export const PartnersUpsert = () => {
       >
         <Input />
       </Form.Item>
+      {id && (
+        <>
+          <Form.Item
+            label="OCPI Version"
+            name={['partnerProfileOCPI', 'version', 'version']}
+          >
+            <Select>
+              <Select.Option value="2.2.1">2.2.1</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Version Details URL"
+            name={['partnerProfileOCPI', 'version', 'versionDetailsUrl']}
+          >
+            <Input />
+          </Form.Item>
+          <Card title="Server Credentials">
+            <Form.Item
+              label="Versions URL"
+              name={['partnerProfileOCPI', 'serverCredentials', 'versionsUrl']}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Token"
+              name={['partnerProfileOCPI', 'serverCredentials', 'token']}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Certificate Ref"
+              name={[
+                'partnerProfileOCPI',
+                'serverCredentials',
+                'certificateRef',
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Card>
+          <Form.List name={['partnerProfileOCPI', 'endpoints']}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: 'flex', marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'identifier']}
+                      rules={[
+                        { required: true, message: 'Missing identifier' },
+                      ]}
+                    >
+                      <Input placeholder="Identifier" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'url']}
+                      rules={[{ required: true, message: 'Missing URL' }]}
+                    >
+                      <Input placeholder="URL" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Endpoint
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+        </>
+      )}
       <SaveButton {...saveButtonProps} />
     </Form>
   );
