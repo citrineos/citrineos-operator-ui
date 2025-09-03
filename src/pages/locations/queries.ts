@@ -35,11 +35,10 @@ export const LOCATIONS_LIST_QUERY = gql`
         protocol
         createdAt
         updatedAt
-        Evses: VariableAttributes(
-          distinct_on: evseDatabaseId
-          where: { evseDatabaseId: { _is_null: false } }
-        ) {
+        evses: Evses {
           id
+          evseTypeId
+          evseId
           createdAt
           updatedAt
         }
@@ -60,7 +59,7 @@ export const LOCATIONS_LIST_QUERY = gql`
             updatedAt
           }
         }
-        Transactions(where: { isActive: { _eq: true } }) {
+        transactions: Transactions(where: { isActive: { _eq: true } }) {
           id
           timeSpentCharging
           isActive
@@ -74,7 +73,7 @@ export const LOCATIONS_LIST_QUERY = gql`
           createdAt
           updatedAt
         }
-        Connectors {
+        connectors: Connectors {
           connectorId
           status
           errorCode

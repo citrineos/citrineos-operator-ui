@@ -23,7 +23,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       locationId
       createdAt
       updatedAt
-      Location {
+      location: Location {
         id
         name
         address
@@ -52,7 +52,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
           updatedAt
         }
       }
-      Transactions(where: { isActive: { _eq: true } }) {
+      transactions: Transactions(where: { isActive: { _eq: true } }) {
         id
         timeSpentCharging
         isActive
@@ -66,7 +66,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
-      Connectors {
+      connectors: Connectors {
         connectorId
         status
         errorCode
@@ -114,7 +114,7 @@ export const FAULTED_CHARGING_STATIONS_LIST_QUERY = gql`
       locationId
       createdAt
       updatedAt
-      Location {
+      location: Location {
         id
         name
         address
@@ -177,7 +177,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       floorLevel
       parkingRestrictions
       capabilities
-      Location {
+      location: Location {
         id
         name
         address
@@ -189,16 +189,10 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         createdAt
         updatedAt
       }
-      ConnectorTypes: VariableAttributes(
-        where: { Variable: { name: { _eq: "ConnectorType" } } }
-      ) {
-        value
-      }
-      Evses: VariableAttributes(
-        distinct_on: evseDatabaseId
-        where: { evseDatabaseId: { _is_null: false } }
-      ) {
+      evses: Evses {
         id
+        evseTypeId
+        evseId
         createdAt
         updatedAt
       }
@@ -233,9 +227,13 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         createdAt
         updatedAt
       }
-      Connectors {
+      connectors: Connectors {
+        id
+        stationId
+        evseId
         connectorId
         status
+        type
         errorCode
         timestamp
         info

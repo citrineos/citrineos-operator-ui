@@ -166,7 +166,7 @@ export const ChargingStationDetailCardContent = ({
 
   let latestTimestamp = 'N/A';
   if (latestLog) {
-    latestTimestamp = formatDate(latestLog.updatedAt);
+    latestTimestamp = formatDate(latestLog.timestamp);
   }
 
   return (
@@ -202,7 +202,7 @@ export const ChargingStationDetailCardContent = ({
           <Flex vertical>
             <Text className="nowrap">Station ID: {station.id}</Text>
             <Text className="nowrap">
-              Location ID:{' '}
+              Location:{' '}
               <Link to={`/locations/${station.locationId}`}>
                 <Tooltip title={station?.location?.name}>
                   <Typography.Text
@@ -215,10 +215,12 @@ export const ChargingStationDetailCardContent = ({
               </Link>
             </Text>
             <Text className="nowrap">
-              Latitude: {station.location?.coordinates?.coordinates[1]}
+              Latitude:{' '}
+              {station.location?.coordinates?.coordinates[1].toFixed(4)}
             </Text>
             <Text className="nowrap">
-              Longitude: {station.location?.coordinates?.coordinates[0]}
+              Longitude:{' '}
+              {station.location?.coordinates?.coordinates[0].toFixed(4)}
             </Text>
           </Flex>
 

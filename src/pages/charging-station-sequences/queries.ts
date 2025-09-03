@@ -29,6 +29,9 @@ export const CHARGING_STATION_SEQUENCES_DELETE_MUTATION = gql`
     delete_ChargingStationSequences(
       where: { stationId: { _eq: $stationId }, type: { _eq: $type } }
     ) {
+      returning {
+        value
+      }
     }
   }
 `;
@@ -43,6 +46,9 @@ export const CHARGING_STATION_SEQUENCES_EDIT_MUTATION = gql`
       where: { stationId: { _eq: $stationId }, type: { _eq: $type } }
       _set: $object
     ) {
+      returning {
+        value
+      }
     }
   }
 `;

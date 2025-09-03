@@ -24,7 +24,7 @@ import { LocationDto } from '../../../dtos/location.dto';
 type SearchProps = GetProps<typeof Input.Search>;
 
 export const LocationsList = () => {
-  const [expandedRowByToggle, setExpandedRowByToggle] = useState<string>();
+  const [expandedRowByToggle, setExpandedRowByToggle] = useState<number>();
   const [searchValue, setSearchValue] = useState<string>('');
   const [filteredStationsByLocation, setFilteredStationsByLocation] = useState<
     Record<string, IChargingStationDto[]>
@@ -42,18 +42,18 @@ export const LocationsList = () => {
   });
 
   const handleExpandToggle = (record: ILocationDto) => {
-    const isCurrentlyExpanded = expandedRowKeys.includes(String(record.id)); // Fix: ensure id is string
+    const isCurrentlyExpanded = expandedRowKeys.includes(record.id!);
 
     if (isCurrentlyExpanded) {
       // Remove this location from expanded rows
       setExpandedRowKeys((prevKeys) =>
-        prevKeys.filter((key) => key !== String(record.id)),
+        prevKeys.filter((key) => key !== record.id),
       );
       setExpandedRowByToggle(undefined);
     } else {
       // Add this location to expanded rows
-      setExpandedRowKeys((prevKeys) => [...prevKeys, String(record.id)]);
-      setExpandedRowByToggle(String(record.id));
+      setExpandedRowKeys((prevKeys) => [...prevKeys, record.id!]);
+      setExpandedRowByToggle(record.id!);
     }
   };
 
@@ -113,7 +113,7 @@ export const LocationsList = () => {
       );
 
       if (matchingStations.length > 0 && location.id !== undefined) {
-        matchedStations[location.id.toString()] = matchingStations;
+        matchedStations[location.id] = matchingStations;
         // Automatically expand locations with matching stations
         newExpandedKeys.push(location.id);
       }
@@ -136,7 +136,7 @@ export const LocationsList = () => {
 
   // Determine if a location should be highlighted based on search results
   const shouldHighlightLocation = (record: ILocationDto): boolean => {
-    return !!filteredStationsByLocation[String(record.id)]?.length;
+    return !!filteredStationsByLocation[record.id!]?.length;
   };
 
   // With backend filtering, all returned locations should be shown
@@ -202,9 +202,7 @@ export const LocationsList = () => {
               return (
                 <LocationsChargingStationsTable
                   location={record}
-                  filteredStations={
-                    filteredStationsByLocation[String(record.id)]
-                  }
+                  filteredStations={filteredStationsByLocation[record.id!]}
                 />
               );
             },

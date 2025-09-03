@@ -67,7 +67,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
                     <strong>Geocoordinates</strong>
                   </td>
                   <td>
-                    {`${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`}
+                    {`${location.coordinates.coordinates[1].toFixed(4)} ${location.coordinates.coordinates[0].toFixed(4)}`}
                   </td>
                 </tr>
                 <tr>

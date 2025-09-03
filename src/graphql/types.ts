@@ -995,6 +995,71 @@ export type ChargingProfilesEditMutation = {
   >;
 };
 
+export type ChargingStationSequencesGetQueryVariables = Types.Exact<{
+  stationId: Types.Scalars['String']['input'];
+  type: Types.Scalars['String']['input'];
+}>;
+
+export type ChargingStationSequencesGetQuery = {
+  ChargingStationSequences: Array<
+    Pick<Types.ChargingStationSequences, 'value'>
+  >;
+};
+
+export type ChargingStationSequencesCreateMutationVariables = Types.Exact<{
+  object: Types.ChargingStationSequences_Insert_Input;
+}>;
+
+export type ChargingStationSequencesCreateMutation = {
+  insert_ChargingStationSequences_one?: Types.Maybe<
+    Pick<Types.ChargingStationSequences, 'value'>
+  >;
+};
+
+export type ChargingStationSequencesDeleteMutationVariables = Types.Exact<{
+  stationId: Types.Scalars['String']['input'];
+  type: Types.Scalars['String']['input'];
+}>;
+
+export type ChargingStationSequencesDeleteMutation = {
+  delete_ChargingStationSequences?: Types.Maybe<{
+    returning: Array<Pick<Types.ChargingStationSequences, 'value'>>;
+  }>;
+};
+
+export type ChargingStationSequencesEditMutationVariables = Types.Exact<{
+  stationId: Types.Scalars['String']['input'];
+  type: Types.Scalars['String']['input'];
+  object: Types.ChargingStationSequences_Set_Input;
+}>;
+
+export type ChargingStationSequencesEditMutation = {
+  update_ChargingStationSequences?: Types.Maybe<{
+    returning: Array<Pick<Types.ChargingStationSequences, 'value'>>;
+  }>;
+};
+
+export type ChargingStationSequencesListQueryVariables = Types.Exact<{
+  offset: Types.Scalars['Int']['input'];
+  limit: Types.Scalars['Int']['input'];
+  order_by?: Types.InputMaybe<
+    | Array<Types.ChargingStationSequences_Order_By>
+    | Types.ChargingStationSequences_Order_By
+  >;
+  where?: Types.InputMaybe<Types.ChargingStationSequences_Bool_Exp>;
+}>;
+
+export type ChargingStationSequencesListQuery = {
+  ChargingStationSequences: Array<
+    Pick<Types.ChargingStationSequences, 'value'>
+  >;
+  ChargingStationSequences_aggregate: {
+    aggregate?: Types.Maybe<
+      Pick<Types.ChargingStationSequences_Aggregate_Fields, 'count'>
+    >;
+  };
+};
+
 export type ChangeConfigurationListQueryVariables = Types.Exact<{
   offset: Types.Scalars['Int']['input'];
   limit: Types.Scalars['Int']['input'];
@@ -1140,7 +1205,7 @@ export type ChargingStationsFaultedListQuery = {
       Types.ChargingStations,
       'id' | 'isOnline' | 'protocol' | 'locationId' | 'createdAt' | 'updatedAt'
     > & {
-      Location?: Types.Maybe<
+      location?: Types.Maybe<
         Pick<
           Types.Locations,
           | 'id'
@@ -1208,7 +1273,7 @@ export type GetChargingStationByIdQuery = {
       | 'parkingRestrictions'
       | 'capabilities'
     > & {
-      Location?: Types.Maybe<
+      location?: Types.Maybe<
         Pick<
           Types.Locations,
           | 'id'
@@ -1223,9 +1288,11 @@ export type GetChargingStationByIdQuery = {
           | 'updatedAt'
         >
       >;
-      ConnectorTypes: Array<Pick<Types.VariableAttributes, 'value'>>;
-      Evses: Array<
-        Pick<Types.VariableAttributes, 'id' | 'createdAt' | 'updatedAt'>
+      evses: Array<
+        Pick<
+          Types.Evses,
+          'id' | 'evseTypeId' | 'evseId' | 'createdAt' | 'updatedAt'
+        >
       >;
       LatestStatusNotifications: Array<
         Pick<
@@ -1251,7 +1318,7 @@ export type GetChargingStationByIdQuery = {
           >;
         }
       >;
-      Transactions: Array<
+      transactions: Array<
         Pick<
           Types.Transactions,
           | 'id'
@@ -1268,11 +1335,15 @@ export type GetChargingStationByIdQuery = {
           | 'updatedAt'
         >
       >;
-      Connectors: Array<
+      connectors: Array<
         Pick<
           Types.Connectors,
+          | 'id'
+          | 'stationId'
+          | 'evseId'
           | 'connectorId'
           | 'status'
+          | 'type'
           | 'errorCode'
           | 'timestamp'
           | 'info'

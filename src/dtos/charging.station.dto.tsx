@@ -1,7 +1,5 @@
-import { Expose, plainToInstance } from 'class-transformer';
-import { IsBoolean, validateSync } from 'class-validator';
-import { EvseDto } from './evse.dto';
-import { ToClass } from '../util/Transformers';
+import { Expose } from 'class-transformer';
+import { IsBoolean } from 'class-validator';
 import {
   IChargingStationDto,
   IStatusNotificationDto,
@@ -35,39 +33,8 @@ export class ChargingStationDto implements Partial<IChargingStationDto> {
   locationId?: number | null;
   @Expose({ name: 'StatusNotifications' })
   statusNotifications?: IStatusNotificationDto[] | null;
-
-  @Expose({ name: 'Evses' })
-  @ToClass((value: { Evse: EvseDto }[]) => {
-    if (value === null || value === undefined) {
-      return undefined;
-    }
-    return value.map((val: any) => {
-      if ('Evse' in val) {
-        return plainToInstance(EvseDto, val.Evse);
-      } else {
-        const instance = plainToInstance(EvseDto, val);
-        const errors = validateSync(value, { whitelist: true });
-        if (errors.length === 0) {
-          return instance;
-        } else {
-          return val;
-        }
-      }
-    });
-  })
   evses?: IEvseDto[] | null;
-
-  @Expose({ name: 'ConnectorTypes' })
-  @ToClass((value: { value: string }[]) => {
-    if (value === null || value === undefined) {
-      return undefined;
-    }
-    return value
-      .filter((val: { value: string }) => !!val.value)
-      .map((val: { value: string }) => val.value);
-  })
   connectors?: IConnectorDto[] | null;
-
   // Add missing properties from IChargingStationDto
   location?: ILocationDto;
   networkProfiles?: any;
