@@ -229,7 +229,8 @@ export const LocationsList = () => {
           <Table.Column
             key="actions"
             dataIndex="actions"
-            title="Actions"
+            title=""
+            width="15%"
             onCell={() => ({
               className: 'column-actions',
             })}

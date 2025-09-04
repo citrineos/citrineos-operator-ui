@@ -7,6 +7,7 @@ import { Table } from 'antd';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { LocationDtoProps } from '@citrineos/base';
+import { getFullAddress } from '@util/geocoding';
 
 /**
  * Get column definitions for locations table
@@ -37,8 +38,9 @@ export const getLocationsColumns = (
           },
           style: { cursor: 'pointer' },
         })}
+        width="35%"
         render={(_: any, record) => {
-          return <h4>{record.name}</h4>;
+          return <span>{record.name}</span>;
         }}
       />
       <Table.Column
@@ -48,30 +50,20 @@ export const getLocationsColumns = (
         onCell={() => ({
           className: `column-${LocationDtoProps.address}`,
         })}
+        width="35%"
+        render={(_: any, record) => <span>{getFullAddress(record)}</span>}
       />
       <Table.Column
-        key={LocationDtoProps.city}
-        dataIndex={LocationDtoProps.city}
-        title="City"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.city}`,
-        })}
-      />
-      <Table.Column
-        key={LocationDtoProps.postalCode}
-        dataIndex={LocationDtoProps.postalCode}
-        title="Postal Code"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.postalCode}`,
-        })}
-      />
-      <Table.Column
-        key={LocationDtoProps.state}
-        dataIndex={LocationDtoProps.state}
-        title="State"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.state}`,
-        })}
+        key="totalChargers"
+        title="Total Chargers"
+        width="15%"
+        render={(_: any, record) => (
+          <span>
+            {record[LocationDtoProps.chargingPool]
+              ? record[LocationDtoProps.chargingPool].length
+              : 0}
+          </span>
+        )}
       />
     </>
   );

@@ -64,10 +64,12 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
                 </tr>
                 <tr>
                   <td>
-                    <strong>Geocoordinates</strong>
+                    <strong>Coordinates</strong>
                   </td>
                   <td>
-                    {`${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`}
+                    {location.coordinates
+                      ? `${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`
+                      : 'N/A'}
                   </td>
                 </tr>
                 <tr>
