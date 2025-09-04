@@ -6,13 +6,23 @@ import { useShow } from '@refinedev/core';
 import { TenantPartnerDto } from '../../../dtos/tenant.partner.dto';
 import { PARTNER_DETAIL_QUERY } from '../queries';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { Card, Descriptions, Flex, Image, Tag, Typography } from 'antd';
+import {
+  Card,
+  Descriptions,
+  Flex,
+  Image,
+  Tag,
+  Typography,
+  Tabs,
+  TabsProps,
+} from 'antd';
 import { ResourceType } from '@util/auth';
 
 import { PartnerAuthorizations } from './partner.authorizations';
+import { PartnerEndpointsTable } from './partner.endpoints.table';
 import { EditButton } from '@refinedev/antd';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export const PartnersDetail = () => {
   const { queryResult } = useShow<TenantPartnerDto>({
@@ -24,11 +34,35 @@ export const PartnersDetail = () => {
   });
 
   const { data } = queryResult;
-  console.log(queryResult);
   const record = data?.data;
-
   const businessDetails =
     record?.partnerProfileOCPI?.roles?.[0]?.businessDetails;
+
+  const tabItems: TabsProps['items'] = [
+    {
+      key: 'endpoints',
+      label: 'Endpoints',
+      children:
+        typeof record?.id === 'number' && record?.id > 0 ? (
+          <PartnerEndpointsTable
+            partnerId={record.id}
+            endpoints={record?.partnerProfileOCPI?.endpoints || []}
+            partnerProfileOCPI={record?.partnerProfileOCPI}
+          />
+        ) : (
+          <div style={{ padding: 32, textAlign: 'center' }}>
+            <span>Loading partner data...</span>
+          </div>
+        ),
+    },
+    {
+      key: 'authorizations',
+      label: 'Authorizations',
+      children: record?.id ? (
+        <PartnerAuthorizations partnerId={record.id} />
+      ) : null,
+    },
+  ];
 
   return (
     <Flex vertical>
@@ -82,23 +116,10 @@ export const PartnersDetail = () => {
             </a>
           </Descriptions.Item>
         </Descriptions>
-        <Title level={4} style={{ marginTop: 24 }}>
-          Endpoints
-        </Title>
-        <Descriptions bordered>
-          {record?.partnerProfileOCPI?.endpoints?.map((endpoint: any) => (
-            <Descriptions.Item
-              key={endpoint.identifier}
-              label={endpoint.identifier}
-            >
-              <a href={endpoint.url} target="_blank" rel="noopener noreferrer">
-                {endpoint.url}
-              </a>
-            </Descriptions.Item>
-          ))}
-        </Descriptions>
       </Card>
-      {record?.id && <PartnerAuthorizations partnerId={record.id} />}
+      <Card style={{ marginTop: 24 }}>
+        <Tabs defaultActiveKey="endpoints" items={tabItems} />
+      </Card>
     </Flex>
   );
 };

@@ -23,12 +23,6 @@ export const PartnersUpsert = () => {
   const { form, formProps, saveButtonProps } = useForm<TenantPartnerDto>({
     resource: ResourceType.PARTNERS,
     redirect: 'list',
-    onMutationSuccess: (data, variables, context) => {
-      console.log('Mutation successful:', data, variables, context);
-    },
-    onMutationError: (error, variables, context) => {
-      console.error('Mutation error:', error, variables, context);
-    },
     queryOptions: {
       select: (data: GetOneResponse<TenantPartnerDto>) => {
         return data;
@@ -227,7 +221,7 @@ export const PartnersUpsert = () => {
           >
             <Input />
           </Form.Item>
-          <Card title="Server Credentials">
+          <Card title="Server Credentials" style={{ marginBottom: 8 }}>
             <Form.Item
               label="Versions URL"
               name={['partnerProfileOCPI', 'serverCredentials', 'versionsUrl']}
@@ -240,58 +234,7 @@ export const PartnersUpsert = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              label="Certificate Ref"
-              name={[
-                'partnerProfileOCPI',
-                'serverCredentials',
-                'certificateRef',
-              ]}
-            >
-              <Input />
-            </Form.Item>
           </Card>
-          <Form.List name={['partnerProfileOCPI', 'endpoints']}>
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
-                    align="baseline"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'identifier']}
-                      rules={[
-                        { required: true, message: 'Missing identifier' },
-                      ]}
-                    >
-                      <Input placeholder="Identifier" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'url']}
-                      rules={[{ required: true, message: 'Missing URL' }]}
-                    >
-                      <Input placeholder="URL" />
-                    </Form.Item>
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Add Endpoint
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
         </>
       )}
       <SaveButton {...saveButtonProps} />
