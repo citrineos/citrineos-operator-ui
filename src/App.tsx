@@ -191,7 +191,6 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
                         <MainMenu activeSection={activeSection} />
                         <AntdLayout>
                           <AppModal />
-                          <Header activeSection={activeSection} />
                           <AntdLayout.Content
                             className={`content-container ${routeClassName}`}
                           >
