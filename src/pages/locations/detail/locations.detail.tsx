@@ -32,19 +32,6 @@ export const LocationsDetail = () => {
   if (isLoading) return <p>Loading...</p>;
   if (!location) return <p>No Data Found</p>;
 
-  const tabItems: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Charging Stations',
-      children: <LocationsChargingStationsTable location={location} />,
-    },
-    // {
-    //   key: '2',
-    //   label: 'KPI Charts',
-    //   children: 'KPI Charts Content',
-    // },
-  ];
-
   return (
     <CanAccess
       resource={ResourceType.LOCATIONS}
@@ -57,7 +44,7 @@ export const LocationsDetail = () => {
         </Card>
 
         <Card>
-          <Tabs defaultActiveKey="1" items={tabItems} />
+          <LocationsChargingStationsTable location={location} />
         </Card>
       </div>
     </CanAccess>

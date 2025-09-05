@@ -8,16 +8,11 @@ import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CanAccess, useNavigation } from '@refinedev/core';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
 
 const createLocationItem = (label: string, value: string) => {
-  return (
-    <Descriptions.Item label={<strong>{label}</strong>}>
-      {value}
-    </Descriptions.Item>
-  );
+  return <Descriptions.Item label={label}>{value}</Descriptions.Item>;
 };
 
 export interface LocationDetailCardProps {
@@ -30,8 +25,8 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
 
   return (
     <Flex gap={16}>
-      <Flex vertical flex="1 1 auto">
-        <Flex gap={12} align={'center'} style={{ marginBottom: 16 }}>
+      <Flex gap={16} vertical flex="1 1 auto">
+        <Flex gap={12} align={'center'}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -60,7 +55,11 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
         </Flex>
         <Flex justify="space-between" gap={16}>
           <Flex vertical gap={32}>
-            <Descriptions size="small" layout="vertical">
+            <Descriptions
+              size="small"
+              layout="vertical"
+              classNames={{ label: 'description-label' }}
+            >
               {createLocationItem('Address', getFullAddress(location))}
               {createLocationItem(
                 'Coordinates',
@@ -70,26 +69,6 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
               )}
               {createLocationItem('Time Zone', location.timeZone)}
             </Descriptions>
-          </Flex>
-        </Flex>
-        <Flex style={{ marginTop: '32px' }}>
-          <Flex>
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.CREATE}
-            >
-              <Button
-                className="secondary"
-                onClick={() =>
-                  push(
-                    `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
-                  )
-                }
-              >
-                Add New Charging Station
-                <PlusIcon />
-              </Button>
-            </CanAccess>
           </Flex>
         </Flex>
       </Flex>

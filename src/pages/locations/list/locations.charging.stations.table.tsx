@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table } from 'antd';
+import { Button, Flex, Table } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { useDispatch } from 'react-redux';
@@ -12,6 +12,8 @@ import { getChargingStationColumns } from '../../charging-stations/columns';
 import { openModal } from '../../../redux/modal.slice';
 import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 import { ILocationDto, IChargingStationDto } from '@citrineos/base';
+import { MenuSection } from '../../../components/main-menu/main.menu';
+import { PlusIcon } from '../../../components/icons/plus.icon';
 
 export interface LocationsChargingStationsTableProps {
   location: ILocationDto;
@@ -87,19 +89,42 @@ export const LocationsChargingStationsTable = ({
   );
 
   return (
-    <CanAccess
-      resource={ResourceType.CHARGING_STATIONS}
-      action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
-    >
-      <Table
-        rowKey="id"
-        className="table nested"
-        dataSource={stationsToDisplay}
-        showHeader={true}
+    <Flex vertical gap={16}>
+      <Flex gap={12} align={'center'}>
+        <h4>Charging Stations</h4>
+        <CanAccess
+          resource={ResourceType.CHARGING_STATIONS}
+          action={ActionType.CREATE}
+        >
+          <Button
+            className="secondary"
+            onClick={() =>
+              push(
+                `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
+              )
+            }
+          >
+            <Flex gap={4} align={'center'}>
+              Add New Charging Station
+              <PlusIcon />
+            </Flex>
+          </Button>
+        </CanAccess>
+      </Flex>
+      <CanAccess
+        resource={ResourceType.CHARGING_STATIONS}
+        action={ActionType.LIST}
+        fallback={<AccessDeniedFallback />}
       >
-        {columns}
-      </Table>
-    </CanAccess>
+        <Table
+          rowKey="id"
+          className="table nested"
+          dataSource={stationsToDisplay}
+          showHeader={true}
+        >
+          {columns}
+        </Table>
+      </CanAccess>
+    </Flex>
   );
 };
