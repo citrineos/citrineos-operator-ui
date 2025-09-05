@@ -38,7 +38,7 @@ export const LocationsDetail = () => {
       action={ActionType.SHOW}
       params={{ id: location.id }}
     >
-      <div style={{ padding: '16px' }}>
+      <div>
         <Card className="location-details">
           <LocationDetailCard location={location} />
         </Card>

@@ -12,13 +12,16 @@ main {
   height: calc(100vh - 130px);
   overflow: auto;
 
-  .content-outer-wrap,
-  .content-inner-wrap {
+  .content-outer-wrap {
     padding: var(--ant-padding-xl);
   }
 
   .content-inner-wrap {
-    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .content-inner-wrap {
+    border-radius: var(--ant-border-radius-lg);
     background-color: var(--ant-color-bg-base);
     box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.1);
   }

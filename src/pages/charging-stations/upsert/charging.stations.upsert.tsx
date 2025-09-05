@@ -17,7 +17,6 @@ import {
 } from '../../locations/queries';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { LocationIcon } from '../../../components/icons/location.icon';
 import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { useSearchParams } from 'react-router-dom';
@@ -247,27 +246,17 @@ export const ChargingStationUpsert = () => {
         onChange={handleOnChange}
         data-testid="charging-stations-create-form"
       >
-        <Flex gap={32}>
-          <Flex flex={1} vertical>
-            <Flex
-              align="center"
-              className="relative"
-              style={{ marginBottom: 16 }}
-            >
-              <ArrowLeftIcon
-                style={{
-                  cursor: 'pointer',
-                  position: 'absolute',
-                  transform: 'translateX(-100%)',
-                }}
-                onClick={() => goBack()}
-              />
-              <h3>
-                {stationId
-                  ? 'Edit Charging Station'
-                  : 'Create Charging Station'}
-              </h3>
-            </Flex>
+        <Flex vertical gap={16}>
+          <Flex gap={12} align={'center'}>
+            <ArrowLeftIcon
+              style={{
+                cursor: 'pointer',
+              }}
+              onClick={() => goBack()}
+            />
+            <h3>{stationId ? 'Edit' : 'Create'} Charging Station</h3>
+          </Flex>
+          <Flex gap={16} wrap>
             <Form.Item
               key={ChargingStationDtoProps.id}
               label="Charging Station Id"
@@ -276,6 +265,7 @@ export const ChargingStationUpsert = () => {
                 { required: true, message: 'Charging Station ID is required' },
               ]}
               data-testid={ChargingStationDtoProps.id}
+              style={{ width: '32%' }}
             >
               <Input />
             </Form.Item>
@@ -284,6 +274,7 @@ export const ChargingStationUpsert = () => {
               label="Is Online"
               name={ChargingStationDtoProps.isOnline}
               data-testid={ChargingStationDtoProps.isOnline}
+              style={{ width: '32%' }}
             >
               <Select onChange={handleOnChange}>
                 <Select.Option value={true}>Yes</Select.Option>
@@ -305,6 +296,7 @@ export const ChargingStationUpsert = () => {
               name="locationName"
               data-testid="locationName"
               rules={[{ required: true, message: 'Please select a location' }]}
+              style={{ width: '32%' }}
             >
               <AutoComplete
                 {...selectProps}
@@ -319,6 +311,7 @@ export const ChargingStationUpsert = () => {
               label="Floor Level"
               name={ChargingStationDtoProps.floorLevel}
               data-testid={ChargingStationDtoProps.floorLevel}
+              style={{ width: '32%' }}
             >
               <Input />
             </Form.Item>
@@ -327,6 +320,7 @@ export const ChargingStationUpsert = () => {
               label="Parking Restrictions"
               name={ChargingStationDtoProps.parkingRestrictions}
               data-testid={ChargingStationDtoProps.parkingRestrictions}
+              style={{ width: '32%' }}
             >
               <Select
                 mode="tags"
@@ -347,6 +341,7 @@ export const ChargingStationUpsert = () => {
               label="Capabilities"
               name={ChargingStationDtoProps.capabilities}
               data-testid={ChargingStationDtoProps.capabilities}
+              style={{ width: '32%' }}
             >
               <Select mode="tags" placeholder="Select capabilities" allowClear>
                 {Object.keys(ChargingStationCapability).map((capability) => (
@@ -356,39 +351,26 @@ export const ChargingStationUpsert = () => {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item>
-              <Flex gap={16}>
-                {stationId && (
-                  <Button onClick={handleReset} disabled={!isFormChanged}>
-                    Reset
-                  </Button>
-                )}
-                <Button onClick={handleCancel} danger>
-                  Cancel
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  data-testid="locations-create-form-submit"
-                >
-                  Submit
-                </Button>
-              </Flex>
-            </Form.Item>
           </Flex>
-          <Flex
-            vertical
-            flex={1}
-            align={'center'}
-            justify={'center'}
-            style={{
-              background: '#D9D9D9',
-              color: '#C3BDB9',
-            }}
-          >
-            <LocationIcon width={100} height={100} />
-            UPLOAD CHARGING STATION IMAGE
-          </Flex>
+          <Form.Item>
+            <Flex gap={16}>
+              {stationId && (
+                <Button onClick={handleReset} disabled={!isFormChanged}>
+                  Reset
+                </Button>
+              )}
+              <Button onClick={handleCancel} danger>
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                data-testid="locations-create-form-submit"
+              >
+                Submit
+              </Button>
+            </Flex>
+          </Form.Item>
         </Flex>
       </Form>
     </CanAccess>
