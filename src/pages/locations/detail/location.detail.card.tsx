@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import { getFullAddress } from '@util/geocoding';
 import { Button, Descriptions, Flex, Tag } from 'antd';
 import { useLocation } from 'react-router-dom';
@@ -10,10 +11,7 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
-
-const createLocationItem = (label: string, value: string) => {
-  return <Descriptions.Item label={label}>{value}</Descriptions.Item>;
-};
+import { EditOutlined } from '@ant-design/icons';
 
 export interface LocationDetailCardProps {
   location: ILocationDto;
@@ -45,11 +43,13 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
           >
             <Button
               className="secondary"
+              icon={<EditOutlined />}
+              iconPosition="end"
               onClick={() =>
                 push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
               }
             >
-              Edit Location
+              Edit
             </Button>
           </CanAccess>
         </Flex>

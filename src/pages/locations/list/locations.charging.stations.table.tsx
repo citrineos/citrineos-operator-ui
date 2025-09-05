@@ -13,7 +13,7 @@ import { openModal } from '../../../redux/modal.slice';
 import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 import { ILocationDto, IChargingStationDto } from '@citrineos/base';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { PlusIcon } from '../../../components/icons/plus.icon';
+import { PlusOutlined } from '@ant-design/icons';
 
 export interface LocationsChargingStationsTableProps {
   location: ILocationDto;
@@ -97,17 +97,16 @@ export const LocationsChargingStationsTable = ({
           action={ActionType.CREATE}
         >
           <Button
-            className="secondary"
+            className="success"
+            icon={<PlusOutlined />}
+            iconPosition="end"
             onClick={() =>
               push(
                 `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
               )
             }
           >
-            <Flex gap={4} align={'center'}>
-              Add New Charging Station
-              <PlusIcon />
-            </Flex>
+            Add
           </Button>
         </CanAccess>
       </Flex>
