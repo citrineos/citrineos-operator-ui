@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Flex, message, Tooltip, Typography } from 'antd';
-import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
+import { Button, Descriptions, Flex, message, Tooltip, Typography } from 'antd';
 import {
   Link,
   useDelete,
@@ -12,7 +11,11 @@ import {
   useOne,
   CanAccess,
 } from '@refinedev/core';
-import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
 import React, { useCallback } from 'react';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { useDispatch } from 'react-redux';
@@ -35,8 +38,10 @@ import {
 import { ActionType, CommandType } from '@util/auth';
 import { IOCPPMessageDto, OCPPMessageDtoProps } from '@citrineos/base';
 import { IChargingStationDto } from '@citrineos/base';
+import { NOT_APPLICABLE } from '@util/consts';
 
 const { Text } = Typography;
+const UNKNOWN_TEXT = 'Unknown';
 
 export interface ChargingStationDetailCardContentProps {
   stationId: string;
@@ -164,25 +169,15 @@ export const ChargingStationDetailCardContent = ({
 
   const hasActiveTransactions = false; // transactions are not a direct property
 
-  let latestTimestamp = 'N/A';
+  let latestTimestamp = NOT_APPLICABLE;
   if (latestLog) {
     latestTimestamp = formatDate(latestLog.updatedAt);
   }
 
   return (
     <Flex gap={16}>
-      <Flex vertical>
-        <div className="image-placeholder">
-          <ChargingStationIcon width={108} height={108} />
-        </div>
-      </Flex>
-      <Flex vertical flex="1 1 auto">
-        <Flex
-          gap={8}
-          align={'center'}
-          style={{ marginBottom: 16 }}
-          key={`${station.isOnline}`}
-        >
+      <Flex gap={16} vertical flex="1 1 auto">
+        <Flex gap={12} align={'center'} key={`${station.isOnline}`}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -197,144 +192,104 @@ export const ChargingStationDetailCardContent = ({
           <span className={station.isOnline ? 'online' : 'offline'}>
             {station.isOnline ? 'Online' : 'Offline'}
           </span>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.EDIT}
+            params={{ id: station.id }}
+          >
+            <Button
+              className="secondary"
+              icon={<EditOutlined />}
+              iconPosition="end"
+              onClick={() =>
+                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
+              }
+            >
+              Edit
+            </Button>
+          </CanAccess>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.DELETE}
+            params={{ id: station.id }}
+          >
+            <Button
+              className="error"
+              icon={<DeleteOutlined />}
+              iconPosition="end"
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </CanAccess>
         </Flex>
-        <Flex justify="space-between" gap={16}>
-          <Flex vertical>
-            <Text className="nowrap">Station ID: {station.id}</Text>
-            <Text className="nowrap">
-              Location ID:{' '}
+        <Descriptions
+          layout="vertical"
+          column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+          colon={false}
+          classNames={{
+            label: 'description-label',
+          }}
+        >
+          <Descriptions.Item label="Location ID">
+            {station?.location?.name ? (
               <Link to={`/locations/${station.locationId}`}>
                 <Tooltip title={station?.location?.name}>
-                  <Typography.Text
+                  <Text
                     ellipsis
                     style={{ maxWidth: 150, display: 'inline-block' }}
                   >
                     {station?.location?.name}
-                  </Typography.Text>
+                  </Text>
                 </Tooltip>
               </Link>
-            </Text>
-            <Text className="nowrap">
-              Latitude: {station.location?.coordinates?.coordinates[1]}
-            </Text>
-            <Text className="nowrap">
-              Longitude: {station.location?.coordinates?.coordinates[0]}
-            </Text>
-          </Flex>
+            ) : (
+              NOT_APPLICABLE
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Latitude">
+            {station.location?.coordinates
+              ? station.location.coordinates.coordinates[1]
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Longitude">
+            {station.location?.coordinates
+              ? station.location.coordinates.coordinates[0]
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            {(station.evses?.length ?? 0) > 0 ? (
+              <ChargingStationStatusTag station={station} />
+            ) : (
+              NOT_APPLICABLE
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Timestamp">
+            {latestTimestamp}
+          </Descriptions.Item>
+          <Descriptions.Item label="Model">
+            {station.chargePointModel ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Vendor">
+            {station.chargePointVendor ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Firmware Version">
+            {station.firmwareVersion ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Connector Types">
+            {(station.connectors?.length ?? 0) > 0
+              ? station
+                  .connectors!.map((c) => c.type)
+                  .filter(Boolean)
+                  .join(', ')
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Total EVSEs">
+            {station.evses?.length ?? 0}
+          </Descriptions.Item>
+        </Descriptions>
 
-          <Flex vertical className="border-left">
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Status</h5>
-                  </td>
-                  <td>
-                    <ChargingStationStatusTag station={station} />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>TimeStamp</h5>
-                  </td>
-                  <td>{latestTimestamp}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Model</h5>
-                  </td>
-                  <td>
-                    {station.chargePointModel ? (
-                      station.chargePointModel
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Vendor</h5>
-                  </td>
-                  <td>
-                    {station.chargePointVendor ? (
-                      station.chargePointVendor
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-
-          <Flex vertical className="border-left">
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Firmware Version</h5>
-                  </td>
-                  <td>
-                    {station.firmwareVersion ? (
-                      station.firmwareVersion
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Connector Type</h5>
-                  </td>
-                  <td>
-                    <Text>
-                      {station.connectors && station.connectors.length > 0
-                        ? station.connectors
-                            .map((c) => c.type)
-                            .filter(Boolean)
-                            .join(', ')
-                        : 'N/A'}
-                    </Text>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Number of EVSEs</h5>
-                  </td>
-                  <td>
-                    <Text>{station.evses?.length || '0'}</Text>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-
-          <Flex vertical>
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.EDIT}
-              params={{ id: station.id }}
-            >
-              <Button
-                type="text"
-                icon={<EditOutlined />}
-                onClick={() =>
-                  push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
-                }
-              />
-            </CanAccess>
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.DELETE}
-              params={{ id: station.id }}
-            >
-              <Button className="secondary" onClick={handleDeleteClick}>
-                Delete
-              </Button>
-            </CanAccess>
-          </Flex>
-        </Flex>
-        <Flex style={{ marginTop: '32px' }}>
+        <Flex>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.COMMAND}
