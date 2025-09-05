@@ -86,8 +86,8 @@ export const getChargingStationColumns = (
       dataIndex={ChargingStationDtoProps.protocol}
       title="Protocol"
       render={(_: any, record: IChargingStationDto) => {
-        let color = 'default';
-        let protocolName = 'Unknown';
+        let color: string;
+        let protocolName: string;
 
         switch (record[ChargingStationDtoProps.protocol]) {
           case OCPPVersion.OCPP1_6:
