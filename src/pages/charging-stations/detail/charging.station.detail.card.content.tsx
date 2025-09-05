@@ -14,6 +14,7 @@ import {
 import {
   DeleteOutlined,
   EditOutlined,
+  EllipsisOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import React, { useCallback } from 'react';
@@ -303,66 +304,76 @@ export const ChargingStationDetailCardContent = ({
               align="center"
               flex="1 1 auto"
             >
-              <Flex gap={16} flex="1 1 auto">
-                {station.isOnline ? (
-                  <Flex gap={16} flex="1 1 auto">
-                    {!hasActiveTransactions && (
-                      <CanAccess
-                        resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.COMMAND}
-                        params={{
-                          id: station.id,
-                          commandType: CommandType.START_TRANSACTION,
-                        }}
-                      >
-                        <Button onClick={() => showRemoteStartModal(station)}>
-                          Start Transaction
-                        </Button>
-                      </CanAccess>
-                    )}
-                    {hasActiveTransactions && (
-                      <CanAccess
-                        resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.COMMAND}
-                        params={{
-                          id: station.id,
-                          commandType: CommandType.STOP_TRANSACTION,
-                        }}
-                      >
-                        <Button
-                          onClick={() => handleStopTransactionClick(station)}
-                        >
-                          Stop Transaction
-                        </Button>
-                      </CanAccess>
-                    )}
+              <Flex vertical gap={8} flex="1 1 auto">
+                {!station.isOnline && (
+                  <Typography.Text type="secondary">
+                    <InfoCircleOutlined style={{ marginRight: 8 }} />
+                    Station offline - commands unavailable
+                  </Typography.Text>
+                )}
+                <Flex gap={16} flex="1 1 auto">
+                  {!hasActiveTransactions && (
                     <CanAccess
                       resource={ResourceType.CHARGING_STATIONS}
                       action={ActionType.COMMAND}
                       params={{
                         id: station.id,
-                        commandType: CommandType.RESET,
+                        commandType: CommandType.START_TRANSACTION,
                       }}
                     >
-                      <Button onClick={() => showResetStartModal(station)}>
-                        Reset
+                      <Button
+                        type="primary"
+                        disabled={!station.isOnline}
+                        onClick={() => showRemoteStartModal(station)}
+                      >
+                        Start Transaction
                       </Button>
                     </CanAccess>
-                  </Flex>
-                ) : (
-                  <Flex gap={16} flex="1 1 auto" align="center">
-                    <Typography.Text type="secondary">
-                      <InfoCircleOutlined style={{ marginRight: 8 }} />
-                      Station offline - commands unavailable
-                    </Typography.Text>
-                  </Flex>
-                )}
-              </Flex>
-
-              <Flex>
-                <Button type="link" onClick={showOtherCommandsModal}>
-                  Other Commands →
-                </Button>
+                  )}
+                  {hasActiveTransactions && (
+                    <CanAccess
+                      resource={ResourceType.CHARGING_STATIONS}
+                      action={ActionType.COMMAND}
+                      params={{
+                        id: station.id,
+                        commandType: CommandType.STOP_TRANSACTION,
+                      }}
+                    >
+                      <Button
+                        className="error"
+                        onClick={() => handleStopTransactionClick(station)}
+                        disabled={!station.isOnline}
+                      >
+                        Stop Transaction
+                      </Button>
+                    </CanAccess>
+                  )}
+                  <CanAccess
+                    resource={ResourceType.CHARGING_STATIONS}
+                    action={ActionType.COMMAND}
+                    params={{
+                      id: station.id,
+                      commandType: CommandType.RESET,
+                    }}
+                  >
+                    <Button
+                      type="primary"
+                      onClick={() => showResetStartModal(station)}
+                      disabled={!station.isOnline}
+                    >
+                      Reset
+                    </Button>
+                  </CanAccess>
+                  <Button
+                    type="primary"
+                    icon={<EllipsisOutlined />}
+                    iconPosition="end"
+                    onClick={showOtherCommandsModal}
+                    disabled={!station.isOnline}
+                  >
+                    Other Commands
+                  </Button>
+                </Flex>
               </Flex>
             </Flex>
           </CanAccess>
