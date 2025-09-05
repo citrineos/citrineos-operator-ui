@@ -262,3 +262,13 @@ button.secondary {
     fill: var(--ant-color-text-base);
   }
 }
+
+.ant-descriptions-item {
+  padding-bottom: 4px !important;
+}
+
+.ant-descriptions-item-label.description-label {
+  font-weight: bold;
+  color: var(--secondary-color-4);
+  font-size: var(--ant-font-size-lg);
+}

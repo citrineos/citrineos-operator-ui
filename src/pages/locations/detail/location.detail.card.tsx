@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { getFullAddress } from '@util/geocoding';
-import { Button, Descriptions, Flex } from 'antd';
+import { Button, Descriptions, Flex, Tag } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
@@ -56,18 +56,31 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
         <Flex justify="space-between" gap={16}>
           <Flex vertical gap={32}>
             <Descriptions
-              size="small"
               layout="vertical"
-              classNames={{ label: 'description-label' }}
+              colon={false}
+              classNames={{
+                label: 'description-label',
+              }}
             >
-              {createLocationItem('Address', getFullAddress(location))}
-              {createLocationItem(
-                'Coordinates',
-                location.coordinates
+              <Descriptions.Item label="Address">
+                {getFullAddress(location)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Coordinates">
+                {location.coordinates
                   ? `${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`
-                  : 'N/A',
-              )}
-              {createLocationItem('Time Zone', location.timeZone)}
+                  : 'N/A'}
+              </Descriptions.Item>
+              <Descriptions.Item label="Time Zone">
+                {location.timeZone}
+              </Descriptions.Item>
+              <Descriptions.Item label="Parking Type">
+                {location.parkingType ?? 'N/A'}
+              </Descriptions.Item>
+              <Descriptions.Item label="Facilities">
+                {location.facilities
+                  ? location.facilities.map((facility) => <Tag>{facility}</Tag>)
+                  : 'N/A'}
+              </Descriptions.Item>
             </Descriptions>
           </Flex>
         </Flex>
