@@ -97,6 +97,26 @@ button.secondary {
   }
 }
 
+button.success {
+  background-color: var(--ui-color-success);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover {
+    background-color: var(--ui-color-success-light);
+    color: white;
+  }
+}
+
+button.error {
+  background-color: var(--ui-color-error);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover {
+    background-color: var(--ui-color-error-light);
+    color: white;
+  }
+}
+
 .ant-table-wrapper .ant-table-cell,
 .ant-table-wrapper .ant-table-thead > tr > th,
 .ant-table-wrapper .ant-table-tbody > tr > th,
