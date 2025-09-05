@@ -187,19 +187,13 @@ button.secondary {
   }
 }
 
-.ant-table-cell.ant-table-cell-row-hover.column-id:hover {
-  background-color: var(--secondary-color-2);
+.ant-table-cell.hoverable-column {
+  cursor: pointer;
+  text-decoration-line: underline;
+  font-weight: bold;
 }
 
-.ant-table-cell.ant-table-cell-row-hover.column-name:hover {
-  background-color: var(--secondary-color-2);
-}
-
-.ant-table-cell.ant-table-cell-row-hover.column-idToken:hover {
-  background-color: var(--secondary-color-2);
-}
-
-.ant-table-cell.ant-table-cell-row-hover.column-transactionId:hover {
+.ant-table-cell.ant-table-cell-row-hover.hoverable-column:hover {
   background-color: var(--secondary-color-2);
 }
 

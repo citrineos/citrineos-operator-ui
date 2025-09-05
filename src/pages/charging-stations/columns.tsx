@@ -2,14 +2,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Flex, Table, Typography } from 'antd';
+import { Button, Flex, Table, Tag, Typography } from 'antd';
 import React from 'react';
 import { CanAccess, CrudFilter } from '@refinedev/core';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { ActionType, CommandType, ResourceType } from '@util/auth';
-import { ChargingStationDtoProps, IChargingStationDto } from '@citrineos/base';
-import { LocationDtoProps } from '@citrineos/base';
+import {
+  ChargingStationDtoProps,
+  IChargingStationDto,
+  LocationDtoProps,
+  OCPPVersion,
+} from '@citrineos/base';
 
 export const getChargingStationColumns = (
   push: (path: string, ...rest: unknown[]) => void,
@@ -30,22 +34,14 @@ export const getChargingStationColumns = (
       title="ID"
       sorter={true}
       onCell={(record) => ({
-        className: `column-${ChargingStationDtoProps.id}`,
-        onClick: (event: React.MouseEvent) => {
+        className: 'hoverable-column',
+        onClick: () => {
           const path = `/${MenuSection.CHARGING_STATIONS}/${record.id}`;
-
-          // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-          if (event.ctrlKey || event.metaKey) {
-            window.open(path, '_blank');
-          } else {
-            // Default behavior - navigate in current window
-            push(path);
-          }
+          window.open(path, '_blank');
         },
-        style: { cursor: 'pointer' },
       })}
       render={(_: any, record: IChargingStationDto) => {
-        return <h4>{record.id}</h4>;
+        return <strong>{record.id}</strong>;
       }}
     />,
   ];
@@ -58,22 +54,14 @@ export const getChargingStationColumns = (
         dataIndex={ChargingStationDtoProps.location}
         title="Location"
         onCell={(record) => ({
-          className: `column-${LocationDtoProps.name}`,
-          onClick: (event: React.MouseEvent) => {
+          className: 'hoverable-column',
+          onClick: () => {
             const path = `/${MenuSection.LOCATIONS}/${record.location?.id}`;
-
-            // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-            if (event.ctrlKey || event.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              // Default behavior - navigate in current window
-              push(path);
-            }
+            window.open(path, '_blank');
           },
-          style: { cursor: 'pointer' },
         })}
         render={(_: any, record: IChargingStationDto) => {
-          return <h4>{record.location?.name}</h4>;
+          return <strong>{record.location?.name}</strong>;
         }}
       />,
     );
@@ -85,15 +73,38 @@ export const getChargingStationColumns = (
       key={ChargingStationDtoProps.statusNotifications}
       dataIndex={ChargingStationDtoProps.statusNotifications}
       title="Status"
-      onCell={() => ({
-        className: `column-${ChargingStationDtoProps.statusNotifications}`,
-      })}
       render={(_: any, record: IChargingStationDto) => {
         return (
           <span className={record.isOnline ? 'online' : 'offline'}>
             {record.isOnline ? 'Online' : 'Offline'}
           </span>
         );
+      }}
+    />,
+    <Table.Column
+      key={ChargingStationDtoProps.protocol}
+      dataIndex={ChargingStationDtoProps.protocol}
+      title="Protocol"
+      render={(_: any, record: IChargingStationDto) => {
+        let color = 'default';
+        let protocolName = 'Unknown';
+
+        switch (record[ChargingStationDtoProps.protocol]) {
+          case OCPPVersion.OCPP1_6:
+            color = 'cyan';
+            protocolName = 'OCPP 1.6';
+            break;
+          case OCPPVersion.OCPP2_0_1:
+            color = 'purple';
+            protocolName = 'OCPP 2.0.1';
+            break;
+          default:
+            color = 'default';
+            protocolName = 'Unknown';
+            break;
+        }
+
+        return <Tag color={color}>{protocolName}</Tag>;
       }}
     />,
     <Table.Column

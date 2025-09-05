@@ -244,7 +244,7 @@ export const LocationsList = () => {
                   handleExpandToggle(record);
                 }}
               >
-                View All Charging Stations
+                View Charging Stations
                 <ArrowDownIcon
                   className={
                     expandedRowKeys.includes(record.id!)

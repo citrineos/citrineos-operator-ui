@@ -24,33 +24,22 @@ export const getLocationsColumns = (
         title="Name"
         sorter={true}
         onCell={(record) => ({
-          className: `column-${LocationDtoProps.name}`,
-          onClick: (event: React.MouseEvent) => {
+          className: 'hoverable-column',
+          onClick: () => {
             const path = `/${MenuSection.LOCATIONS}/${record.id}`;
-
-            // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-            if (event.ctrlKey || event.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              // Default behavior - navigate in current window
-              push(path);
-            }
+            window.open(path, '_blank');
           },
-          style: { cursor: 'pointer' },
         })}
-        width="35%"
+        width="25%"
         render={(_: any, record) => {
-          return <span>{record.name}</span>;
+          return <strong>{record.name}</strong>;
         }}
       />
       <Table.Column
         key={LocationDtoProps.address}
         dataIndex={LocationDtoProps.address}
         title="Address"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.address}`,
-        })}
-        width="35%"
+        width="45%"
         render={(_: any, record) => <span>{getFullAddress(record)}</span>}
       />
       <Table.Column
