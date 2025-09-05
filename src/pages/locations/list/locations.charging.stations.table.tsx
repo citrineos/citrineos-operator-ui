@@ -18,11 +18,13 @@ import { PlusOutlined } from '@ant-design/icons';
 export interface LocationsChargingStationsTableProps {
   location: ILocationDto;
   filteredStations?: IChargingStationDto[]; // Added prop for filtered stations
+  showHeader?: boolean;
 }
 
 export const LocationsChargingStationsTable = ({
   location,
   filteredStations, // Accept filtered stations prop
+  showHeader = false,
 }: LocationsChargingStationsTableProps) => {
   const { push } = useNavigation();
   const dispatch = useDispatch();
@@ -90,26 +92,28 @@ export const LocationsChargingStationsTable = ({
 
   return (
     <Flex vertical gap={16}>
-      <Flex gap={12} align={'center'}>
-        <h4>Charging Stations</h4>
-        <CanAccess
-          resource={ResourceType.CHARGING_STATIONS}
-          action={ActionType.CREATE}
-        >
-          <Button
-            className="success"
-            icon={<PlusOutlined />}
-            iconPosition="end"
-            onClick={() =>
-              push(
-                `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
-              )
-            }
+      {showHeader && (
+        <Flex gap={12} align={'center'}>
+          <h4>Charging Stations</h4>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.CREATE}
           >
-            Add
-          </Button>
-        </CanAccess>
-      </Flex>
+            <Button
+              className="success"
+              icon={<PlusOutlined />}
+              iconPosition="end"
+              onClick={() =>
+                push(
+                  `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
+                )
+              }
+            >
+              Add
+            </Button>
+          </CanAccess>
+        </Flex>
+      )}
       <CanAccess
         resource={ResourceType.CHARGING_STATIONS}
         action={ActionType.LIST}

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Card, Tabs, TabsProps } from 'antd';
+import { Card } from 'antd';
 import './style.scss';
 import { useParams } from 'react-router-dom';
 import { CanAccess, useOne } from '@refinedev/core';
@@ -44,7 +44,7 @@ export const LocationsDetail = () => {
         </Card>
 
         <Card>
-          <LocationsChargingStationsTable location={location} />
+          <LocationsChargingStationsTable location={location} showHeader />
         </Card>
       </div>
     </CanAccess>
