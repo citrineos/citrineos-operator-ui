@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Flex, Table, Tag, Typography } from 'antd';
 import React from 'react';
+import { Button, Flex, Table, Tag, Typography } from 'antd';
 import { CanAccess, CrudFilter } from '@refinedev/core';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -111,9 +111,6 @@ export const getChargingStationColumns = (
       key="actions"
       dataIndex="actions"
       title="Actions"
-      onCell={() => ({
-        className: 'column-actions',
-      })}
       render={(_: any, record: IChargingStationDto) => {
         const hasActiveTransactions = false; // transactions are not a direct property
 
@@ -135,7 +132,10 @@ export const getChargingStationColumns = (
                     commandType: CommandType.START_TRANSACTION,
                   }}
                 >
-                  <Button onClick={() => showRemoteStartModal(record)}>
+                  <Button
+                    type="primary"
+                    onClick={() => showRemoteStartModal(record)}
+                  >
                     Start Transaction
                   </Button>
                 </CanAccess>
@@ -149,7 +149,10 @@ export const getChargingStationColumns = (
                     commandType: CommandType.STOP_TRANSACTION,
                   }}
                 >
-                  <Button onClick={() => handleStopTransactionClick(record)}>
+                  <Button
+                    className="error"
+                    onClick={() => handleStopTransactionClick(record)}
+                  >
                     Stop Transaction
                   </Button>
                 </CanAccess>
@@ -162,7 +165,10 @@ export const getChargingStationColumns = (
                   commandType: CommandType.RESET,
                 }}
               >
-                <Button onClick={() => showResetStartModal(record)}>
+                <Button
+                  className="warning"
+                  onClick={() => showResetStartModal(record)}
+                >
                   Reset
                 </Button>
               </CanAccess>

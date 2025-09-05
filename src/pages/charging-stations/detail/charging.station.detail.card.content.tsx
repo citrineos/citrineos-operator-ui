@@ -357,7 +357,7 @@ export const ChargingStationDetailCardContent = ({
                     }}
                   >
                     <Button
-                      type="primary"
+                      className="warning"
                       onClick={() => showResetStartModal(station)}
                       disabled={!station.isOnline}
                     >

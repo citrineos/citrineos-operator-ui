@@ -182,7 +182,7 @@ export const LocationsList = () => {
               style={{ marginRight: '20px' }}
               onClick={() => push(`/${MenuSection.LOCATIONS}/new`)}
             >
-              Add New Location
+              Add Location
             </Button>
           </CanAccess>
           <DebounceSearch onSearch={onSearch} placeholder="Search Locations" />

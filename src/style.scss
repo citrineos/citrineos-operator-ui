@@ -117,6 +117,16 @@ button.error {
   }
 }
 
+button.warning {
+  background-color: var(--ui-color-warning);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover {
+    background-color: var(--ui-color-warning-light);
+    color: white;
+  }
+}
+
 .ant-table-wrapper .ant-table-cell,
 .ant-table-wrapper .ant-table-thead > tr > th,
 .ant-table-wrapper .ant-table-tbody > tr > th,
