@@ -145,7 +145,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <HelpIcon />
+          <HelpIcon width={28} height={28} />
         </a>
       ),
     },

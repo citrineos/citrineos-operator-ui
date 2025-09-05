@@ -6,7 +6,7 @@
 
 .ant-layout-sider,
 .ant-menu {
-  background: var(--ant-layout-sider-bg);
+  background-color: rgba(var(--ant-layout-sider-bg), 0.99);
 }
 
 .ant-layout-sider.sider {
@@ -39,17 +39,12 @@
   }
 
   .icon-button {
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background: var(--ant-color-bg-base);
-    margin-right: var(--ant-menu-icon-margin-inline-end);
-    margin-right: var(--ant-menu-icon-margin-inline-end);
-    svg {
-      width: 40px;
-      vertical-align: middle;
-    }
+    padding: var(--ant-padding-xs);
+    border-radius: 50%;
   }
 
   .ant-menu-item {
