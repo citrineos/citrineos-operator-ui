@@ -10,7 +10,6 @@ import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { LocationsChargingStationsTable } from './locations.charging.stations.table';
 import { useTable } from '@refinedev/antd';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { DebounceSearch } from '../../../components/debounce-search';
@@ -20,6 +19,7 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import { ILocationDto, IChargingStationDto } from '@citrineos/base';
 import { LocationDto } from '../../../dtos/location.dto';
+import { PlusOutlined } from '@ant-design/icons';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -176,12 +176,13 @@ export const LocationsList = () => {
             action={ActionType.CREATE}
           >
             <Button
-              type="primary"
+              className="success"
+              icon={<PlusOutlined />}
+              iconPosition="end"
               style={{ marginRight: '20px' }}
               onClick={() => push(`/${MenuSection.LOCATIONS}/new`)}
             >
               Add New Location
-              <PlusIcon />
             </Button>
           </CanAccess>
           <DebounceSearch onSearch={onSearch} placeholder="Search Locations" />
