@@ -43,8 +43,8 @@ export const getLocationsColumns = (
         render={(_: any, record) => <span>{getFullAddress(record)}</span>}
       />
       <Table.Column
-        key="totalChargers"
-        title="Total Chargers"
+        key="totalStations"
+        title="Total Stations"
         width="15%"
         render={(_: any, record) => (
           <span>
