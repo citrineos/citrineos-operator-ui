@@ -3,15 +3,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { getFullAddress } from '@util/geocoding';
-import { Button, Flex } from 'antd';
+import { Button, Descriptions, Flex } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { LocationIcon } from '../../../components/map';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
+
+const createLocationItem = (label: string, value: string) => {
+  return (
+    <Descriptions.Item label={<strong>{label}</strong>}>
+      {value}
+    </Descriptions.Item>
+  );
+};
 
 export interface LocationDetailCardProps {
   location: ILocationDto;
@@ -23,23 +30,8 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
 
   return (
     <Flex gap={16}>
-      <Flex
-        vertical
-        flex={'0 0 25%'}
-        align={'center'}
-        justify={'center'}
-        style={{
-          background: '#D9D9D9',
-          color: '#C3BDB9',
-          borderRadius: 8,
-        }}
-      >
-        <div className="image-placeholder">
-          <LocationIcon width={100} height={100} />
-        </div>
-      </Flex>
       <Flex vertical flex="1 1 auto">
-        <Flex gap={8} align={'center'} style={{ marginBottom: 16 }}>
+        <Flex gap={12} align={'center'} style={{ marginBottom: 16 }}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -51,74 +43,36 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
             style={{ cursor: 'pointer' }}
           />
           <h3>{location.name}</h3>
+          <CanAccess
+            resource={ResourceType.LOCATIONS}
+            action={ActionType.EDIT}
+            params={{ id: location.id }}
+          >
+            <Button
+              className="secondary"
+              onClick={() =>
+                push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
+              }
+            >
+              Edit Location
+            </Button>
+          </CanAccess>
         </Flex>
         <Flex justify="space-between" gap={16}>
           <Flex vertical gap={32}>
-            <table className="location-details-table">
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Address</strong>
-                  </td>
-                  <td>{getFullAddress(location)}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Coordinates</strong>
-                  </td>
-                  <td>
-                    {location.coordinates
-                      ? `${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`
-                      : 'N/A'}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Tenant</strong>
-                  </td>
-                  <td>Tenant</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Hours of Operation</strong>
-                  </td>
-                  <td>Hours of Operation</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Location Type</strong>
-                  </td>
-                  <td>Location Type</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Commissioning Status</strong>
-                  </td>
-                  <td>Needs Configurations</td>
-                </tr>
-              </tbody>
-            </table>
+            <Descriptions size="small" layout="vertical">
+              {createLocationItem('Address', getFullAddress(location))}
+              {createLocationItem(
+                'Coordinates',
+                location.coordinates
+                  ? `${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`
+                  : 'N/A',
+              )}
+              {createLocationItem('Time Zone', location.timeZone)}
+            </Descriptions>
           </Flex>
         </Flex>
         <Flex style={{ marginTop: '32px' }}>
-          <Flex gap={16} justify="space-between" align="center" flex="1 1 auto">
-            <Flex>
-              <CanAccess
-                resource={ResourceType.LOCATIONS}
-                action={ActionType.EDIT}
-                params={{ id: location.id }}
-              >
-                <Button
-                  className="secondary"
-                  onClick={() =>
-                    push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
-                  }
-                >
-                  Edit Charging Location
-                </Button>
-              </CanAccess>
-            </Flex>
-          </Flex>
           <Flex>
             <CanAccess
               resource={ResourceType.CHARGING_STATIONS}
