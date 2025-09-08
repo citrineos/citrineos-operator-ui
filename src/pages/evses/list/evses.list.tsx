@@ -3,12 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { Table, Button, Col, Row, Modal, Dropdown } from 'antd';
+import { Table, Button, Col, Row, Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import { EvseDto } from '../../../dtos/evse.dto';
 import { EvseUpsert } from '../upsert/evses.upsert';
 import { ConnectorDto } from '../../../dtos/connector.dto';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ConnectorsUpsert } from '../../connectors/upsert/connectors.upsert';
 import { setSelectedChargingStation } from '../../../redux/selected.charging.station.slice';

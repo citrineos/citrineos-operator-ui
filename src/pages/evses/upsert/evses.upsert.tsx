@@ -4,7 +4,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useForm, useSelect } from '@refinedev/antd';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, Tooltip } from 'antd';
 
 import { EvseDto } from '../../../dtos/evse.dto';
 import { ResourceType } from '@util/auth';
@@ -16,6 +16,7 @@ import { IConnectorDto } from '@citrineos/base';
 import { IEvseDto, EvseDtoProps } from '@citrineos/base';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
@@ -31,8 +32,6 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
     physicalReference: evse !== null ? evse.physicalReference : '',
     removed: evse !== null ? evse.removed : false,
     chargingStation: evse !== null ? evse.chargingStation : undefined,
-    connectorId:
-      evse !== null ? evse.connectors?.at(0)?.connectorId : undefined,
   });
 
   const selectedChargingStation = useSelector(getSelectedChargingStation());
@@ -52,7 +51,6 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
         chargingStation: undefined,
         physicalReference: '',
         removed: false,
-        connectorId: undefined,
       });
       form.resetFields();
       onSubmit();
@@ -91,26 +89,43 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       onFinish={onFinish}
       initialValues={formData}
     >
-      <Form.Item name={EvseDtoProps.evseTypeId} label="EVSE Type ID">
+      <Form.Item
+        name={EvseDtoProps.evseTypeId}
+        label={
+          <span>
+            Evse Type ID{' '}
+            <Tooltip title="This is the serial int used in OCPP 2.0.1 to refer to the EVSE, unique per Charging Station.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
+      >
         <Input id="evseTypeId" name="evseTypeId" type="number" />
       </Form.Item>
       <Form.Item
-        name={EvseDtoProps.id}
-        label="ID"
-        rules={[{ required: true, message: 'Please input the ID!' }]}
-      >
-        <Input id="id" name="id" type="text" />
-      </Form.Item>
-      <Form.Item
         name={EvseDtoProps.evseId}
-        label="EVSE ID"
+        label={
+          <span>
+            Evse ID{' '}
+            <Tooltip title="This is the eMI3 compliant EVSE ID, which must be globally unique.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
         rules={[{ required: true, message: 'Please input the EVSE ID!' }]}
       >
         <Input id="evseId" name="evseId" type="text" />
       </Form.Item>
       <Form.Item
         name={EvseDtoProps.physicalReference}
-        label="Physical Reference"
+        label={
+          <span>
+            Physical Reference{' '}
+            <Tooltip title="Any identifier printed on the EVSE used to identify it when physically at the location, e.g. a number or a letter.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
       >
         <Input id="physicalReference" name="physicalReference" type="text" />
       </Form.Item>
@@ -119,9 +134,6 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
           <Select.Option value={true}>Yes</Select.Option>
           <Select.Option value={false}>No</Select.Option>
         </Select>
-      </Form.Item>
-      <Form.Item label="Connector ID" name="connectorId">
-        <Select {...connectors} id="connectorId" />
       </Form.Item>
       <Form.Item style={{ textAlign: 'right' }}>
         <Button type="primary" htmlType="submit">
