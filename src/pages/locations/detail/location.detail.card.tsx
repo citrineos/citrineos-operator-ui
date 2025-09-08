@@ -25,7 +25,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
   return (
     <Flex gap={16}>
       <Flex gap={16} vertical flex="1 1 auto">
-        <Flex gap={12} align={'center'}>
+        <Flex gap={16} align={'center'}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -43,7 +43,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
             params={{ id: location.id }}
           >
             <Button
-              className="secondary"
+              className="secondary btn-md"
               icon={<EditOutlined />}
               iconPosition="end"
               onClick={() =>

@@ -134,6 +134,7 @@ export const getChargingStationColumns = (
                 >
                   <Button
                     type="primary"
+                    className="btn-md"
                     onClick={() => showRemoteStartModal(record)}
                   >
                     Start Transaction
@@ -150,7 +151,7 @@ export const getChargingStationColumns = (
                   }}
                 >
                   <Button
-                    className="error"
+                    className="error btn-md"
                     onClick={() => handleStopTransactionClick(record)}
                   >
                     Stop Transaction
@@ -166,7 +167,7 @@ export const getChargingStationColumns = (
                 }}
               >
                 <Button
-                  className="warning"
+                  className="warning btn-md"
                   onClick={() => showResetStartModal(record)}
                 >
                   Reset

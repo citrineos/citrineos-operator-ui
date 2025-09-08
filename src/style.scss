@@ -90,6 +90,11 @@ main {
   }
 }
 
+button.btn-md {
+  height: 32px !important;
+  padding: 0 12px !important;
+}
+
 button.secondary {
   background-color: var(--secondary-color-2);
   color: white;

@@ -93,14 +93,14 @@ export const LocationsChargingStationsTable = ({
   return (
     <Flex vertical gap={16}>
       {showHeader && (
-        <Flex gap={12} align={'center'}>
+        <Flex gap={16} align={'center'}>
           <h4>Charging Stations</h4>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.CREATE}
           >
             <Button
-              className="success"
+              className="success btn-md"
               icon={<PlusOutlined />}
               iconPosition="end"
               onClick={() =>

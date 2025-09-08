@@ -178,7 +178,7 @@ export const ChargingStationDetailCardContent = ({
   return (
     <Flex gap={16}>
       <Flex gap={16} vertical flex="1 1 auto">
-        <Flex gap={12} align={'center'} key={`${station.isOnline}`}>
+        <Flex gap={16} align={'center'} key={`${station.isOnline}`}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -199,7 +199,7 @@ export const ChargingStationDetailCardContent = ({
             params={{ id: station.id }}
           >
             <Button
-              className="secondary"
+              className="secondary btn-md"
               icon={<EditOutlined />}
               iconPosition="end"
               onClick={() =>
@@ -215,7 +215,7 @@ export const ChargingStationDetailCardContent = ({
             params={{ id: station.id }}
           >
             <Button
-              className="error"
+              className="error btn-md"
               icon={<DeleteOutlined />}
               iconPosition="end"
               onClick={handleDeleteClick}
@@ -323,6 +323,7 @@ export const ChargingStationDetailCardContent = ({
                     >
                       <Button
                         type="primary"
+                        className="btn-md"
                         disabled={!station.isOnline}
                         onClick={() => showRemoteStartModal(station)}
                       >
@@ -340,7 +341,7 @@ export const ChargingStationDetailCardContent = ({
                       }}
                     >
                       <Button
-                        className="error"
+                        className="error btn-md"
                         onClick={() => handleStopTransactionClick(station)}
                         disabled={!station.isOnline}
                       >
@@ -357,7 +358,7 @@ export const ChargingStationDetailCardContent = ({
                     }}
                   >
                     <Button
-                      className="warning"
+                      className="warning btn-md"
                       onClick={() => showResetStartModal(station)}
                       disabled={!station.isOnline}
                     >
@@ -366,6 +367,7 @@ export const ChargingStationDetailCardContent = ({
                   </CanAccess>
                   <Button
                     type="primary"
+                    className="btn-md"
                     icon={<EllipsisOutlined />}
                     iconPosition="end"
                     onClick={showOtherCommandsModal}
