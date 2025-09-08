@@ -2,20 +2,20 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   LOCATIONS_CREATE_MUTATION,
   LOCATIONS_EDIT_MUTATION,
   LOCATIONS_GET_QUERY,
 } from '../queries';
 import {
+  App,
   Button,
   Col,
   Flex,
   Form,
   Input,
   InputNumber,
-  message,
   Row,
   Select,
   Upload,
@@ -47,13 +47,14 @@ import {
   LocationFacilityType,
   LocationParkingType,
 } from '@citrineos/base';
+import { MenuSection } from '../../../components/main-menu/main.menu';
 
 export const LocationsUpsert = () => {
   const params: any = useParams<{ id: string }>();
   const locationId = params.id ? params.id : undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formValuesRef = useRef<Record<string, any>>({});
-
+  const { message } = App.useApp();
   const { replace, goBack } = useNavigation();
   const { mutate } = useUpdateMany();
 
@@ -132,7 +133,8 @@ export const LocationsUpsert = () => {
       } catch (_error) {
         message.error('Failed to update charging stations').then();
       } finally {
-        replace('/locations');
+        const newId = locationResponse.data.id;
+        replace(`/${MenuSection.LOCATIONS}/${newId}`);
         setIsSubmitting(false);
       }
     },
@@ -149,13 +151,11 @@ export const LocationsUpsert = () => {
   });
 
   useEffect(() => {
-    if (!locationId) {
-      form?.setFieldsValue({
-        [LocationDtoProps.country]: Country.USA,
-      });
-      return;
-    }
-  }, [locationId, query?.data?.data, form]);
+    form?.setFieldsValue({
+      [LocationDtoProps.facilities]: query?.data?.data?.facilities,
+    });
+    return;
+  }, [query?.data?.data]);
 
   const onFinish = () => {
     try {
@@ -170,11 +170,6 @@ export const LocationsUpsert = () => {
           type: 'Point',
           coordinates: [coords.longitude, coords.latitude],
         };
-      }
-      // Convert facilities array to comma-separated string for Hasura
-      if (Array.isArray(input[LocationDtoProps.facilities])) {
-        input[LocationDtoProps.facilities] =
-          input[LocationDtoProps.facilities].join(',');
       }
       delete input[LocationDtoProps.chargingPool];
       const newItem: any = getSerializedValues(input, LocationDto);
@@ -292,11 +287,11 @@ export const LocationsUpsert = () => {
                       {countryStateData[
                         form.getFieldValue(LocationDtoProps.country) ||
                           Country.USA
-                      ].map((state) => (
+                      ]?.map((state) => (
                         <Select.Option key={state} value={state}>
                           {state}
                         </Select.Option>
-                      ))}
+                      )) || []}
                     </Select>
                   </Form.Item>
                 </Col>

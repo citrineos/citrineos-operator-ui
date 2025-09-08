@@ -64,35 +64,33 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
                 </tr>
                 <tr>
                   <td>
-                    <strong>Geocoordinates</strong>
+                    <strong>Latitude</strong>
                   </td>
-                  <td>
-                    {`${location.coordinates.coordinates[1].toFixed(4)} ${location.coordinates.coordinates[0].toFixed(4)}`}
-                  </td>
+                  <td>{location?.coordinates?.coordinates[1].toFixed(4)}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Tenant</strong>
+                    <strong>Longitude</strong>
                   </td>
-                  <td>Tenant</td>
+                  <td>{location?.coordinates?.coordinates[0].toFixed(4)}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Hours of Operation</strong>
+                    <strong>Time Zone</strong>
                   </td>
-                  <td>Hours of Operation</td>
+                  <td>{location.timeZone}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Location Type</strong>
+                    <strong>Parking Type</strong>
                   </td>
-                  <td>Location Type</td>
+                  <td>{location.parkingType || 'Unknown'}</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>Commissioning Status</strong>
+                    <strong>Facilities</strong>
                   </td>
-                  <td>Needs Configurations</td>
+                  <td>{location.facilities?.join(', ') || 'None'}</td>
                 </tr>
               </tbody>
             </table>

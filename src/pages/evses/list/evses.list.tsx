@@ -31,6 +31,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
   const [selectedItem, setSelectedItem] = useState<
     EvseDto | ConnectorDto | null
   >(null);
+  const [evseId, setEvseId] = useState<number | null>(null);
 
   const { data, isLoading } = useOne<IChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
@@ -47,9 +48,11 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     (
       type: 'evse' | 'connector',
       item: EvseDto | ConnectorDto | null = null,
+      evseId: number | null = null,
     ) => {
       setModalType(type);
       setSelectedItem(item);
+      setEvseId(evseId);
       setIsModalVisible(true);
     },
     [],
@@ -59,6 +62,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     setIsModalVisible(false);
     setModalType(null);
     setSelectedItem(null);
+    setEvseId(null);
   }, []);
 
   const handleFormSubmit = useCallback(() => {
@@ -87,33 +91,33 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         key: 'evseId',
       },
       {
+        title: 'Physical Reference',
+        dataIndex: 'physicalReference',
+        key: 'physicalReference',
+      },
+      {
         title: 'Actions',
         key: 'actions',
         render: (_: any, record: EvseDto) => (
-          <Button
-            className="Secondary"
-            onClick={() => openModal('evse', record)}
-          >
-            Edit
-          </Button>
+          <div>
+            <Button
+              className="Secondary"
+              onClick={() => openModal('evse', record)}
+            >
+              Edit
+            </Button>
+            <Button
+              className="Secondary"
+              onClick={() => openModal('connector', null, record.id || null)}
+            >
+              Add Connector
+            </Button>
+          </div>
         ),
       },
     ],
     [openModal],
   );
-
-  const menuItems = [
-    {
-      key: 'add-evse',
-      label: 'Add New Evse',
-      onClick: () => openModal('evse'),
-    },
-    {
-      key: 'add-connector',
-      label: 'Add New Connector',
-      onClick: () => openModal('connector'),
-    },
-  ];
 
   const renderModalContent = () => {
     if (modalType === 'evse') {
@@ -129,6 +133,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         <ConnectorsUpsert
           onSubmit={handleFormSubmit}
           connector={selectedItem as IConnectorDto | null}
+          evseId={evseId}
         />
       );
     }
@@ -151,11 +156,9 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
   return (
     <Col>
       <Row justify="end" style={{ marginBottom: '16px' }}>
-        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-          <Button type="primary">
-            Actions <PlusIcon />
-          </Button>
-        </Dropdown>
+        <Button type="primary" onClick={() => openModal('evse')}>
+          Add New Evse
+        </Button>
       </Row>
       <Table
         rowKey="id"

@@ -105,10 +105,11 @@ export const LOCATIONS_GET_QUERY = gql`
       state
       country
       coordinates
-      createdAt
-      updatedAt
+      facilities
       timeZone
       parkingType
+      createdAt
+      updatedAt
       chargingPool: ChargingStations {
         id
         isOnline
@@ -170,10 +171,11 @@ export const LOCATIONS_GET_QUERY_BY_ID = gql`
       state
       country
       coordinates
-      createdAt
-      updatedAt
+      facilities
       timeZone
       parkingType
+      createdAt
+      updatedAt
       chargingPool: ChargingStations {
         id
         isOnline
@@ -215,6 +217,9 @@ export const LOCATIONS_GET_QUERY_BY_ID = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }
@@ -237,10 +242,11 @@ export const LOCATIONS_CREATE_MUTATION = gql`
       state
       country
       coordinates
-      createdAt
-      updatedAt
+      facilities
       timeZone
       parkingType
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -256,6 +262,9 @@ export const LOCATIONS_DELETE_MUTATION = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }
@@ -273,6 +282,9 @@ export const LOCATIONS_EDIT_MUTATION = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }

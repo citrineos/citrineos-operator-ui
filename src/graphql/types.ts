@@ -1111,7 +1111,7 @@ export type ChargingStationsListQuery = {
       Types.ChargingStations,
       'id' | 'isOnline' | 'protocol' | 'locationId' | 'createdAt' | 'updatedAt'
     > & {
-      Location?: Types.Maybe<
+      location?: Types.Maybe<
         Pick<
           Types.Locations,
           | 'id'
@@ -1150,7 +1150,7 @@ export type ChargingStationsListQuery = {
           >;
         }
       >;
-      Transactions: Array<
+      transactions: Array<
         Pick<
           Types.Transactions,
           | 'id'
@@ -1167,7 +1167,7 @@ export type ChargingStationsListQuery = {
           | 'updatedAt'
         >
       >;
-      Connectors: Array<
+      connectors: Array<
         Pick<
           Types.Connectors,
           | 'connectorId'
@@ -1318,7 +1318,7 @@ export type GetChargingStationByIdQuery = {
           >;
         }
       >;
-      transactions: Array<
+      Transactions: Array<
         Pick<
           Types.Transactions,
           | 'id'
@@ -1871,8 +1871,11 @@ export type LocationsListQuery = {
           Types.ChargingStations,
           'id' | 'isOnline' | 'protocol' | 'createdAt' | 'updatedAt'
         > & {
-          Evses: Array<
-            Pick<Types.VariableAttributes, 'id' | 'createdAt' | 'updatedAt'>
+          evses: Array<
+            Pick<
+              Types.Evses,
+              'id' | 'evseTypeId' | 'evseId' | 'createdAt' | 'updatedAt'
+            >
           >;
           LatestStatusNotifications: Array<
             Pick<
@@ -1898,7 +1901,7 @@ export type LocationsListQuery = {
               >;
             }
           >;
-          Transactions: Array<
+          transactions: Array<
             Pick<
               Types.Transactions,
               | 'id'
@@ -1915,7 +1918,7 @@ export type LocationsListQuery = {
               | 'updatedAt'
             >
           >;
-          Connectors: Array<
+          connectors: Array<
             Pick<
               Types.Connectors,
               | 'connectorId'
@@ -1954,10 +1957,11 @@ export type GetLocationByIdQuery = {
       | 'state'
       | 'country'
       | 'coordinates'
-      | 'createdAt'
-      | 'updatedAt'
+      | 'facilities'
       | 'timeZone'
       | 'parkingType'
+      | 'createdAt'
+      | 'updatedAt'
     > & {
       chargingPool: Array<
         Pick<
@@ -2031,10 +2035,11 @@ export type GetLocationByIdAndWhereQuery = {
       | 'state'
       | 'country'
       | 'coordinates'
-      | 'createdAt'
-      | 'updatedAt'
+      | 'facilities'
       | 'timeZone'
       | 'parkingType'
+      | 'createdAt'
+      | 'updatedAt'
     > & {
       chargingPool: Array<
         Pick<
@@ -2086,6 +2091,9 @@ export type GetLocationByIdAndWhereQuery = {
       | 'state'
       | 'country'
       | 'coordinates'
+      | 'facilities'
+      | 'timeZone'
+      | 'parkingType'
       | 'createdAt'
       | 'updatedAt'
     >
@@ -2111,10 +2119,11 @@ export type LocationsCreateMutation = {
       | 'state'
       | 'country'
       | 'coordinates'
-      | 'createdAt'
-      | 'updatedAt'
+      | 'facilities'
       | 'timeZone'
       | 'parkingType'
+      | 'createdAt'
+      | 'updatedAt'
     >
   >;
 };
@@ -2135,6 +2144,9 @@ export type LocationsDeleteMutation = {
       | 'state'
       | 'country'
       | 'coordinates'
+      | 'facilities'
+      | 'timeZone'
+      | 'parkingType'
       | 'createdAt'
       | 'updatedAt'
     >
@@ -2158,6 +2170,9 @@ export type LocationsEditMutation = {
       | 'state'
       | 'country'
       | 'coordinates'
+      | 'facilities'
+      | 'timeZone'
+      | 'parkingType'
       | 'createdAt'
       | 'updatedAt'
     >
@@ -2503,7 +2518,7 @@ export type GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransa
             >
           >;
         }>;
-        Transactions: Array<
+        transactions: Array<
           Pick<
             Types.Transactions,
             | 'id'
@@ -2520,7 +2535,7 @@ export type GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransa
             | 'updatedAt'
           >
         >;
-        Location?: Types.Maybe<
+        location?: Types.Maybe<
           Pick<
             Types.Locations,
             | 'id'
@@ -2535,7 +2550,7 @@ export type GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransa
             | 'updatedAt'
           >
         >;
-        Evses: Array<
+        evses: Array<
           Pick<Types.VariableAttributes, 'id' | 'createdAt' | 'updatedAt'>
         >;
       }

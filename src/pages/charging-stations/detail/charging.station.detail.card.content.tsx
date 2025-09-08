@@ -207,7 +207,7 @@ export const ChargingStationDetailCardContent = ({
                 <Tooltip title={station?.location?.name}>
                   <Typography.Text
                     ellipsis
-                    style={{ maxWidth: 150, display: 'inline-block' }}
+                    style={{ maxWidth: 100, display: 'inline-block' }}
                   >
                     {station?.location?.name}
                   </Typography.Text>
@@ -237,33 +237,37 @@ export const ChargingStationDetailCardContent = ({
                 </tr>
                 <tr>
                   <td>
-                    <h5>TimeStamp</h5>
+                    <h5>Last OCPP Message</h5>
                   </td>
                   <td>{latestTimestamp}</td>
                 </tr>
                 <tr>
                   <td>
-                    <h5>Model</h5>
+                    <h5>Make</h5>
                   </td>
                   <td>
-                    {station.chargePointModel ? (
-                      station.chargePointModel
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
+                    {(station.chargePointVendor || 'Unknown') +
+                      ' ' +
+                      (station.chargePointModel || 'Unknown')}
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <h5>Vendor</h5>
+                    <h5>Floor Level</h5>
                   </td>
+                  <td>{station.floorLevel || 'Unknown'}</td>
+                </tr>
+                <tr>
                   <td>
-                    {station.chargePointVendor ? (
-                      station.chargePointVendor
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
+                    <h5>Parking Restrictions</h5>
                   </td>
+                  <td>{station.parkingRestrictions?.join(', ') || 'None'}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5>Capabilities</h5>
+                  </td>
+                  <td>{station.capabilities?.join(', ') || 'None'}</td>
                 </tr>
               </tbody>
             </table>
@@ -295,7 +299,7 @@ export const ChargingStationDetailCardContent = ({
                             .map((c) => c.type)
                             .filter(Boolean)
                             .join(', ')
-                        : 'N/A'}
+                        : 'Unknown'}
                     </Text>
                   </td>
                 </tr>

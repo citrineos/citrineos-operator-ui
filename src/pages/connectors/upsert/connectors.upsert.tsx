@@ -26,11 +26,13 @@ const { Option } = Select;
 interface ConnectorUpsertProps {
   onSubmit: () => void;
   connector: IConnectorDto | null;
+  evseId?: number | null;
 }
 
 export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
   onSubmit,
   connector,
+  evseId,
 }) => {
   const selectedChargingStation = useSelector(getSelectedChargingStation());
 
@@ -92,6 +94,7 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
 
   const onFinish = useCallback(
     async (input: any) => {
+      input.evseId = evseId;
       const newItem: any = getSerializedValues(input, ConnectorDto);
       formProps.onFinish?.(newItem);
     },

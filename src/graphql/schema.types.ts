@@ -4976,17 +4976,7 @@ export type ChargingStationSecurityInfos_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'ChargingStationSecurityInfos_pkey'
   /** unique or primary key constraint on columns "stationId" */
-  | 'ChargingStationSecurityInfos_stationId_key'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'ChargingStationSecurityInfos_stationId_key1'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'ChargingStationSecurityInfos_stationId_key2'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'ChargingStationSecurityInfos_stationId_key3'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'ChargingStationSecurityInfos_stationId_key4'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'ChargingStationSecurityInfos_stationId_key5';
+  | 'ChargingStationSecurityInfos_stationId_key';
 
 /** input type for incrementing numeric columns in table "ChargingStationSecurityInfos" */
 export type ChargingStationSecurityInfos_Inc_Input = {
@@ -17489,16 +17479,6 @@ export type SetNetworkProfiles_Bool_Exp = {
 export type SetNetworkProfiles_Constraint =
   /** unique or primary key constraint on columns "correlationId" */
   | 'SetNetworkProfiles_correlationId_key'
-  /** unique or primary key constraint on columns "correlationId" */
-  | 'SetNetworkProfiles_correlationId_key1'
-  /** unique or primary key constraint on columns "correlationId" */
-  | 'SetNetworkProfiles_correlationId_key2'
-  /** unique or primary key constraint on columns "correlationId" */
-  | 'SetNetworkProfiles_correlationId_key3'
-  /** unique or primary key constraint on columns "correlationId" */
-  | 'SetNetworkProfiles_correlationId_key4'
-  /** unique or primary key constraint on columns "correlationId" */
-  | 'SetNetworkProfiles_correlationId_key5'
   /** unique or primary key constraint on columns "id" */
   | 'SetNetworkProfiles_pkey';
 
@@ -18046,7 +18026,7 @@ export type StartTransactions_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'StartTransactions_pkey'
   /** unique or primary key constraint on columns "transactionDatabaseId" */
-  | 'StartTransactions_transactionDatabaseId_unique';
+  | 'StartTransactions_transactionDatabaseId_key';
 
 /** input type for incrementing numeric columns in table "StartTransactions" */
 export type StartTransactions_Inc_Input = {
@@ -19087,7 +19067,9 @@ export type StopTransactions_Bool_Exp = {
 /** unique or primary key constraints on table "StopTransactions" */
 export type StopTransactions_Constraint =
   /** unique or primary key constraint on columns "id" */
-  'StopTransactions_pkey';
+  | 'StopTransactions_pkey'
+  /** unique or primary key constraint on columns "transactionDatabaseId" */
+  | 'StopTransactions_transactionDatabaseId_key';
 
 /** input type for incrementing numeric columns in table "StopTransactions" */
 export type StopTransactions_Inc_Input = {
@@ -20097,17 +20079,7 @@ export type Tariffs_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'Tariffs_pkey'
   /** unique or primary key constraint on columns "stationId" */
-  | 'Tariffs_stationId_key'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'Tariffs_stationId_key1'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'Tariffs_stationId_key2'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'Tariffs_stationId_key3'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'Tariffs_stationId_key4'
-  /** unique or primary key constraint on columns "stationId" */
-  | 'Tariffs_stationId_key5';
+  | 'Tariffs_stationId_key';
 
 /** input type for incrementing numeric columns in table "Tariffs" */
 export type Tariffs_Inc_Input = {
@@ -21210,7 +21182,7 @@ export type Tenants = {
   countryCode: Scalars['String']['output'];
   createdAt: Scalars['timestamptz']['output'];
   id: Scalars['Int']['output'];
-  name?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   partyId: Scalars['String']['output'];
   serverProfileOCPI?: Maybe<Scalars['jsonb']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
