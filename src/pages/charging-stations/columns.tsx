@@ -14,6 +14,7 @@ import {
   LocationDtoProps,
   OCPPVersion,
 } from '@citrineos/base';
+import ProtocolTag from '../../components/protocol-tag';
 
 export const getChargingStationColumns = (
   push: (path: string, ...rest: unknown[]) => void,
@@ -85,27 +86,9 @@ export const getChargingStationColumns = (
       key={ChargingStationDtoProps.protocol}
       dataIndex={ChargingStationDtoProps.protocol}
       title="Protocol"
-      render={(_: any, record: IChargingStationDto) => {
-        let color: string;
-        let protocolName: string;
-
-        switch (record[ChargingStationDtoProps.protocol]) {
-          case OCPPVersion.OCPP1_6:
-            color = 'cyan';
-            protocolName = 'OCPP 1.6';
-            break;
-          case OCPPVersion.OCPP2_0_1:
-            color = 'purple';
-            protocolName = 'OCPP 2.0.1';
-            break;
-          default:
-            color = 'default';
-            protocolName = 'Unknown';
-            break;
-        }
-
-        return <Tag color={color}>{protocolName}</Tag>;
-      }}
+      render={(_: any, record: IChargingStationDto) => (
+        <ProtocolTag protocol={record[ChargingStationDtoProps.protocol]} />
+      )}
     />,
     <Table.Column
       key="actions"

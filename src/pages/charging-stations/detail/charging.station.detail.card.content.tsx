@@ -37,9 +37,14 @@ import {
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
 import { ActionType, CommandType } from '@util/auth';
-import { IOCPPMessageDto, OCPPMessageDtoProps } from '@citrineos/base';
+import {
+  ChargingStationDtoProps,
+  IOCPPMessageDto,
+  OCPPMessageDtoProps,
+} from '@citrineos/base';
 import { IChargingStationDto } from '@citrineos/base';
 import { NOT_APPLICABLE } from '@util/consts';
+import ProtocolTag from '../../../components/protocol-tag';
 
 const { Text } = Typography;
 const UNKNOWN_TEXT = 'Unknown';
@@ -232,6 +237,9 @@ export const ChargingStationDetailCardContent = ({
             label: 'description-label',
           }}
         >
+          <Descriptions.Item label="Protocol">
+            <ProtocolTag protocol={station[ChargingStationDtoProps.protocol]} />
+          </Descriptions.Item>
           <Descriptions.Item label="Location ID">
             {station?.location?.name ? (
               <Link to={`/locations/${station.locationId}`}>
