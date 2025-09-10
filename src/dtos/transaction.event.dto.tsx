@@ -5,7 +5,7 @@ export class TransactionEventDto implements Partial<ITransactionEventDto> {
   id?: number;
   stationId!: string;
   evseId?: number | null;
-  transactionDatabaseId?: string;
+  transactionDatabaseId?: number;
   eventType!: any;
   meterValues?: IMeterValueDto[];
   timestamp!: string;

@@ -171,22 +171,22 @@ export const getTransactionColumns = (
         }
       />
       <Table.Column
-        key={BaseDtoProps.createdAt}
-        dataIndex={BaseDtoProps.createdAt}
-        title="Created At"
+        key={TransactionDtoProps.startTime}
+        dataIndex={TransactionDtoProps.startTime}
+        title="Start Time"
         sorter={true}
         onCell={() => ({
-          className: `column-${BaseDtoProps.createdAt}`,
+          className: `column-${TransactionDtoProps.startTime}`,
         })}
         render={(createdAt) => <TimestampDisplay isoTimestamp={createdAt} />}
       />
       <Table.Column
-        key={BaseDtoProps.updatedAt}
-        dataIndex={BaseDtoProps.updatedAt}
+        key={TransactionDtoProps.endTime}
+        dataIndex={TransactionDtoProps.endTime}
         title="Updated At"
         sorter={true}
         onCell={() => ({
-          className: `column-${BaseDtoProps.updatedAt}`,
+          className: `column-${TransactionDtoProps.endTime}`,
         })}
         render={(updatedAt) => <TimestampDisplay isoTimestamp={updatedAt} />}
       />

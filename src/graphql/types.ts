@@ -1291,8 +1291,40 @@ export type GetChargingStationByIdQuery = {
       evses: Array<
         Pick<
           Types.Evses,
-          'id' | 'evseTypeId' | 'evseId' | 'createdAt' | 'updatedAt'
-        >
+          | 'id'
+          | 'evseTypeId'
+          | 'evseId'
+          | 'physicalReference'
+          | 'removed'
+          | 'createdAt'
+          | 'updatedAt'
+        > & {
+          connectors: Array<
+            Pick<
+              Types.Connectors,
+              | 'id'
+              | 'stationId'
+              | 'evseId'
+              | 'evseTypeConnectorId'
+              | 'connectorId'
+              | 'status'
+              | 'type'
+              | 'maximumPowerWatts'
+              | 'maximumAmperage'
+              | 'maximumVoltage'
+              | 'format'
+              | 'powerType'
+              | 'termsAndConditionsUrl'
+              | 'errorCode'
+              | 'timestamp'
+              | 'info'
+              | 'vendorId'
+              | 'vendorErrorCode'
+              | 'createdAt'
+              | 'updatedAt'
+            >
+          >;
+        }
       >;
       LatestStatusNotifications: Array<
         Pick<
@@ -1344,6 +1376,12 @@ export type GetChargingStationByIdQuery = {
           | 'connectorId'
           | 'status'
           | 'type'
+          | 'maximumPowerWatts'
+          | 'maximumAmperage'
+          | 'maximumVoltage'
+          | 'format'
+          | 'powerType'
+          | 'termsAndConditionsUrl'
           | 'errorCode'
           | 'timestamp'
           | 'info'
@@ -1530,17 +1568,26 @@ export type ConnectorListQuery = {
   Connectors: Array<
     Pick<
       Types.Connectors,
-      | 'connectorId'
-      | 'createdAt'
-      | 'errorCode'
       | 'id'
-      | 'info'
       | 'stationId'
+      | 'evseId'
+      | 'evseTypeConnectorId'
+      | 'connectorId'
       | 'status'
+      | 'type'
+      | 'maximumPowerWatts'
+      | 'maximumAmperage'
+      | 'maximumVoltage'
+      | 'format'
+      | 'powerType'
+      | 'termsAndConditionsUrl'
+      | 'errorCode'
       | 'timestamp'
-      | 'updatedAt'
-      | 'vendorErrorCode'
+      | 'info'
       | 'vendorId'
+      | 'vendorErrorCode'
+      | 'createdAt'
+      | 'updatedAt'
     >
   >;
   Connectors_aggregate: {
@@ -1556,17 +1603,26 @@ export type GetConnectorByIdQuery = {
   Connectors_by_pk?: Types.Maybe<
     Pick<
       Types.Connectors,
-      | 'connectorId'
-      | 'createdAt'
-      | 'errorCode'
       | 'id'
-      | 'info'
       | 'stationId'
+      | 'evseId'
+      | 'evseTypeConnectorId'
+      | 'connectorId'
       | 'status'
+      | 'type'
+      | 'maximumPowerWatts'
+      | 'maximumAmperage'
+      | 'maximumVoltage'
+      | 'format'
+      | 'powerType'
+      | 'termsAndConditionsUrl'
+      | 'errorCode'
       | 'timestamp'
-      | 'updatedAt'
-      | 'vendorErrorCode'
+      | 'info'
       | 'vendorId'
+      | 'vendorErrorCode'
+      | 'createdAt'
+      | 'updatedAt'
     >
   >;
 };
@@ -1579,17 +1635,26 @@ export type ConnectorCreateMutation = {
   insert_Connectors_one?: Types.Maybe<
     Pick<
       Types.Connectors,
-      | 'connectorId'
-      | 'createdAt'
-      | 'errorCode'
       | 'id'
-      | 'info'
       | 'stationId'
+      | 'evseId'
+      | 'evseTypeConnectorId'
+      | 'connectorId'
       | 'status'
+      | 'type'
+      | 'maximumPowerWatts'
+      | 'maximumAmperage'
+      | 'maximumVoltage'
+      | 'format'
+      | 'powerType'
+      | 'termsAndConditionsUrl'
+      | 'errorCode'
       | 'timestamp'
-      | 'updatedAt'
-      | 'vendorErrorCode'
+      | 'info'
       | 'vendorId'
+      | 'vendorErrorCode'
+      | 'createdAt'
+      | 'updatedAt'
     >
   >;
 };
@@ -1603,14 +1668,26 @@ export type ConnectorEditMutation = {
   update_Connectors_by_pk?: Types.Maybe<
     Pick<
       Types.Connectors,
-      | 'connectorId'
-      | 'createdAt'
-      | 'errorCode'
       | 'id'
-      | 'info'
+      | 'stationId'
+      | 'evseId'
+      | 'evseTypeConnectorId'
+      | 'connectorId'
       | 'status'
-      | 'vendorErrorCode'
+      | 'type'
+      | 'maximumPowerWatts'
+      | 'maximumAmperage'
+      | 'maximumVoltage'
+      | 'format'
+      | 'powerType'
+      | 'termsAndConditionsUrl'
+      | 'errorCode'
+      | 'timestamp'
+      | 'info'
       | 'vendorId'
+      | 'vendorErrorCode'
+      | 'createdAt'
+      | 'updatedAt'
     >
   >;
 };
@@ -1623,17 +1700,26 @@ export type ConnectorDeleteMutation = {
   delete_Connectors_by_pk?: Types.Maybe<
     Pick<
       Types.Connectors,
-      | 'connectorId'
-      | 'createdAt'
-      | 'errorCode'
       | 'id'
-      | 'info'
       | 'stationId'
+      | 'evseId'
+      | 'evseTypeConnectorId'
+      | 'connectorId'
       | 'status'
+      | 'type'
+      | 'maximumPowerWatts'
+      | 'maximumAmperage'
+      | 'maximumVoltage'
+      | 'format'
+      | 'powerType'
+      | 'termsAndConditionsUrl'
+      | 'errorCode'
       | 'timestamp'
-      | 'updatedAt'
-      | 'vendorErrorCode'
+      | 'info'
       | 'vendorId'
+      | 'vendorErrorCode'
+      | 'createdAt'
+      | 'updatedAt'
     >
   >;
 };

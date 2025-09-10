@@ -193,8 +193,32 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         id
         evseTypeId
         evseId
+        physicalReference
+        removed
         createdAt
         updatedAt
+        connectors: Connectors {
+          id
+          stationId
+          evseId
+          evseTypeConnectorId
+          connectorId
+          status
+          type
+          maximumPowerWatts
+          maximumAmperage
+          maximumVoltage
+          format
+          powerType
+          termsAndConditionsUrl
+          errorCode
+          timestamp
+          info
+          vendorId
+          vendorErrorCode
+          createdAt
+          updatedAt
+        }
       }
       LatestStatusNotifications {
         id
@@ -234,6 +258,12 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         connectorId
         status
         type
+        maximumPowerWatts
+        maximumAmperage
+        maximumVoltage
+        format
+        powerType
+        termsAndConditionsUrl
         errorCode
         timestamp
         info

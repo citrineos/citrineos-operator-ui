@@ -4,6 +4,8 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Table, Button, Col, Row, Modal } from 'antd';
+import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
+import { ConnectorsTable } from '../../connectors/list/connectors.table';
 import { useDispatch } from 'react-redux';
 import { EvseDto } from '../../../dtos/evse.dto';
 import { EvseUpsert } from '../upsert/evses.upsert';
@@ -32,7 +34,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
   >(null);
   const [evseId, setEvseId] = useState<number | null>(null);
 
-  const { data, isLoading } = useOne<IChargingStationDto>({
+  const { data, isLoading, refetch } = useOne<IChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     id: stationId,
     meta: {
@@ -64,11 +66,11 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     setEvseId(null);
   }, []);
 
-  const handleFormSubmit = useCallback(() => {
+  const handleFormSubmit = useCallback(async () => {
+    await refetch();
     closeModal();
-  }, [closeModal]);
+  }, [closeModal, refetch]);
 
-  // Dispatch the selected charging station to Redux
   useEffect(() => {
     dispatch(
       setSelectedChargingStation({
@@ -76,6 +78,8 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
       }),
     );
   }, [dispatch, station]);
+
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
   const columns = useMemo(
     () => [
@@ -97,41 +101,93 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
       {
         title: 'Actions',
         key: 'actions',
-        render: (_: any, record: EvseDto) => (
-          <div>
-            <Button
-              className="Secondary"
-              onClick={() => openModal('evse', record)}
+        render: (_: any, record: EvseDto) => {
+          const evseId = record.id;
+          if (evseId === undefined) return null;
+          return (
+            <Row
+              className="view-connectors"
+              justify="end"
+              align="middle"
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleExpandToggle(record);
+              }}
             >
-              Edit
-            </Button>
-            <Button
-              className="Secondary"
-              onClick={() => openModal('connector', null, record.id || null)}
-            >
-              Add Connector
-            </Button>
-          </div>
-        ),
+              View Connectors
+              <ArrowDownIcon
+                className={
+                  expandedRowKeys.includes(evseId) ? 'arrow rotate' : 'arrow'
+                }
+              />
+              <Button
+                className="Secondary"
+                style={{ marginLeft: 8 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal('evse', record);
+                }}
+              >
+                Edit
+              </Button>
+              <Button
+                className="Secondary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal('connector', null, evseId);
+                }}
+              >
+                Add Connector
+              </Button>
+            </Row>
+          );
+        },
       },
     ],
-    [openModal],
+    [openModal, expandedRowKeys],
+  );
+
+  const getCurrentEvse = useCallback(
+    (item: EvseDto | ConnectorDto | null): IEvseDto | null => {
+      if (!item || !station?.evses || modalType !== 'evse')
+        return item as IEvseDto | null;
+
+      const currentEvse = station.evses.find((evse) => evse.id === item.id);
+      return currentEvse || (item as IEvseDto);
+    },
+    [station?.evses, modalType],
+  );
+
+  const getCurrentConnector = useCallback(
+    (item: EvseDto | ConnectorDto | null): IConnectorDto | null => {
+      if (!item || !station?.evses || modalType !== 'connector')
+        return item as IConnectorDto | null;
+
+      for (const evse of station.evses) {
+        const currentConnector = evse.connectors?.find(
+          (connector) => connector.id === item.id,
+        );
+        if (currentConnector) {
+          return currentConnector;
+        }
+      }
+      return item as IConnectorDto;
+    },
+    [station?.evses, modalType],
   );
 
   const renderModalContent = () => {
     if (modalType === 'evse') {
-      return (
-        <EvseUpsert
-          onSubmit={handleFormSubmit}
-          evse={selectedItem as IEvseDto | null}
-        />
-      );
+      const currentEvse = getCurrentEvse(selectedItem);
+      return <EvseUpsert onSubmit={handleFormSubmit} evse={currentEvse} />;
     }
     if (modalType === 'connector') {
+      const currentConnector = getCurrentConnector(selectedItem);
       return (
         <ConnectorsUpsert
           onSubmit={handleFormSubmit}
-          connector={selectedItem as IConnectorDto | null}
+          connector={currentConnector}
           evseId={evseId}
         />
       );
@@ -149,6 +205,30 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     return '';
   }, [modalType, selectedItem]);
 
+  const handleExpandToggle = (record: EvseDto) => {
+    const evseId = record.id;
+    if (evseId === undefined) return;
+    const isExpanded = expandedRowKeys.includes(evseId);
+    if (isExpanded) {
+      setExpandedRowKeys((prev) => prev.filter((key) => key !== evseId));
+    } else {
+      setExpandedRowKeys((prev) => [...prev, evseId]);
+    }
+  };
+
+  const handleConnectorEdit = (
+    connector: IConnectorDto,
+    evseId: number | undefined,
+  ) => {
+    if (evseId === undefined) return;
+    openModal('connector', connector, evseId);
+  };
+
+  const handleConnectorAdd = (evseId: number | undefined) => {
+    if (evseId === undefined) return;
+    openModal('connector', null, evseId);
+  };
+
   if (isLoading) return <p>Loading...</p>;
   if (!station) return <p>No Data Found</p>;
 
@@ -164,6 +244,26 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         columns={columns}
         pagination={false}
         dataSource={station.evses || []}
+        expandable={{
+          expandIconColumnIndex: -1,
+          expandedRowRender: (record: EvseDto) => {
+            const evseId = record.id;
+            if (evseId === undefined) return null;
+            return (
+              <ConnectorsTable
+                connectors={record.connectors || []}
+                onEdit={(connector) => handleConnectorEdit(connector, evseId)}
+                onAdd={() => handleConnectorAdd(evseId)}
+              />
+            );
+          },
+          expandedRowKeys: expandedRowKeys.filter((key) => key !== undefined),
+          onExpandedRowsChange: (expandedRows) => {
+            setExpandedRowKeys(
+              (expandedRows as React.Key[]).filter((key) => key !== undefined),
+            );
+          },
+        }}
       />
       <Modal
         centered
@@ -171,6 +271,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         open={isModalVisible}
         onCancel={closeModal}
         title={modalTitle}
+        key={`${modalType}-${selectedItem?.id || 'new'}`}
       >
         {renderModalContent()}
       </Modal>

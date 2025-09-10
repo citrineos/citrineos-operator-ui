@@ -5,7 +5,7 @@
 import { useForm } from '@refinedev/antd';
 import { useSelector } from 'react-redux';
 import { Form, Input, Button, Select, InputNumber, Tooltip } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 
 import { ResourceType } from '@util/auth';
 import { getSerializedValues } from '@util/middleware';
@@ -36,63 +36,62 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
   evseId,
 }) => {
   const selectedChargingStation = useSelector(getSelectedChargingStation());
+  const [id, setId] = useState<number | undefined>(undefined);
 
-  const [formData, setFormData] = useState({
-    id: connector !== null ? connector.id : 0,
-    stationId:
-      connector !== null
-        ? connector.stationId
-        : selectedChargingStation?.id || '',
-    connectorId: connector !== null ? connector.connectorId : '',
-    evseTypeConnectorId:
-      connector !== null ? connector.evseTypeConnectorId : '',
-    type: connector !== null ? connector.type : undefined,
-    format: connector !== null ? connector.format : undefined,
-    powerType: connector !== null ? connector.powerType : undefined,
-    maximumAmperage: connector !== null ? connector.maximumAmperage : undefined,
-    maximumVoltage: connector !== null ? connector.maximumVoltage : undefined,
-    maximumPowerWatts:
-      connector !== null ? connector.maximumPowerWatts : undefined,
-    termsAndConditionsUrl:
-      connector !== null ? connector.termsAndConditionsUrl : undefined,
-  });
+  const initialFormData = useMemo(
+    () => ({
+      id: connector?.id,
+      stationId: connector?.stationId || selectedChargingStation?.id || '',
+      connectorId: connector?.connectorId || '',
+      evseTypeConnectorId: connector?.evseTypeConnectorId || '',
+      type: connector?.type,
+      format: connector?.format,
+      powerType: connector?.powerType,
+      maximumAmperage: connector?.maximumAmperage,
+      maximumVoltage: connector?.maximumVoltage,
+      maximumPowerWatts: connector?.maximumPowerWatts,
+      termsAndConditionsUrl: connector?.termsAndConditionsUrl,
+    }),
+    [connector, selectedChargingStation?.id],
+  );
 
   const { formProps, form } = useForm({
     resource: ResourceType.CONNECTORS,
-    id: formData.id,
+    id: id,
     redirect: false,
     meta: {
       gqlMutation:
         connector === null
           ? CONNECTOR_CREATE_MUTATION
           : CONNECTOR_EDIT_MUTATION,
+      gqlVariables: { id },
     },
     onMutationSuccess: () => {
-      setFormData({
-        id: 0,
-        stationId: selectedChargingStation?.id || '',
-        connectorId: '',
-        evseTypeConnectorId: undefined,
-        type: undefined,
-        format: undefined,
-        powerType: undefined,
-        maximumAmperage: undefined,
-        maximumVoltage: undefined,
-        maximumPowerWatts: undefined,
-        termsAndConditionsUrl: undefined,
-      });
-      form.resetFields();
+      if (!connector) {
+        form.resetFields();
+      }
       onSubmit();
     },
   });
 
+  useEffect(() => {
+    setId(connector?.id);
+
+    form.setFieldsValue(initialFormData);
+  }, [connector, form, initialFormData]);
+
   const onFinish = useCallback(
     async (input: any) => {
-      input.evseId = evseId;
+      if (evseId) {
+        input.evseId = evseId;
+      }
+      if (connector?.id) {
+        setId(connector.id);
+      }
       const newItem: any = getSerializedValues(input, ConnectorDto);
       formProps.onFinish?.(newItem);
     },
-    [formProps],
+    [formProps, evseId, connector?.id],
   );
 
   return (
@@ -101,7 +100,7 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={formData}
+      initialValues={initialFormData}
     >
       <Form.Item
         name={ConnectorDtoProps.stationId}
@@ -112,7 +111,6 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
           id="stationId"
           name="stationId"
           type="text"
-          value={selectedChargingStation?.id || ''}
           disabled={!!selectedChargingStation?.id}
         />
       </Form.Item>

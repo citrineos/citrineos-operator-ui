@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm, useSelect } from '@refinedev/antd';
-import { Form, Input, Button, Select, Tooltip } from 'antd';
+import { Form, Input, Button, Select, Tooltip, Switch } from 'antd';
 
 import { EvseDto } from '../../../dtos/evse.dto';
 import { ResourceType } from '@util/auth';
@@ -24,62 +24,51 @@ interface EvseUpsertProps {
 }
 
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
-  const [formData, setFormData] = useState({
-    id: evse !== null ? evse.id : 0,
-    stationId: evse !== null ? evse.stationId : '',
-    evseTypeId: evse !== null ? evse.evseTypeId : undefined,
-    evseId: evse !== null ? evse.evseId : '',
-    physicalReference: evse !== null ? evse.physicalReference : '',
-    removed: evse !== null ? evse.removed : false,
-    chargingStation: evse !== null ? evse.chargingStation : undefined,
-  });
+  const [id, setId] = useState<number | undefined>(undefined);
 
-  const selectedChargingStation = useSelector(getSelectedChargingStation());
+  const initialFormData = useMemo(
+    () => ({
+      stationId: evse?.stationId || '',
+      evseTypeId: evse?.evseTypeId || undefined,
+      evseId: evse?.evseId || '',
+      physicalReference: evse?.physicalReference || '',
+      removed: evse?.removed || false,
+    }),
+    [evse],
+  );
+
   const { formProps, form } = useForm({
     resource: ResourceType.EVSES,
-    id: formData.id,
+    id: id,
     redirect: false,
     meta: {
       gqlMutation: evse === null ? EVSE_CREATE_MUTATION : EVSE_EDIT_MUTATION,
+      gqlVariables: { id },
     },
     onMutationSuccess: () => {
-      setFormData({
-        id: 0,
-        stationId: '',
-        evseTypeId: undefined,
-        evseId: '',
-        chargingStation: undefined,
-        physicalReference: '',
-        removed: false,
-      });
-      form.resetFields();
+      if (!evse) {
+        form.resetFields();
+      }
       onSubmit();
     },
   });
 
+  useEffect(() => {
+    setId(evse?.id);
+
+    form.setFieldsValue(initialFormData);
+  }, [evse, form, initialFormData]);
+
   const onFinish = useCallback(
     async (input: any) => {
       const newItem: any = getSerializedValues(input, EvseDto);
+      if (evse?.id) {
+        setId(evse.id);
+      }
       formProps.onFinish?.(newItem);
     },
-    [formProps],
+    [formProps, evse?.id],
   );
-
-  const { selectProps: connectors } = useSelect<IConnectorDto>({
-    resource: ResourceType.CONNECTORS,
-    optionLabel: (connector) =>
-      `${connector.connectorId} "-" ${connector.status?.valueOf()}`,
-    optionValue: (connector) => `${connector.id}`,
-    meta: {
-      gqlQuery: CONNECTOR_LIST_QUERY,
-      gqlVariables: {
-        offset: 0,
-        limit: 5,
-      },
-    },
-    sorters: [{ field: BaseDtoProps.updatedAt, order: 'desc' }],
-    pagination: { mode: 'off' },
-  });
 
   return (
     <Form
@@ -87,7 +76,7 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={formData}
+      initialValues={initialFormData}
     >
       <Form.Item
         name={EvseDtoProps.evseTypeId}
@@ -129,11 +118,12 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       >
         <Input id="physicalReference" name="physicalReference" type="text" />
       </Form.Item>
-      <Form.Item name={EvseDtoProps.removed} label="Removed">
-        <Select id="removed">
-          <Select.Option value={true}>Yes</Select.Option>
-          <Select.Option value={false}>No</Select.Option>
-        </Select>
+      <Form.Item
+        name={EvseDtoProps.removed}
+        label="Removed"
+        valuePropName="checked"
+      >
+        <Switch id="removed" checkedChildren="Yes" unCheckedChildren="No" />
       </Form.Item>
       <Form.Item style={{ textAlign: 'right' }}>
         <Button type="primary" htmlType="submit">
