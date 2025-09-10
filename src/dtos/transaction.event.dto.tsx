@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { ITransactionEventDto, IMeterValueDto } from '@citrineos/base';
 import { TransactionEventEnumType, TriggerReasonEnumType } from '@OCPP2_0_1';
 
@@ -5,7 +9,7 @@ export class TransactionEventDto implements Partial<ITransactionEventDto> {
   id?: number;
   stationId!: string;
   evseId?: number | null;
-  transactionDatabaseId?: string;
+  transactionDatabaseId?: number;
   eventType!: any;
   meterValues?: IMeterValueDto[];
   timestamp!: string;

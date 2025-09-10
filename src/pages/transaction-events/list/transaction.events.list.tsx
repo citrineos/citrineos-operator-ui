@@ -67,10 +67,10 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
   const merged = useMemo<ITransactionEventDto[]>(() => {
     const messageRows: ITransactionEventDto[] = (msgTable.dataSource || []).map(
       (m: any) => ({
-        id: -Number(m.id),
+        id: -m.id,
         stationId: String(m.stationId ?? ''),
         evseId: m.message?.connectorId ?? null,
-        transactionDatabaseId: String(transactionDatabaseId),
+        transactionDatabaseId: transactionDatabaseId,
         eventType: 'OCPPMessage' as ITransactionEventDto['eventType'],
         meterValues: [],
         timestamp: String(m.timestamp), // Fix: ensure timestamp is a string
