@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChargingStationIcon } from '../icons/charging.station.icon';
 import { ClipboardIcon } from '../icons/clipboard.icon';
 import { BiDirectionsArrowsIcon } from '../icons/bi.directional.arrows.icon';
+import { PartnerIcon } from '../icons/partner.icon';
 
 const { Sider } = Layout;
 
@@ -24,6 +25,7 @@ export enum MenuSection {
   CHARGING_STATIONS = 'charging-stations',
   AUTHORIZATIONS = 'authorizations',
   TRANSACTIONS = 'transactions',
+  PARTNERS = 'partners',
 }
 
 export interface MainMenuProps {
@@ -118,6 +120,11 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
       label: 'Transactions',
       icon: <BiDirectionsArrowsIcon />,
     }),
+    MenuItem({
+      key: `/${MenuSection.PARTNERS}`,
+      label: 'Partners',
+      icon: <PartnerIcon />,
+    }),
   ];
 
   // Handle the Help link differently since it's an external link
@@ -145,7 +152,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <HelpIcon />
+          <HelpIcon width={28} height={28} />
         </a>
       ),
     },
@@ -175,7 +182,11 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
         <Menu mode="inline" items={bottomMenuItems} style={{ width: '100%' }} />
       </Row>
       <div onClick={toggleSider} className="trigger">
-        {collapsed ? <ArrowRightIcon /> : <ArrowLeftIcon />}
+        {collapsed ? (
+          <ArrowRightIcon width={30} height={30} />
+        ) : (
+          <ArrowLeftIcon width={30} height={30} />
+        )}
       </div>
     </Sider>
   );

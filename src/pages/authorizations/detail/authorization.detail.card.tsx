@@ -112,6 +112,21 @@ export const AuthorizationDetailCard: React.FC<
             <Text className="nowrap">
               <strong>ID Token:</strong> {authorization.idToken}
             </Text>
+            <Text className="nowrap">
+              <strong>Partner:</strong>{' '}
+              <a
+                onClick={() =>
+                  push(
+                    `/${MenuSection.PARTNERS}/${authorization.tenantPartner?.id}`,
+                  )
+                }
+              >
+                {
+                  authorization.tenantPartner?.partnerProfileOCPI?.roles?.[0]
+                    ?.businessDetails?.name
+                }
+              </a>
+            </Text>
           </Flex>
 
           <Flex vertical gap={16} className="border-left column-right">

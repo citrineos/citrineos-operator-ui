@@ -67,7 +67,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
   const merged = useMemo<ITransactionEventDto[]>(() => {
     const messageRows: ITransactionEventDto[] = (msgTable.dataSource || []).map(
       (m: any) => ({
-        id: -Number(m.id),
+        id: -m.id,
         stationId: String(m.stationId ?? ''),
         evseId: m.message?.connectorId ?? null,
         transactionDatabaseId: transactionDatabaseId,

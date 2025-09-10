@@ -47,6 +47,7 @@ export enum ResourceType {
   INSTALLED_CERTIFICATES = 'InstalledCertificates',
   RESERVATIONS = 'Reservations',
   SERVER_NETWORK_PROFILES = 'ServerNetworkProfiles',
+  PARTNERS = 'TenantPartners',
 }
 
 export enum ActionType {

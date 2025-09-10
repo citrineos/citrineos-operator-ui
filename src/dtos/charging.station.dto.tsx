@@ -1,5 +1,10 @@
-import { Expose } from 'class-transformer';
-import { IsBoolean } from 'class-validator';
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+import { Expose, plainToInstance } from 'class-transformer';
+import { IsBoolean, validateSync } from 'class-validator';
+
 import {
   IChargingStationDto,
   IStatusNotificationDto,

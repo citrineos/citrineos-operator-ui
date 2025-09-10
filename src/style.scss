@@ -12,13 +12,16 @@ main {
   height: calc(100vh - 130px);
   overflow: auto;
 
-  .content-outer-wrap,
-  .content-inner-wrap {
+  .content-outer-wrap {
     padding: var(--ant-padding-xl);
   }
 
   .content-inner-wrap {
-    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .content-inner-wrap {
+    border-radius: var(--ant-border-radius-lg);
     background-color: var(--ant-color-bg-base);
     box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.1);
   }
@@ -87,12 +90,47 @@ main {
   }
 }
 
+button.btn-md {
+  height: 32px !important;
+  padding: 0 12px !important;
+}
+
 button.secondary {
   background-color: var(--secondary-color-2);
   color: white;
   border: 0;
   &:not(:disabled):not(.ant-btn-disabled):hover {
     background-color: var(--secondary-color-3);
+    color: white;
+  }
+}
+
+button.success {
+  background-color: var(--ui-color-success);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover {
+    background-color: var(--ui-color-success-light);
+    color: white;
+  }
+}
+
+button.error {
+  background-color: var(--ui-color-error);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover {
+    background-color: var(--ui-color-error-light);
+    color: white;
+  }
+}
+
+button.warning {
+  background-color: var(--ui-color-warning);
+  color: white;
+  border: 0;
+  &:not(:disabled):not(.ant-btn-disabled):hover {
+    background-color: var(--ui-color-warning-light);
     color: white;
   }
 }
@@ -187,19 +225,13 @@ button.secondary {
   }
 }
 
-.ant-table-cell.ant-table-cell-row-hover.column-id:hover {
-  background-color: var(--secondary-color-2);
+.ant-table-cell.hoverable-column {
+  cursor: pointer;
+  text-decoration-line: underline;
+  font-weight: bold;
 }
 
-.ant-table-cell.ant-table-cell-row-hover.column-name:hover {
-  background-color: var(--secondary-color-2);
-}
-
-.ant-table-cell.ant-table-cell-row-hover.column-idToken:hover {
-  background-color: var(--secondary-color-2);
-}
-
-.ant-table-cell.ant-table-cell-row-hover.column-transactionId:hover {
+.ant-table-cell.ant-table-cell-row-hover.hoverable-column:hover {
   background-color: var(--secondary-color-2);
 }
 
@@ -267,4 +299,14 @@ button.secondary {
   text {
     fill: var(--ant-color-text-base);
   }
+}
+
+.ant-descriptions-item {
+  padding-bottom: 4px !important;
+}
+
+.ant-descriptions-item-label.description-label {
+  font-weight: bold;
+  color: var(--secondary-color-4);
+  font-size: var(--ant-font-size-lg);
 }

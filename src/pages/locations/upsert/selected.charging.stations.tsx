@@ -16,7 +16,6 @@ import {
 } from 'antd';
 
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { SearchIcon } from '../../../components/icons/search.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
@@ -27,6 +26,7 @@ import {
   IChargingStationDto,
   LocationDtoProps,
 } from '@citrineos/base';
+import { PlusOutlined } from '@ant-design/icons';
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
@@ -159,11 +159,12 @@ export const SelectedChargingStations = ({
                 fallback={<AccessDeniedFallback />}
               >
                 <Button
-                  className="secondary"
+                  className="success"
+                  icon={<PlusOutlined />}
+                  iconPosition="end"
                   onClick={handleAddNewChargingStation}
                 >
-                  Add New Charging Station
-                  <PlusIcon />
+                  Create Charging Station
                 </Button>
               </CanAccess>
             </Flex>

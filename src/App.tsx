@@ -60,6 +60,10 @@ import {
   routes as AuthorizationsRoutes,
   resources as authoriationResources,
 } from './pages/authorizations';
+import {
+  resources as partnerResources,
+  routes as PartnersRoutes,
+} from './pages/partners';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { darkTheme, lightTheme } from './theme';
 import { MainMenu, MenuSection } from './components/main-menu/main.menu';
@@ -124,6 +128,7 @@ const resources: ResourceProps[] = [
   ...locationResources,
   ...transactionResources,
   ...authoriationResources,
+  ...partnerResources,
 ];
 
 const MainAntDApp: React.FC<MainAntdAppProps> = ({
@@ -146,6 +151,8 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
       return MenuSection.AUTHORIZATIONS;
     if (location.pathname.startsWith(`/${MenuSection.TRANSACTIONS}`))
       return MenuSection.TRANSACTIONS;
+    if (location.pathname.startsWith(`/${MenuSection.PARTNERS}`))
+      return MenuSection.PARTNERS;
     return MenuSection.OVERVIEW;
   }, [location.pathname]);
 
@@ -194,7 +201,6 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
                         <MainMenu activeSection={activeSection} />
                         <AntdLayout>
                           <AppModal />
-                          <Header activeSection={activeSection} />
                           <AntdLayout.Content
                             className={`content-container ${routeClassName}`}
                           >
@@ -226,6 +232,7 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
                 path="/charging-stations/*"
                 element={<ChargingStationsRoutes />}
               />
+              <Route path="/partners/*" element={<PartnersRoutes />} />
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>

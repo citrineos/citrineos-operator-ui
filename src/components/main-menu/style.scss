@@ -6,7 +6,7 @@
 
 .ant-layout-sider,
 .ant-menu {
-  background: var(--ant-layout-sider-bg);
+  background-color: rgba(var(--ant-layout-sider-bg), 0.99);
 }
 
 .ant-layout-sider.sider {
@@ -27,33 +27,24 @@
     position: absolute;
     top: 0;
     right: 0;
-    transform: translateY(150px) translateX(50%);
+    transform: translateY(110px) translateX(50%);
     padding: 0;
     margin: 0;
     display: block;
-    width: 25px !important;
-    line-height: 25px;
-    height: 25px;
+    width: 30px !important;
+    line-height: 30px;
+    height: 30px;
     border-radius: 50%;
     cursor: pointer;
   }
 
   .icon-button {
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background: var(--ant-color-bg-base);
-    margin-right: var(--ant-menu-icon-margin-inline-end);
-    margin-right: var(--ant-menu-icon-margin-inline-end);
-    svg {
-      width: 40px;
-      vertical-align: middle;
-    }
-  }
-
-  .main-menu {
-    margin: 50px 0;
+    padding: var(--ant-padding-xs);
+    border-radius: 50%;
   }
 
   .ant-menu-item {
@@ -61,7 +52,7 @@
   }
 
   .bottom-menu {
-    padding: 50px 0;
+    padding: 25px 0;
     flex: 1 1 100%;
     align-items: flex-end;
   }
@@ -77,12 +68,10 @@
     }
 
     & > .ant-menu-item {
+      display: flex;
       padding: 0;
-      text-align: center;
-
-      svg {
-        vertical-align: middle;
-      }
+      align-items: center;
+      justify-content: center;
 
       .ant-menu-item-icon + span {
         display: none;

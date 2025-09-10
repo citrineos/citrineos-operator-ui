@@ -203,16 +203,14 @@ export const LocationsUpsert = () => {
         data-testid="locations-create-form"
       >
         <Flex vertical gap={16}>
-          <Flex align="center" className="relative">
+          <Flex gap={12} align={'center'}>
             <ArrowLeftIcon
               style={{
                 cursor: 'pointer',
-                position: 'absolute',
-                transform: 'translateX(-100%)',
               }}
               onClick={() => goBack()}
             />
-            <h3>{locationId ? 'Edit Location' : 'Create Location'}</h3>
+            <h3>{locationId ? 'Edit' : 'Create'} Location</h3>
           </Flex>
           <Flex gap={16}>
             <Flex vertical flex={1}>
@@ -469,7 +467,7 @@ export const LocationsUpsert = () => {
               />
             </Flex>
           </Flex>
-          <SelectedChargingStations form={form} />
+          {locationId && <SelectedChargingStations form={form} />}
         </Flex>
       </Form>
     </CanAccess>

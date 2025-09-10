@@ -12,9 +12,3 @@ main[class*='content-locations-']:not(
   ) {
   @include mixins.inner-content-no-padding;
 }
-
-.location-details-table {
-  td:nth-child(2) {
-    padding-left: var(--ant-padding-md);
-  }
-}

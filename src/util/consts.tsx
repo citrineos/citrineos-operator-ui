@@ -12,3 +12,5 @@ export const EMPTY_FILTER: CrudFilter[] = [
     value: [],
   },
 ];
+
+export const NOT_APPLICABLE = 'N/A';

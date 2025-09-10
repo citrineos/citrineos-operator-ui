@@ -124,6 +124,10 @@ export const AUTHORIZATIONS_SHOW_QUERY = gql`
       realTimeAuthUrl
       createdAt
       updatedAt
+      tenantPartner: TenantPartner {
+        id
+        partnerProfileOCPI
+      }
     }
   }
 `;
