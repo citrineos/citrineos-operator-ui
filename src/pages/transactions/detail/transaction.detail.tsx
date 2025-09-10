@@ -87,18 +87,9 @@ export const TransactionDetail = () => {
   const { tableProps } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
     sorters: { permanent: [{ field: BaseDtoProps.updatedAt, order: 'desc' }] },
-    filters: {
-      permanent: [
-        {
-          field: 'id',
-          operator: 'eq',
-          value: authorization?.id,
-        },
-      ],
-    },
     meta: {
       gqlQuery: GET_TRANSACTIONS_BY_AUTHORIZATION,
-      gqlVariables: { limit: 10000 },
+      gqlVariables: { id: authorization?.id, limit: 10000 },
     },
     queryOptions: getPlainToInstanceOptions(),
   });

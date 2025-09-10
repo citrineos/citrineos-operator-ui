@@ -8,7 +8,6 @@ import { Type } from 'class-transformer';
 import { FieldLabel } from '@util/decorators/FieldLabel';
 import { ResourceType } from '@util/auth';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { GqlAssociation } from '@util/decorators/GqlAssociation';
 
 import {
   EVSE_CREATE_MUTATION,
@@ -23,17 +22,15 @@ import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
-import { VariableAttribute } from '../variable-attributes/VariableAttributes';
 import {
-  VARIABLE_ATTRIBUTE_GET_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_QUERY,
-} from '../variable-attributes/queries';
-import {
+  ConnectorDtoProps,
   EvseDtoProps,
+  IConnectorDto,
   IEvseDto,
-  VariableAttributeDtoProps,
 } from '@citrineos/base';
+import { Connector } from '../connectors/connector';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import { GET_CONNECTOR_LIST_FOR_STATION_EVSE } from '../../message/queries';
 
 @ClassResourceType(ResourceType.EVSES)
 @ClassGqlListQuery(EVSE_LIST_QUERY)
@@ -46,35 +43,65 @@ export class Evse implements Partial<IEvseDto> {
   @IsNumber()
   id!: number;
 
+  // @IsNumber()
+  // @FieldLabel('Station ID')
+  // stationId!: string;
+
+  @IsNumber()
+  @FieldLabel('EVSE Type ID')
+  evseTypeId?: number;
+
+  @FieldLabel('EVSE ID')
+  evseId!: string;
+
+  @FieldLabel('Physical Reference')
+  physicalReference?: string | null;
+
+  @FieldLabel('Removed')
+  removed?: boolean;
+
+  // @ValidateNested()
+  // @Type(() => Object)
+  // @FieldLabel('Charging Station')
+  // chargingStation?: IChargingStationDto;
+
   @IsArray()
-  @Type(() => VariableAttribute)
   @ValidateNested({ each: true })
-  @FieldLabel('Device Model')
   @GqlAssociation({
     parentIdFieldName: EvseDtoProps.id,
-    associatedIdFieldName: 'id',
+    associatedIdFieldName: ConnectorDtoProps.evseId,
     hasNewAssociatedIdsVariable: true,
     gqlQuery: {
-      query: VARIABLE_ATTRIBUTE_GET_QUERY,
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
     },
     gqlListQuery: {
-      query: VARIABLE_ATTRIBUTE_LIST_QUERY,
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
     },
     gqlListSelectedQuery: {
-      query: VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
       getQueryVariables: (evse: IEvseDto) => ({
-        id: evse.id,
+        stationId: evse.stationId,
+        where: {
+          evseId: { _eq: evse.id },
+        },
       }),
     },
   })
-  VariableAttributes?: VariableAttribute[];
+  @Type(() => Connector)
+  @FieldLabel('Connectors')
+  connectors?: IConnectorDto[] | null;
 
   constructor(data?: Partial<IEvseDto>) {
     if (data) {
       Object.assign(this, {
         id: data.id,
+        // stationId: data.stationId,
+        evseTypeId: data.evseTypeId,
+        evseId: data.evseId,
+        physicalReference: data.physicalReference,
+        removed: data.removed,
+        // chargingStation: data.chargingStation,
         connectors: data.connectors,
-        VariableAttributes: (data as any).VariableAttributes,
       });
     }
   }

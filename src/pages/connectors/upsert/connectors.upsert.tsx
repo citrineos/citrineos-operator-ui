@@ -4,8 +4,8 @@
 
 import { useForm } from '@refinedev/antd';
 import { useSelector } from 'react-redux';
-import { Form, Input, Button, Select, InputNumber } from 'antd';
-import React, { useCallback, useState } from 'react';
+import { Form, Input, Button, Select, InputNumber, Tooltip } from 'antd';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 
 import { ResourceType } from '@util/auth';
 import { getSerializedValues } from '@util/middleware';
@@ -20,82 +20,78 @@ import {
   ConnectorFormatEnum,
   ConnectorPowerType,
 } from '@citrineos/base';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
 interface ConnectorUpsertProps {
   onSubmit: () => void;
   connector: IConnectorDto | null;
+  evseId?: number | null;
 }
 
 export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
   onSubmit,
   connector,
+  evseId,
 }) => {
   const selectedChargingStation = useSelector(getSelectedChargingStation());
+  const [id, setId] = useState<number | undefined>(undefined);
 
-  const [formData, setFormData] = useState({
-    id: connector !== null ? connector.id : 0,
-    info: connector !== null ? connector.info : undefined,
-    stationId:
-      connector !== null
-        ? connector.stationId
-        : selectedChargingStation?.id || '',
-    status: connector !== null ? connector.status : undefined,
-    vendorId: connector !== null ? connector.vendorId : undefined,
-    errorCode: connector !== null ? connector.errorCode : undefined,
-    connectorId: connector !== null ? connector.connectorId : undefined,
-    vendorErrorCode: connector !== null ? connector.vendorErrorCode : undefined,
-    type: connector !== null ? connector.type : undefined,
-    format: connector !== null ? connector.format : undefined,
-    powerType: connector !== null ? connector.powerType : undefined,
-    maximumAmperage: connector !== null ? connector.maximumAmperage : undefined,
-    maximumVoltage: connector !== null ? connector.maximumVoltage : undefined,
-    maximumPowerWatts:
-      connector !== null ? connector.maximumPowerWatts : undefined,
-    termsAndConditionsUrl:
-      connector !== null ? connector.termsAndConditionsUrl : undefined,
-  });
+  const initialFormData = useMemo(
+    () => ({
+      id: connector?.id,
+      stationId: connector?.stationId || selectedChargingStation?.id || '',
+      connectorId: connector?.connectorId || '',
+      evseTypeConnectorId: connector?.evseTypeConnectorId || '',
+      type: connector?.type,
+      format: connector?.format,
+      powerType: connector?.powerType,
+      maximumAmperage: connector?.maximumAmperage,
+      maximumVoltage: connector?.maximumVoltage,
+      maximumPowerWatts: connector?.maximumPowerWatts,
+      termsAndConditionsUrl: connector?.termsAndConditionsUrl,
+    }),
+    [connector, selectedChargingStation?.id],
+  );
 
   const { formProps, form } = useForm({
     resource: ResourceType.CONNECTORS,
-    id: formData.id,
+    id: id,
     redirect: false,
     meta: {
       gqlMutation:
         connector === null
           ? CONNECTOR_CREATE_MUTATION
           : CONNECTOR_EDIT_MUTATION,
+      gqlVariables: { id },
     },
     onMutationSuccess: () => {
-      setFormData({
-        id: 0,
-        stationId: selectedChargingStation?.id || '',
-        info: undefined,
-        status: undefined,
-        vendorId: undefined,
-        errorCode: undefined,
-        connectorId: undefined,
-        vendorErrorCode: undefined,
-        type: undefined,
-        format: undefined,
-        powerType: undefined,
-        maximumAmperage: undefined,
-        maximumVoltage: undefined,
-        maximumPowerWatts: undefined,
-        termsAndConditionsUrl: undefined,
-      });
-      form.resetFields();
+      if (!connector) {
+        form.resetFields();
+      }
       onSubmit();
     },
   });
 
+  useEffect(() => {
+    setId(connector?.id);
+
+    form.setFieldsValue(initialFormData);
+  }, [connector, form, initialFormData]);
+
   const onFinish = useCallback(
     async (input: any) => {
+      if (evseId) {
+        input.evseId = evseId;
+      }
+      if (connector?.id) {
+        setId(connector.id);
+      }
       const newItem: any = getSerializedValues(input, ConnectorDto);
       formProps.onFinish?.(newItem);
     },
-    [formProps],
+    [formProps, evseId, connector?.id],
   );
 
   return (
@@ -104,15 +100,8 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={formData}
+      initialValues={initialFormData}
     >
-      <Form.Item
-        name={ConnectorDtoProps.id}
-        label="ID"
-        rules={[{ required: true, message: 'Please input the ID!' }]}
-      >
-        <Input id="id" name="id" type="text" />
-      </Form.Item>
       <Form.Item
         name={ConnectorDtoProps.stationId}
         label="Station ID"
@@ -122,41 +111,39 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
           id="stationId"
           name="stationId"
           type="text"
-          value={selectedChargingStation?.id || ''}
+          disabled={!!selectedChargingStation?.id}
         />
       </Form.Item>
-      <Form.Item label="Connector ID" name={ConnectorDtoProps.connectorId}>
+      <Form.Item
+        label={
+          <span>
+            Connector ID{' '}
+            <Tooltip title="This is the serial int starting at 1 used in OCPP 1.6 to refer to the connector, unique per Charging Station.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
+        name={ConnectorDtoProps.connectorId}
+      >
         <Input type="text" id="connectorId" name="connectorId" required />
       </Form.Item>
-      <Form.Item label="Status" name={ConnectorDtoProps.status}>
-        <Select id="status">
-          {Object.values(ConnectorStatusEnumType).map((status) => (
-            <Option key={status} value={status}>
-              {status}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item label="Error Code" name={ConnectorDtoProps.errorCode}>
-        <Select id="errorCode">
-          {Object.values(ErrorCodes).map((status) => (
-            <Option key={status} value={status}>
-              {status}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item label="Info" name={ConnectorDtoProps.info}>
-        <Input type="text" id="info" name="info" />
-      </Form.Item>
-      <Form.Item label="Vendor ID" name={ConnectorDtoProps.vendorId}>
-        <Input type="text" id="vendorId" name="vendorId" />
-      </Form.Item>
       <Form.Item
-        label="Vendor Error Code"
-        name={ConnectorDtoProps.vendorErrorCode}
+        label={
+          <span>
+            Evse Type Connector ID{' '}
+            <Tooltip title="This is the serial int starting at 1 used in OCPP 2.0.1 to refer to the connector, unique per EVSE.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
+        name={ConnectorDtoProps.evseTypeConnectorId}
       >
-        <Input type="text" id="vendorErrorCode" name="vendorErrorCode" />
+        <Input
+          type="text"
+          id="evseTypeConnectorId"
+          name="evseTypeConnectorId"
+          required
+        />
       </Form.Item>
       <Form.Item label="Type" name={ConnectorDtoProps.type}>
         <Select id="type">

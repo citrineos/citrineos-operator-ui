@@ -23,7 +23,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       locationId
       createdAt
       updatedAt
-      Location {
+      location: Location {
         id
         name
         address
@@ -52,7 +52,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
           updatedAt
         }
       }
-      Transactions(where: { isActive: { _eq: true } }) {
+      transactions: Transactions(where: { isActive: { _eq: true } }) {
         id
         timeSpentCharging
         isActive
@@ -60,13 +60,13 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         stationId
         stoppedReason
         transactionId
-        evseDatabaseId
+        evseId
         remoteStartId
         totalKwh
         createdAt
         updatedAt
       }
-      Connectors {
+      connectors: Connectors {
         connectorId
         status
         errorCode
@@ -87,7 +87,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
 `;
 
 export const FAULTED_CHARGING_STATIONS_LIST_QUERY = gql`
-  query ChargingStationsList(
+  query ChargingStationsFaultedList(
     $offset: Int!
     $limit: Int!
     $order_by: [ChargingStations_order_by!]
@@ -114,7 +114,7 @@ export const FAULTED_CHARGING_STATIONS_LIST_QUERY = gql`
       locationId
       createdAt
       updatedAt
-      Location {
+      location: Location {
         id
         name
         address
@@ -177,7 +177,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       floorLevel
       parkingRestrictions
       capabilities
-      Location {
+      location: Location {
         id
         name
         address
@@ -189,18 +189,36 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         createdAt
         updatedAt
       }
-      ConnectorTypes: VariableAttributes(
-        where: { Variable: { name: { _eq: "ConnectorType" } } }
-      ) {
-        value
-      }
-      Evses: VariableAttributes(
-        distinct_on: evseDatabaseId
-        where: { evseDatabaseId: { _is_null: false } }
-      ) {
+      evses: Evses {
         id
+        evseTypeId
+        evseId
+        physicalReference
+        removed
         createdAt
         updatedAt
+        connectors: Connectors {
+          id
+          stationId
+          evseId
+          evseTypeConnectorId
+          connectorId
+          status
+          type
+          maximumPowerWatts
+          maximumAmperage
+          maximumVoltage
+          format
+          powerType
+          termsAndConditionsUrl
+          errorCode
+          timestamp
+          info
+          vendorId
+          vendorErrorCode
+          createdAt
+          updatedAt
+        }
       }
       LatestStatusNotifications {
         id
@@ -227,15 +245,25 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         stationId
         stoppedReason
         transactionId
-        evseDatabaseId
+        evseId
         remoteStartId
         totalKwh
         createdAt
         updatedAt
       }
-      Connectors {
+      connectors: Connectors {
+        id
+        stationId
+        evseId
         connectorId
         status
+        type
+        maximumPowerWatts
+        maximumAmperage
+        maximumVoltage
+        format
+        powerType
+        termsAndConditionsUrl
         errorCode
         timestamp
         info
@@ -287,23 +315,6 @@ export const CHARGING_STATIONS_EDIT_MUTATION = gql`
       isOnline
       protocol
       locationId
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-export const GET_OCPP_MESSAGES = gql`
-  query GetOCPPMessages($id: String!) {
-    OCPPMessages(id: $id) {
-      id
-      stationId
-      correlationId
-      origin
-      protocol
-      action
-      message
-      timestamp
       createdAt
       updatedAt
     }

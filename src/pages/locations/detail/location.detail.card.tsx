@@ -65,9 +65,14 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
           <Descriptions.Item label="Address">
             {getFullAddress(location)}
           </Descriptions.Item>
-          <Descriptions.Item label="Coordinates">
-            {location.coordinates
-              ? `${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`
+          <Descriptions.Item label="Latitude">
+            {location?.coordinates
+              ? location.coordinates.coordinates[1].toFixed(4)
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Longitude">
+            {location?.coordinates
+              ? location.coordinates.coordinates[0].toFixed(4)
               : NOT_APPLICABLE}
           </Descriptions.Item>
           <Descriptions.Item label="Time Zone">

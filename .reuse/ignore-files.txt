@@ -27,3 +27,5 @@ public/online.png
 tsconfig.json
 tsconfig.node.json
 .env.example
+src/graphql/schema.types.ts
+src/graphql/types.ts

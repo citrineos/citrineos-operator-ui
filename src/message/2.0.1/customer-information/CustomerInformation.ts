@@ -3,11 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Type } from 'class-transformer';
-import { CustomDataType } from './CustomData';
-import { IdToken } from '../pages/id-tokens/id-token';
+import { CustomDataType } from '../../../model/CustomData';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import { ChargingStation } from '../pages/charging-stations/ChargingStation';
-import { ADDITIONAL_INFOS_RELATED_IDTOKENS } from '../queries/additionalInfo';
+import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import {
   IsBoolean,
   IsInt,
@@ -18,12 +16,24 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { IdTokenDtoProps } from '@citrineos/base';
-
-const ID_TOKEN_FIELD = 'idToken';
+import { AuthorizationDtoProps, IAuthorizationDto } from '@citrineos/base';
+import { Authorization } from '../../../pages/authorizations/authorizations';
+import {
+  AUTHORIZATIONS_LIST_QUERY,
+  AUTHORIZATIONS_SHOW_QUERY,
+} from '../../../pages/authorizations/queries';
 
 export interface GetCustomerProps {
   station: ChargingStation;
+}
+
+export enum GetCustomerInformationDataProps {
+  authorization = 'authorization',
+  customData = 'customData',
+  requestId = 'requestId',
+  report = 'report',
+  clear = 'clear',
+  customerIdentifier = 'customerIdentifier',
 }
 
 export class CustomerInformationRequest {
@@ -44,18 +54,18 @@ export class CustomerInformationRequest {
   customData?: CustomDataType | null;
 
   @GqlAssociation({
-    parentIdFieldName: ID_TOKEN_FIELD,
-    associatedIdFieldName: IdTokenDtoProps.id,
+    parentIdFieldName: GetCustomerInformationDataProps.authorization,
+    associatedIdFieldName: AuthorizationDtoProps.id,
     gqlQuery: {
-      query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+      query: AUTHORIZATIONS_SHOW_QUERY,
     },
     gqlListQuery: {
-      query: ADDITIONAL_INFOS_RELATED_IDTOKENS,
+      query: AUTHORIZATIONS_LIST_QUERY,
     },
   })
-  @Type(() => IdToken)
+  @Type(() => Authorization)
   @IsOptional()
-  idToken?: IdToken | null;
+  authorization?: Authorization | null;
 
   @IsString()
   @MinLength(1)
@@ -63,18 +73,9 @@ export class CustomerInformationRequest {
   customerIdentifier?: string;
 }
 
-export enum GetCustomerInformationDataProps {
-  idToken = 'idToken',
-  customData = 'customData',
-  requestId = 'requestId',
-  report = 'report',
-  clear = 'clear',
-  customerIdentifier = 'customerIdentifier',
-}
-
 export const CustomerPayload = (plainValues: Record<string, any>) => {
   const {
-    idToken,
+    authorization,
     report,
     clear,
     customData,
@@ -83,25 +84,12 @@ export const CustomerPayload = (plainValues: Record<string, any>) => {
   } = plainValues;
 
   let finalIdToken = null;
-  if (idToken) {
+  if (authorization) {
     finalIdToken = {
-      idToken: idToken.idToken,
-      type: idToken.type,
-      customData: idToken.customData,
+      idToken: (authorization as IAuthorizationDto).idToken,
+      type: (authorization as IAuthorizationDto).idTokenType,
+      additionalInfo: (authorization as IAuthorizationDto).additionalInfo,
     };
-    if (
-      idToken.IdTokenAdditionalInfos &&
-      idToken.IdTokenAdditionalInfos.length > 0
-    ) {
-      (finalIdToken as any).additionalInfo =
-        idToken.IdTokenAdditionalInfos?.map(
-          ({ AdditionalInfo: info }: any) => ({
-            additionalIdToken: info.additionalIdToken,
-            type: info.type,
-            customData: info.customData,
-          }),
-        );
-    }
   }
   const payload: any = {
     requestId: plainValues.requestId,

@@ -24,7 +24,7 @@ export const TRANSACTION_LIST_QUERY = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -43,8 +43,6 @@ export const TRANSACTION_LIST_QUERY = gql`
       }
       Evse {
         id
-        databaseId
-        connectorId
         createdAt
         updatedAt
       }
@@ -110,7 +108,7 @@ export const TRANSACTION_GET_QUERY = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -128,8 +126,8 @@ export const TRANSACTION_GET_QUERY = gql`
       }
       Evse {
         id
-        databaseId
-        connectorId
+        evseTypeId
+        evseId
         createdAt
         updatedAt
       }
@@ -170,7 +168,7 @@ export const TRANSACTION_CREATE_MUTATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -189,7 +187,7 @@ export const TRANSACTION_EDIT_MUTATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -208,7 +206,7 @@ export const TRANSACTION_DELETE_MUTATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -250,7 +248,8 @@ export const TRANSACTION_SUCCESS_RATE_QUERY = gql`
 `;
 
 export const GET_TRANSACTIONS_BY_AUTHORIZATION = gql`
-  query AuthorizationsList(
+  query GetAuthorizationsListByAuthorizationId(
+    $id: Int!
     $offset: Int!
     $limit: Int!
     $order_by: [Authorizations_order_by!]
@@ -260,32 +259,22 @@ export const GET_TRANSACTIONS_BY_AUTHORIZATION = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: $where
+      where: { id: { _eq: $id }, _and: [$where] }
     ) {
       id
-      allowedConnectorTypes
-      disallowedEvseIdPrefixes
-      idTokenId
-      idTokenInfoId
-      IdToken {
-        createdAt
-        id
-        idToken
-        type
-        updatedAt
-      }
-      IdTokenInfo {
-        cacheExpiryDateTime
-        chargingPriority
-        createdAt
-        groupIdTokenId
-        id
-        language1
-        language2
-        personalMessage
-        status
-        updatedAt
-      }
+      idToken
+      idTokenType
+      status
+      groupAuthorizationId
+      additionalInfo
+      concurrentTransaction
+      chargingPriority
+      language1
+      language2
+      personalMessage
+      cacheExpiryDateTime
+      createdAt
+      updatedAt
     }
     Authorizations_aggregate(where: $where) {
       aggregate {

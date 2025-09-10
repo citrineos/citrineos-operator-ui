@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm, useSelect } from '@refinedev/antd';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, Tooltip, Switch } from 'antd';
 
 import { EvseDto } from '../../../dtos/evse.dto';
 import { ResourceType } from '@util/auth';
@@ -14,6 +14,9 @@ import { CONNECTOR_LIST_QUERY } from '../../connectors/queries';
 import { BaseDtoProps } from '@citrineos/base';
 import { IConnectorDto } from '@citrineos/base';
 import { IEvseDto, EvseDtoProps } from '@citrineos/base';
+import { useSelector } from 'react-redux';
+import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
@@ -21,58 +24,51 @@ interface EvseUpsertProps {
 }
 
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
-  const [formData, setFormData] = useState({
-    id: evse !== null ? evse.id : 0,
-    evseId: evse !== null ? evse.evseId : '',
-    physicalReference: evse !== null ? evse.physicalReference : '',
-    removed: evse !== null ? evse.removed : false,
-    connectorId:
-      evse !== null ? evse.connectors?.at(0)?.connectorId : undefined,
-  });
+  const [id, setId] = useState<number | undefined>(undefined);
+
+  const initialFormData = useMemo(
+    () => ({
+      stationId: evse?.stationId || '',
+      evseTypeId: evse?.evseTypeId || undefined,
+      evseId: evse?.evseId || '',
+      physicalReference: evse?.physicalReference || '',
+      removed: evse?.removed || false,
+    }),
+    [evse],
+  );
 
   const { formProps, form } = useForm({
     resource: ResourceType.EVSES,
-    id: formData.id,
+    id: id,
     redirect: false,
     meta: {
       gqlMutation: evse === null ? EVSE_CREATE_MUTATION : EVSE_EDIT_MUTATION,
+      gqlVariables: { id },
     },
     onMutationSuccess: () => {
-      setFormData({
-        id: 0,
-        evseId: '',
-        physicalReference: '',
-        removed: false,
-        connectorId: undefined,
-      });
-      form.resetFields();
+      if (!evse) {
+        form.resetFields();
+      }
       onSubmit();
     },
   });
 
+  useEffect(() => {
+    setId(evse?.id);
+
+    form.setFieldsValue(initialFormData);
+  }, [evse, form, initialFormData]);
+
   const onFinish = useCallback(
     async (input: any) => {
       const newItem: any = getSerializedValues(input, EvseDto);
+      if (evse?.id) {
+        setId(evse.id);
+      }
       formProps.onFinish?.(newItem);
     },
-    [formProps],
+    [formProps, evse?.id],
   );
-
-  const { selectProps: connectors } = useSelect<IConnectorDto>({
-    resource: ResourceType.CONNECTORS,
-    optionLabel: (connector) =>
-      `${connector.connectorId} "-" ${connector.status?.valueOf()}`,
-    optionValue: (connector) => `${connector.id}`,
-    meta: {
-      gqlQuery: CONNECTOR_LIST_QUERY,
-      gqlVariables: {
-        offset: 0,
-        limit: 5,
-      },
-    },
-    sorters: [{ field: BaseDtoProps.updatedAt, order: 'desc' }],
-    pagination: { mode: 'off' },
-  });
 
   return (
     <Form
@@ -80,36 +76,54 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={formData}
+      initialValues={initialFormData}
     >
       <Form.Item
-        name={EvseDtoProps.id}
-        label="ID"
-        rules={[{ required: true, message: 'Please input the ID!' }]}
+        name={EvseDtoProps.evseTypeId}
+        label={
+          <span>
+            Evse Type ID{' '}
+            <Tooltip title="This is the serial int used in OCPP 2.0.1 to refer to the EVSE, unique per Charging Station.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
       >
-        <Input id="id" name="id" type="text" />
+        <Input id="evseTypeId" name="evseTypeId" type="number" />
       </Form.Item>
       <Form.Item
         name={EvseDtoProps.evseId}
-        label="EVSE ID"
+        label={
+          <span>
+            Evse ID{' '}
+            <Tooltip title="This is the eMI3 compliant EVSE ID, which must be globally unique.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
         rules={[{ required: true, message: 'Please input the EVSE ID!' }]}
       >
         <Input id="evseId" name="evseId" type="text" />
       </Form.Item>
       <Form.Item
         name={EvseDtoProps.physicalReference}
-        label="Physical Reference"
+        label={
+          <span>
+            Physical Reference{' '}
+            <Tooltip title="Any identifier printed on the EVSE used to identify it when physically at the location, e.g. a number or a letter.">
+              <InfoCircleOutlined style={{ color: '#1890ff' }} />
+            </Tooltip>
+          </span>
+        }
       >
         <Input id="physicalReference" name="physicalReference" type="text" />
       </Form.Item>
-      <Form.Item name={EvseDtoProps.removed} label="Removed">
-        <Select id="removed">
-          <Select.Option value={true}>Yes</Select.Option>
-          <Select.Option value={false}>No</Select.Option>
-        </Select>
-      </Form.Item>
-      <Form.Item label="Connector ID" name="connectorId">
-        <Select {...connectors} id="connectorId" />
+      <Form.Item
+        name={EvseDtoProps.removed}
+        label="Removed"
+        valuePropName="checked"
+      >
+        <Switch id="removed" checkedChildren="Yes" unCheckedChildren="No" />
       </Form.Item>
       <Form.Item style={{ textAlign: 'right' }}>
         <Button type="primary" htmlType="submit">

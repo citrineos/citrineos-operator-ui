@@ -22,10 +22,7 @@ export type User = {
 };
 
 export enum ResourceType {
-  ADDITIONAL_INFOS = 'AdditionalInfos',
   AUTHORIZATIONS = 'Authorizations',
-  ID_TOKENS = 'IdTokens',
-  ID_TOKEN_INFOS = 'IdTokenInfos',
   BOOTS = 'Boots',
   SECURITY_EVENTS = 'SecurityEvents',
   CHARGING_STATIONS = 'ChargingStations',

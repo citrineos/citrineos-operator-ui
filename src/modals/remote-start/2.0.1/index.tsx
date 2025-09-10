@@ -5,10 +5,16 @@
 import React, { useEffect, useState } from 'react';
 import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
-import { ID_TOKENS_LIST_QUERY } from '../../../pages/id-tokens/queries';
 import { useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../../pages/charging-station-sequences/queries';
-import { ChargingStationSequenceType } from '@citrineos/base';
+import {
+  AuthorizationDtoProps,
+  BaseDtoProps,
+  ChargingStationSequenceType,
+  IAuthorizationDto,
+  IChargingStationDto,
+  IChargingStationSequenceDto,
+} from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { ChargingStationSequenceDto } from '../../../dtos/charging.station.sequence.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
@@ -18,10 +24,7 @@ import { EvseSelector } from '../../shared/evse-selector/evse.selector';
 
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { ResourceType } from '@util/auth';
-import { BaseDtoProps } from '@citrineos/base';
-import { IChargingStationDto } from '@citrineos/base';
-import { IChargingStationSequenceDto } from '@citrineos/base';
-import { IdTokenDtoProps, IIdTokenDto } from '@citrineos/base';
+import { AUTHORIZATIONS_LIST_QUERY } from '../../../pages/authorizations/queries';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: IChargingStationDto;
@@ -38,7 +41,9 @@ export const OCPP2_0_1_RemoteStart = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [evseSelectorLoading, setEvseSelectorLoading] =
     useState<boolean>(false);
-  const [idToken, setIdToken] = useState<IIdTokenDto | null>(null);
+  const [authorization, setAuthorization] = useState<IAuthorizationDto | null>(
+    null,
+  );
   const isModalOpen = useSelector(selectIsModalOpen);
 
   const { data: requestIdResponse, isLoading: isLoadingRequestId } =
@@ -64,25 +69,35 @@ export const OCPP2_0_1_RemoteStart = ({
       },
     } as any);
 
-  const { selectProps: idTokenSelectProps } = useSelect<IIdTokenDto>({
-    resource: ResourceType.ID_TOKENS,
-    optionLabel: (idToken) => idToken.idToken,
-    optionValue: (idToken) => JSON.stringify(idToken),
-    meta: {
-      gqlQuery: ID_TOKENS_LIST_QUERY,
-      gqlVariables: { offset: 0, limit: 10 },
-    },
-    sorters: [{ field: BaseDtoProps.updatedAt, order: 'desc' }],
-    pagination: { mode: 'off' },
-    onSearch: (value) => [
-      {
-        operator: 'or',
-        value: [
-          { field: IdTokenDtoProps.idToken, operator: 'contains', value },
-        ],
+  const { selectProps: authorizationSelectProps } =
+    useSelect<IAuthorizationDto>({
+      resource: ResourceType.AUTHORIZATIONS,
+      optionLabel: (authorization) => authorization.idToken,
+      optionValue: (authorization) =>
+        JSON.stringify({
+          idToken: authorization.idToken,
+          type: authorization?.idTokenType,
+          additionalInfo: authorization.additionalInfo,
+        }),
+      meta: {
+        gqlQuery: AUTHORIZATIONS_LIST_QUERY,
+        gqlVariables: { offset: 0, limit: 10 },
       },
-    ],
-  });
+      sorters: [{ field: BaseDtoProps.updatedAt, order: 'desc' }],
+      pagination: { mode: 'off' },
+      onSearch: (value) => [
+        {
+          operator: 'or',
+          value: [
+            {
+              field: AuthorizationDtoProps.idToken,
+              operator: 'contains',
+              value,
+            },
+          ],
+        },
+      ],
+    });
 
   useEffect(() => {
     if (isModalOpen) {
@@ -102,17 +117,17 @@ export const OCPP2_0_1_RemoteStart = ({
 
   if (
     loading ||
-    idTokenSelectProps.loading ||
+    authorizationSelectProps.loading ||
     evseSelectorLoading ||
     isLoadingRequestId
   ) {
     return <Spin />;
   }
 
-  const handleIdTokenSelection = (value: any) => {
-    const idToken = JSON.parse(value);
-    setIdToken(idToken);
-    form.setFieldsValue({ idToken: idToken.idToken });
+  const handleAuthorizationSelection = (value: any) => {
+    const authorization = JSON.parse(value);
+    setAuthorization(authorization);
+    form.setFieldsValue({ authorization: authorization.idToken });
   };
 
   const handleEvseSelection = (value: any) => {
@@ -126,8 +141,9 @@ export const OCPP2_0_1_RemoteStart = ({
       remoteStartId,
       evseId,
       idToken: {
-        idToken: idToken?.idToken,
-        type: idToken?.type,
+        idToken: authorization?.idToken,
+        type: authorization?.idTokenType,
+        additionalInfo: authorization?.additionalInfo,
       },
     };
 
@@ -155,16 +171,16 @@ export const OCPP2_0_1_RemoteStart = ({
         <Flex>
           <Form.Item
             className={'full-width'}
-            label="ID Token"
-            name="idToken"
-            rules={[{ required: true, message: 'ID Token is required' }]}
+            label="Authorization"
+            name="authorization"
+            rules={[{ required: true, message: 'Authorization is required' }]}
           >
             <AutoComplete
               className="full-width"
-              onSelect={handleIdTokenSelection}
+              onSelect={handleAuthorizationSelection}
               filterOption={false}
-              placeholder="Search ID Token"
-              {...idTokenSelectProps}
+              placeholder="Search Authorization"
+              {...authorizationSelectProps}
             />
           </Form.Item>
         </Flex>

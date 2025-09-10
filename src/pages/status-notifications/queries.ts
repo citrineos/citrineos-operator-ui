@@ -35,7 +35,7 @@ export const STATUS_NOTIFICATIONS_LIST_QUERY = gql`
 `;
 
 export const STATUS_NOTIFICATIONS_LIST_FOR_STATION_QUERY = gql`
-  query StatusNotificationsList(
+  query StatusNotificationsForStationList(
     $stationId: String!
     $order_by: [StatusNotifications_order_by!] = {}
     $where: [StatusNotifications_bool_exp!] = []

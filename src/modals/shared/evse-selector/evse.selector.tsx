@@ -5,7 +5,7 @@
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { BaseOption } from '@refinedev/core';
-import { GET_EVSE_ID_LIST_FOR_STATION } from '../../../message/queries';
+import { GET_EVSE_LIST_FOR_STATION } from '../../../message/queries';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { ResourceType } from '@util/auth';
 import { EvseDtoProps, IEvseDto } from '@citrineos/base';
@@ -25,17 +25,17 @@ export const EvseSelector = ({
 }: EvseSelectorProps) => {
   const { selectProps } = useSelect<IEvseDto>({
     resource: ResourceType.EVSES,
-    optionLabel: (evse) => String(evse.id),
-    optionValue: (evse) => String(evse.id),
+    optionLabel: (evse) => String(evse.evseTypeId),
+    optionValue: (evse) => String(evse.evseTypeId),
     meta: {
-      gqlQuery: GET_EVSE_ID_LIST_FOR_STATION,
+      gqlQuery: GET_EVSE_LIST_FOR_STATION,
       gqlVariables: {
         offset: 0,
         limit: 10,
         stationId: station.id,
       },
     },
-    sorters: [{ field: EvseDtoProps.id, order: 'asc' }],
+    sorters: [{ field: EvseDtoProps.evseTypeId, order: 'asc' }],
     pagination: { mode: 'off' },
     onSearch: (value) => {
       const evseId = Number(value);
@@ -45,7 +45,7 @@ export const EvseSelector = ({
       return [
         {
           operator: 'or',
-          value: [{ field: EvseDtoProps.id, operator: 'eq', value }],
+          value: [{ field: EvseDtoProps.evseTypeId, operator: 'eq', value }],
         },
       ];
     },

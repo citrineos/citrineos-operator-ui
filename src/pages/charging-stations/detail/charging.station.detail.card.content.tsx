@@ -177,7 +177,7 @@ export const ChargingStationDetailCardContent = ({
 
   let latestTimestamp = NOT_APPLICABLE;
   if (latestLog) {
-    latestTimestamp = formatDate(latestLog.updatedAt);
+    latestTimestamp = formatDate(latestLog.timestamp);
   }
 
   return (
@@ -246,7 +246,7 @@ export const ChargingStationDetailCardContent = ({
                 <Tooltip title={station?.location?.name}>
                   <Text
                     ellipsis
-                    style={{ maxWidth: 150, display: 'inline-block' }}
+                    style={{ maxWidth: 100, display: 'inline-block' }}
                   >
                     {station?.location?.name}
                   </Text>
@@ -258,12 +258,12 @@ export const ChargingStationDetailCardContent = ({
           </Descriptions.Item>
           <Descriptions.Item label="Latitude">
             {station.location?.coordinates
-              ? station.location.coordinates.coordinates[1]
+              ? station.location.coordinates.coordinates[1].toFixed(4)
               : NOT_APPLICABLE}
           </Descriptions.Item>
           <Descriptions.Item label="Longitude">
             {station.location?.coordinates
-              ? station.location.coordinates.coordinates[0]
+              ? station.location.coordinates.coordinates[0].toFixed(4)
               : NOT_APPLICABLE}
           </Descriptions.Item>
           <Descriptions.Item label="Status">
@@ -273,14 +273,22 @@ export const ChargingStationDetailCardContent = ({
               NOT_APPLICABLE
             )}
           </Descriptions.Item>
-          <Descriptions.Item label="Timestamp">
+          <Descriptions.Item label="Last OCPP Message">
             {latestTimestamp}
           </Descriptions.Item>
-          <Descriptions.Item label="Model">
-            {station.chargePointModel ?? UNKNOWN_TEXT}
+          <Descriptions.Item label="Vendor & Model">
+            {(station.chargePointModel ?? UNKNOWN_TEXT) +
+              ' ' +
+              (station.chargePointVendor ?? UNKNOWN_TEXT)}
           </Descriptions.Item>
-          <Descriptions.Item label="Vendor">
-            {station.chargePointVendor ?? UNKNOWN_TEXT}
+          <Descriptions.Item label="Floor Level">
+            {station.floorLevel ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Parking Restrictions">
+            {station.parkingRestrictions ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Capabilities">
+            {station.capabilities?.join(', ') ?? UNKNOWN_TEXT}
           </Descriptions.Item>
           <Descriptions.Item label="Firmware Version">
             {station.firmwareVersion ?? UNKNOWN_TEXT}

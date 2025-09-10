@@ -8,7 +8,13 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { EvseDtoProps, IEvseDto, OCPPVersion } from '@citrineos/base';
+import {
+  ConnectorDtoProps,
+  EvseDtoProps,
+  type IConnectorDto,
+  type IEvseDto,
+  OCPPVersion,
+} from '@citrineos/base';
 import { AttributeEnumType, GetVariableStatusEnumType } from '@OCPP2_0_1';
 import {
   ArrayMinSize,
@@ -23,7 +29,10 @@ import {
 import { Type } from 'class-transformer';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { Evse } from '../../../pages/evses/Evse';
-import { GET_EVSE_LIST_FOR_STATION } from '../../queries';
+import {
+  GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+  GET_EVSE_LIST_FOR_STATION,
+} from '../../queries';
 import { StatusInfoType } from '../model/StatusInfoType';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
@@ -46,6 +55,7 @@ import {
   VARIABLE_GET_QUERY,
   VARIABLE_LIST_BY_COMPONENT_QUERY,
 } from '../../../pages/variable-attributes/variables/queries';
+import { Connector } from '../../../pages/connectors/connector';
 
 enum GetVariablesDataProps {
   // customData = 'customData', // todo
@@ -54,6 +64,7 @@ enum GetVariablesDataProps {
   variable = 'variable',
   variableInstance = 'variableInstance',
   evse = 'evse',
+  connector = 'connector',
   attributeType = 'attributeType',
 }
 
@@ -149,6 +160,34 @@ export class GetVariablesData {
   @IsOptional()
   evse?: Evse | null;
 
+  @GqlAssociation({
+    parentIdFieldName: GetVariablesDataProps.evse,
+    associatedIdFieldName: EvseDtoProps.id,
+    gqlQuery: {
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+    },
+    gqlListQuery: {
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+      getQueryVariables: (formData: GetVariablesData, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        const selectedEvse = formData.evse;
+        const hasValidEvse =
+          selectedEvse &&
+          selectedEvse.id &&
+          (selectedEvse.id as any) !== NEW_IDENTIFIER;
+
+        return {
+          stationId: station.id,
+          where: hasValidEvse ? { evseId: { _eq: selectedEvse.id } } : {},
+        };
+      },
+    },
+  })
+  @Type(() => Connector)
+  @ValidateNested()
+  @IsOptional()
+  connector?: IConnectorDto | null;
+
   @IsEnum(AttributeEnumType)
   @IsOptional()
   attributeType?: AttributeEnumType | null;
@@ -243,22 +282,28 @@ export const GetVariables: React.FC<GetVariablesProps> = ({ station }) => {
         if (item) {
           const component: Component = item[GetVariablesDataProps.component]!;
           const variable: Variable = item[GetVariablesDataProps.variable]!;
-          const evse: IEvseDto | null =
+          const evse: Partial<IEvseDto> | null =
             item[GetVariablesDataProps.evse] || null;
+          const connector: Partial<IConnectorDto> | null =
+            item[GetVariablesDataProps.connector] || null;
 
           let evsePayload: any = undefined;
           // Only include EVSE if it has a valid ID (not the placeholder NEW_IDENTIFIER)
           if (
             evse &&
-            evse[EvseDtoProps.databaseId] &&
-            evse[EvseDtoProps.databaseId] !== (NEW_IDENTIFIER as any)
+            evse[EvseDtoProps.id] &&
+            evse[EvseDtoProps.id] !== (NEW_IDENTIFIER as any)
           ) {
             evsePayload = {
               id: evse[EvseDtoProps.id],
               // customData: null // todo
             };
-            if (evse[EvseDtoProps.connectorId]) {
-              evsePayload.connectorId = evse[EvseDtoProps.connectorId];
+            if (
+              connector &&
+              connector[ConnectorDtoProps.id] &&
+              connector[ConnectorDtoProps.id] !== (NEW_IDENTIFIER as any)
+            ) {
+              evsePayload.connectorId = connector[ConnectorDtoProps.id];
             }
           }
 

@@ -74,7 +74,7 @@ import {
 } from '@util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
-import { authProvider, createAccessProvider } from '@util/auth';
+import { authProvider, createAccessProvider, ResourceType } from '@util/auth';
 import config from '@util/config';
 
 const accessControlProvider = createAccessProvider({});
@@ -102,7 +102,10 @@ const webSocketClient = graphqlWS.createClient({
 });
 
 const hasuraProviderOptions = {
-  idType: 'String',
+  idType: (resource: string) => {
+    if (resource === ResourceType.CHARGING_STATIONS) return 'String';
+    return 'Int';
+  },
   namingConvention: 'hasura-default',
 };
 

@@ -26,8 +26,12 @@ export const CHARGING_STATION_SEQUENCES_CREATE_MUTATION = gql`
 
 export const CHARGING_STATION_SEQUENCES_DELETE_MUTATION = gql`
   mutation ChargingStationSequencesDelete($stationId: String!, $type: String!) {
-    delete_ChargingStationSequences_by_pk(stationId: $stationId, type: $type) {
-      value
+    delete_ChargingStationSequences(
+      where: { stationId: { _eq: $stationId }, type: { _eq: $type } }
+    ) {
+      returning {
+        value
+      }
     }
   }
 `;
@@ -38,11 +42,13 @@ export const CHARGING_STATION_SEQUENCES_EDIT_MUTATION = gql`
     $type: String!
     $object: ChargingStationSequences_set_input!
   ) {
-    update_ChargingStationSequences_by_pk(
-      pk_columns: { stationId: $stationId, type: $type }
+    update_ChargingStationSequences(
+      where: { stationId: { _eq: $stationId }, type: { _eq: $type } }
       _set: $object
     ) {
-      value
+      returning {
+        value
+      }
     }
   }
 `;

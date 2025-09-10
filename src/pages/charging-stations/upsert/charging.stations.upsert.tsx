@@ -190,23 +190,18 @@ export const ChargingStationUpsert = () => {
         onOk: () => replace('/charging-stations'),
       });
     } else {
-      replace('/charging-stations');
+      const stationId = station?.id;
+      if (stationId) {
+        replace(`/${MenuSection.CHARGING_STATIONS}/${stationId}`);
+      } else {
+        replace('/charging-stations');
+      }
     }
   }, [isFormChanged, replace]);
 
   const onFinish = useCallback(
     async (input: any) => {
       delete input.locationName; // placeholder for AutoComplete input
-      // Convert parkingRestrictions array to comma-separated string for Hasura
-      if (Array.isArray(input[ChargingStationDtoProps.parkingRestrictions])) {
-        input[ChargingStationDtoProps.parkingRestrictions] =
-          input[ChargingStationDtoProps.parkingRestrictions].join(',');
-      }
-      // Convert capabilities array to comma-separated string for Hasura
-      if (Array.isArray(input[ChargingStationDtoProps.capabilities])) {
-        input[ChargingStationDtoProps.capabilities] =
-          input[ChargingStationDtoProps.capabilities].join(',');
-      }
       const newItem: any = getSerializedValues(input, ChargingStationDto);
       if (!stationId) {
         newItem.tenantId = config.tenantId;
