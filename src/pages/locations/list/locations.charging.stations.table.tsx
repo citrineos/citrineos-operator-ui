@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table } from 'antd';
+import { Button, Flex, Table } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { useDispatch } from 'react-redux';
@@ -12,15 +12,19 @@ import { getChargingStationColumns } from '../../charging-stations/columns';
 import { openModal } from '../../../redux/modal.slice';
 import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 import { ILocationDto, IChargingStationDto } from '@citrineos/base';
+import { MenuSection } from '../../../components/main-menu/main.menu';
+import { PlusOutlined } from '@ant-design/icons';
 
 export interface LocationsChargingStationsTableProps {
   location: ILocationDto;
   filteredStations?: IChargingStationDto[]; // Added prop for filtered stations
+  showHeader?: boolean;
 }
 
 export const LocationsChargingStationsTable = ({
   location,
   filteredStations, // Accept filtered stations prop
+  showHeader = false,
 }: LocationsChargingStationsTableProps) => {
   const { push } = useNavigation();
   const dispatch = useDispatch();
@@ -87,19 +91,43 @@ export const LocationsChargingStationsTable = ({
   );
 
   return (
-    <CanAccess
-      resource={ResourceType.CHARGING_STATIONS}
-      action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
-    >
-      <Table
-        rowKey="id"
-        className="table nested"
-        dataSource={stationsToDisplay}
-        showHeader={true}
+    <Flex vertical gap={16}>
+      {showHeader && (
+        <Flex gap={16} align={'center'}>
+          <h4>Charging Stations</h4>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.CREATE}
+          >
+            <Button
+              className="success btn-md"
+              icon={<PlusOutlined />}
+              iconPosition="end"
+              onClick={() =>
+                push(
+                  `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
+                )
+              }
+            >
+              Add
+            </Button>
+          </CanAccess>
+        </Flex>
+      )}
+      <CanAccess
+        resource={ResourceType.CHARGING_STATIONS}
+        action={ActionType.LIST}
+        fallback={<AccessDeniedFallback />}
       >
-        {columns}
-      </Table>
-    </CanAccess>
+        <Table
+          rowKey="id"
+          className="table nested"
+          dataSource={stationsToDisplay}
+          showHeader={true}
+        >
+          {columns}
+        </Table>
+      </CanAccess>
+    </Flex>
   );
 };

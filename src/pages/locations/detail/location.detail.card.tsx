@@ -2,16 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import { getFullAddress } from '@util/geocoding';
-import { Button, Flex } from 'antd';
+import { Button, Descriptions, Flex, Tag } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { LocationIcon } from '../../../components/map';
 import { CanAccess, useNavigation } from '@refinedev/core';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
+import { EditOutlined } from '@ant-design/icons';
+import { NOT_APPLICABLE } from '@util/consts';
 
 export interface LocationDetailCardProps {
   location: ILocationDto;
@@ -23,23 +24,8 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
 
   return (
     <Flex gap={16}>
-      <Flex
-        vertical
-        flex={'0 0 25%'}
-        align={'center'}
-        justify={'center'}
-        style={{
-          background: '#D9D9D9',
-          color: '#C3BDB9',
-          borderRadius: 8,
-        }}
-      >
-        <div className="image-placeholder">
-          <LocationIcon width={100} height={100} />
-        </div>
-      </Flex>
-      <Flex vertical flex="1 1 auto">
-        <Flex gap={8} align={'center'} style={{ marginBottom: 16 }}>
+      <Flex gap={16} vertical flex="1 1 auto">
+        <Flex gap={16} align={'center'}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -51,91 +37,54 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
             style={{ cursor: 'pointer' }}
           />
           <h3>{location.name}</h3>
-        </Flex>
-        <Flex justify="space-between" gap={16}>
-          <Flex vertical gap={32}>
-            <table className="location-details-table">
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Address</strong>
-                  </td>
-                  <td>{getFullAddress(location)}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Geocoordinates</strong>
-                  </td>
-                  <td>
-                    {`${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Tenant</strong>
-                  </td>
-                  <td>Tenant</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Hours of Operation</strong>
-                  </td>
-                  <td>Hours of Operation</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Location Type</strong>
-                  </td>
-                  <td>Location Type</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Commissioning Status</strong>
-                  </td>
-                  <td>Needs Configurations</td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-        </Flex>
-        <Flex style={{ marginTop: '32px' }}>
-          <Flex gap={16} justify="space-between" align="center" flex="1 1 auto">
-            <Flex>
-              <CanAccess
-                resource={ResourceType.LOCATIONS}
-                action={ActionType.EDIT}
-                params={{ id: location.id }}
-              >
-                <Button
-                  className="secondary"
-                  onClick={() =>
-                    push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
-                  }
-                >
-                  Edit Charging Location
-                </Button>
-              </CanAccess>
-            </Flex>
-          </Flex>
-          <Flex>
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.CREATE}
+          <CanAccess
+            resource={ResourceType.LOCATIONS}
+            action={ActionType.EDIT}
+            params={{ id: location.id }}
+          >
+            <Button
+              className="secondary btn-md"
+              icon={<EditOutlined />}
+              iconPosition="end"
+              onClick={() =>
+                push(`/${MenuSection.LOCATIONS}/${location.id}/edit`)
+              }
             >
-              <Button
-                className="secondary"
-                onClick={() =>
-                  push(
-                    `/${MenuSection.CHARGING_STATIONS}/new?locationId=${location.id}`,
-                  )
-                }
-              >
-                Add New Charging Station
-                <PlusIcon />
-              </Button>
-            </CanAccess>
-          </Flex>
+              Edit
+            </Button>
+          </CanAccess>
         </Flex>
+        <Descriptions
+          layout="vertical"
+          column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+          colon={false}
+          classNames={{
+            label: 'description-label',
+          }}
+        >
+          <Descriptions.Item label="Address">
+            {getFullAddress(location)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Coordinates">
+            {location.coordinates
+              ? `${location.coordinates.coordinates[1]} ${location.coordinates.coordinates[0]}`
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Time Zone">
+            {location.timeZone}
+          </Descriptions.Item>
+          <Descriptions.Item label="Parking Type">
+            {location.parkingType ?? NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Facilities">
+            {location.facilities
+              ? location.facilities.map((facility) => <Tag>{facility}</Tag>)
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Total Chargers">
+            {location.chargingPool?.length ?? 0}
+          </Descriptions.Item>
+        </Descriptions>
       </Flex>
     </Flex>
   );

@@ -152,7 +152,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <HelpIcon />
+          <HelpIcon width={28} height={28} />
         </a>
       ),
     },
@@ -182,7 +182,11 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
         <Menu mode="inline" items={bottomMenuItems} style={{ width: '100%' }} />
       </Row>
       <div onClick={toggleSider} className="trigger">
-        {collapsed ? <ArrowRightIcon /> : <ArrowLeftIcon />}
+        {collapsed ? (
+          <ArrowRightIcon width={30} height={30} />
+        ) : (
+          <ArrowLeftIcon width={30} height={30} />
+        )}
       </div>
     </Sider>
   );
