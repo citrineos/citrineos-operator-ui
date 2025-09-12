@@ -199,12 +199,6 @@ export const PartnersUpsert = () => {
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        label="Server Token"
-        name={['partnerProfileOCPI', 'credentials', 'serverToken']}
-      >
-        <Input />
-      </Form.Item>
       {id && (
         <>
           <Form.Item
