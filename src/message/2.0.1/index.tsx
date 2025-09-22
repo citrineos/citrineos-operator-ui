@@ -3,52 +3,47 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { RemoteStop, RemoteStopProps } from './remote-stop';
-import { CustomAction } from '../../components/custom-actions';
-import { SetVariables, SetVariablesProps } from './set-variables';
-import { TriggerMessage, TriggerMessageProps } from './trigger-message';
-import { GetBaseReport, GetBaseReportProps } from './get-base-report';
-import { ClearCache, ClearCacheProps } from './clear-cache';
+import type { RemoteStopProps } from './remote-stop';
+import { RemoteStop } from './remote-stop';
+import type { CustomAction } from '../../components/custom-actions';
+import type { SetVariablesProps } from './set-variables';
+import { SetVariables } from './set-variables';
+import type { TriggerMessageProps } from './trigger-message';
+import { TriggerMessage } from './trigger-message';
+import type { GetBaseReportProps } from './get-base-report';
+import { GetBaseReport } from './get-base-report';
+import type { ClearCacheProps } from './clear-cache';
+import { ClearCache } from './clear-cache';
+import type { ChangeAvailabilityProps } from './change-availability';
 import { ChangeAvailability } from './change-availability';
-import { GetLog, GetLogProps } from './get-log';
-import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
-import { UnlockConnector, UnlockConnectorProps } from './unlock-connector';
+import type { GetLogProps } from './get-log';
+import { GetLog } from './get-log';
+import type { UpdateFirmwareProps } from './update-firmware';
+import { UpdateFirmware } from './update-firmware';
+import type { UnlockConnectorProps } from './unlock-connector';
+import { UnlockConnector } from './unlock-connector';
 import React from 'react';
-import { GetVariables, GetVariablesProps } from './get-variables';
+import type { GetVariablesProps } from './get-variables';
+import { GetVariables } from './get-variables';
 import { CustomerInformation } from './customer-information';
-import {
-  InstallCertificate,
-  InstallCertificateProps,
-} from './install-certificate';
-import {
-  GetInstalledCertificateIds,
-  GetInstalledCertificateIdsProps,
-} from './get-installed-certificate-ids';
-import {
-  SetNetworkProfile,
-  SetNetworkProfileProps,
-} from './set-network-profile';
-import {
-  CertificateSigned,
-  CertificateSignedProps,
-} from './certificate-signed';
-import {
-  GetTransactionStatus,
-  GetTransactionStatusProps,
-} from './get-transaction-status';
+import type { InstallCertificateProps } from './install-certificate';
+import { InstallCertificate } from './install-certificate';
+import type { GetInstalledCertificateIdsProps } from './get-installed-certificate-ids';
+import { GetInstalledCertificateIds } from './get-installed-certificate-ids';
+import type { SetNetworkProfileProps } from './set-network-profile';
+import { SetNetworkProfile } from './set-network-profile';
+import type { CertificateSignedProps } from './certificate-signed';
+import { CertificateSigned } from './certificate-signed';
+import type { GetTransactionStatusProps } from './get-transaction-status';
+import { GetTransactionStatus } from './get-transaction-status';
 import { setSelectedChargingStation } from '../../redux/selected.charging.station.slice';
 import { instanceToPlain } from 'class-transformer';
-import { GetCustomerProps } from './customer-information/CustomerInformation';
-import {
-  UpdateAuthPassword,
-  UpdateAuthPasswordProps,
-} from './update-auth-password';
-import {
-  DeleteStationNetworkProfiles,
-  DeleteStationNetworkProfilesProps,
-} from './delete-station-network-profiles';
+import type { GetCustomerProps } from './customer-information/CustomerInformation';
+import type { UpdateAuthPasswordProps } from './update-auth-password';
+import { UpdateAuthPassword } from './update-auth-password';
+import type { DeleteStationNetworkProfilesProps } from './delete-station-network-profiles';
+import { DeleteStationNetworkProfiles } from './delete-station-network-profiles';
 import { DeleteCertificate } from './delete-certificate';
-import { ChangeAvailabilityProps } from './change-availability';
 
 export const chargingStationActionMap: {
   [label: string]: React.FC<any>;

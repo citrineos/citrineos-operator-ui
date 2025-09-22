@@ -6,16 +6,8 @@ import { useShow } from '@refinedev/core';
 import { TenantPartnerDto } from '../../../dtos/tenant.partner.dto';
 import { PARTNER_DETAIL_QUERY } from '../queries';
 import { getPlainToInstanceOptions } from '@util/tables';
-import {
-  Card,
-  Descriptions,
-  Flex,
-  Image,
-  Tag,
-  Typography,
-  Tabs,
-  TabsProps,
-} from 'antd';
+import type { TabsProps } from 'antd';
+import { Card, Descriptions, Flex, Image, Tabs, Tag, Typography } from 'antd';
 import { ResourceType } from '@util/auth';
 
 import { PartnerAuthorizations } from './partner.authorizations';

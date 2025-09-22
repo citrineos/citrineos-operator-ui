@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { CustomAction } from '../../components/custom-actions';
+import type { CustomAction } from '../../components/custom-actions';
 
 export const CLASS_CUSTOM_ACTIONS = 'classCustomActions';
 

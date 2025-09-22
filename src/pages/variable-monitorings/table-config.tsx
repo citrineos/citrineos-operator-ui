@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { VARIABLE_MONITORINGS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '@util/auth';
-import { VariableMonitorings } from '../../graphql/schema.types';
+import type { VariableMonitorings } from '../../graphql/schema.types';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MonitorEnumType } from '@OCPP2_0_1';
 import { StatusIcon } from '../../components/status-icon';

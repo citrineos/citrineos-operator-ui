@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { ChargingProfilesListQuery } from '../../graphql/types';
+import type { ChargingProfilesListQuery } from '../../graphql/types';
 import { ChargingProfile } from './ChargingProfile';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   CHARGING_PROFILES_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   CHARGING_PROFILES_LIST_QUERY,
 } from './queries';
 import { CHARGING_PROFILES_COLUMNS } from './table-config';
-import { ChargingProfiles } from '../../graphql/schema.types';
+import type { ChargingProfiles } from '../../graphql/schema.types';
 import { AiOutlineProfile } from 'react-icons/ai';
 
 export const ChargingProfilesView: React.FC = () => {

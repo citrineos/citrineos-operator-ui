@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { BootsListQuery } from '../../graphql/types';
+import type { BootsListQuery } from '../../graphql/types';
 import { Boot } from './Boot';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   BOOTS_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   BOOTS_LIST_QUERY,
 } from './queries';
 import { BOOTS_COLUMNS } from './table-config';
-import { Boots } from '../../graphql/schema.types';
+import type { Boots } from '../../graphql/schema.types';
 import { MdLogin } from 'react-icons/md';
 
 export const BootsView: React.FC = () => {

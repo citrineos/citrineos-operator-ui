@@ -3,19 +3,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
+import type { MapMouseEvent } from '@vis.gl/react-google-maps';
 import {
+  AdvancedMarker,
+  APILoadingStatus,
   APIProvider,
   Map,
-  AdvancedMarker,
-  MapMouseEvent,
-  useMap,
   useApiLoadingStatus,
-  APILoadingStatus,
+  useMap,
 } from '@vis.gl/react-google-maps';
 import { mapStyles } from './map.styles';
 import config from '@util/config';
 import { GeoPoint } from '@util/GeoPoint';
-import { LocationPickerMapProps } from './types';
+import type { LocationPickerMapProps } from './types';
 import { MarkerIconCircle } from './marker.icons';
 import './style.scss';
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { CrudFilter } from '@refinedev/core';
+import type { CrudFilter } from '@refinedev/core';
 
 export const NEW_IDENTIFIER = 'new';
 

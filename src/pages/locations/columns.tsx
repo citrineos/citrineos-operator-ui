@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ConditionalFilter, CrudFilters } from '@refinedev/core';
+import type { ConditionalFilter, CrudFilters } from '@refinedev/core';
 import { Table } from 'antd';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';

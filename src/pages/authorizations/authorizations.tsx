@@ -17,7 +17,7 @@ import {
   AUTHORIZATIONS_LIST_QUERY,
   AUTHORIZATIONS_SHOW_QUERY,
 } from './queries';
-import { IAuthorizationDto } from '@citrineos/base';
+import type { IAuthorizationDto } from '@citrineos/base';
 import { IsNumber } from 'class-validator';
 
 export enum AuthorizationsProps {

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ISubscriptionDto } from '@citrineos/base';
+import type { ISubscriptionDto } from '@citrineos/base';
 
 export class Subscription implements Partial<ISubscriptionDto> {
   constructor(data: Partial<ISubscriptionDto>) {

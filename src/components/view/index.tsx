@@ -15,15 +15,18 @@ import {
 } from '@refinedev/antd';
 import { GenericForm } from '../form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GetFields, GetVariables } from '@refinedev/hasura';
-import { HttpError } from '@refinedev/core';
+import type { GetFields, GetVariables } from '@refinedev/hasura';
+import type { HttpError } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CustomActions } from '../custom-actions';
 import dayjs from 'dayjs';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { useDispatch } from 'react-redux';
 import { setSelectedChargingStation } from '../../redux/selected.charging.station.slice';
-import { GenericParameterizedViewProps, GenericViewProps } from '@interfaces';
+import type {
+  GenericParameterizedViewProps,
+  GenericViewProps,
+} from '@interfaces';
 import { GenericViewState } from '@enums';
 
 export const GenericView = (props: GenericViewProps) => {

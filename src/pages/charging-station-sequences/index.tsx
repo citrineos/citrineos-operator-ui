@@ -4,7 +4,7 @@
 
 import { AiFillDatabase } from 'react-icons/ai';
 import { Route, Routes } from 'react-router-dom';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { GenericView } from '../../components/view';
 import { ResourceType } from '@util/auth';
 import { ChargingStationSequence } from './ChargingStationSequence';

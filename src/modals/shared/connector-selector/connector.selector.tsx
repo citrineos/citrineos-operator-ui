@@ -4,12 +4,13 @@
 
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
-import { BaseOption } from '@refinedev/core';
+import type { BaseOption } from '@refinedev/core';
 import { CONNECTOR_LIST_FOR_STATION_QUERY } from '../../../message/queries';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useEffect } from 'react';
 import { ResourceType } from '@util/auth';
-import { IChargingStationDto } from '@citrineos/base';
-import { ConnectorDtoProps, IConnectorDto } from '@citrineos/base';
+import type { IChargingStationDto, IConnectorDto } from '@citrineos/base';
+import { ConnectorDtoProps } from '@citrineos/base';
 
 export interface ConnectorSelectorProps {
   onSelect: (value: BaseOption) => void;

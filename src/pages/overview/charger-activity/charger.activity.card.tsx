@@ -14,13 +14,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { IoClose } from 'react-icons/io5';
 import { plainToInstance } from 'class-transformer';
 import { CanAccess } from '@refinedev/core';
-import { ResourceType, ActionType } from '@util/auth';
-import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
-import {
+import { ActionType, ResourceType } from '@util/auth';
+import { ConnectorStatusEnumType } from '@OCPP2_0_1';
+import type {
   IChargingStationDto,
-  ILatestStatusNotificationDto,
-  ITransactionDto,
   IEvseDto,
+  ILatestStatusNotificationDto,
 } from '@citrineos/base';
 
 export enum ChargerStatusEnum {

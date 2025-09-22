@@ -4,7 +4,7 @@
 
 import { IsOptional } from 'class-validator';
 import { TransformDate } from '@util/TransformDate';
-import { IBootDto } from '@citrineos/base';
+import type { IBootDto } from '@citrineos/base';
 
 export class Boot implements Partial<IBootDto> {
   @IsOptional()

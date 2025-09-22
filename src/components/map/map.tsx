@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  useCallback,
 } from 'react';
 import {
   AdvancedMarker,
@@ -20,7 +20,12 @@ import {
 import { MapMarkerComponent } from './map.marker';
 import { mapStyles } from './map.styles';
 import { ClusterIcon } from './marker.icons';
-import { ClusterInfo, LocationGroup, MapMarkerData, MapProps } from './types';
+import type {
+  ClusterInfo,
+  LocationGroup,
+  MapMarkerData,
+  MapProps,
+} from './types';
 import './style.scss';
 import { CanAccess } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';

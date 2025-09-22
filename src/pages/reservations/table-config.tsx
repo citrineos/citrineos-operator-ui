@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { RESERVATIONS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '@util/auth';
-import { Reservations } from '../../graphql/schema.types';
+import type { Reservations } from '../../graphql/schema.types';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';

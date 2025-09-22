@@ -3,17 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Button, Flex, Table, Tag, Typography } from 'antd';
-import { CanAccess, CrudFilter } from '@refinedev/core';
+import { Button, Flex, Table, Typography } from 'antd';
+import type { CrudFilter } from '@refinedev/core';
+import { CanAccess } from '@refinedev/core';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { ActionType, CommandType, ResourceType } from '@util/auth';
-import {
-  ChargingStationDtoProps,
-  IChargingStationDto,
-  LocationDtoProps,
-  OCPPVersion,
-} from '@citrineos/base';
+import type { IChargingStationDto } from '@citrineos/base';
+import { ChargingStationDtoProps, LocationDtoProps } from '@citrineos/base';
 import ProtocolTag from '../../components/protocol-tag';
 
 export const getChargingStationColumns = (

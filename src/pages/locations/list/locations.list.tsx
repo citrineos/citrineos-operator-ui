@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Flex, GetProps, Input, Row, Table } from 'antd';
-import React, { useMemo, useState, useEffect } from 'react';
+import type { GetProps } from 'antd';
+import { Button, Flex, Input, Row, Table } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
 import { LOCATIONS_LIST_QUERY } from '../queries';
 import './style.scss';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
@@ -17,7 +18,7 @@ import { getLocationAndStationsFilters, getLocationsColumns } from '../columns';
 import { EMPTY_FILTER } from '@util/consts';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
-import { ILocationDto, IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto, ILocationDto } from '@citrineos/base';
 import { LocationDto } from '../../../dtos/location.dto';
 import { PlusOutlined } from '@ant-design/icons';
 

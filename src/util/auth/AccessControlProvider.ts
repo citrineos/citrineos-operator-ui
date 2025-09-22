@@ -2,16 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { AccessControlProvider, CanReturnType } from '@refinedev/core';
-import {
-  ActionType,
-  ChargingStationAccessType,
-  CommandType,
-  ListCanReturnType,
-  OperatorCanParams,
-  ResourceType,
-  TransactionAccessType,
-} from './types';
+import type { AccessControlProvider, CanReturnType } from '@refinedev/core';
+import type { ListCanReturnType, OperatorCanParams } from './types';
+import { ActionType, CommandType, ResourceType } from './types';
 
 /**
  * Configuration options for access provider

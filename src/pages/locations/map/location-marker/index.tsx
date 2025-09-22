@@ -7,7 +7,7 @@ import { Button } from 'antd';
 import { useNavigation } from '@refinedev/core';
 import './style.scss';
 import { ResourceType } from '@util/auth';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 
 interface LocationMarkerProps {
   location: ILocationDto;

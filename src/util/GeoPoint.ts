@@ -2,13 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Point } from 'geojson';
-import {
-  buildMessage,
-  IsNumber,
-  ValidateBy,
-  ValidationOptions,
-} from 'class-validator';
+import type { Point } from 'geojson';
+import type { ValidationOptions } from 'class-validator';
+import { buildMessage, IsNumber, ValidateBy } from 'class-validator';
 
 export enum GeoPointProps {
   latitude = 'latitude',

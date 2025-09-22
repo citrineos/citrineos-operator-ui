@@ -8,7 +8,7 @@ import {
 } from '../../dtos/charging.station.dto';
 import GenericTag from '../../components/tag';
 import React from 'react';
-import { IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto } from '@citrineos/base';
 
 export interface ChargingStationStatusTagProps {
   station: IChargingStationDto;

@@ -20,14 +20,12 @@ import {
   GET_EVSES_FOR_STATION,
 } from '../../queries';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
+import type { IChangeAvailabilityRequestDto } from '@citrineos/base';
 import {
+  ChangeAvailabilityRequestDtoProps,
   EvseDtoProps,
   type IConnectorDto,
   type IEvseDto,
-} from '@citrineos/base';
-import {
-  ChangeAvailabilityRequestDtoProps,
-  IChangeAvailabilityRequestDto,
 } from '@citrineos/base';
 
 export class ChangeAvailabilityRequest

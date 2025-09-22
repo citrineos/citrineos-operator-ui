@@ -8,27 +8,27 @@ import {
   CHARGING_STATIONS_EDIT_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
-import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
+import type { CrudFilter } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { AutoComplete, Button, Flex, Form, Input, Modal, Select } from 'antd';
 import {
-  LOCATIONS_LIST_QUERY,
   LOCATIONS_GET_QUERY_BY_ID,
+  LOCATIONS_LIST_QUERY,
 } from '../../locations/queries';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
-import { useSearchParams } from 'react-router-dom';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { debounce } from 'lodash';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import type { ILocationDto } from '@citrineos/base';
 import {
   ChargingStationCapability,
   ChargingStationDtoProps,
   ChargingStationParkingRestriction,
-  ILocationDto,
   LocationDtoProps,
 } from '@citrineos/base';
 

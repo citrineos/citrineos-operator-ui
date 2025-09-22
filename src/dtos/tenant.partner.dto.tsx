@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ITenantDto, ITenantPartnerDto } from '@citrineos/base';
+import type { ITenantDto, ITenantPartnerDto } from '@citrineos/base';
 
 export class TenantPartnerDto implements Partial<ITenantPartnerDto> {
   id?: number;

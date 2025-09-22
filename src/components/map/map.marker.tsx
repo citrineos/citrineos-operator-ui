@@ -8,8 +8,8 @@ import {
   AdvancedMarker,
   useAdvancedMarkerRef,
 } from '@vis.gl/react-google-maps';
-import { LocationIcon, ChargingStationIcon } from './marker.icons';
-import { BaseMapMarkerProps } from './types';
+import { ChargingStationIcon, LocationIcon } from './marker.icons';
+import type { BaseMapMarkerProps } from './types';
 
 export const MapMarkerComponent: React.FC<
   BaseMapMarkerProps & { type: 'station' | 'location' | 'mixed' }

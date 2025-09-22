@@ -12,7 +12,8 @@ import React from 'react';
 import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
 import { getLocationsFilters } from '../../locations/columns';
 import { LocationsMap } from '../../locations/map/locations.map';
-import { BaseDtoProps, ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
+import { BaseDtoProps } from '@citrineos/base';
 
 const { Search } = Input;
 

@@ -8,7 +8,7 @@ import { renderField } from './index';
 import { AssociationSelection } from '../data-model-table/association-selection';
 import { getProperty, setProperty } from '@util/objects';
 import { AssociatedView } from '../data-model-table/associated-view';
-import { NestedObjectFieldProps } from '@interfaces';
+import type { NestedObjectFieldProps } from '@interfaces';
 import { renderLabel } from '@util/renderUtil';
 
 export const NestedObjectField: (

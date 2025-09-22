@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
+import type {
   BaseKey,
   CanParams,
   CanReturnType,

@@ -10,8 +10,8 @@ import { instanceToPlain } from 'class-transformer';
 import { ModalComponentType } from '../../../AppModal';
 import { getChargingStationColumns } from '../../charging-stations/columns';
 import { openModal } from '../../../redux/modal.slice';
-import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
-import { ILocationDto, IChargingStationDto } from '@citrineos/base';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import type { IChargingStationDto, ILocationDto } from '@citrineos/base';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { PlusOutlined } from '@ant-design/icons';
 

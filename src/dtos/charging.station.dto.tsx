@@ -2,19 +2,20 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Expose, plainToInstance } from 'class-transformer';
-import { IsBoolean, validateSync } from 'class-validator';
-
-import {
+import { Expose } from 'class-transformer';
+import { IsBoolean } from 'class-validator';
+import type {
   IChargingStationDto,
-  IStatusNotificationDto,
+  IConnectorDto,
   IEvseDto,
   ILocationDto,
-  IConnectorDto,
-  ChargingStationParkingRestriction,
-  ChargingStationCapability,
+  IStatusNotificationDto,
 } from '@citrineos/base';
-import { Point } from 'geojson';
+import {
+  ChargingStationCapability,
+  ChargingStationParkingRestriction,
+} from '@citrineos/base';
+import type { Point } from 'geojson';
 import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
 
 export class ChargingStationDto implements Partial<IChargingStationDto> {

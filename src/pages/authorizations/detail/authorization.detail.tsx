@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo } from 'react';
-import { Card, Flex, Table, Tabs, TabsProps } from 'antd';
-import { useNavigation, useOne, CanAccess } from '@refinedev/core';
-import { ResourceType } from '@util/auth';
+import type { TabsProps } from 'antd';
+import { Card, Flex, Table, Tabs } from 'antd';
+import { CanAccess, useNavigation, useOne } from '@refinedev/core';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import {
@@ -13,12 +14,12 @@ import {
   GET_TRANSACTIONS_FOR_AUTHORIZATION,
 } from '../queries';
 import { getTransactionColumns } from '../../transactions/columns';
-import { AccessDeniedFallback, ActionType } from '@util/auth';
 import { AuthorizationDetailCard } from './authorization.detail.card';
 import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
-import { TransactionDtoProps, IAuthorizationDto } from '@citrineos/base';
+import type { IAuthorizationDto } from '@citrineos/base';
+import { TransactionDtoProps } from '@citrineos/base';
 import { AuthorizationDto } from '../../../dtos/authorization.dto';
 
 export const AuthorizationDetail: React.FC = () => {

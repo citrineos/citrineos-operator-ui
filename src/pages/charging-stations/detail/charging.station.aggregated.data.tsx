@@ -2,15 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo, useState, FC } from 'react';
+import type { FC } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  DatePicker,
-  Spin,
   Card,
   Checkbox,
-  Select,
-  Typography,
+  DatePicker,
   Flex,
+  Select,
+  Spin,
+  Typography,
 } from 'antd';
 import { useList } from '@refinedev/core';
 import dayjs, { Dayjs } from 'dayjs';
@@ -18,20 +19,19 @@ import { getPlainToInstanceOptions } from '@util/tables';
 import { MeterValueDto } from '../../../dtos/meter.value.dto';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import {
-  GET_TRANSACTION_LIST_FOR_STATION,
   GET_METER_VALUES_FOR_STATION,
+  GET_TRANSACTION_LIST_FOR_STATION,
 } from '../../../message/queries';
 import {
+  CurrentOverTime,
+  EnergyOverTime,
   PowerOverTime,
   StateOfCharge,
-  EnergyOverTime,
   VoltageOverTime,
-  CurrentOverTime,
 } from '../../transactions/chart';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { ResourceType } from '@util/auth';
-import { ITransactionDto } from '@citrineos/base';
-import { IMeterValueDto } from '@citrineos/base';
+import type { IMeterValueDto, ITransactionDto } from '@citrineos/base';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;

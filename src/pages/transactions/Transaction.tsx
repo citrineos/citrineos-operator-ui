@@ -44,12 +44,8 @@ import React from 'react';
 import { Searchable } from '@util/decorators/Searcheable';
 import { Sortable } from '@util/decorators/Sortable';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
-import {
-  ITransactionDto,
-  ITransactionEventDto,
-  TransactionDtoProps,
-  TransactionEventDtoProps,
-} from '@citrineos/base';
+import type { ITransactionDto, ITransactionEventDto } from '@citrineos/base';
+import { TransactionDtoProps, TransactionEventDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.TRANSACTIONS)
 @ClassGqlListQuery(TRANSACTION_LIST_QUERY)

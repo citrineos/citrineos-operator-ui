@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo } from 'react';
-import { Card, Flex, Table, Tabs, TabsProps, Typography } from 'antd';
+import type { TabsProps } from 'antd';
+import { Card, Flex, Table, Tabs, Typography } from 'antd';
 import { useParams } from 'react-router-dom';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
 import './style.scss';
 import { ChargingStationDetailCardContent } from './charging.station.detail.card.content';
 import { ChargingStationConfiguration } from './charging.station.configuration';
@@ -22,7 +23,6 @@ import { TransactionDto } from '../../../dtos/transaction.dto';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '../../../message/queries';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { getTransactionColumns } from '../../transactions/columns';
-import { useNavigation } from '@refinedev/core';
 import { useTable } from '@refinedev/antd';
 import { AggregatedMeterValuesData } from './charging.station.aggregated.data';
 import { TransactionDtoProps } from '@citrineos/base';

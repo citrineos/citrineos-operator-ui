@@ -4,8 +4,8 @@
 
 // types.tsx - Refactored types
 import { GeoPoint } from '@util/GeoPoint';
-import { ReactNode } from 'react';
-import { ILocationDto } from '@citrineos/base';
+import type { ReactNode } from 'react';
+import type { ILocationDto } from '@citrineos/base';
 
 export interface MapMarkerData {
   position: google.maps.LatLngLiteral;

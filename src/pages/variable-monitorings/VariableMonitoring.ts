@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IVariableMonitoringDto } from '@citrineos/base';
+import type { IVariableMonitoringDto } from '@citrineos/base';
 
 export class VariableMonitoring implements Partial<IVariableMonitoringDto> {
   constructor(data: Partial<IVariableMonitoringDto>) {

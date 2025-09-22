@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { ReservationsListQuery } from '../../graphql/types';
+import type { ReservationsListQuery } from '../../graphql/types';
 import { Reservation } from './Reservation';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   RESERVATIONS_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   RESERVATIONS_LIST_QUERY,
 } from './queries';
 import { RESERVATIONS_COLUMNS } from './table-config';
-import { Reservations } from '../../graphql/schema.types';
+import type { Reservations } from '../../graphql/schema.types';
 import { AiTwotoneCalendar } from 'react-icons/ai';
 
 export const ReservationsView: React.FC = () => {

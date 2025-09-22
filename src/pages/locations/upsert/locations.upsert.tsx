@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   LOCATIONS_CREATE_MUTATION,
   LOCATIONS_EDIT_MUTATION,
@@ -26,12 +26,8 @@ import { MapLocationPicker } from '../../../components/map';
 import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
 import { getSerializedValues } from '@util/middleware';
 import { LocationDto } from '../../../dtos/location.dto';
-import {
-  BaseKey,
-  CanAccess,
-  useNavigation,
-  useUpdateMany,
-} from '@refinedev/core';
+import type { BaseKey } from '@refinedev/core';
+import { CanAccess, useNavigation, useUpdateMany } from '@refinedev/core';
 import { UploadOutlined } from '@ant-design/icons';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { SelectedChargingStations } from './selected.charging.stations';
@@ -39,10 +35,9 @@ import { useParams } from 'react-router-dom';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import type { IChargingStationDto, ILocationDto } from '@citrineos/base';
 import {
   ChargingStationDtoProps,
-  IChargingStationDto,
-  ILocationDto,
   LocationDtoProps,
   LocationFacilityType,
   LocationParkingType,

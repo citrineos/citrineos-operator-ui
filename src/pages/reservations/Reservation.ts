@@ -5,8 +5,7 @@
 import { IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { TransformDate } from '@util/TransformDate';
-import { Dayjs } from 'dayjs';
-import { IReservationDto } from '@citrineos/base';
+import type { IReservationDto } from '@citrineos/base';
 
 export class Reservation implements Partial<IReservationDto> {
   @Type(() => Date)

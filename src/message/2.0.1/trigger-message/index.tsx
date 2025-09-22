@@ -13,28 +13,32 @@ import {
 import { GenericForm } from '../../../components/form';
 import {
   EvseDtoProps,
+  type IConnectorDto,
   type IEvseDto,
   OCPPVersion,
-  type IConnectorDto,
 } from '@citrineos/base';
 import { Connector } from '../../../pages/connectors/connector';
-import { GET_CONNECTOR_LIST_FOR_STATION_EVSE } from '../../queries';
-import { IsOptional } from 'class-validator';
+import {
+  GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+  GET_EVSE_LIST_FOR_STATION,
+  GET_EVSES_FOR_STATION,
+} from '../../queries';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { MessageTriggerEnumType } from '@OCPP2_0_1';
 import { CustomDataType } from '../../../model/CustomData';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '@util/consts';
-import {
-  GET_EVSE_LIST_FOR_STATION,
-  GET_EVSES_FOR_STATION,
-} from '../../queries';
 import { Evse } from '../../../pages/evses/Evse';
 import { FieldCustomActions } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
-import { CustomAction } from '../../../components/custom-actions';
+import type { CustomAction } from '../../../components/custom-actions';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',

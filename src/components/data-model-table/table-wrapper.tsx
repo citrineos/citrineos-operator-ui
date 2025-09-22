@@ -9,18 +9,18 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { Col, Form, Input, Row, Table, TableProps } from 'antd';
+import type { TableProps } from 'antd';
+import { Col, Form, Input, Row, Table } from 'antd';
 import { plainToInstance } from 'class-transformer';
 import { useTable } from '@refinedev/antd';
 import isEqual from 'lodash.isequal';
-import type { TableRowSelection } from 'antd/lib/table/interface';
-import { SorterResult } from 'antd/lib/table/interface';
+import type { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SearchOutlined } from '@ant-design/icons';
 import { getSearchableKeys } from '@util/decorators/Searcheable';
 import { generateSearchFilters } from '@util/tables';
-import { TableWrapperProps, TableWrapperRef } from '@interfaces';
+import type { TableWrapperProps, TableWrapperRef } from '@interfaces';
 import { SelectionType } from '@enums';
 
 export const TableWrapper = forwardRef(function TableWrapper<

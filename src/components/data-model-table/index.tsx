@@ -4,11 +4,11 @@
 
 import './style.scss';
 import { CreateButton, List } from '@refinedev/antd';
-import { BaseRecord } from '@refinedev/core';
+import type { BaseRecord } from '@refinedev/core';
 import { Table } from 'antd';
-import { ColumnType } from 'antd/es/table/interface';
-import { AnyObject } from 'antd/es/_util/type';
-import { IDataModelTableProps } from '../../model/interfaces';
+import type { ColumnType } from 'antd/es/table/interface';
+import type { AnyObject } from 'antd/es/_util/type';
+import type { IDataModelTableProps } from '../../model/interfaces';
 
 export const DataModelTable = <T extends AnyObject, U extends BaseRecord>({
   tableProps,

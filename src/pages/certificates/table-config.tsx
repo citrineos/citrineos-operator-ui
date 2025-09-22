@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { ResourceType } from '@util/auth';
-import { Certificates } from '../../graphql/schema.types';
+import type { Certificates } from '../../graphql/schema.types';
 import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import { TruncateDisplay } from '../../components/truncate-display';
-import { CustomAction } from '../../components/custom-actions';
+import type { CustomAction } from '../../components/custom-actions';
 import { ColumnAction, DefaultColors } from '@enums';
 import {
   CountryNameEnumType,

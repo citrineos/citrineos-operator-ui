@@ -3,27 +3,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import {
-  ChangeAvailability,
-  ChangeAvailabilityProps,
-} from './change-availability';
-import {
-  ChangeConfiguration,
-  ChangeConfigurationProps,
-} from './change-configuration';
-import { GetConfiguration, GetConfigurationProps } from './get-configuration';
-import {
-  RemoteStartTransaction,
-  RemoteStartTransactionProps,
-} from './remote-start-transaction';
-import {
-  RemoteStopTransaction,
-  RemoteStopTransactionProps,
-} from './remote-stop-transaction';
-import { ResetChargingStation, ResetChargingStationProps } from './reset';
-import { TriggerMessage, TriggerMessageProps } from './trigger-message';
-import { UpdateFirmware, UpdateFirmwareProps } from './update-firmware';
-import { CustomAction } from '../../components/custom-actions';
+import type { ChangeAvailabilityProps } from './change-availability';
+import { ChangeAvailability } from './change-availability';
+import type { ChangeConfigurationProps } from './change-configuration';
+import { ChangeConfiguration } from './change-configuration';
+import type { GetConfigurationProps } from './get-configuration';
+import { GetConfiguration } from './get-configuration';
+import type { RemoteStartTransactionProps } from './remote-start-transaction';
+import { RemoteStartTransaction } from './remote-start-transaction';
+import type { RemoteStopTransactionProps } from './remote-stop-transaction';
+import { RemoteStopTransaction } from './remote-stop-transaction';
+import type { ResetChargingStationProps } from './reset';
+import { ResetChargingStation } from './reset';
+import type { TriggerMessageProps } from './trigger-message';
+import { TriggerMessage } from './trigger-message';
+import type { UpdateFirmwareProps } from './update-firmware';
+import { UpdateFirmware } from './update-firmware';
+import type { CustomAction } from '../../components/custom-actions';
 import { setSelectedChargingStation } from '../../redux/selected.charging.station.slice';
 import { instanceToPlain } from 'class-transformer';
 

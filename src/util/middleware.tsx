@@ -4,7 +4,7 @@
 
 import dayjs from 'dayjs';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { Constructable } from '@util/Constructable';
+import type { Constructable } from '@util/Constructable';
 import moment from 'moment';
 import { defaultMetadataStorage } from '@util/DefaultMetadataStorage';
 import 'reflect-metadata';

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { InstalledCertificate } from './InstalledCertificate';
 import {
@@ -16,7 +16,7 @@ import {
 import { Route, Routes } from 'react-router-dom';
 import { ResourceType } from '@util/auth';
 import { AiOutlineProfile } from 'react-icons/ai';
-import { CustomAction } from '../../components/custom-actions';
+import type { CustomAction } from '../../components/custom-actions';
 import { BaseRestClient } from '@util/BaseRestClient';
 import { MessageConfirmation } from '../../message/MessageConfirmation';
 import {
@@ -24,7 +24,7 @@ import {
   responseSuccessCheck,
 } from '../../message/util';
 import { notification } from 'antd';
-import { IInstalledCertificateDto } from '@citrineos/base';
+import type { IInstalledCertificateDto } from '@citrineos/base';
 
 export const DeleteCertificateCustomAction: CustomAction<IInstalledCertificateDto> =
   {

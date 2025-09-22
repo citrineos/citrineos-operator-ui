@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { MESSAGE_INFOS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '@util/auth';
-import { MessageInfos } from '../../graphql/schema.types';
+import type { MessageInfos } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 import { MessagePriorityEnumType, MessageStateEnumType } from '@OCPP2_0_1';
@@ -15,7 +15,7 @@ import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';
 import { DefaultColors } from '@enums';
-import { IMessageInfoDto } from '@citrineos/base';
+import type { IMessageInfoDto } from '@citrineos/base';
 
 export const MESSAGE_INFOS_COLUMNS = (
   withActions: boolean,

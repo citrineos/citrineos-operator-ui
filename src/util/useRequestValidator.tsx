@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { validateSync } from 'class-validator';
-import { plainToInstance, ClassConstructor } from 'class-transformer';
-import { useCallback, useState } from 'react';
+import type { ClassConstructor } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
+import { useCallback } from 'react';
 
 function useRequestValidator<T extends object>(
   RequestClass: ClassConstructor<T>,

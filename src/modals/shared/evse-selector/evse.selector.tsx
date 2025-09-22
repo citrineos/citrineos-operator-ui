@@ -4,12 +4,13 @@
 
 import { AutoComplete, Form } from 'antd';
 import { useSelect } from '@refinedev/antd';
-import { BaseOption } from '@refinedev/core';
+import type { BaseOption } from '@refinedev/core';
 import { GET_EVSE_LIST_FOR_STATION } from '../../../message/queries';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useEffect } from 'react';
 import { ResourceType } from '@util/auth';
-import { EvseDtoProps, IEvseDto } from '@citrineos/base';
-import { IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto, IEvseDto } from '@citrineos/base';
+import { EvseDtoProps } from '@citrineos/base';
 
 export interface EvseSelectorProps {
   onSelect: (value: BaseOption) => void;

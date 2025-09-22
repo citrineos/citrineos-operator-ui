@@ -2,11 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  IMeterValueDto,
-  MeasurandEnumType,
-  ISampledValueDto,
-} from '@citrineos/base';
+import type { IMeterValueDto, ISampledValueDto } from '@citrineos/base';
+import { MeasurandEnumType } from '@citrineos/base';
 import { PhaseEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 
 export class MeterValueDto implements Partial<IMeterValueDto> {}

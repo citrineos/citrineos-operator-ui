@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { DocumentNode } from 'graphql';
+import type { DocumentNode } from 'graphql';
 
 export const CLASS_GQL_CREATE_MUTATION = 'classGqlCreateMutation';
 

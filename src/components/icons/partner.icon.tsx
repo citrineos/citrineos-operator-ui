@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { SVGProps } from 'react';
+import type { SVGProps } from 'react';
 
 export const PartnerIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg

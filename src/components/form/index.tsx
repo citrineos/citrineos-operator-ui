@@ -22,19 +22,17 @@ import { defaultMetadataStorage } from '@util/DefaultMetadataStorage';
 import { isDefined, isNullOrUndefined } from '@util/assertion';
 import { IS_DATE } from '@util/TransformDate';
 import { FIELD_LABEL } from '@util/decorators/FieldLabel';
-import {
-  GQL_ASSOCIATION,
-  GqlAssociationProps,
-} from '@util/decorators/GqlAssociation';
+import type { GqlAssociationProps } from '@util/decorators/GqlAssociation';
+import { GQL_ASSOCIATION } from '@util/decorators/GqlAssociation';
 
 import { getProperty, omitProperties } from '@util/objects';
 import { Flags } from './state/flags';
-import {
+import type {
   SupportedUnknownType,
   UnknownEntry,
-  Unknowns,
   UnknownsActions,
 } from './state/unknowns';
+import { Unknowns } from './state/unknowns';
 
 import { FieldPath } from './state/fieldpath';
 import { CUSTOM_FORM_RENDER } from '@util/decorators/CustomFormRender';
@@ -52,16 +50,16 @@ import {
   renderOptionalToggle,
   renderUnknownProperty,
   renderUploadField,
-} from '../../util/renderUtil';
-import {
+} from '@util/renderUtil';
+import type {
   FieldAnnotations,
   FieldSchema,
   FieldSchemaKeys,
   FieldSelectOption,
   GenericFormProps,
-  isDynamicFieldSchema,
   RenderFieldProps,
 } from '@interfaces';
+import { isDynamicFieldSchema } from '@interfaces';
 import { FieldType, ReflectType, SelectMode } from '@enums';
 
 export const getReflectTypeFromString = (type: string): ReflectType => {

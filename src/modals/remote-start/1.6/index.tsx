@@ -5,11 +5,10 @@
 import { useEffect, useState } from 'react';
 import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
+import type { IAuthorizationDto, IChargingStationDto } from '@citrineos/base';
 import {
   AuthorizationDtoProps,
   BaseDtoProps,
-  IChargingStationDto,
-  IAuthorizationDto,
   OCPPVersion,
 } from '@citrineos/base';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';

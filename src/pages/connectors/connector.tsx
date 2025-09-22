@@ -17,7 +17,8 @@ import {
   CONNECTOR_GET_QUERY,
   CONNECTOR_LIST_QUERY,
 } from './queries';
-import { ConnectorDtoProps, IConnectorDto } from '@citrineos/base';
+import type { IConnectorDto } from '@citrineos/base';
+import { ConnectorDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CONNECTORS)
 @ClassGqlListQuery(CONNECTOR_LIST_QUERY)

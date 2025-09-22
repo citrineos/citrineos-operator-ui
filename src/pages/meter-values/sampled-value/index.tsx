@@ -11,7 +11,8 @@ import {
   ReadingContextEnumType,
 } from '@OCPP2_0_1';
 import GenericTag from '../../../components/tag';
-import { SampledValue } from '@citrineos/base';
+import type { SampledValue } from '@citrineos/base';
+
 // Define types based on ISampledValueDto structure
 // These should ideally be imported from a shared types package if available
 interface SignedMeterValueType {

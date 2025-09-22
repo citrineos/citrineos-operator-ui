@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { AuthProvider } from '@refinedev/core';
-import { AuthenticationContextProvider, User } from './types';
+import type { AuthProvider } from '@refinedev/core';
+import type { AuthenticationContextProvider, User } from './types';
 import config from '@util/config';
 
 /**

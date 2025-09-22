@@ -7,13 +7,15 @@ import { AutoComplete, Button, Flex, Form, InputNumber, Spin } from 'antd';
 import { useSelect } from '@refinedev/antd';
 import { useCustom } from '@refinedev/core';
 import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '../../../pages/charging-station-sequences/queries';
+import type {
+  IAuthorizationDto,
+  IChargingStationDto,
+  IChargingStationSequenceDto,
+} from '@citrineos/base';
 import {
   AuthorizationDtoProps,
   BaseDtoProps,
   ChargingStationSequenceType,
-  IAuthorizationDto,
-  IChargingStationDto,
-  IChargingStationSequenceDto,
 } from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { ChargingStationSequenceDto } from '../../../dtos/charging.station.sequence.dto';

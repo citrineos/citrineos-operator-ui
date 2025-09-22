@@ -5,7 +5,7 @@
 import React from 'react';
 import { Popover, Tag } from 'antd';
 import { DefaultColors } from '@enums';
-import { ValueDisplayProps } from '@interfaces';
+import type { ValueDisplayProps } from '@interfaces';
 
 export const ValueDisplay: React.FC<ValueDisplayProps> = ({
   value,

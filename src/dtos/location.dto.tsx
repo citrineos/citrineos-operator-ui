@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ILocationDto, IChargingStationDto } from '@citrineos/base';
-import { Point } from 'geojson';
+import type { IChargingStationDto, ILocationDto } from '@citrineos/base';
+import type { Point } from 'geojson';
 
 export class LocationDto implements Partial<ILocationDto> {
   coordinates!: Point;

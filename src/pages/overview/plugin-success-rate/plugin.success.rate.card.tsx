@@ -5,15 +5,10 @@
 import { Flex, Progress, Spin } from 'antd';
 import './style.scss';
 import { CanAccess, useCustom } from '@refinedev/core';
-import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '../../charging-stations/queries';
 import { TRANSACTION_SUCCESS_RATE_QUERY } from '../../transactions/queries';
 import React from 'react';
-import {
-  TransactionAccessType,
-  ActionType,
-  AccessDeniedFallback,
-  ResourceType,
-} from '@util/auth';
+
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 
 export const PluginSuccessRateCard = () => {
   const { data, isLoading, error } = useCustom({

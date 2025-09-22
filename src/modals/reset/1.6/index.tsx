@@ -8,9 +8,9 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
+import type { IChargingStationDto } from '@citrineos/base';
 import { OCPPVersion } from '@citrineos/base';
 import { ResetRequestType } from '@OCPP1_6';
-import { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP1_6_ResetProps {
   station: IChargingStationDto;

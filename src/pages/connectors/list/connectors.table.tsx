@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table, Button } from 'antd';
+import { Button, Table } from 'antd';
 import React, { useMemo } from 'react';
-import { IConnectorDto } from '@citrineos/base';
+import type { IConnectorDto } from '@citrineos/base';
 
 interface ConnectorsTableProps {
   connectors: IConnectorDto[];

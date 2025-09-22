@@ -2,6 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IStatusNotificationDto } from '@citrineos/base';
+import type { IStatusNotificationDto } from '@citrineos/base';
 
 export class StatusNotificationDto implements Partial<IStatusNotificationDto> {}

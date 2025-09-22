@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  ChargingStationSequenceType,
-  IChargingStationSequenceDto,
-} from '@citrineos/base';
+import type { IChargingStationSequenceDto } from '@citrineos/base';
+import { ChargingStationSequenceType } from '@citrineos/base';
 
 export class ChargingStationSequenceDto
   implements Partial<IChargingStationSequenceDto>

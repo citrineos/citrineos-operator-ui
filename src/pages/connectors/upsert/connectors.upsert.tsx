@@ -4,21 +4,20 @@
 
 import { useForm } from '@refinedev/antd';
 import { useSelector } from 'react-redux';
-import { Form, Input, Button, Select, InputNumber, Tooltip } from 'antd';
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import { Button, Form, Input, InputNumber, Select, Tooltip } from 'antd';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ResourceType } from '@util/auth';
 import { getSerializedValues } from '@util/middleware';
 import { ConnectorDto } from '../../../dtos/connector.dto';
 import { CONNECTOR_CREATE_MUTATION, CONNECTOR_EDIT_MUTATION } from '../queries';
-import { ErrorCodes, ConnectorStatusEnumType } from '@OCPP2_0_1';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
+import type { IConnectorDto } from '@citrineos/base';
 import {
-  IConnectorDto,
   ConnectorDtoProps,
-  ConnectorTypeEnum,
   ConnectorFormatEnum,
   ConnectorPowerType,
+  ConnectorTypeEnum,
 } from '@citrineos/base';
 import { InfoCircleOutlined } from '@ant-design/icons';
 

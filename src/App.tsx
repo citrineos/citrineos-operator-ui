@@ -17,16 +17,17 @@ import {
 import '@refinedev/antd/dist/reset.css';
 import { App as AntdApp, ConfigProvider, Layout as AntdLayout } from 'antd';
 
+import type {
+  HasuraDataProviderOptions,
+  HasuraLiveProviderOptions,
+} from '@refinedev/hasura';
 import dataProvider, {
   GraphQLClient,
   graphqlWS,
-  HasuraDataProviderOptions,
-  HasuraLiveProviderOptions,
   liveProvider,
 } from '@refinedev/hasura';
 import routerBindings, {
   DocumentTitleHandler,
-  NavigateToResource,
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
@@ -38,7 +39,6 @@ import {
   Routes,
   useLocation,
 } from 'react-router-dom';
-import { Header } from './components';
 import {
   ColorModeContext,
   ColorModeContextProvider,
@@ -52,13 +52,13 @@ import {
   routes as ChargingStationsRoutes,
 } from './pages/charging-stations';
 import {
-  routes as TransactionsRoutes,
   resources as transactionResources,
+  routes as TransactionsRoutes,
 } from './pages/transactions';
 import { routes as OverviewRoutes } from './pages/overview';
 import {
-  routes as AuthorizationsRoutes,
   resources as authoriationResources,
+  routes as AuthorizationsRoutes,
 } from './pages/authorizations';
 import {
   resources as partnerResources,

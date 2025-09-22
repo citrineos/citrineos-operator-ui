@@ -13,7 +13,7 @@ import { getPlainToInstanceOptions } from '@util/tables';
 import { getPartnersColumns } from '../columns';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
-import { ITenantPartnerDto } from '@citrineos/base';
+import type { ITenantPartnerDto } from '@citrineos/base';
 import { TenantPartnerDto } from '../../../dtos/tenant.partner.dto';
 
 export const PartnersList = () => {

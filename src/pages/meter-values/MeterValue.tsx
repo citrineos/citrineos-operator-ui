@@ -21,11 +21,8 @@ import {
 import { CustomFormRender } from '@util/decorators/CustomFormRender';
 import { SampledValuesListView } from './sampled-value';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
-import {
-  IMeterValueDto,
-  SampledValue,
-  MeterValueDtoProps,
-} from '@citrineos/base';
+import type { IMeterValueDto, SampledValue } from '@citrineos/base';
+import { MeterValueDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.METER_VALUES)
 @ClassGqlListQuery(METER_VALUE_LIST_QUERY)

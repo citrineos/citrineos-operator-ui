@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useMemo } from 'react';
-import { Button, Col, GetProps, Input, Row, Table } from 'antd';
+import type { GetProps } from 'antd';
+import { Button, Col, Input, Row, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
@@ -12,7 +13,7 @@ import { EMPTY_FILTER } from '@util/consts';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AUTHORIZATIONS_LIST_QUERY } from '../queries';
 import { AuthorizationDto } from '../../../dtos/authorization.dto';
-import { getAuthorizationFilters, getAuthorizationColumns } from '../columns';
+import { getAuthorizationColumns, getAuthorizationFilters } from '../columns';
 import './style.scss';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { MenuSection } from '../../../components/main-menu/main.menu';

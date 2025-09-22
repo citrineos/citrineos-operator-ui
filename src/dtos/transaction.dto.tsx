@@ -2,20 +2,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  ITransactionDto,
-  ITransactionEventDto,
+import type {
+  IAuthorizationDto,
   IChargingStationDto,
+  IConnectorDto,
   IEvseDto,
+  ILocationDto,
   IMeterValueDto,
   IStartTransactionDto,
   IStopTransactionDto,
-  IConnectorDto,
-  IAuthorizationDto,
   ITariffDto,
-  ILocationDto,
+  ITransactionDto,
+  ITransactionEventDto,
 } from '@citrineos/base';
-import { ChargingStateEnumType, ReasonEnumType } from '@OCPP2_0_1';
 
 export class TransactionDto implements Partial<ITransactionDto> {
   id?: number;

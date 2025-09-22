@@ -5,13 +5,13 @@
 import { useTable } from '@refinedev/antd';
 
 import { SECURITY_EVENTS_LIST_QUERY } from './queries';
-import { SecurityEvents } from '../../graphql/schema.types';
+import type { SecurityEvents } from '../../graphql/schema.types';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { SECURITY_EVENTS_COLUMNS } from './table-config';
 import { ResourceType } from '@util/auth';
-import { SecurityEventsListQuery } from '../../graphql/types';
+import type { SecurityEventsListQuery } from '../../graphql/types';
 
 export const SecurityEventsList = (props: IDataModelListProps) => {
   const { tableProps } = useTable<SecurityEventsListQuery>({

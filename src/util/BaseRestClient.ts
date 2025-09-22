@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
 import { OCPPVersion } from '@citrineos/base';

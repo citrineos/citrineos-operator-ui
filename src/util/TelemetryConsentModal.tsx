@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Modal, Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { BaseRestClient } from './BaseRestClient';
-import { SystemConfig } from '@citrineos/base';
+import type { SystemConfig } from '@citrineos/base';
 
 let systemConfig: SystemConfig | null = null;
 const client = new BaseRestClient(null);

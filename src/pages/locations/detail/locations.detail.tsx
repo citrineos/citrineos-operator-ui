@@ -13,7 +13,7 @@ import { LOCATIONS_GET_QUERY } from '../queries';
 import { LocationsChargingStationsTable } from '../list/locations.charging.stations.table';
 import { LocationDetailCard } from './location.detail.card';
 import { ActionType, ResourceType } from '@util/auth';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 
 export const LocationsDetail = () => {
   const { id } = useParams<{ id: string }>();

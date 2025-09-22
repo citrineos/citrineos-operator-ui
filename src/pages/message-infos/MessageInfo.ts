@@ -5,8 +5,8 @@
 import { IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { TransformDate } from '@util/TransformDate';
-import { Dayjs } from 'dayjs';
-import { IMessageInfoDto } from '@citrineos/base';
+import type { IMessageInfoDto } from '@citrineos/base';
+
 export class MessageInfo implements Partial<IMessageInfoDto> {
   @Type(() => Date)
   @IsDate()
