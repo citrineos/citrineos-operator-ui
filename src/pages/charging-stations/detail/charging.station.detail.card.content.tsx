@@ -243,14 +243,9 @@ export const ChargingStationDetailCardContent = ({
           <Descriptions.Item label="Location ID">
             {station?.location?.name ? (
               <Link to={`/locations/${station.locationId}`}>
-                <Tooltip title={station?.location?.name}>
-                  <Text
-                    ellipsis
-                    style={{ maxWidth: 100, display: 'inline-block' }}
-                  >
-                    {station?.location?.name}
-                  </Text>
-                </Tooltip>
+                <Text ellipsis className="hoverable-value">
+                  {station?.location?.name}
+                </Text>
               </Link>
             ) : (
               NOT_APPLICABLE

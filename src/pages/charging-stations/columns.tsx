@@ -35,10 +35,17 @@ export const getChargingStationColumns = (
       title="ID"
       sorter={true}
       onCell={(record) => ({
-        className: 'hoverable-column',
-        onClick: () => {
+        className: 'hoverable-value',
+        onClick: (event: React.MouseEvent) => {
           const path = `/${MenuSection.CHARGING_STATIONS}/${record.id}`;
-          window.open(path, '_blank');
+
+          // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
+          if (event.ctrlKey || event.metaKey) {
+            window.open(path, '_blank');
+          } else {
+            // Default behavior - navigate in current window
+            push(path);
+          }
         },
       })}
       render={(_: any, record: IChargingStationDto) => {
@@ -55,10 +62,17 @@ export const getChargingStationColumns = (
         dataIndex={ChargingStationDtoProps.location}
         title="Location"
         onCell={(record) => ({
-          className: 'hoverable-column',
-          onClick: () => {
+          className: 'hoverable-value',
+          onClick: (event: React.MouseEvent) => {
             const path = `/${MenuSection.LOCATIONS}/${record.location?.id}`;
-            window.open(path, '_blank');
+
+            // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
+            if (event.ctrlKey || event.metaKey) {
+              window.open(path, '_blank');
+            } else {
+              // Default behavior - navigate in current window
+              push(path);
+            }
           },
         })}
         render={(_: any, record: IChargingStationDto) => {
