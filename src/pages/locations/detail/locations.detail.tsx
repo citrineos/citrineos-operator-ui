@@ -12,6 +12,7 @@ import { LocationDto } from '../../../dtos/location.dto';
 import { LOCATIONS_GET_QUERY } from '../queries';
 import { LocationsChargingStationsTable } from '../list/locations.charging.stations.table';
 import { LocationDetailCard } from './location.detail.card';
+import { LocationPublicationManager } from './publication-manager';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
 
@@ -39,6 +40,8 @@ export const LocationsDetail = () => {
       params={{ id: location.id }}
     >
       <div>
+        <LocationPublicationManager location={location} />
+
         <Card className="location-details">
           <LocationDetailCard location={location} />
         </Card>
