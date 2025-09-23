@@ -2,15 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Flex, Typography } from 'antd';
+import React from 'react';
+import { Descriptions, Flex, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { useNavigation } from '@refinedev/core';
-import { BiDirectionsArrowsIcon } from '../../../components/icons/bi.directional.arrows.icon';
+import { Link, useNavigation } from '@refinedev/core';
 import { useLocation } from 'react-router-dom';
 import { ITransactionDto } from '@citrineos/base';
 
 const { Text } = Typography;
+const emptyValue = '-';
 
 export interface TransactionDetailCardProps {
   transaction: ITransactionDto;
@@ -24,14 +25,8 @@ export const TransactionDetailCard = ({
 
   return (
     <Flex gap={16}>
-      <Flex vertical>
-        <div className="image-placeholder">
-          <BiDirectionsArrowsIcon width={164} height={164} />
-        </div>
-      </Flex>
-
-      <Flex vertical flex="1">
-        <Flex gap={8} align="center" style={{ marginBottom: 16 }}>
+      <Flex gap={16} vertical flex="1 1 auto">
+        <Flex gap={16} align={'center'}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -43,84 +38,42 @@ export const TransactionDetailCard = ({
             style={{ cursor: 'pointer' }}
           />
           <h3>Transaction {transaction.transactionId}</h3>
-          <Text
-            style={{ marginLeft: 8 }}
-            type={transaction.isActive ? 'success' : 'danger'}
-          >
+          <Text type={transaction.isActive ? 'success' : 'danger'}>
             {transaction.isActive ? 'Active' : 'Inactive'}
           </Text>
         </Flex>
-
-        <Flex justify="space-between" gap={16} className="transaction-details">
-          <Flex vertical>
-            <table className="transaction-details-table">
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Transaction ID</h5>
-                  </td>
-                  <td>{transaction.transactionId}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Station ID</h5>
-                  </td>
-                  <td>{transaction.stationId}</td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-
-          <Flex vertical className="border-left">
-            <table className="transaction-details-table">
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Total kWh</h5>
-                  </td>
-                  <td>
-                    {transaction.totalKwh
-                      ? transaction.totalKwh.toFixed(2) + ' kWh'
-                      : '-'}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Charging State</h5>
-                  </td>
-                  <td>{transaction.chargingState || '-'}</td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-
-          <Flex vertical className="border-left">
-            <table className="transaction-details-table">
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Created At</h5>
-                  </td>
-                  <td>
-                    {transaction.createdAt
-                      ? new Date(transaction.createdAt).toLocaleString()
-                      : '-'}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Updated At</h5>
-                  </td>
-                  <td>
-                    {transaction.updatedAt
-                      ? new Date(transaction.updatedAt).toLocaleString()
-                      : '-'}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-        </Flex>
+        <Descriptions
+          layout="vertical"
+          column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+          colon={false}
+          classNames={{
+            label: 'description-label',
+          }}
+        >
+          <Descriptions.Item label="Station ID">
+            <Link to={`/charging-stations/${transaction.stationId}`}>
+              <Text className="hoverable-value">{transaction.stationId}</Text>
+            </Link>
+          </Descriptions.Item>
+          <Descriptions.Item label="Total kWh">
+            {transaction.totalKwh
+              ? transaction.totalKwh.toFixed(2) + ' kWh'
+              : emptyValue}
+          </Descriptions.Item>
+          <Descriptions.Item label="Charging State">
+            {transaction.chargingState || emptyValue}
+          </Descriptions.Item>
+          <Descriptions.Item label="Created At">
+            {transaction.createdAt
+              ? new Date(transaction.createdAt).toLocaleString()
+              : emptyValue}
+          </Descriptions.Item>
+          <Descriptions.Item label="Updated At">
+            {transaction.updatedAt
+              ? new Date(transaction.updatedAt).toLocaleString()
+              : emptyValue}
+          </Descriptions.Item>
+        </Descriptions>
       </Flex>
     </Flex>
   );

@@ -62,7 +62,7 @@ export const getTransactionColumns = (
         title="Transaction ID"
         sorter={true}
         onCell={(record: ITransactionDto) => ({
-          className: `column-${TransactionDtoProps.transactionId}`,
+          className: 'hoverable-value',
           onClick: (e: React.MouseEvent) => {
             const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
             if (e.ctrlKey || e.metaKey) {
@@ -71,10 +71,9 @@ export const getTransactionColumns = (
               push(path);
             }
           },
-          style: { cursor: 'pointer' },
         })}
         render={(_: any, record: ITransactionDto) => (
-          <h4>{record.transactionId}</h4>
+          <span>{record.transactionId}</span>
         )}
       />
       <Table.Column
@@ -94,7 +93,7 @@ export const getTransactionColumns = (
         title="Station ID"
         sorter={true}
         onCell={(record: ITransactionDto) => ({
-          className: `column-${ChargingStationDtoProps.id}`,
+          className: 'hoverable-value',
           onClick: (e: React.MouseEvent) => {
             const path = `/${MenuSection.CHARGING_STATIONS}/${record.chargingStation?.id}`;
             if (e.ctrlKey || e.metaKey) {
@@ -115,7 +114,7 @@ export const getTransactionColumns = (
         title="Location Name"
         sorter={true}
         onCell={(record: ITransactionDto) => ({
-          className: `column-${LocationDtoProps.name}`,
+          className: 'hoverable-value',
           onClick: (e: React.MouseEvent) => {
             const path = `/${MenuSection.LOCATIONS}/${record.chargingStation?.location?.id}`;
             if (e.ctrlKey || e.metaKey) {

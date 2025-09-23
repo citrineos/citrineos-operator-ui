@@ -245,8 +245,8 @@ export const TransactionDetail = () => {
       fallback={<AccessDeniedFallback />}
       params={{ id: transaction.id }}
     >
-      <div style={{ padding: '16px' }}>
-        <Card className="transaction-details">
+      <div>
+        <Card>
           <TransactionDetailCard transaction={transaction} />
         </Card>
         <Card>

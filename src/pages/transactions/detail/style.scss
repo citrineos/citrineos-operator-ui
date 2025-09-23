@@ -28,11 +28,3 @@ main[class*='content-transactions-'] {
   border-left: 1px solid var(--grayscale-color-6);
   padding-left: var(--ant-padding-md);
 }
-
-.transaction-details {
-  padding: var(--ant-padding-md) 0;
-
-  table td:nth-child(2) {
-    padding-left: var(--ant-padding-md);
-  }
-}
