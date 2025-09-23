@@ -11,11 +11,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { getTimestampToMeasurandArray } from '../../../dtos/meter.value.dto';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
-import { formatTimeLabel, generateTimeTicks } from './util';
+import { chartMinHeight, formatTimeLabel, generateTimeTicks } from './util';
 import { IMeterValueDto } from '@citrineos/base';
+import { Flex } from 'antd';
 
 export interface StateOfChargeProps {
   meterValues: IMeterValueDto[];
@@ -46,49 +47,53 @@ export const StateOfCharge = ({
     }));
   }, [meterValues, validContexts]);
 
-  if (!chartData || chartData.length === 0) {
-    return <div>No State of Charge data available</div>;
-  }
+  const hasChartData = chartData && chartData.length > 0;
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={chartData} margin={{ bottom: 40 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
-        <XAxis
-          dataKey="elapsedTime"
-          type="number"
-          tick={{ fill: strokeColor }}
-          stroke={strokeColor}
-          ticks={generateTimeTicks(chartData)}
-          tickFormatter={formatTimeLabel}
-          label={{
-            value: 'Time Elapsed',
-            position: 'insideBottom',
-            offset: -20,
-            fill: strokeColor,
-          }}
-        />
-        <YAxis
-          tick={{ fill: strokeColor }}
-          stroke={strokeColor}
-          label={{
-            value: 'State of Charge (%)',
-            angle: -90,
-            position: 'insideLeft',
-            fill: strokeColor,
-            style: { textAnchor: 'middle' },
-          }}
-        />
-        <Tooltip />
-        <Line
-          type="monotone"
-          dataKey="percentage"
-          stroke={lineColor}
-          strokeWidth={5}
-          dot={{ r: 6, fill: lineColor }}
-          activeDot={{ r: 12, fill: lineColor }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <Flex vertical gap={16}>
+      <h3>State of Charge Over Time</h3>
+      {!hasChartData && <div>No State of Charge data available</div>}
+      {hasChartData && (
+        <ResponsiveContainer minHeight={chartMinHeight}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
+            <XAxis
+              dataKey="elapsedTime"
+              type="number"
+              tick={{ fill: strokeColor }}
+              stroke={strokeColor}
+              ticks={generateTimeTicks(chartData)}
+              tickFormatter={formatTimeLabel}
+              label={{
+                value: 'Time Elapsed',
+                position: 'insideBottom',
+                offset: -20,
+                fill: strokeColor,
+              }}
+            />
+            <YAxis
+              tick={{ fill: strokeColor }}
+              stroke={strokeColor}
+              label={{
+                value: 'State of Charge (%)',
+                angle: -90,
+                position: 'insideLeft',
+                fill: strokeColor,
+                style: { textAnchor: 'middle' },
+              }}
+            />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="percentage"
+              stroke={lineColor}
+              strokeWidth={5}
+              dot={{ r: 6, fill: lineColor }}
+              activeDot={{ r: 12, fill: lineColor }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </Flex>
   );
 };

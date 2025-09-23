@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Card, Flex, Select, Tabs, TabsProps, Table } from 'antd';
-import { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { Card, Tabs, TabsProps, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
 import { CanAccess, useList, useNavigation, useOne } from '@refinedev/core';
@@ -14,13 +14,6 @@ import {
 } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import './style.scss';
-import {
-  PowerOverTime,
-  StateOfCharge,
-  EnergyOverTime,
-  VoltageOverTime,
-  CurrentOverTime,
-} from '../chart';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
 import { MeterValueDto } from '../../../dtos/meter.value.dto';
@@ -32,36 +25,15 @@ import {
   AccessDeniedFallback,
   TransactionAccessType,
 } from '@util/auth';
-import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { TransactionDetailCard } from './transaction.detail.card';
-import { renderEnumSelectOptions } from '@util/renderUtil';
 import { BaseDtoProps } from '@citrineos/base';
 import { ITransactionDto } from '@citrineos/base';
 import { IMeterValueDto, MeterValueDtoProps } from '@citrineos/base';
-
-enum ChartType {
-  POWER = 'Power Over Time',
-  ENERGY = 'Energy Over Time',
-  SOC = 'State of Charge Over Time',
-  VOLTAGE = 'Voltage Over Time',
-  CURRENT = 'Current Over Time',
-}
+import { AllCharts } from '../chart/allCharts';
 
 export const TransactionDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { push } = useNavigation();
-  const [selectedChartLeft, setSelectedChartLeft] = useState<ChartType>(
-    ChartType.POWER,
-  );
-  const [selectedChartRight, setSelectedChartRight] = useState<ChartType>(
-    ChartType.ENERGY,
-  );
-
-  const [validContexts, setValidContexts] = useState<ReadingContextEnumType[]>([
-    ReadingContextEnumType.Transaction_Begin,
-    ReadingContextEnumType.Sample_Periodic,
-    ReadingContextEnumType.Transaction_End,
-  ]);
 
   const { data: transactionData, isLoading } = useOne<ITransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -96,69 +68,6 @@ export const TransactionDetail = () => {
 
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
 
-  const renderChartSelect = (
-    selectedChart: ChartType,
-    onChange: (value: ChartType) => void,
-  ) => (
-    <Select
-      className="full-width"
-      value={selectedChart}
-      onChange={(value) => onChange(value as ChartType)}
-    >
-      {(Object.values(ChartType) as ChartType[]).map((chart) => (
-        <Select.Option key={chart} value={chart}>
-          {chart}
-        </Select.Option>
-      ))}
-    </Select>
-  );
-
-  const renderChartContent = (selectedChart: ChartType) => (
-    <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400 }}>
-      {(() => {
-        switch (selectedChart) {
-          case ChartType.POWER:
-            return (
-              <PowerOverTime
-                meterValues={meterValues}
-                validContexts={validContexts}
-              />
-            );
-          case ChartType.ENERGY:
-            return (
-              <EnergyOverTime
-                meterValues={meterValues}
-                validContexts={validContexts}
-              />
-            );
-          case ChartType.SOC:
-            return (
-              <StateOfCharge
-                meterValues={meterValues}
-                validContexts={validContexts}
-              />
-            );
-          case ChartType.VOLTAGE:
-            return (
-              <VoltageOverTime
-                meterValues={meterValues}
-                validContexts={validContexts}
-              />
-            );
-          case ChartType.CURRENT:
-            return (
-              <CurrentOverTime
-                meterValues={meterValues}
-                validContexts={validContexts}
-              />
-            );
-          default:
-            return <div>No data available for selected chart</div>;
-        }
-      })()}
-    </Flex>
-  );
-
   if (isLoading) return <p>Loading...</p>;
   if (!transaction) return <p>No Data Found</p>;
 
@@ -191,31 +100,7 @@ export const TransactionDetail = () => {
             accessType: TransactionAccessType.EVENTS,
           }}
         >
-          <Flex vertical gap={32} style={{ paddingTop: 32 }}>
-            <Select
-              mode="multiple"
-              className="full-width"
-              style={{ width: '100%' }}
-              value={validContexts}
-              onChange={(vals) =>
-                setValidContexts(vals as ReadingContextEnumType[])
-              }
-            >
-              {renderEnumSelectOptions(ReadingContextEnumType)}
-            </Select>
-
-            <Flex gap={32}>
-              <Flex vertical flex={1} gap={16}>
-                {renderChartSelect(selectedChartLeft, setSelectedChartLeft)}
-                {renderChartContent(selectedChartLeft)}
-              </Flex>
-
-              <Flex vertical flex={1} gap={16}>
-                {renderChartSelect(selectedChartRight, setSelectedChartRight)}
-                {renderChartContent(selectedChartRight)}
-              </Flex>
-            </Flex>
-          </Flex>
+          <AllCharts meterValues={meterValues} />
         </CanAccess>
       ),
     },

@@ -50,3 +50,5 @@ export const formatTimeLabel = (seconds: number) => {
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   }
 };
+
+export const chartMinHeight = 300;

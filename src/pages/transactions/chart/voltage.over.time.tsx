@@ -11,11 +11,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { getTimestampToMeasurandArray } from '../../../dtos/meter.value.dto';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
-import { formatTimeLabel, generateTimeTicks } from './util';
+import { chartMinHeight, formatTimeLabel, generateTimeTicks } from './util';
 import { IMeterValueDto } from '@citrineos/base';
+import { Flex } from 'antd';
 
 export interface VoltageOverTimeProps {
   meterValues: IMeterValueDto[];
@@ -27,7 +28,7 @@ export const VoltageOverTime = ({
   validContexts,
 }: VoltageOverTimeProps) => {
   const strokeColor = 'var(--grayscale-color-1)';
-  const lineColor = 'var(--secondary-color-2)';
+  const lineColor = 'var(--ui-color-success)';
   const buffer = 1;
 
   const { chartData, minValue, maxValue } = useMemo(() => {
@@ -48,50 +49,54 @@ export const VoltageOverTime = ({
     return { chartData: processedData, minValue: min, maxValue: max };
   }, [meterValues, validContexts]);
 
-  if (!chartData || chartData.length === 0) {
-    return <div>No Voltage data available</div>;
-  }
+  const hasChartData = chartData && chartData.length > 0;
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={chartData} margin={{ bottom: 40 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
-        <XAxis
-          dataKey="elapsedTime"
-          type="number"
-          tick={{ fill: strokeColor }}
-          stroke={strokeColor}
-          ticks={generateTimeTicks(chartData)}
-          tickFormatter={formatTimeLabel}
-          label={{
-            value: 'Time Elapsed',
-            position: 'insideBottom',
-            offset: -20,
-            fill: strokeColor,
-          }}
-        />
-        <YAxis
-          tick={{ fill: strokeColor }}
-          stroke={strokeColor}
-          label={{
-            value: 'Voltage (V)',
-            angle: -90,
-            position: 'insideLeft',
-            fill: strokeColor,
-            style: { textAnchor: 'middle' },
-          }}
-          domain={[minValue - buffer, maxValue + buffer]}
-        />
-        <Tooltip />
-        <Line
-          type="monotone"
-          dataKey="v"
-          stroke={lineColor}
-          strokeWidth={5}
-          dot={{ r: 6, fill: lineColor }}
-          activeDot={{ r: 12, fill: lineColor }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <Flex vertical gap={16}>
+      <h3>Voltage Over Time</h3>
+      {!hasChartData && <div>No Voltage data available</div>}
+      {hasChartData && (
+        <ResponsiveContainer minHeight={chartMinHeight}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
+            <XAxis
+              dataKey="elapsedTime"
+              type="number"
+              tick={{ fill: strokeColor }}
+              stroke={strokeColor}
+              ticks={generateTimeTicks(chartData)}
+              tickFormatter={formatTimeLabel}
+              label={{
+                value: 'Time Elapsed',
+                position: 'insideBottom',
+                offset: -20,
+                fill: strokeColor,
+              }}
+            />
+            <YAxis
+              tick={{ fill: strokeColor }}
+              stroke={strokeColor}
+              label={{
+                value: 'Voltage (V)',
+                angle: -90,
+                position: 'insideLeft',
+                fill: strokeColor,
+                style: { textAnchor: 'middle' },
+              }}
+              domain={[minValue - buffer, maxValue + buffer]}
+            />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="v"
+              stroke={lineColor}
+              strokeWidth={5}
+              dot={{ r: 6, fill: lineColor }}
+              activeDot={{ r: 12, fill: lineColor }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </Flex>
   );
 };
