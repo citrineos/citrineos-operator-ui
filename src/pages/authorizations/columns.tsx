@@ -3,16 +3,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Typography } from 'antd';
 import { CrudFilter } from '@refinedev/core';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import {
   AuthorizationDtoProps,
+  AuthorizationStatusType,
   IAuthorizationDto,
   IdTokenDtoProps,
   IdTokenType,
 } from '@citrineos/base';
 import GenericTag from '../../components/tag';
+
+const { Text } = Typography;
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>
@@ -41,6 +44,26 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
       sorter={true}
       render={(value) => (
         <GenericTag enumValue={value ?? undefined} enumType={IdTokenType} />
+      )}
+    />
+    <Table.Column
+      key="status"
+      dataIndex="status"
+      title="Status"
+      sorter={true}
+      render={(value) => (
+        <GenericTag enumValue={value} enumType={AuthorizationStatusType} />
+      )}
+    />
+    <Table.Column
+      key="concurrentTransaction"
+      dataIndex="concurrentTransaction"
+      title="Concurrent Transaction"
+      sorter={true}
+      render={(value) => (
+        <Text type={value ? 'success' : 'danger'}>
+          {value ? 'Allowed' : 'Not Allowed'}
+        </Text>
       )}
     />
   </>
