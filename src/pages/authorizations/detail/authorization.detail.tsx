@@ -125,7 +125,7 @@ export const AuthorizationDetail: React.FC = () => {
       params={{ id: authorization.id }}
     >
       <Flex vertical>
-        <Card className="authorization-details">
+        <Card>
           <AuthorizationDetailCard authorization={authorization} />
         </Card>
         <Card>

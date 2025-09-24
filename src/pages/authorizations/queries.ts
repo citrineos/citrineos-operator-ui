@@ -158,25 +158,20 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       totalKwh
       createdAt
       updatedAt
+      startTime
+      endTime
+      locationId
+      authorizationId
       ChargingStation {
         id
-        isOnline
-        protocol
-        locationId
-        createdAt
-        updatedAt
-        Location {
-          id
-          name
-          address
-          city
-          postalCode
-          state
-          country
-          coordinates
-          createdAt
-          updatedAt
-        }
+      }
+      Location {
+        id
+        name
+      }
+      Authorization {
+        id
+        idToken
       }
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType

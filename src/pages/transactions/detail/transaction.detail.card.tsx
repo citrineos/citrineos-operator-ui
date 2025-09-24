@@ -10,6 +10,7 @@ import { Link, useNavigation } from '@refinedev/core';
 import { useLocation } from 'react-router-dom';
 import { ITransactionDto } from '@citrineos/base';
 import { TimestampDisplay } from '../../../components/timestamp-display';
+import { NOT_APPLICABLE } from '@util/consts';
 
 const { Text } = Typography;
 const emptyValue = '-';
@@ -66,7 +67,7 @@ export const TransactionDetailCard = ({
           <Descriptions.Item label="Location">
             <Link to={`/locations/${transaction.locationId}`}>
               <Text className="hoverable-value">
-                {transaction.location?.name ?? 'N/A'}
+                {transaction.location?.name ?? NOT_APPLICABLE}
               </Text>
             </Link>
           </Descriptions.Item>

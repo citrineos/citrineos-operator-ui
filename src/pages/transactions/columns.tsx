@@ -13,6 +13,7 @@ import { CrudFilters } from '@refinedev/core';
 import { ITransactionDto, TransactionDtoProps } from '@citrineos/base';
 import { IdTokenDtoProps } from '@citrineos/base';
 import { LocationDtoProps } from '@citrineos/base';
+import { NOT_APPLICABLE } from '@util/consts';
 
 export const getTransactionsFilters = (value: string): CrudFilters => {
   return [
@@ -144,7 +145,7 @@ export const getTransactionColumns = (
         })}
         render={(_: any, record: ITransactionDto) => {
           const idToken = record.authorization?.idToken;
-          return idToken ? <span>{idToken ?? 'N/A'}</span> : '';
+          return idToken ? <span>{idToken ?? NOT_APPLICABLE}</span> : '';
         }}
       />
       <Table.Column
