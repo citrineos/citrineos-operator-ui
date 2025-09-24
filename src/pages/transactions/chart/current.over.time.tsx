@@ -52,51 +52,53 @@ export const CurrentOverTime = ({
   const hasChartData = chartData && chartData.length > 0;
 
   return (
-    <Flex vertical gap={16}>
-      <h3>Current Over Time</h3>
-      {!hasChartData && <div>No Current data available</div>}
-      {hasChartData && (
-        <ResponsiveContainer minHeight={chartMinHeight}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
-            <XAxis
-              dataKey="elapsedTime"
-              type="number"
-              tick={{ fill: strokeColor }}
-              stroke={strokeColor}
-              ticks={generateTimeTicks(chartData)}
-              tickFormatter={formatTimeLabel}
-              label={{
-                value: 'Time Elapsed',
-                position: 'insideBottom',
-                offset: -20,
-                fill: strokeColor,
-              }}
-            />
-            <YAxis
-              tick={{ fill: strokeColor }}
-              stroke={strokeColor}
-              label={{
-                value: 'Current (A)',
-                angle: -90,
-                position: 'insideLeft',
-                fill: strokeColor,
-                style: { textAnchor: 'middle' },
-              }}
-              domain={[minValue - buffer, maxValue + buffer]}
-            />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="a"
-              stroke={lineColor}
-              strokeWidth={5}
-              dot={{ r: 6, fill: lineColor }}
-              activeDot={{ r: 12, fill: lineColor }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      )}
-    </Flex>
+    <div className="meter-value-chart">
+      <Flex vertical gap={16}>
+        <h3>Current Over Time</h3>
+        {!hasChartData && <div>No Current data available</div>}
+        {hasChartData && (
+          <ResponsiveContainer minHeight={chartMinHeight}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
+              <XAxis
+                dataKey="elapsedTime"
+                type="number"
+                tick={{ fill: strokeColor }}
+                stroke={strokeColor}
+                ticks={generateTimeTicks(chartData)}
+                tickFormatter={formatTimeLabel}
+                label={{
+                  value: 'Time Elapsed',
+                  position: 'insideBottom',
+                  offset: -20,
+                  fill: strokeColor,
+                }}
+              />
+              <YAxis
+                tick={{ fill: strokeColor }}
+                stroke={strokeColor}
+                label={{
+                  value: 'Current (A)',
+                  angle: -90,
+                  position: 'insideLeft',
+                  fill: strokeColor,
+                  style: { textAnchor: 'middle' },
+                }}
+                domain={[minValue - buffer, maxValue + buffer]}
+              />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="a"
+                stroke={lineColor}
+                strokeWidth={5}
+                dot={{ r: 6, fill: lineColor }}
+                activeDot={{ r: 12, fill: lineColor }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </Flex>
+    </div>
   );
 };

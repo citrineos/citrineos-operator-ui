@@ -29,7 +29,7 @@ import { TransactionDetailCard } from './transaction.detail.card';
 import { BaseDtoProps } from '@citrineos/base';
 import { ITransactionDto } from '@citrineos/base';
 import { IMeterValueDto, MeterValueDtoProps } from '@citrineos/base';
-import { AllCharts } from '../chart/allCharts';
+import { ChartsWrapper } from '../chart/charts.wrapper';
 
 export const TransactionDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,7 +85,7 @@ export const TransactionDetail = () => {
             accessType: TransactionAccessType.EVENTS,
           }}
         >
-          <AllCharts meterValues={meterValues} />
+          <ChartsWrapper meterValues={meterValues} />
         </CanAccess>
       ),
     },

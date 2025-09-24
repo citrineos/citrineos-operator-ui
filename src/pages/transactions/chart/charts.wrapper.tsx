@@ -25,10 +25,11 @@ const columnProps = {
   xs: { flex: '100%' },
   sm: { flex: '100%' },
   md: { flex: '50%' },
-  lg: { flex: '30%' },
-  xl: { flex: '30%' },
+  lg: { flex: '50%' },
+  xl: { flex: '50%' },
+  xxl: { flex: '33.33333%' },
 };
-export const AllCharts = ({
+export const ChartsWrapper = ({
   meterValues,
 }: {
   meterValues: IMeterValueDto[];
@@ -50,7 +51,7 @@ export const AllCharts = ({
         {renderEnumSelectOptions(ReadingContextEnumType)}
       </Select>
 
-      <Row gutter={32}>
+      <Row gutter={[32, 32]}>
         <Col {...columnProps}>
           <PowerOverTime
             meterValues={meterValues}
