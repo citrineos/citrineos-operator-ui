@@ -83,7 +83,9 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
           </Descriptions.Item>
           <Descriptions.Item label="Facilities">
             {location.facilities
-              ? location.facilities.map((facility) => <Tag>{facility}</Tag>)
+              ? location.facilities.map((facility) => (
+                  <Tag key={facility}>{facility}</Tag>
+                ))
               : NOT_APPLICABLE}
           </Descriptions.Item>
           <Descriptions.Item label="Total Chargers">

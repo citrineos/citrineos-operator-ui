@@ -10,9 +10,7 @@ import { StatusIcon } from '../../components/status-icon';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { ChargingStateEnumType } from '@OCPP2_0_1';
 import { CrudFilters } from '@refinedev/core';
-import { BaseDtoProps } from '@citrineos/base';
 import { ITransactionDto, TransactionDtoProps } from '@citrineos/base';
-import { ChargingStationDtoProps } from '@citrineos/base';
 import { IdTokenDtoProps } from '@citrineos/base';
 import { LocationDtoProps } from '@citrineos/base';
 
@@ -105,18 +103,18 @@ export const getTransactionColumns = (
           style: { cursor: 'pointer' },
         })}
         render={(_: any, record: ITransactionDto) => (
-          <h4>{record.chargingStation?.id}</h4>
+          <span>{record.chargingStation?.id}</span>
         )}
       />
       <Table.Column
         key="location"
         dataIndex="location"
-        title="Location Name"
+        title="Location"
         sorter={true}
         onCell={(record: ITransactionDto) => ({
           className: 'hoverable-value',
           onClick: (e: React.MouseEvent) => {
-            const path = `/${MenuSection.LOCATIONS}/${record.chargingStation?.location?.id}`;
+            const path = `/${MenuSection.LOCATIONS}/${record.location?.id}`;
             if (e.ctrlKey || e.metaKey) {
               window.open(path, '_blank');
             } else {
@@ -126,7 +124,7 @@ export const getTransactionColumns = (
           style: { cursor: 'pointer' },
         })}
         render={(_: any, record: ITransactionDto) => (
-          <h4>{record.chargingStation?.location?.name}</h4>
+          <span>{record.location?.name}</span>
         )}
       />
       <Table.Column
@@ -138,7 +136,7 @@ export const getTransactionColumns = (
         })}
         render={(_: any, record: ITransactionDto) => {
           const idToken = record.authorization?.idToken;
-          return idToken ? <h4>{idToken ?? 'N/A'}</h4> : '';
+          return idToken ? <span>{idToken ?? 'N/A'}</span> : '';
         }}
       />
       <Table.Column
@@ -177,7 +175,7 @@ export const getTransactionColumns = (
         onCell={() => ({
           className: `column-${TransactionDtoProps.startTime}`,
         })}
-        render={(createdAt) => <TimestampDisplay isoTimestamp={createdAt} />}
+        render={(startTime) => <TimestampDisplay isoTimestamp={startTime} />}
       />
       <Table.Column
         key={TransactionDtoProps.endTime}
@@ -187,7 +185,7 @@ export const getTransactionColumns = (
         onCell={() => ({
           className: `column-${TransactionDtoProps.endTime}`,
         })}
-        render={(updatedAt) => <TimestampDisplay isoTimestamp={updatedAt} />}
+        render={(endTime) => <TimestampDisplay isoTimestamp={endTime} />}
       />
     </>
   );

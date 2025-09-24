@@ -74,21 +74,6 @@ export const TransactionDetail = () => {
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: 'Authorizations',
-      children: (
-        <CanAccess
-          resource={ResourceType.AUTHORIZATIONS}
-          action={ActionType.LIST}
-          fallback={<AccessDeniedFallback />}
-        >
-          <Table rowKey="id" {...tableProps}>
-            {authColumns}
-          </Table>
-        </CanAccess>
-      ),
-    },
-    {
-      key: '2',
       label: 'Meter Value Data',
       children: (
         <CanAccess
@@ -105,7 +90,7 @@ export const TransactionDetail = () => {
       ),
     },
     {
-      key: '3',
+      key: '2',
       label: 'Events',
       children: (
         <CanAccess

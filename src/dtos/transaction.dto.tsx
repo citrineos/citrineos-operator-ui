@@ -5,24 +5,25 @@
 import {
   ITransactionDto,
   ITransactionEventDto,
-  IChargingStationDto,
+  type IChargingStationDto,
   IEvseDto,
   IMeterValueDto,
   IStartTransactionDto,
   IStopTransactionDto,
   IConnectorDto,
-  IAuthorizationDto,
+  type IAuthorizationDto,
   ITariffDto,
-  ILocationDto,
+  type ILocationDto,
 } from '@citrineos/base';
-import { ChargingStateEnumType, ReasonEnumType } from '@OCPP2_0_1';
+import { Expose } from 'class-transformer';
 
 export class TransactionDto implements Partial<ITransactionDto> {
   id?: number;
   transactionId!: string;
   stationId!: string;
   transactionEvents?: ITransactionEventDto[];
-  chargingStation?: IChargingStationDto;
+  @Expose({ name: 'ChargingStation' })
+  chargingStation?: IChargingStationDto | undefined;
   evse?: IEvseDto | null;
   evseDatabaseId?: number;
   isActive!: boolean;
@@ -36,12 +37,14 @@ export class TransactionDto implements Partial<ITransactionDto> {
   remoteStartId?: number | null;
   totalCost?: number;
   locationId?: number;
-  location?: ILocationDto;
+  @Expose({ name: 'Location' })
+  location?: ILocationDto | undefined;
   evseId?: number;
   connectorId?: number;
   connector?: IConnectorDto | null;
   authorizationId?: number;
-  authorization?: IAuthorizationDto;
+  @Expose({ name: 'Authorization' })
+  authorization?: IAuthorizationDto | undefined;
   tariffId?: number | null;
   tariff?: ITariffDto | null;
   startTime?: string | null;

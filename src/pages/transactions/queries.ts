@@ -29,6 +29,8 @@ export const TRANSACTION_LIST_QUERY = gql`
       totalKwh
       createdAt
       updatedAt
+      startTime
+      endTime
       Location {
         id
         name
@@ -111,8 +113,10 @@ export const TRANSACTION_GET_QUERY = gql`
       evseId
       remoteStartId
       totalKwh
-      createdAt
-      updatedAt
+      startTime
+      endTime
+      locationId
+      authorizationId
       Location {
         name
         address

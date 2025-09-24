@@ -9,6 +9,7 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { Link, useNavigation } from '@refinedev/core';
 import { useLocation } from 'react-router-dom';
 import { ITransactionDto } from '@citrineos/base';
+import { TimestampDisplay } from '../../../components/timestamp-display';
 
 const { Text } = Typography;
 const emptyValue = '-';
@@ -50,9 +51,23 @@ export const TransactionDetailCard = ({
             label: 'description-label',
           }}
         >
+          <Descriptions.Item label="Authorization">
+            <Link to={`/authorizations/${transaction.authorizationId}`}>
+              <Text className="hoverable-value" ellipsis>
+                {transaction.authorization?.idToken}
+              </Text>
+            </Link>
+          </Descriptions.Item>
           <Descriptions.Item label="Station ID">
             <Link to={`/charging-stations/${transaction.stationId}`}>
               <Text className="hoverable-value">{transaction.stationId}</Text>
+            </Link>
+          </Descriptions.Item>
+          <Descriptions.Item label="Location">
+            <Link to={`/locations/${transaction.locationId}`}>
+              <Text className="hoverable-value">
+                {transaction.location?.name ?? 'N/A'}
+              </Text>
             </Link>
           </Descriptions.Item>
           <Descriptions.Item label="Total kWh">
@@ -63,15 +78,11 @@ export const TransactionDetailCard = ({
           <Descriptions.Item label="Charging State">
             {transaction.chargingState || emptyValue}
           </Descriptions.Item>
-          <Descriptions.Item label="Created At">
-            {transaction.createdAt
-              ? new Date(transaction.createdAt).toLocaleString()
-              : emptyValue}
+          <Descriptions.Item label="Start Time">
+            <TimestampDisplay isoTimestamp={transaction.startTime ?? ''} />
           </Descriptions.Item>
-          <Descriptions.Item label="Updated At">
-            {transaction.updatedAt
-              ? new Date(transaction.updatedAt).toLocaleString()
-              : emptyValue}
+          <Descriptions.Item label="End Time">
+            <TimestampDisplay isoTimestamp={transaction.endTime ?? ''} />
           </Descriptions.Item>
         </Descriptions>
       </Flex>
