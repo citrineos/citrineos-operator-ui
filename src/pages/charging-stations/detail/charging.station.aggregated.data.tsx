@@ -3,15 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo, useState, FC } from 'react';
-import {
-  DatePicker,
-  Spin,
-  Card,
-  Checkbox,
-  Select,
-  Typography,
-  Flex,
-} from 'antd';
+import { DatePicker, Spin, Select, Typography, Flex, Row, Col } from 'antd';
 import { useList } from '@refinedev/core';
 import dayjs, { Dayjs } from 'dayjs';
 import { getPlainToInstanceOptions } from '@util/tables';
@@ -21,29 +13,15 @@ import {
   GET_TRANSACTION_LIST_FOR_STATION,
   GET_METER_VALUES_FOR_STATION,
 } from '../../../message/queries';
-import {
-  PowerOverTime,
-  StateOfCharge,
-  EnergyOverTime,
-  VoltageOverTime,
-  CurrentOverTime,
-} from '../../transactions/chart';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { ResourceType } from '@util/auth';
 import { ITransactionDto } from '@citrineos/base';
 import { IMeterValueDto } from '@citrineos/base';
+import { ChartsWrapper } from '../../transactions/chart/charts.wrapper';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const { Text } = Typography;
-
-enum ChartType {
-  POWER = 'Power Over Time',
-  ENERGY = 'Energy Over Time',
-  SOC = 'State of Charge Over Time',
-  VOLTAGE = 'Voltage Over Time',
-  CURRENT = 'Current Over Time',
-}
 
 const allContexts = [
   ReadingContextEnumType.Transaction_Begin,
@@ -61,10 +39,6 @@ interface ChartPanelProps {
   series: IMeterValueDto[];
   contexts: ReadingContextEnumType[];
   onContextsChange: (vals: ReadingContextEnumType[]) => void;
-  selected: ChartType;
-  onSelect: (c: ChartType) => void;
-  allTime: boolean;
-  onToggleAllTime: (v: boolean) => void;
   range: [Dayjs, Dayjs];
   onRangeChange: (r: [Dayjs, Dayjs]) => void;
 }
@@ -73,84 +47,44 @@ const ChartPanel: FC<ChartPanelProps> = ({
   series,
   contexts,
   onContextsChange,
-  selected,
-  onSelect,
-  allTime,
-  onToggleAllTime,
   range,
   onRangeChange,
 }) => {
-  const data = allTime ? series : filterByDate(series, range);
-  const ChartElement = useMemo(() => {
-    switch (selected) {
-      case ChartType.ENERGY:
-        return <EnergyOverTime meterValues={data} validContexts={contexts} />;
-      case ChartType.SOC:
-        return <StateOfCharge meterValues={data} validContexts={contexts} />;
-      case ChartType.VOLTAGE:
-        return <VoltageOverTime meterValues={data} validContexts={contexts} />;
-      case ChartType.CURRENT:
-        return <CurrentOverTime meterValues={data} validContexts={contexts} />;
-      default:
-        return <PowerOverTime meterValues={data} validContexts={contexts} />;
-    }
-  }, [data, contexts, selected]);
+  const data = filterByDate(series, range);
 
   return (
-    <Card
-      style={{ flex: 1, display: 'flex', flexDirection: 'column', height: 650 }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-          marginBottom: 16,
-        }}
-      >
-        <Checkbox
-          checked={allTime}
-          onChange={(e) => onToggleAllTime(e.target.checked)}
-        >
-          All Time
-        </Checkbox>
-        {!allTime && (
-          <RangePicker
-            value={range}
-            onChange={(d) => d && d[0] && d[1] && onRangeChange([d[0], d[1]])}
-            style={{ width: '100%' }}
-          />
-        )}
-        <Text>Contexts:</Text>
-        <Select
-          mode="multiple"
-          style={{ width: '100%' }}
-          value={contexts}
-          onChange={(v) => onContextsChange(v as ReadingContextEnumType[])}
-        >
-          {allContexts.map((ctx) => (
-            <Option key={ctx} value={ctx}>
-              {ctx}
-            </Option>
-          ))}
-        </Select>
-        <Text>Chart Type:</Text>
-        <Select
-          value={selected}
-          onChange={(v) => onSelect(v as ChartType)}
-          style={{ width: '100%' }}
-        >
-          {Object.values(ChartType).map((c) => (
-            <Option key={c} value={c}>
-              {c}
-            </Option>
-          ))}
-        </Select>
-      </div>
-      <Flex style={{ aspectRatio: '1 / 1', maxHeight: 400, width: '100%' }}>
-        {ChartElement}
-      </Flex>
-    </Card>
+    <Flex vertical gap={16}>
+      <Row gutter={16}>
+        <Col span={8}>
+          <Flex vertical gap={8}>
+            <Text>Time Range:</Text>
+            <RangePicker
+              value={range}
+              onChange={(d) => d && d[0] && d[1] && onRangeChange([d[0], d[1]])}
+              style={{ width: '100%' }}
+            />
+          </Flex>
+        </Col>
+        <Col span={16}>
+          <Flex vertical gap={8}>
+            <Text>Contexts:</Text>
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              value={contexts}
+              onChange={(v) => onContextsChange(v as ReadingContextEnumType[])}
+            >
+              {allContexts.map((ctx) => (
+                <Option key={ctx} value={ctx}>
+                  {ctx}
+                </Option>
+              ))}
+            </Select>
+          </Flex>
+        </Col>
+      </Row>
+      <ChartsWrapper meterValues={data} validContexts={contexts} />
+    </Flex>
   );
 };
 
@@ -186,15 +120,9 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
     dayjs().subtract(7, 'day').startOf('day'),
     dayjs().endOf('day'),
   ];
-  const [selL, setSelL] = useState<ChartType>(ChartType.POWER);
-  const [allL, setAllL] = useState(true);
-  const [rngL, setRngL] = useState(defaultRange);
-  const [ctxL, setCtxL] = useState<ReadingContextEnumType[]>(allContexts);
-
-  const [selR, setSelR] = useState<ChartType>(ChartType.ENERGY);
-  const [allR, setAllR] = useState(true);
-  const [rngR, setRngR] = useState(defaultRange);
-  const [ctxR, setCtxR] = useState<ReadingContextEnumType[]>(allContexts);
+  const [range, setRange] = useState(defaultRange);
+  const [contexts, setContexts] =
+    useState<ReadingContextEnumType[]>(allContexts);
 
   if (txLoading || mvLoading)
     return (
@@ -204,29 +132,12 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
     );
 
   return (
-    <div style={{ display: 'flex', gap: 32 }}>
-      <ChartPanel
-        series={series}
-        selected={selL}
-        onSelect={setSelL}
-        allTime={allL}
-        onToggleAllTime={setAllL}
-        range={rngL}
-        onRangeChange={setRngL}
-        contexts={ctxL}
-        onContextsChange={setCtxL}
-      />
-      <ChartPanel
-        series={series}
-        selected={selR}
-        onSelect={setSelR}
-        allTime={allR}
-        onToggleAllTime={setAllR}
-        range={rngR}
-        onRangeChange={setRngR}
-        contexts={ctxR}
-        onContextsChange={setCtxR}
-      />
-    </div>
+    <ChartPanel
+      series={series}
+      range={range}
+      onRangeChange={setRange}
+      contexts={contexts}
+      onContextsChange={setContexts}
+    />
   );
 };

@@ -2,23 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo } from 'react';
-import { Card, Tabs, TabsProps, Table } from 'antd';
-import { useTable } from '@refinedev/antd';
+import React, { useState } from 'react';
+import { Card, Tabs, TabsProps, Select, Flex, Typography } from 'antd';
 import { useParams } from 'react-router-dom';
-import { CanAccess, useList, useNavigation, useOne } from '@refinedev/core';
+import { CanAccess, useList, useOne } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
-import {
-  TRANSACTION_GET_QUERY,
-  GET_TRANSACTIONS_BY_AUTHORIZATION,
-} from '../queries';
+import { TRANSACTION_GET_QUERY } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import './style.scss';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
 import { MeterValueDto } from '../../../dtos/meter.value.dto';
-import { AuthorizationDto } from '../../../dtos/authorization.dto';
-import { getAuthorizationColumns } from '../../authorizations/columns';
 import {
   ResourceType,
   ActionType,
@@ -26,14 +20,16 @@ import {
   TransactionAccessType,
 } from '@util/auth';
 import { TransactionDetailCard } from './transaction.detail.card';
-import { BaseDtoProps } from '@citrineos/base';
 import { ITransactionDto } from '@citrineos/base';
 import { IMeterValueDto, MeterValueDtoProps } from '@citrineos/base';
 import { ChartsWrapper } from '../chart/charts.wrapper';
+import { ReadingContextEnumType } from '@OCPP2_0_1';
+import { renderEnumSelectOptions } from '@util/renderUtil';
+
+const { Text } = Typography;
 
 export const TransactionDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { push } = useNavigation();
 
   const { data: transactionData, isLoading } = useOne<ITransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -54,19 +50,11 @@ export const TransactionDetail = () => {
   });
   const meterValues = meterValuesData?.data ?? [];
 
-  const authorization = transaction?.authorization;
-
-  const { tableProps } = useTable<AuthorizationDto>({
-    resource: ResourceType.AUTHORIZATIONS,
-    sorters: { permanent: [{ field: BaseDtoProps.updatedAt, order: 'desc' }] },
-    meta: {
-      gqlQuery: GET_TRANSACTIONS_BY_AUTHORIZATION,
-      gqlVariables: { id: authorization?.id, limit: 10000 },
-    },
-    queryOptions: getPlainToInstanceOptions(),
-  });
-
-  const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
+  const [validContexts, setValidContexts] = useState<ReadingContextEnumType[]>([
+    ReadingContextEnumType.Transaction_Begin,
+    ReadingContextEnumType.Sample_Periodic,
+    ReadingContextEnumType.Transaction_End,
+  ]);
 
   if (isLoading) return <p>Loading...</p>;
   if (!transaction) return <p>No Data Found</p>;
@@ -85,7 +73,25 @@ export const TransactionDetail = () => {
             accessType: TransactionAccessType.EVENTS,
           }}
         >
-          <ChartsWrapper meterValues={meterValues} />
+          <Flex vertical gap={16}>
+            <Flex vertical gap={8}>
+              <Text>Contexts:</Text>
+              <Select
+                mode="multiple"
+                className="full-width"
+                value={validContexts}
+                onChange={(vals) =>
+                  setValidContexts(vals as ReadingContextEnumType[])
+                }
+              >
+                {renderEnumSelectOptions(ReadingContextEnumType)}
+              </Select>
+            </Flex>
+            <ChartsWrapper
+              meterValues={meterValues}
+              validContexts={validContexts}
+            />
+          </Flex>
         </CanAccess>
       ),
     },

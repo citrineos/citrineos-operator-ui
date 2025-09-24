@@ -31,26 +31,13 @@ const columnProps = {
 };
 export const ChartsWrapper = ({
   meterValues,
+  validContexts,
 }: {
   meterValues: IMeterValueDto[];
+  validContexts: ReadingContextEnumType[];
 }) => {
-  const [validContexts, setValidContexts] = useState<ReadingContextEnumType[]>([
-    ReadingContextEnumType.Transaction_Begin,
-    ReadingContextEnumType.Sample_Periodic,
-    ReadingContextEnumType.Transaction_End,
-  ]);
-
   return (
     <Flex vertical gap={32} className="full-width">
-      <Select
-        mode="multiple"
-        className="full-width"
-        value={validContexts}
-        onChange={(vals) => setValidContexts(vals as ReadingContextEnumType[])}
-      >
-        {renderEnumSelectOptions(ReadingContextEnumType)}
-      </Select>
-
       <Row gutter={[32, 32]}>
         <Col {...columnProps}>
           <PowerOverTime

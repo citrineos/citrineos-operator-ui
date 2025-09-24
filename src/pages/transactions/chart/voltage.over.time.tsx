@@ -55,7 +55,9 @@ export const VoltageOverTime = ({
     <div className="meter-value-chart">
       <Flex vertical gap={16}>
         <h3>Voltage Over Time</h3>
-        {!hasChartData && <div>No Voltage data available</div>}
+        {!hasChartData && (
+          <div className="no-meter-values">No Voltage data available</div>
+        )}
         {hasChartData && (
           <ResponsiveContainer minHeight={chartMinHeight}>
             <LineChart data={chartData}>

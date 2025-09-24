@@ -4,3 +4,7 @@
   border-radius: 16px;
   padding: 16px;
 }
+
+.no-meter-values {
+  min-height: var(--minimum-chart-height);
+}

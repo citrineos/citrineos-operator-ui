@@ -55,7 +55,9 @@ export const CurrentOverTime = ({
     <div className="meter-value-chart">
       <Flex vertical gap={16}>
         <h3>Current Over Time</h3>
-        {!hasChartData && <div>No Current data available</div>}
+        {!hasChartData && (
+          <div className="no-meter-values">No Current data available</div>
+        )}
         {hasChartData && (
           <ResponsiveContainer minHeight={chartMinHeight}>
             <LineChart data={chartData}>

@@ -49,17 +49,15 @@ export const EnergyOverTime = ({
     return { chartData: processedData, minValue: min, maxValue: max };
   }, [meterValues, validContexts]);
 
-  if (!chartData || chartData.length === 0) {
-    return;
-  }
-
   const hasChartData = chartData && chartData.length > 0;
 
   return (
     <div className="meter-value-chart">
       <Flex vertical gap={16}>
         <h3>Energy Over Time</h3>
-        {!hasChartData && <div>No Energy data available</div>}
+        {!hasChartData && (
+          <div className="no-meter-values">No Energy data available</div>
+        )}
         {hasChartData && (
           <ResponsiveContainer minHeight={chartMinHeight}>
             <LineChart data={chartData}>

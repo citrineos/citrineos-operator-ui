@@ -53,7 +53,11 @@ export const StateOfCharge = ({
     <div className="meter-value-chart">
       <Flex vertical gap={16}>
         <h3>State of Charge Over Time</h3>
-        {!hasChartData && <div>No State of Charge data available</div>}
+        {!hasChartData && (
+          <div className="no-meter-values">
+            No State of Charge data available
+          </div>
+        )}
         {hasChartData && (
           <ResponsiveContainer minHeight={chartMinHeight}>
             <LineChart data={chartData}>
