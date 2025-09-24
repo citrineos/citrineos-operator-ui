@@ -91,8 +91,16 @@ export const getTransactionColumns = (
         title="Station ID"
         sorter={true}
         onCell={(record: ITransactionDto) => ({
-          className: 'hoverable-value',
+          className: window.location.pathname.includes(
+            MenuSection.CHARGING_STATIONS,
+          )
+            ? ''
+            : 'hoverable-value',
           onClick: (e: React.MouseEvent) => {
+            if (window.location.pathname.includes('chargingStation')) {
+              return;
+            }
+
             const path = `/${MenuSection.CHARGING_STATIONS}/${record.chargingStation?.id}`;
             if (e.ctrlKey || e.metaKey) {
               window.open(path, '_blank');
