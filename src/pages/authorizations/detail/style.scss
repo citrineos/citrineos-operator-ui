@@ -31,21 +31,6 @@ main[class*='content-authorizations-']:not(
   padding-left: var(--ant-padding-md);
 }
 
-.authorization-details {
-  padding: var(--ant-padding-md) 0;
-
-  table td:nth-child(2) {
-    padding-left: var(--ant-padding-md);
-  }
-  .column-right {
-    padding-right: var(--ant-padding-md);
-  }
-  .nowrap {
-    display: block;
-    margin-bottom: var(--ant-padding-s);
-  }
-}
-
 .authorizations-list .header-row {
   margin-bottom: var(--ant-margin-md);
 }

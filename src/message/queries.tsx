@@ -233,8 +233,10 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       evseId
       remoteStartId
       totalKwh
-      createdAt
-      updatedAt
+      startTime
+      endTime
+      locationId
+      authorizationId
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
         idTokenValue
@@ -245,22 +247,12 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       }
       ChargingStation {
         id
-        isOnline
-        locationId
-        createdAt
-        updatedAt
-        Location {
-          id
-          name
-          address
-          city
-          postalCode
-          state
-          country
-          coordinates
-          createdAt
-          updatedAt
-        }
+      }
+      Location {
+        name
+      }
+      Authorization {
+        idToken
       }
     }
     Transactions_aggregate(

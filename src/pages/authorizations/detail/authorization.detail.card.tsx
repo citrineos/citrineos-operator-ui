@@ -3,11 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback } from 'react';
-import { Button, Flex, message, Typography } from 'antd';
+import { Button, Descriptions, Flex, message, Tag, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useDelete, useNavigation } from '@refinedev/core';
-import { ClipboardIcon } from '../../../components/icons/clipboard.icon';
 import { useLocation } from 'react-router-dom';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
 import { ResourceType } from '@util/auth';
@@ -17,6 +16,8 @@ import {
   IdTokenType,
 } from '@citrineos/base';
 import GenericTag from '../../../components/tag';
+import { NOT_APPLICABLE } from '@util/consts';
+import { DeleteOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -54,25 +55,21 @@ export const AuthorizationDetailCard: React.FC<
   }, [authorization, mutate, goBack]);
 
   return (
-    <Flex gap={24}>
-      <Flex vertical>
-        <div className="image-placeholder">
-          <ClipboardIcon />
-        </div>
-      </Flex>
-
-      <Flex vertical flex="1 1 auto">
-        <Flex gap={8} align="center" style={{ marginBottom: 24 }}>
+    <Flex gap={16}>
+      <Flex gap={16} vertical flex="1 1 auto">
+        <Flex gap={16} align="center">
           <ArrowLeftIcon
             onClick={() => {
-              if (loc.key === 'default') push(`/${MenuSection.AUTHORIZATIONS}`);
-              else goBack();
+              if (loc.key === 'default') {
+                push(`/${MenuSection.AUTHORIZATIONS}`);
+              } else {
+                goBack();
+              }
             }}
             style={{ cursor: 'pointer' }}
           />
           <h3>Authorization {authorization.id}</h3>
           <Text
-            style={{ marginLeft: 8 }}
             type={
               authorization.status === AuthorizationStatusType.Accepted
                 ? 'success'
@@ -81,39 +78,43 @@ export const AuthorizationDetailCard: React.FC<
           >
             {authorization.status}
           </Text>
+          <Button
+            className="error btn-md"
+            icon={<DeleteOutlined />}
+            iconPosition="end"
+            onClick={handleDeleteClick}
+          >
+            Delete
+          </Button>
         </Flex>
-
-        <Flex justify="space-between" gap={32}>
-          <Flex vertical gap={16}>
-            <Text className="nowrap">
-              <strong>ID:</strong> {authorization.id}
-            </Text>
-            <Text className="nowrap">
-              <strong>Type:</strong>{' '}
-              <GenericTag
-                enumValue={
-                  authorization.idTokenType
-                    ? authorization.idTokenType
-                    : undefined
-                }
-                enumType={IdTokenType}
-              />
-            </Text>
-            <Text className="nowrap">
-              <strong>Status:</strong>{' '}
-              <GenericTag
-                enumValue={authorization.status}
-                enumType={AuthorizationStatusType}
-              />
-            </Text>
-          </Flex>
-
-          <Flex vertical gap={16} className="border-left">
-            <Text className="nowrap">
-              <strong>ID Token:</strong> {authorization.idToken}
-            </Text>
-            <Text className="nowrap">
-              <strong>Partner:</strong>{' '}
+        <Descriptions
+          layout="vertical"
+          column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+          colon={false}
+          classNames={{
+            label: 'description-label',
+          }}
+        >
+          <Descriptions.Item label="ID Token">
+            {authorization.idToken}
+          </Descriptions.Item>
+          <Descriptions.Item label="Type">
+            <GenericTag
+              enumValue={authorization.idTokenType ?? undefined}
+              enumType={IdTokenType}
+            />
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            <GenericTag
+              enumValue={authorization.status}
+              enumType={AuthorizationStatusType}
+            />
+          </Descriptions.Item>
+          <Descriptions.Item label="Partner">
+            {!authorization.tenantPartner?.partnerProfileOCPI?.roles?.[0]
+              ?.businessDetails?.name ? (
+              NOT_APPLICABLE
+            ) : (
               <a
                 onClick={() =>
                   push(
@@ -126,49 +127,36 @@ export const AuthorizationDetailCard: React.FC<
                     ?.businessDetails?.name
                 }
               </a>
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Allowed Types">
+            {authorization.allowedConnectorTypes
+              ? authorization.allowedConnectorTypes.map((connectorType) => (
+                  <Tag key={connectorType}>{connectorType}</Tag>
+                ))
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Disallowed Prefixes">
+            {authorization.disallowedEvseIdPrefixes
+              ? authorization.disallowedEvseIdPrefixes.map((prefix) => (
+                  <Tag key={prefix}>{prefix}</Tag>
+                ))
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Concurrent Transactions">
+            <Text
+              type={authorization.concurrentTransaction ? 'success' : 'danger'}
+            >
+              {authorization.concurrentTransaction ? 'Allowed' : 'Not Allowed'}
             </Text>
-          </Flex>
-
-          <Flex vertical gap={16} className="border-left column-right">
-            <Text className="nowrap">
-              <strong>Allowed Types:</strong>{' '}
-              {authorization.allowedConnectorTypes?.length
-                ? authorization.allowedConnectorTypes.join(', ')
-                : '—'}
-            </Text>
-            <Text className="nowrap">
-              <strong>Disallowed Prefixes:</strong>{' '}
-              {authorization.disallowedEvseIdPrefixes?.length
-                ? authorization.disallowedEvseIdPrefixes.join(', ')
-                : '—'}
-            </Text>
-            <Text className="nowrap">
-              <strong>Allowing Concurrent Transactions:</strong>{' '}
-              {authorization.concurrentTransaction ? 'True' : 'False'}
-            </Text>
-            <Text className="nowrap">
-              <strong>Real-Time Authentication:</strong>{' '}
-              {authorization.realTimeAuth || '—'}
-            </Text>
-            <Text className="nowrap">
-              <strong>Real-Time Authentication URL:</strong>{' '}
-              {authorization.realTimeAuthUrl || '—'}
-            </Text>
-          </Flex>
-
-          <Flex vertical>
-            {/* <Button
-              type="text"
-              icon={<EditOutlined />}
-              onClick={() =>
-                push(`/${MenuSection.AUTHORIZATIONS}/${authorization.id}/edit`)
-              }
-            /> */}
-            <Button className="secondary" onClick={handleDeleteClick}>
-              Delete
-            </Button>
-          </Flex>
-        </Flex>
+          </Descriptions.Item>
+          <Descriptions.Item label="Real-Time Authentication">
+            {authorization.realTimeAuth || NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Real-Time Authentication URL">
+            {authorization.realTimeAuthUrl || NOT_APPLICABLE}
+          </Descriptions.Item>
+        </Descriptions>
       </Flex>
     </Flex>
   );

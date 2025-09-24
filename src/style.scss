@@ -225,14 +225,14 @@ button.warning {
   }
 }
 
-.ant-table-cell.hoverable-column {
+.hoverable-value {
   cursor: pointer;
   text-decoration-line: underline;
   font-weight: bold;
-}
 
-.ant-table-cell.ant-table-cell-row-hover.hoverable-column:hover {
-  background-color: var(--secondary-color-2);
+  &:hover {
+    color: var(--secondary-color-2);
+  }
 }
 
 .ant-drawer {
