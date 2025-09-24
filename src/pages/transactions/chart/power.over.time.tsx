@@ -17,6 +17,7 @@ import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { chartMinHeight, formatTimeLabel, generateTimeTicks } from './util';
 import { IMeterValueDto } from '@citrineos/base';
 import { Flex } from 'antd';
+import './style.scss';
 
 export interface PowerOverTimeProps {
   meterValues: IMeterValueDto[];
