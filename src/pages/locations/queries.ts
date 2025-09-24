@@ -110,6 +110,10 @@ export const LOCATIONS_GET_QUERY = gql`
       parkingType
       createdAt
       updatedAt
+      isPublished
+      validationErrors
+      publishedToPartners
+      lastPublicationAttempt
       chargingPool: ChargingStations {
         id
         isOnline

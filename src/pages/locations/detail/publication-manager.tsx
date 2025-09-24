@@ -2,11 +2,22 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
-import { Card, Button, Space, Tag, Alert, Modal, Select } from 'antd';
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  Button,
+  Space,
+  Tag,
+  Alert,
+  Modal,
+  Select,
+  notification,
+} from 'antd';
 import { CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
 import { ILocationDto } from '@citrineos/base';
-import { useCustomMutation } from '@refinedev/core';
+import { useCustomMutation, useList } from '@refinedev/core';
+import { PARTNERS_LIST_QUERY } from '../../partners/queries';
+import config from '@util/config';
 import './publication-manager.scss';
 
 interface LocationPublicationManagerProps {
@@ -31,42 +42,73 @@ interface PublishLocationResponse {
   publishedConnectors: number;
 }
 
+interface Partner {
+  id: number;
+  countryCode: string;
+  partyId: string;
+  partnerProfileOCPI?: any;
+}
+
 export const LocationPublicationManager: React.FC<
   LocationPublicationManagerProps
 > = ({ location }) => {
   const [isPublishModalVisible, setIsPublishModalVisible] = useState(false);
   const [selectedPartners, setSelectedPartners] = useState<string[]>([]);
 
-  // Mock partner data - in real implementation, this would come from an API
-  const availablePartners = [
-    { id: 'partner1', name: 'Partner 1' },
-    { id: 'partner2', name: 'Partner 2' },
-    { id: 'partner3', name: 'Partner 3' },
-  ];
+  // Fetch real partners data for the current tenant
+  const { data: partnersData, isLoading: isLoadingPartners } = useList<Partner>(
+    {
+      resource: 'TenantPartners',
+      meta: {
+        gqlQuery: PARTNERS_LIST_QUERY,
+        gqlVariables: {
+          where: config.tenantId ? { tenantId: { _eq: config.tenantId } } : {},
+          limit: 100, // Adjust as needed
+          offset: 0,
+        },
+      },
+    },
+  );
 
-  const { mutate: publishLocation, isLoading: isPublishing } =
-    useCustomMutation<PublishLocationResponse>({
-      url: `/admin/v2.2.1/locations/locations/${location.id}/publish`,
-      method: 'post',
-      successNotification: (data) => ({
-        message: 'Publication Successful',
-        description: `Location with ${data?.publishedEvses || 0} EVSEs and ${data?.publishedConnectors || 0} connectors published to ${data?.publishedToPartners?.length || 0} partners`,
-        type: 'success',
-      }),
-      errorNotification: {
+  const availablePartners =
+    partnersData?.data?.map((partner) => ({
+      id: partner.id.toString(),
+      name: `${partner.countryCode}-${partner.partyId}`,
+      countryCode: partner.countryCode,
+      partyId: partner.partyId,
+    })) || [];
+
+  const {
+    mutate: publishLocation,
+    isLoading: isPublishing,
+    data: mutationData,
+    error: mutationError,
+  } = useCustomMutation<PublishLocationResponse>();
+
+  useEffect(() => {
+    if (mutationError) {
+      notification.error({
         message: 'Publication Failed',
         description: 'Failed to publish location hierarchy to OCPI partners',
-        type: 'error',
-      },
-    });
+      });
+    } else if (mutationData) {
+      notification.success({
+        message: 'Publication Successful',
+        description: `Location with ${mutationData?.data.publishedEvses || 0} EVSEs and ${mutationData?.data.publishedConnectors || 0} connectors published to ${mutationData?.data.publishedToPartners?.length || 0} partners`,
+      });
+    }
+  }, [mutationData, mutationError]);
 
   const handlePublish = () => {
     const requestData: PublishLocationRequest = {};
+
     if (selectedPartners.length > 0) {
       requestData.partnerIds = selectedPartners;
     }
 
     publishLocation({
+      url: `/admin/v2.2.1/locations/locations/${location.id}/publish`,
+      method: 'post',
       values: requestData,
     });
     setIsPublishModalVisible(false);
@@ -185,7 +227,13 @@ export const LocationPublicationManager: React.FC<
             <span>Select specific partners (optional):</span>
             <Select
               mode="multiple"
-              placeholder="Select partners (leave empty to publish to all)"
+              placeholder={
+                isLoadingPartners
+                  ? 'Loading partners...'
+                  : availablePartners.length === 0
+                    ? 'No partners available'
+                    : 'Select partners (leave empty to publish to all)'
+              }
               style={{ width: '100%', marginTop: 8 }}
               value={selectedPartners}
               onChange={setSelectedPartners}
@@ -193,12 +241,24 @@ export const LocationPublicationManager: React.FC<
                 label: partner.name,
                 value: partner.id,
               }))}
+              loading={isLoadingPartners}
+              disabled={isLoadingPartners || availablePartners.length === 0}
             />
+            {!isLoadingPartners && availablePartners.length === 0 && (
+              <Alert
+                message="No OCPI partners configured"
+                description="No partners are available for this tenant. Please configure OCPI partners before publishing."
+                type="warning"
+                showIcon
+                style={{ marginTop: 8 }}
+              />
+            )}
           </div>
 
-          {selectedPartners.length === 0 && (
+          {selectedPartners.length === 0 && availablePartners.length > 0 && (
             <Alert
               message="Publishing to all configured OCPI partners"
+              description={`This will publish to all ${availablePartners.length} configured partners`}
               type="info"
               showIcon
             />
