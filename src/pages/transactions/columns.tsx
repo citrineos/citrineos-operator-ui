@@ -181,20 +181,21 @@ export const getTransactionColumns = (
         dataIndex={TransactionDtoProps.startTime}
         title="Start Time"
         sorter={true}
-        onCell={() => ({
-          className: `column-${TransactionDtoProps.startTime}`,
-        })}
         render={(startTime) => <TimestampDisplay isoTimestamp={startTime} />}
       />
       <Table.Column
         key={TransactionDtoProps.endTime}
         dataIndex={TransactionDtoProps.endTime}
+        title="End Time"
+        sorter={true}
+        render={(endTime) => <TimestampDisplay isoTimestamp={endTime} />}
+      />
+      <Table.Column
+        key="updatedAt"
+        dataIndex="updatedAt"
         title="Updated At"
         sorter={true}
-        onCell={() => ({
-          className: `column-${TransactionDtoProps.endTime}`,
-        })}
-        render={(endTime) => <TimestampDisplay isoTimestamp={endTime} />}
+        render={(updatedAt) => <TimestampDisplay isoTimestamp={updatedAt} />}
       />
     </>
   );
