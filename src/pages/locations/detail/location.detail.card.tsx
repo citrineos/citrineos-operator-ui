@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { getFullAddress } from '@util/geocoding';
-import { Button, Descriptions, Flex, Tag } from 'antd';
+import { Button, Descriptions, Flex, Tag, Alert, Switch, Tooltip } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
@@ -13,14 +13,82 @@ import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
 import { EditOutlined } from '@ant-design/icons';
 import { NOT_APPLICABLE } from '@util/consts';
+import { useNotification } from '@refinedev/core';
+import { useMutation } from '@tanstack/react-query';
+
+interface PublishLocationResponse {
+  success: boolean;
+  locationId: string;
+  publishedToPartners: string[];
+  validationErrors?: string[];
+  publishedEvses: number;
+  publishedConnectors: number;
+}
 
 export interface LocationDetailCardProps {
   location: ILocationDto;
+  onRefresh?: () => void;
 }
 
-export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
+export const LocationDetailCard = ({
+  location,
+  onRefresh,
+}: LocationDetailCardProps) => {
   const { goBack, push } = useNavigation();
   const pageLocation = useLocation();
+  const { open } = useNotification();
+
+  const [optimisticPublished, setOptimisticPublished] = React.useState(false);
+  const effectivePublished = location.isPublished || optimisticPublished;
+
+  const { mutate: publishLocation, isLoading: isPublishing } = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(
+        `/admin/v2.2.1/locations/locations/${location.id}/publish`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Add any other necessary headers, like authorization
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
+    onSuccess: (data: PublishLocationResponse) => {
+      open?.({
+        type: 'success',
+        message: 'Publication Successful',
+        description: `Location with ${data?.publishedEvses || 0} EVSEs and ${data?.publishedConnectors || 0} connectors published to ${data?.publishedToPartners?.length || 0} partners`,
+      });
+      if (onRefresh) onRefresh();
+    },
+    onError: (error: any) => {
+      open?.({
+        type: 'error',
+        message: 'Publication Failed',
+        description:
+          error?.message ||
+          'Failed to publish location hierarchy to OCPI partners',
+      });
+      // Revert optimistic state if it failed
+      setOptimisticPublished(false);
+    },
+  });
+
+  const handleToggleChange = (checked: boolean) => {
+    // Only support publishing (one-way). Ignore attempts to un-check.
+    if (!checked) return;
+    if (effectivePublished || isPublishing) return;
+
+    // Optimistic UI update
+    setOptimisticPublished(true);
+    publishLocation();
+  };
 
   return (
     <Flex gap={16}>
@@ -90,6 +158,55 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
             {location.chargingPool?.length ?? 0}
           </Descriptions.Item>
         </Descriptions>
+        <Flex justify="space-between" align="center">
+          <span>Publish Status</span>
+          <Tooltip
+            title={
+              effectivePublished
+                ? 'Already published'
+                : 'Publish location & full hierarchy upstream'
+            }
+          >
+            <Switch
+              checkedChildren="Published"
+              unCheckedChildren="Publish"
+              checked={effectivePublished}
+              onChange={handleToggleChange}
+              loading={isPublishing}
+              disabled={effectivePublished && !isPublishing}
+            />
+          </Tooltip>
+        </Flex>
+        <Alert
+          message={effectivePublished ? 'Published' : 'Not Published'}
+          description={
+            effectivePublished
+              ? 'This location hierarchy has been (or is being) published to OCPI partners.'
+              : 'Toggle to publish this location (including EVSEs & connectors) to all OCPI partners.'
+          }
+          type={effectivePublished ? 'success' : 'info'}
+          showIcon
+        />
+        {location.validationErrors?.length ? (
+          <Alert
+            style={{ marginTop: 8 }}
+            message="Last Validation Errors"
+            description={
+              <ul style={{ margin: 0, paddingLeft: 18 }}>
+                {location.validationErrors.map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            }
+            type="error"
+            showIcon
+          />
+        ) : null}
+        {optimisticPublished && !location.isPublished && (
+          <Tag color="processing" style={{ marginTop: 8 }}>
+            Publishing…
+          </Tag>
+        )}
       </Flex>
     </Flex>
   );
