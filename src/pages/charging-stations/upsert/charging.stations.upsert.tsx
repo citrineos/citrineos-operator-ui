@@ -10,13 +10,23 @@ import {
 } from '../queries';
 import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
-import { AutoComplete, Button, Flex, Form, Input, Modal, Select } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Col,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select,
+} from 'antd';
 import {
   LOCATIONS_LIST_QUERY,
   LOCATIONS_GET_QUERY_BY_ID,
 } from '../../locations/queries';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { useSearchParams } from 'react-router-dom';
@@ -31,6 +41,7 @@ import {
   ILocationDto,
   LocationDtoProps,
 } from '@citrineos/base';
+import { formFieldColumnProps } from '@util/forms';
 
 export const ChargingStationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -251,31 +262,36 @@ export const ChargingStationUpsert = () => {
             />
             <h3>{stationId ? 'Edit' : 'Create'} Charging Station</h3>
           </Flex>
-          <Flex gap={16} wrap>
-            <Form.Item
-              key={ChargingStationDtoProps.id}
-              label="Charging Station Id"
-              name={ChargingStationDtoProps.id}
-              rules={[
-                { required: true, message: 'Charging Station ID is required' },
-              ]}
-              data-testid={ChargingStationDtoProps.id}
-              style={{ width: '32%' }}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              key={ChargingStationDtoProps.isOnline}
-              label="Is Online"
-              name={ChargingStationDtoProps.isOnline}
-              data-testid={ChargingStationDtoProps.isOnline}
-              style={{ width: '32%' }}
-            >
-              <Select onChange={handleOnChange}>
-                <Select.Option value={true}>Yes</Select.Option>
-                <Select.Option value={false}>No</Select.Option>
-              </Select>
-            </Form.Item>
+          <Row gutter={[16, 16]}>
+            <Col {...formFieldColumnProps}>
+              <Form.Item
+                key={ChargingStationDtoProps.id}
+                label="Charging Station Id"
+                name={ChargingStationDtoProps.id}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Charging Station ID is required',
+                  },
+                ]}
+                data-testid={ChargingStationDtoProps.id}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col {...formFieldColumnProps}>
+              <Form.Item
+                key={ChargingStationDtoProps.isOnline}
+                label="Is Online"
+                name={ChargingStationDtoProps.isOnline}
+                data-testid={ChargingStationDtoProps.isOnline}
+              >
+                <Select onChange={handleOnChange}>
+                  <Select.Option value={true}>Yes</Select.Option>
+                  <Select.Option value={false}>No</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
             <Form.Item
               key={ChargingStationDtoProps.locationId}
               label="LocationId"
@@ -285,68 +301,78 @@ export const ChargingStationUpsert = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              key="locationName"
-              label="Location"
-              name="locationName"
-              data-testid="locationName"
-              rules={[{ required: true, message: 'Please select a location' }]}
-              style={{ width: '32%' }}
-            >
-              <AutoComplete
-                {...selectProps}
-                options={memoizedOptions}
-                onSelect={handleSelect as any}
-                filterOption={false}
-                placeholder="Select a location"
-              />
-            </Form.Item>
-            <Form.Item
-              key={ChargingStationDtoProps.floorLevel}
-              label="Floor Level"
-              name={ChargingStationDtoProps.floorLevel}
-              data-testid={ChargingStationDtoProps.floorLevel}
-              style={{ width: '32%' }}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              key={ChargingStationDtoProps.parkingRestrictions}
-              label="Parking Restrictions"
-              name={ChargingStationDtoProps.parkingRestrictions}
-              data-testid={ChargingStationDtoProps.parkingRestrictions}
-              style={{ width: '32%' }}
-            >
-              <Select
-                mode="tags"
-                placeholder="Select parking restrictions"
-                allowClear
+            <Col {...formFieldColumnProps}>
+              <Form.Item
+                key="locationName"
+                label="Location"
+                name="locationName"
+                data-testid="locationName"
+                rules={[
+                  { required: true, message: 'Please select a location' },
+                ]}
               >
-                {Object.keys(ChargingStationParkingRestriction).map(
-                  (restriction) => (
-                    <Select.Option key={restriction} value={restriction}>
-                      {restriction}
+                <AutoComplete
+                  {...selectProps}
+                  options={memoizedOptions}
+                  onSelect={handleSelect as any}
+                  filterOption={false}
+                  placeholder="Select a location"
+                />
+              </Form.Item>
+            </Col>
+            <Col {...formFieldColumnProps}>
+              <Form.Item
+                key={ChargingStationDtoProps.floorLevel}
+                label="Floor Level"
+                name={ChargingStationDtoProps.floorLevel}
+                data-testid={ChargingStationDtoProps.floorLevel}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col {...formFieldColumnProps}>
+              <Form.Item
+                key={ChargingStationDtoProps.parkingRestrictions}
+                label="Parking Restrictions"
+                name={ChargingStationDtoProps.parkingRestrictions}
+                data-testid={ChargingStationDtoProps.parkingRestrictions}
+              >
+                <Select
+                  mode="tags"
+                  placeholder="Select parking restrictions"
+                  allowClear
+                >
+                  {Object.keys(ChargingStationParkingRestriction).map(
+                    (restriction) => (
+                      <Select.Option key={restriction} value={restriction}>
+                        {restriction}
+                      </Select.Option>
+                    ),
+                  )}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col {...formFieldColumnProps}>
+              <Form.Item
+                key={ChargingStationDtoProps.capabilities}
+                label="Capabilities"
+                name={ChargingStationDtoProps.capabilities}
+                data-testid={ChargingStationDtoProps.capabilities}
+              >
+                <Select
+                  mode="tags"
+                  placeholder="Select capabilities"
+                  allowClear
+                >
+                  {Object.keys(ChargingStationCapability).map((capability) => (
+                    <Select.Option key={capability} value={capability}>
+                      {capability}
                     </Select.Option>
-                  ),
-                )}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              key={ChargingStationDtoProps.capabilities}
-              label="Capabilities"
-              name={ChargingStationDtoProps.capabilities}
-              data-testid={ChargingStationDtoProps.capabilities}
-              style={{ width: '32%' }}
-            >
-              <Select mode="tags" placeholder="Select capabilities" allowClear>
-                {Object.keys(ChargingStationCapability).map((capability) => (
-                  <Select.Option key={capability} value={capability}>
-                    {capability}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Flex>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item>
             <Flex gap={16}>
               {stationId && (

@@ -10,7 +10,9 @@ import {
   AuthorizationDtoProps,
   IAuthorizationDto,
   IdTokenDtoProps,
+  IdTokenType,
 } from '@citrineos/base';
+import GenericTag from '../../components/tag';
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>
@@ -20,7 +22,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
       title="Authorization ID"
       sorter={true}
       onCell={(record: IAuthorizationDto) => ({
-        className: `column-${IdTokenDtoProps.idToken}`,
+        className: 'hoverable-value',
         onClick: (e: React.MouseEvent) => {
           const path = `/${MenuSection.AUTHORIZATIONS}/${record.id}`;
           if (e.ctrlKey || e.metaKey) {
@@ -31,7 +33,15 @@ export const getAuthorizationColumns = (push: (path: string) => void) => (
         },
         style: { cursor: 'pointer' },
       })}
-      render={(_, record) => <h4>{record.idToken}</h4>}
+    />
+    <Table.Column
+      key="idTokenType"
+      dataIndex="idTokenType"
+      title="Type"
+      sorter={true}
+      render={(value) => (
+        <GenericTag enumValue={value ?? undefined} enumType={IdTokenType} />
+      )}
     />
   </>
 );
@@ -47,7 +57,7 @@ export const getAuthorizationFilters = (value: string): CrudFilter[] => {
           value,
         },
         {
-          field: `${AuthorizationDtoProps.idToken}.type`,
+          field: `${AuthorizationDtoProps.idToken}.idTokenType`,
           operator: 'contains',
           value,
         },
