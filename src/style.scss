@@ -256,6 +256,11 @@ button.warning {
   color: #8c8c8c !important;
 }
 
+.ant-switch-checked.ant-switch-disabled {
+  background-color: var(--ui-color-success) !important;
+  opacity: 0.5;
+}
+
 .ant-layout {
   background: transparent;
   height: 100vh;

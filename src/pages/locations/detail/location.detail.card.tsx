@@ -15,6 +15,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { NOT_APPLICABLE } from '@util/consts';
 import { useNotification } from '@refinedev/core';
 import { useMutation } from '@tanstack/react-query';
+import { OcpiRestClient } from '@util/OcpiRestClient';
 
 interface PublishLocationResponse {
   success: boolean;
@@ -43,29 +44,31 @@ export const LocationDetailCard = ({
 
   const { mutate: publishLocation, isLoading: isPublishing } = useMutation({
     mutationFn: async () => {
-      const response = await fetch(
-        `/admin/v2.2.1/locations/locations/${location.id}/publish`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // Add any other necessary headers, like authorization
-          },
-        },
+      const client = new OcpiRestClient();
+      return client.post<PublishLocationResponse>(
+        `locations/${location.id}/publish`,
+        {},
+        {},
       );
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
     },
     onSuccess: (data: PublishLocationResponse) => {
-      open?.({
-        type: 'success',
-        message: 'Publication Successful',
-        description: `Location with ${data?.publishedEvses || 0} EVSEs and ${data?.publishedConnectors || 0} connectors published to ${data?.publishedToPartners?.length || 0} partners`,
-      });
-      if (onRefresh) onRefresh();
+      if (data.success) {
+        open?.({
+          type: 'success',
+          message: 'Publication Successful',
+          description: `Location with ${data?.publishedEvses || 0} EVSEs and ${data?.publishedConnectors || 0} connectors published to ${data?.publishedToPartners?.length || 0} partners`,
+        });
+        if (onRefresh) onRefresh();
+      } else {
+        open?.({
+          type: 'error',
+          message: 'Publication Failed',
+          description: data.validationErrors?.length
+            ? data.validationErrors.join(', ')
+            : 'Failed to publish location hierarchy to OCPI partners',
+        });
+        setOptimisticPublished(false);
+      }
     },
     onError: (error: any) => {
       open?.({
