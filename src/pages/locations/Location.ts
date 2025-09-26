@@ -62,11 +62,7 @@ export class Location {
   @IsString()
   country!: string;
 
-  @IsGeoPoint()
-  @Type(() => GeoPoint)
-  @ToPlain<GeoPoint>((value) => (value ? value.json : value))
-  @ToClass<GeoPoint>(GeoPoint.parse)
-  coordinates!: GeoPoint;
+  coordinates!: { type: 'Point'; coordinates: number[] };
 
   constructor(data?: Location) {
     if (data) {

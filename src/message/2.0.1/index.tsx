@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChargingStation } from '../../pages/charging-stations/ChargingStation';
-import { RemoteStop, RemoteStopProps } from './remote-stop';
 import { CustomAction } from '../../components/custom-actions';
 import { SetVariables, SetVariablesProps } from './set-variables';
 import { TriggerMessage, TriggerMessageProps } from './trigger-message';
@@ -70,7 +69,6 @@ export const chargingStationActionMap: {
   'Get Variables': GetVariables as React.FC<GetVariablesProps>,
   'Install Certificate':
     InstallCertificate as React.FC<InstallCertificateProps>,
-  'Remote Stop': RemoteStop as React.FC<RemoteStopProps>,
   'Set Network Profile': SetNetworkProfile as React.FC<SetNetworkProfileProps>,
   'Set Variables': SetVariables as React.FC<SetVariablesProps>,
   'Trigger Message': TriggerMessage as React.FC<TriggerMessageProps>,

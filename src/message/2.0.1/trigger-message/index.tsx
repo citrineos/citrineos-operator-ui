@@ -156,7 +156,7 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       customData: request[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && evse.id) {
+    if (evse && evse.id && evse.id !== (NEW_IDENTIFIER as unknown as number)) {
       data.evse = {
         id: evse.id,
         ...(connector && connector.id ? { connectorId: connector.id } : {}),

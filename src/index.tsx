@@ -5,14 +5,25 @@
 import 'reflect-metadata';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import App, { authProvider } from './App';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
-root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-);
+
+const init = async () => {
+  const initialized = await authProvider.getInitialized();
+  if (!initialized) {
+    root.render(
+      <div>Oops something went wrong during auth initialization</div>,
+    );
+  }
+  root.render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+  );
+};
+
+init().finally();

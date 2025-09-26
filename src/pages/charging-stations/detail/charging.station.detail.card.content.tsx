@@ -173,7 +173,8 @@ export const ChargingStationDetailCardContent = ({
   if (isLoading) return <p>Loading...</p>;
   if (!station) return <p>No Data Found</p>;
 
-  const hasActiveTransactions = false; // transactions are not a direct property
+  const hasActiveTransactions =
+    station.transactions && station.transactions.length > 0;
 
   let latestTimestamp = NOT_APPLICABLE;
   if (latestLog) {

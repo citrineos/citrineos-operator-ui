@@ -6,6 +6,8 @@ import { ILocationDto, IChargingStationDto } from '@citrineos/base';
 import { Point } from 'geojson';
 
 export class LocationDto implements Partial<ILocationDto> {
+  id!: number;
+
   coordinates!: Point;
 
   chargingPool!: IChargingStationDto[];

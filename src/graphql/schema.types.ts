@@ -1950,7 +1950,7 @@ export type Certificates_Bool_Exp = {
 export type Certificates_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'Certificates_pkey'
-  /** unique or primary key constraint on columns "issuerName", "serialNumber" */
+  /** unique or primary key constraint on columns "serialNumber", "issuerName" */
   | 'Certificates_serialNumber_issuerName_key';
 
 /** input type for incrementing numeric columns in table "Certificates" */
@@ -5326,7 +5326,7 @@ export type ChargingStationSequences_Bool_Exp = {
 export type ChargingStationSequences_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'ChargingStationSequences_pkey'
-  /** unique or primary key constraint on columns "stationId", "type" */
+  /** unique or primary key constraint on columns "type", "stationId" */
   | 'ChargingStationSequences_stationId_type_key';
 
 /** input type for incrementing numeric columns in table "ChargingStationSequences" */
@@ -7980,7 +7980,7 @@ export type Connectors_Bool_Exp = {
 export type Connectors_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'Connectors_pkey'
-  /** unique or primary key constraint on columns "stationId", "connectorId" */
+  /** unique or primary key constraint on columns "connectorId", "stationId" */
   | 'Connectors_stationId_connectorId_key';
 
 /** input type for incrementing numeric columns in table "Connectors" */
@@ -8667,7 +8667,7 @@ export type EventData_Bool_Exp = {
 export type EventData_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'EventData_pkey'
-  /** unique or primary key constraint on columns "stationId", "eventId" */
+  /** unique or primary key constraint on columns "eventId", "stationId" */
   | 'EventData_stationId_eventId_key';
 
 /** input type for incrementing numeric columns in table "EventData" */
@@ -9643,7 +9643,6 @@ export type Evses = {
   Transactions: Array<Transactions>;
   /** An aggregate relationship */
   Transactions_aggregate: Transactions_Aggregate;
-  connectorId?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['timestamptz']['output'];
   evseId?: Maybe<Scalars['String']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
@@ -9787,7 +9786,6 @@ export type Evses_Arr_Rel_Insert_Input = {
 
 /** aggregate avg on columns */
 export type Evses_Avg_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -9795,7 +9793,6 @@ export type Evses_Avg_Fields = {
 
 /** order by avg() on columns of table "Evses" */
 export type Evses_Avg_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -9814,7 +9811,6 @@ export type Evses_Bool_Exp = {
   _and?: InputMaybe<Array<Evses_Bool_Exp>>;
   _not?: InputMaybe<Evses_Bool_Exp>;
   _or?: InputMaybe<Array<Evses_Bool_Exp>>;
-  connectorId?: InputMaybe<Int_Comparison_Exp>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   evseId?: InputMaybe<String_Comparison_Exp>;
   evseTypeId?: InputMaybe<Int_Comparison_Exp>;
@@ -9828,16 +9824,11 @@ export type Evses_Bool_Exp = {
 
 /** unique or primary key constraints on table "Evses" */
 export type Evses_Constraint =
-  /** unique or primary key constraint on columns "id", "connectorId" */
-  | 'Evses_id_connectorId_key'
   /** unique or primary key constraint on columns "id" */
-  | 'Evses_pkey'
-  /** unique or primary key constraint on columns "id" */
-  | 'evses_id';
+  'Evses_pkey';
 
 /** input type for incrementing numeric columns in table "Evses" */
 export type Evses_Inc_Input = {
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
@@ -9850,7 +9841,6 @@ export type Evses_Insert_Input = {
   Connectors?: InputMaybe<Connectors_Arr_Rel_Insert_Input>;
   Tenant?: InputMaybe<Tenants_Obj_Rel_Insert_Input>;
   Transactions?: InputMaybe<Transactions_Arr_Rel_Insert_Input>;
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   evseId?: InputMaybe<Scalars['String']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
@@ -9864,7 +9854,6 @@ export type Evses_Insert_Input = {
 
 /** aggregate max on columns */
 export type Evses_Max_Fields = {
-  connectorId?: Maybe<Scalars['Int']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   evseId?: Maybe<Scalars['String']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
@@ -9877,7 +9866,6 @@ export type Evses_Max_Fields = {
 
 /** order by max() on columns of table "Evses" */
 export type Evses_Max_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   evseId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
@@ -9890,7 +9878,6 @@ export type Evses_Max_Order_By = {
 
 /** aggregate min on columns */
 export type Evses_Min_Fields = {
-  connectorId?: Maybe<Scalars['Int']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   evseId?: Maybe<Scalars['String']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
@@ -9903,7 +9890,6 @@ export type Evses_Min_Fields = {
 
 /** order by min() on columns of table "Evses" */
 export type Evses_Min_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   evseId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
@@ -9943,7 +9929,6 @@ export type Evses_Order_By = {
   Connectors_aggregate?: InputMaybe<Connectors_Aggregate_Order_By>;
   Tenant?: InputMaybe<Tenants_Order_By>;
   Transactions_aggregate?: InputMaybe<Transactions_Aggregate_Order_By>;
-  connectorId?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   evseId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
@@ -9962,8 +9947,6 @@ export type Evses_Pk_Columns_Input = {
 
 /** select columns of table "Evses" */
 export type Evses_Select_Column =
-  /** column name */
-  | 'connectorId'
   /** column name */
   | 'createdAt'
   /** column name */
@@ -9995,7 +9978,6 @@ export type Evses_Select_Column_Evses_Aggregate_Bool_Exp_Bool_Or_Arguments_Colum
 
 /** input type for updating data in table "Evses" */
 export type Evses_Set_Input = {
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   evseId?: InputMaybe<Scalars['String']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
@@ -10009,7 +9991,6 @@ export type Evses_Set_Input = {
 
 /** aggregate stddev on columns */
 export type Evses_Stddev_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10017,7 +9998,6 @@ export type Evses_Stddev_Fields = {
 
 /** order by stddev() on columns of table "Evses" */
 export type Evses_Stddev_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10025,7 +10005,6 @@ export type Evses_Stddev_Order_By = {
 
 /** aggregate stddev_pop on columns */
 export type Evses_Stddev_Pop_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10033,7 +10012,6 @@ export type Evses_Stddev_Pop_Fields = {
 
 /** order by stddev_pop() on columns of table "Evses" */
 export type Evses_Stddev_Pop_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10041,7 +10019,6 @@ export type Evses_Stddev_Pop_Order_By = {
 
 /** aggregate stddev_samp on columns */
 export type Evses_Stddev_Samp_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10049,7 +10026,6 @@ export type Evses_Stddev_Samp_Fields = {
 
 /** order by stddev_samp() on columns of table "Evses" */
 export type Evses_Stddev_Samp_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10065,7 +10041,6 @@ export type Evses_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Evses_Stream_Cursor_Value_Input = {
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   evseId?: InputMaybe<Scalars['String']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
@@ -10079,7 +10054,6 @@ export type Evses_Stream_Cursor_Value_Input = {
 
 /** aggregate sum on columns */
 export type Evses_Sum_Fields = {
-  connectorId?: Maybe<Scalars['Int']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   tenantId?: Maybe<Scalars['Int']['output']>;
@@ -10087,7 +10061,6 @@ export type Evses_Sum_Fields = {
 
 /** order by sum() on columns of table "Evses" */
 export type Evses_Sum_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10095,8 +10068,6 @@ export type Evses_Sum_Order_By = {
 
 /** update columns of table "Evses" */
 export type Evses_Update_Column =
-  /** column name */
-  | 'connectorId'
   /** column name */
   | 'createdAt'
   /** column name */
@@ -10127,7 +10098,6 @@ export type Evses_Updates = {
 
 /** aggregate var_pop on columns */
 export type Evses_Var_Pop_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10135,7 +10105,6 @@ export type Evses_Var_Pop_Fields = {
 
 /** order by var_pop() on columns of table "Evses" */
 export type Evses_Var_Pop_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10143,7 +10112,6 @@ export type Evses_Var_Pop_Order_By = {
 
 /** aggregate var_samp on columns */
 export type Evses_Var_Samp_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10151,7 +10119,6 @@ export type Evses_Var_Samp_Fields = {
 
 /** order by var_samp() on columns of table "Evses" */
 export type Evses_Var_Samp_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10159,7 +10126,6 @@ export type Evses_Var_Samp_Order_By = {
 
 /** aggregate variance on columns */
 export type Evses_Variance_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10167,7 +10133,6 @@ export type Evses_Variance_Fields = {
 
 /** order by variance() on columns of table "Evses" */
 export type Evses_Variance_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -16051,7 +16016,7 @@ export type SendLocalListAuthorizations_Bool_Exp = {
 
 /** unique or primary key constraints on table "SendLocalListAuthorizations" */
 export type SendLocalListAuthorizations_Constraint =
-  /** unique or primary key constraint on columns "authorizationId", "sendLocalListId" */
+  /** unique or primary key constraint on columns "sendLocalListId", "authorizationId" */
   'SendLocalListAuthorizations_pkey';
 
 /** input type for incrementing numeric columns in table "SendLocalListAuthorizations" */
@@ -21182,7 +21147,7 @@ export type Tenants = {
   countryCode: Scalars['String']['output'];
   createdAt: Scalars['timestamptz']['output'];
   id: Scalars['Int']['output'];
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   partyId: Scalars['String']['output'];
   serverProfileOCPI?: Maybe<Scalars['jsonb']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
@@ -24306,21 +24271,21 @@ export type VariableAttributes_Bool_Exp = {
 export type VariableAttributes_Constraint =
   /** unique or primary key constraint on columns "id" */
   | 'VariableAttributes_pkey'
-  /** unique or primary key constraint on columns "stationId", "componentId", "type", "variableId" */
+  /** unique or primary key constraint on columns "type", "componentId", "stationId", "variableId" */
   | 'VariableAttributes_stationId_type_variableId_componentId_key'
   /** unique or primary key constraint on columns "stationId" */
   | 'variable_attributes_station_id'
-  /** unique or primary key constraint on columns "stationId", "componentId" */
+  /** unique or primary key constraint on columns "componentId", "stationId" */
   | 'variable_attributes_station_id_component_id'
-  /** unique or primary key constraint on columns "stationId", "type" */
+  /** unique or primary key constraint on columns "type", "stationId" */
   | 'variable_attributes_station_id_type'
-  /** unique or primary key constraint on columns "stationId", "componentId", "type" */
+  /** unique or primary key constraint on columns "type", "componentId", "stationId" */
   | 'variable_attributes_station_id_type_component_id'
-  /** unique or primary key constraint on columns "stationId", "type", "variableId" */
+  /** unique or primary key constraint on columns "type", "stationId", "variableId" */
   | 'variable_attributes_station_id_type_variable_id'
   /** unique or primary key constraint on columns "stationId", "variableId" */
   | 'variable_attributes_station_id_variable_id'
-  /** unique or primary key constraint on columns "stationId", "componentId", "variableId" */
+  /** unique or primary key constraint on columns "componentId", "stationId", "variableId" */
   | 'variable_attributes_station_id_variable_id_component_id';
 
 /** input type for incrementing numeric columns in table "VariableAttributes" */

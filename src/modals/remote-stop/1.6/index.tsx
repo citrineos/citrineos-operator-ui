@@ -2,20 +2,34 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect } from 'react';
-import { Button, Flex, Form } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Flex, Form, Select, Spin } from 'antd';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
+import { triggerMessageAndHandleResponse } from '../../../message/util';
+import { MessageConfirmation } from '../../../message/MessageConfirmation';
+import { ITransactionDto, OCPPVersion } from '@citrineos/base';
 import { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP1_6_RemoteStopProps {
   station: IChargingStationDto;
 }
-
 export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
   const isModalOpen = useSelector(selectIsModalOpen);
+
+  const onFinish = async ({ transactionId }: { transactionId: string }) => {
+    const data = { transactionId };
+
+    await triggerMessageAndHandleResponse<MessageConfirmation[]>({
+      url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=1`,
+      data,
+      ocppVersion: OCPPVersion.OCPP1_6,
+      setLoading,
+    });
+  };
 
   useEffect(() => {
     if (isModalOpen) {
@@ -23,42 +37,61 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
     }
   }, [isModalOpen, form]);
 
-  // TODO: Fetch transactions for the station separately, as transactions is not a direct property
-  // For now, skip transaction logic to avoid type errors
-  // useEffect(() => {
-  //   if (station.transactions && station.transactions.length > 0) {
-  //     form.setFieldsValue({
-  //       transactionId: station.transactions[0].transactionId,
-  //     });
-  //   }
-  // }, [station, form]);
+  // Set initial value when transactions are loaded
+  useEffect(() => {
+    if (station.transactions && station.transactions.length > 0) {
+      form.setFieldsValue({
+        transactionId: station.transactions[0].transactionId,
+      });
+    }
+  }, [station, form]);
 
-  // if (loading || !station.transactions) {
-  //   return <Spin />;
-  // }
+  if (loading || !station.transactions) {
+    return <Spin />;
+  }
 
-  // const activeTransactions = station.transactions.filter((tx) => tx.isActive);
-  // if (activeTransactions.length === 0) {
-  //   return (
-  //     <Flex vertical gap={16}>
-  //       <div>No active transactions found for this charging station.</div>
-  //       <Flex justify="end" gap={8}>
-  //         <Button onClick={() => dispatch(closeModal())}>Close</Button>
-  //       </Flex>
-  //     </Flex>
-  //   );
-  // }
-
-  // Render fallback UI or message
-  return (
-    <Flex vertical gap={16}>
-      <div>
-        Transaction data not available. Please implement transaction fetching
-        logic.
-      </div>
-      <Flex justify="end" gap={8}>
-        <Button onClick={() => dispatch(closeModal())}>Close</Button>
+  // Handle the case when there are no active transactions
+  if (station.transactions.length === 0) {
+    return (
+      <Flex vertical gap={16}>
+        <div>No active transactions found for this charging station.</div>
+        <Flex justify="end" gap={8}>
+          <Button onClick={() => dispatch(closeModal())}>Close</Button>
+        </Flex>
       </Flex>
-    </Flex>
+    );
+  }
+
+  return (
+    <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Flex vertical gap={16}>
+        <Flex>
+          <Form.Item
+            label="Active Transactions"
+            name="transactionId"
+            rules={[{ required: true, message: 'Please select a transaction' }]}
+          >
+            <Select className="full-width" placeholder="Select a transaction">
+              {station.transactions.map((transaction: ITransactionDto) => {
+                return (
+                  <Select.Option
+                    key={transaction.transactionId}
+                    value={transaction.transactionId}
+                  >
+                    {`${transaction.transactionId}`}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+        </Flex>
+        <Flex justify="end" gap={8}>
+          <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Flex>
+      </Flex>
+    </Form>
   );
 };

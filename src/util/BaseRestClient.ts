@@ -6,8 +6,8 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { UnsuccessfulRequestException } from '../exceptions/UnsuccessfulRequestException';
 import { incrementRequestCount } from '../telemetry';
 import { OCPPVersion } from '@citrineos/base';
-import { authProvider } from '@util/auth';
 import config from './config';
+import { authProvider } from '../App';
 
 const CITRINE_CORE_URL = config.citrineCoreUrl;
 
@@ -23,7 +23,7 @@ export class MissingRequiredParamException extends Error {
 }
 
 export class BaseRestClient {
-  private axiosInstance!: AxiosInstance;
+  private axiosInstance: AxiosInstance;
   private _baseUrl: string;
 
   constructor(ocppVersion: OCPPVersion | null = OCPPVersion.OCPP2_0_1) {
@@ -34,7 +34,7 @@ export class BaseRestClient {
     } else {
       this._baseUrl = `${CITRINE_CORE_URL}/ocpp/2.0.1/`;
     }
-    this.initAxiosInstance();
+    this.axiosInstance = this.createAxiosInstance();
   }
 
   get baseUrl(): string {
@@ -43,7 +43,7 @@ export class BaseRestClient {
 
   set baseUrl(value: string) {
     this._baseUrl = value;
-    this.initAxiosInstance();
+    this.axiosInstance = this.createAxiosInstance();
   }
 
   async optionsRaw<T>(
@@ -160,22 +160,32 @@ export class BaseRestClient {
     }
   }
 
-  private initAxiosInstance() {
-    this.axiosInstance = axios.create({
+  private createAxiosInstance(): AxiosInstance {
+    const axiosInstance = axios.create({
       baseURL: this.baseUrl,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    this.axiosInstance.interceptors.request.use(async (config) => {
-      // Get token and add to headers if it exists
-      const token = await authProvider.getToken();
-      if (token) {
-        config.headers = config.headers || {};
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    axiosInstance.interceptors.request.use(
+      async (config) => {
+        // Get token and add to headers if it exists
+        const token = await authProvider.getToken();
+        if (token) {
+          config.headers = config.headers || {};
+          config.headers.Authorization = `Bearer ${token}`;
+        } else {
+          console.warn('No token found, request may not be authenticated.');
+        }
 
-      return config;
-    });
+        return config;
+      },
+      (error) => {
+        console.error('Error in request interceptor:', error);
+        return Promise.reject(error);
+      },
+    );
+
+    return axiosInstance;
   }
 }

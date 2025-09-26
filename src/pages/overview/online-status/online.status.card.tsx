@@ -7,10 +7,11 @@ import React from 'react';
 import { CanAccess, useCustom, useNavigation } from '@refinedev/core';
 import './style.scss';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
-import { Circle, CircleStatusEnum } from '../circle/circle';
+import { Circle } from '../circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '../../charging-stations/queries';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ActionType, AccessDeniedFallback, ResourceType } from '@util/auth';
+import { ChargerStatusEnum } from '../charger-activity/charger.activity.card';
 
 export const OnlineStatusCard = () => {
   const { push } = useNavigation();
@@ -41,14 +42,14 @@ export const OnlineStatusCard = () => {
           <Flex vertical>
             <div className="online-status-number">{onlineCount}</div>
             <Flex align={'center'} gap={8}>
-              <Circle />
+              <Circle status={ChargerStatusEnum.ONLINE} />
               Online
             </Flex>
           </Flex>
           <Flex vertical>
             <div className="online-status-number">{offlineCount}</div>
             <Flex align={'center'} gap={8}>
-              <Circle status={CircleStatusEnum.ERROR} />
+              <Circle status={ChargerStatusEnum.OFFLINE} />
               Offline
             </Flex>
           </Flex>

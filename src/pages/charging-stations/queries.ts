@@ -237,7 +237,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
           updatedAt
         }
       }
-      Transactions(where: { isActive: { _eq: true } }) {
+      transactions: Transactions(where: { isActive: { _eq: true } }) {
         id
         timeSpentCharging
         isActive
