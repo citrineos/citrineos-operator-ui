@@ -4,11 +4,22 @@
 
 import React from 'react';
 import { getFullAddress } from '@util/geocoding';
-import { Button, Descriptions, Flex, Tag, Alert, Switch, Tooltip } from 'antd';
+import {
+  Button,
+  Descriptions,
+  Flex,
+  Tag,
+  Alert,
+  Switch,
+  Tooltip,
+  Modal,
+  Select,
+  Space,
+} from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { CanAccess, useNavigation } from '@refinedev/core';
+import { CanAccess, useNavigation, useList } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
 import { EditOutlined } from '@ant-design/icons';
@@ -16,6 +27,8 @@ import { NOT_APPLICABLE } from '@util/consts';
 import { useNotification } from '@refinedev/core';
 import { useMutation } from '@tanstack/react-query';
 import { OcpiRestClient } from '@util/OcpiRestClient';
+import { PARTNERS_LIST_QUERY } from '../../partners/queries';
+import config from '@util/config';
 
 interface PublishLocationResponse {
   success: boolean;
@@ -24,6 +37,17 @@ interface PublishLocationResponse {
   validationErrors?: string[];
   publishedEvses: number;
   publishedConnectors: number;
+}
+
+interface Partner {
+  id: number;
+  countryCode: string;
+  partyId: string;
+  partnerProfileOCPI?: any;
+}
+
+interface PublishLocationRequest {
+  partnerIds?: string[];
 }
 
 export interface LocationDetailCardProps {
@@ -40,15 +64,47 @@ export const LocationDetailCard = ({
   const { open } = useNotification();
 
   const [optimisticPublished, setOptimisticPublished] = React.useState(false);
+  const [isPublishModalVisible, setIsPublishModalVisible] =
+    React.useState(false);
+  const [selectedPartners, setSelectedPartners] = React.useState<string[]>([]);
   const effectivePublished = location.isPublished || optimisticPublished;
 
+  // Fetch partners data
+  const { data: partnersData, isLoading: isLoadingPartners } = useList<Partner>(
+    {
+      resource: 'TenantPartners',
+      meta: {
+        gqlQuery: PARTNERS_LIST_QUERY,
+        gqlVariables: {
+          where: config.tenantId ? { tenantId: { _eq: config.tenantId } } : {},
+          limit: 100,
+          offset: 0,
+        },
+      },
+    },
+  );
+
+  const availablePartners =
+    partnersData?.data?.map((partner) => ({
+      id: partner.id.toString(),
+      name: `${partner.countryCode}-${partner.partyId}`,
+      countryCode: partner.countryCode,
+      partyId: partner.partyId,
+    })) || [];
+
   const { mutate: publishLocation, isLoading: isPublishing } = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (partnerIds?: string[]) => {
       const client = new OcpiRestClient();
+      const requestData: PublishLocationRequest = {};
+
+      if (partnerIds && partnerIds.length > 0) {
+        requestData.partnerIds = partnerIds;
+      }
+
       return client.post<PublishLocationResponse>(
         `locations/${location.id}/publish`,
         {},
-        {},
+        requestData,
       );
     },
     onSuccess: (data: PublishLocationResponse) => {
@@ -69,6 +125,8 @@ export const LocationDetailCard = ({
         });
         setOptimisticPublished(false);
       }
+      setIsPublishModalVisible(false);
+      setSelectedPartners([]);
     },
     onError: (error: any) => {
       open?.({
@@ -78,8 +136,9 @@ export const LocationDetailCard = ({
           error?.message ||
           'Failed to publish location hierarchy to OCPI partners',
       });
-      // Revert optimistic state if it failed
       setOptimisticPublished(false);
+      setIsPublishModalVisible(false);
+      setSelectedPartners([]);
     },
   });
 
@@ -88,9 +147,19 @@ export const LocationDetailCard = ({
     if (!checked) return;
     if (effectivePublished || isPublishing) return;
 
+    // Show partner selection modal
+    setIsPublishModalVisible(true);
+  };
+
+  const handlePublish = () => {
     // Optimistic UI update
     setOptimisticPublished(true);
-    publishLocation();
+    publishLocation(selectedPartners.length > 0 ? selectedPartners : undefined);
+  };
+
+  const handleModalCancel = () => {
+    setIsPublishModalVisible(false);
+    setSelectedPartners([]);
   };
 
   return (
@@ -211,6 +280,91 @@ export const LocationDetailCard = ({
           </Tag>
         )}
       </Flex>
+
+      {/* Publish Modal */}
+      <Modal
+        title="Publish Location Hierarchy to OCPI Partners"
+        open={isPublishModalVisible}
+        onOk={handlePublish}
+        onCancel={handleModalCancel}
+        confirmLoading={isPublishing}
+        okText="Publish Complete Location"
+        cancelText="Cancel"
+        width={600}
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Alert
+            message="Complete Location Publication"
+            description="This will publish the location and all its charging stations, EVSEs, and connectors as a complete unit to OCPI partners."
+            type="info"
+            showIcon
+          />
+
+          <div>
+            <span>Select specific partners (optional):</span>
+            <Select
+              mode="multiple"
+              placeholder={
+                isLoadingPartners
+                  ? 'Loading partners...'
+                  : availablePartners.length === 0
+                    ? 'No partners available'
+                    : 'Select partners (leave empty to publish to all)'
+              }
+              style={{ width: '100%', marginTop: 8 }}
+              value={selectedPartners}
+              onChange={setSelectedPartners}
+              options={availablePartners.map((partner) => ({
+                label: partner.name,
+                value: partner.id,
+              }))}
+              loading={isLoadingPartners}
+              disabled={isLoadingPartners || availablePartners.length === 0}
+            />
+            {!isLoadingPartners && availablePartners.length === 0 && (
+              <Alert
+                message="No OCPI partners configured"
+                description="No partners are available for this tenant. Please configure OCPI partners before publishing."
+                type="warning"
+                showIcon
+                style={{ marginTop: 8 }}
+              />
+            )}
+          </div>
+
+          {selectedPartners.length === 0 && availablePartners.length > 0 && (
+            <Alert
+              message="Publishing to all configured OCPI partners"
+              description={`This will publish to all ${availablePartners.length} configured partners`}
+              type="info"
+              showIcon
+            />
+          )}
+
+          <Alert
+            message="Validation Requirements"
+            description={
+              <ul style={{ margin: 0, paddingLeft: 16 }}>
+                <li>
+                  Location must have name, address, city, country, and
+                  coordinates
+                </li>
+                <li>Location must have at least one charging station</li>
+                <li>
+                  Each charging station must have at least one EVSE with an EVSE
+                  ID
+                </li>
+                <li>
+                  Each EVSE must have at least one connector with type, format,
+                  and power type
+                </li>
+              </ul>
+            }
+            type="warning"
+            showIcon
+          />
+        </Space>
+      </Modal>
     </Flex>
   );
 };
