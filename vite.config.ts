@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     nodePolyfills({
       globals: {
-        process: true,
+        process: false,
         Buffer: false,
       },
     }),

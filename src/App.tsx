@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import './telemetry';
-import { Authenticated, Refine, ResourceProps } from '@refinedev/core';
+import type { ResourceProps } from '@refinedev/core';
+import { Authenticated, Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import './style.scss';
 
@@ -32,7 +33,6 @@ import {
   Route,
   Routes,
   useLocation,
-  useNavigate,
 } from 'react-router-dom';
 import {
   ColorModeContext,
