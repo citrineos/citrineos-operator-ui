@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { TariffListQuery } from '../../graphql/types';
+import type { TariffListQuery } from '../../graphql/types';
 import { Tariff } from './Tariff';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   TARIFF_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   TARIFF_LIST_QUERY,
 } from './queries';
 import { TARIFF_COLUMNS } from './table-config';
-import { Tariffs } from '../../graphql/schema.types';
+import type { Tariffs } from '../../graphql/schema.types';
 import { IoReceiptOutline } from 'react-icons/io5';
 
 export const TariffView: React.FC = () => {

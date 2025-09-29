@@ -21,10 +21,8 @@ import {
   CERTIFICATES_GET_QUERY,
   CERTIFICATES_LIST_QUERY,
 } from './queries';
-import {
-  CertificateDtoProps,
-  INewCertificateRequestDto,
-} from '@citrineos/base';
+import type { INewCertificateRequestDto } from '@citrineos/base';
+import { CertificateDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CERTIFICATES)
 @ClassGqlListQuery(CERTIFICATES_LIST_QUERY)

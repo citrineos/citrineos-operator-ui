@@ -14,7 +14,10 @@ import type {
 } from '../../graphql/types';
 import type { GetFields, GetVariables } from '@refinedev/hasura';
 import { SECURITY_EVENTS_CREATE_MUTATION } from './queries';
-import { Exact, SecurityEvents_Insert_Input } from '../../graphql/schema.types';
+import type {
+  Exact,
+  SecurityEvents_Insert_Input,
+} from '../../graphql/schema.types';
 
 export const SecurityEventsCreate = () => {
   const { formProps, onFinish, saveButtonProps } = useForm<

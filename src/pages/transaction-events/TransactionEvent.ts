@@ -19,7 +19,6 @@ import {
   TRANSACTION_EVENT_GET_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
 } from './queries';
-import { Type } from 'class-transformer';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import {
   GET_METER_VALUES_FOR_TRANSACTION_EVENT,
@@ -27,12 +26,8 @@ import {
   METER_VALUE_LIST_QUERY,
 } from '../meter-values/queries';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
-import {
-  IMeterValueDto,
-  ITransactionEventDto,
-  MeterValueDtoProps,
-  TransactionEventDtoProps,
-} from '@citrineos/base';
+import type { IMeterValueDto, ITransactionEventDto } from '@citrineos/base';
+import { MeterValueDtoProps, TransactionEventDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.TRANSACTION_EVENTS)
 @ClassGqlListQuery(TRANSACTION_EVENT_LIST_QUERY)

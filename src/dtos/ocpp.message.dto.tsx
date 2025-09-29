@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IOCPPMessageDto } from '@citrineos/base';
+import type { IOCPPMessageDto } from '@citrineos/base';
 import { OCPPVersion } from '@citrineos/base';
 
 export enum OCPPMessageOriginEnumType {

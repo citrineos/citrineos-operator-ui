@@ -17,10 +17,8 @@ import {
   STATUS_NOTIFICATIONS_GET_QUERY,
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from './queries';
-import {
-  IStatusNotificationDto,
-  StatusNotificationDtoProps,
-} from '@citrineos/base';
+import type { IStatusNotificationDto } from '@citrineos/base';
+import { StatusNotificationDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.STATUS_NOTIFICATIONS)
 @ClassGqlListQuery(STATUS_NOTIFICATIONS_LIST_QUERY)

@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { StatusNotificationsListQuery } from '../../graphql/types';
+import type { StatusNotificationsListQuery } from '../../graphql/types';
 import { StatusNotification } from './StatusNotification';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   STATUS_NOTIFICATIONS_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   STATUS_NOTIFICATIONS_LIST_QUERY,
 } from './queries';
 import { STATUS_NOTIFICATIONS_COLUMNS } from './table-config';
-import { StatusNotifications } from '../../graphql/schema.types';
+import type { StatusNotifications } from '../../graphql/schema.types';
 import { MdOutlineNotificationsActive } from 'react-icons/md';
 
 export const StatusNotificationsView: React.FC = () => {

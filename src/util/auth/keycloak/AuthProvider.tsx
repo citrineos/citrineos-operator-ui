@@ -2,15 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { AuthProvider } from '@refinedev/core';
-import {
-  KeycloakPermissions,
-  KeycloakRole,
-  KeycloakUserIdentity,
-} from './types';
+import type { AuthProvider } from '@refinedev/core';
+import type { KeycloakPermissions, KeycloakUserIdentity } from './types';
+import { KeycloakRole } from './types';
 import Keycloak from 'keycloak-js';
 import config from '@util/config';
-import { AuthenticationContextProvider } from '../types';
+import type { AuthenticationContextProvider } from '../types';
 import { HasuraClaimType, HasuraHeader, HasuraRole } from '../hasura';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

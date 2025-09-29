@@ -6,7 +6,7 @@ import { ResourceType } from '@util/auth';
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import {
   EVSE_CREATE_MUTATION,
   EVSE_DELETE_MUTATION,

@@ -8,7 +8,7 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useNavigation } from '@refinedev/core';
 import { BiDirectionsArrowsIcon } from '../../../components/icons/bi.directional.arrows.icon';
 import { useLocation } from 'react-router-dom';
-import { ITransactionDto } from '@citrineos/base';
+import type { ITransactionDto } from '@citrineos/base';
 
 const { Text } = Typography;
 

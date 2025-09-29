@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import './telemetry';
-import { Authenticated, Refine, ResourceProps } from '@refinedev/core';
+import type { ResourceProps } from '@refinedev/core';
+import { Authenticated, Refine } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import './style.scss';
 
@@ -11,11 +12,13 @@ import { ErrorComponent, ThemedLayoutContextProvider } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
 import { App as AntdApp, ConfigProvider, Layout as AntdLayout } from 'antd';
 
+import type {
+  HasuraDataProviderOptions,
+  HasuraLiveProviderOptions,
+} from '@refinedev/hasura';
 import dataProvider, {
   GraphQLClient,
   graphqlWS,
-  HasuraDataProviderOptions,
-  HasuraLiveProviderOptions,
   liveProvider,
 } from '@refinedev/hasura';
 import routerBindings, {
@@ -30,9 +33,7 @@ import {
   Route,
   Routes,
   useLocation,
-  useNavigate,
 } from 'react-router-dom';
-import { Header } from './components';
 import {
   ColorModeContext,
   ColorModeContextProvider,

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ThemeConfig } from 'antd';
+import type { ThemeConfig } from 'antd';
 import { merge } from 'lodash';
 
 const sharedTheme: ThemeConfig = {

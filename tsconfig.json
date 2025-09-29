@@ -17,6 +17,7 @@
     "jsx": "react-jsx",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
       "@OCPP1_6": ["src/util/ocpp1_6_dependencies"],

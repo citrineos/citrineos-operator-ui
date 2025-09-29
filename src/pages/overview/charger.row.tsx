@@ -7,8 +7,7 @@ import { useNavigation } from '@refinedev/core';
 import { Circle } from './circle/circle';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { IChargingStationDto } from '@citrineos/base';
-import { IEvseDto } from '@citrineos/base';
+import type { IChargingStationDto, IEvseDto } from '@citrineos/base';
 import { ChargerStatusEnum } from './charger-activity/charger.activity.card';
 
 export interface ChargerRowProps {

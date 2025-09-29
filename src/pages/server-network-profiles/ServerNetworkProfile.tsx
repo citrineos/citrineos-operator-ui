@@ -11,16 +11,14 @@ import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import {
-  SERVER_NETWORK_PROFILE_LIST_QUERY,
-  SERVER_NETWORK_PROFILE_GET_QUERY,
   SERVER_NETWORK_PROFILE_CREATE_MUTATION,
-  SERVER_NETWORK_PROFILE_EDIT_MUTATION,
   SERVER_NETWORK_PROFILE_DELETE_MUTATION,
+  SERVER_NETWORK_PROFILE_EDIT_MUTATION,
+  SERVER_NETWORK_PROFILE_GET_QUERY,
+  SERVER_NETWORK_PROFILE_LIST_QUERY,
 } from './queries';
-import {
-  IServerNetworkProfileDto,
-  ServerNetworkProfileDtoProps,
-} from '@citrineos/base';
+import type { IServerNetworkProfileDto } from '@citrineos/base';
+import { ServerNetworkProfileDtoProps } from '@citrineos/base';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 @ClassResourceType(ResourceType.SERVER_NETWORK_PROFILES)

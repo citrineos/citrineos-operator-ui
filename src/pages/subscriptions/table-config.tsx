@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
-import { Subscriptions } from '../../graphql/schema.types';
+import type { TableColumnsType } from 'antd';
+import type { Subscriptions } from '../../graphql/schema.types';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { SUBSCRIPTIONS_DELETE_MUTATION } from './queries';
 import { StatusIcon } from '../../components/status-icon';

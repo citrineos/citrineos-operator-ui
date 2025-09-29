@@ -10,7 +10,7 @@ import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 import { EditOutlined } from '@ant-design/icons';
 import { NOT_APPLICABLE } from '@util/consts';
 

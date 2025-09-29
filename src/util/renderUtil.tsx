@@ -5,6 +5,7 @@
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -12,13 +13,12 @@ import {
   Select,
   Switch,
   Upload,
-  DatePicker,
 } from 'antd';
 import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 
-import { FieldSchema } from '@interfaces';
+import type { FieldSchema } from '@interfaces';
 import { FieldPath } from '../components/form/state/fieldpath';
-import {
+import type {
   SupportedUnknownType,
   UnknownEntry,
 } from '../components/form/state/unknowns';

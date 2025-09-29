@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
+import type { ValidationOptions } from 'class-validator';
+import { buildMessage, ValidateBy } from 'class-validator';
 import { Dayjs, isDayjs } from 'dayjs';
 
 export function isDate(value: unknown): value is Date {

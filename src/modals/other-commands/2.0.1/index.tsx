@@ -6,11 +6,12 @@ import { instanceToPlain } from 'class-transformer';
 import { Button, Flex, Form } from 'antd';
 import { ModalComponentType } from '../../../AppModal';
 import { chargingStationActionMap } from '../../../message/2.0.1';
-import { openModal, closeModal } from '../../../redux/modal.slice';
+import { closeModal, openModal } from '../../../redux/modal.slice';
 import { useDispatch } from 'react-redux';
 import { useCan } from '@refinedev/core';
-import { ResourceType, ActionType, ListCanReturnType } from '@util/auth';
-import { IChargingStationDto } from '@citrineos/base';
+import type { ListCanReturnType } from '@util/auth';
+import { ActionType, ResourceType } from '@util/auth';
+import type { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP2_0_1_CommandsProps {
   station: IChargingStationDto;

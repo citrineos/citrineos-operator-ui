@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import config from './config';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 
 export interface GoogleGeocodingResponse {
   results: GeocodingResult[];

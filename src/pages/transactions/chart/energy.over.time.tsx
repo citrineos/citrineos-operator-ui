@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 import { getTimestampToMeasurandArray } from '../../../dtos/meter.value.dto';
 import { MeasurandEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 import { formatTimeLabel, generateTimeTicks } from './util';
-import { IMeterValueDto } from '@citrineos/base';
+import type { IMeterValueDto } from '@citrineos/base';
 
 export interface EnergyOverTimeProps {
   meterValues: IMeterValueDto[];

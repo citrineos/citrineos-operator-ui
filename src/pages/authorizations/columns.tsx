@@ -4,13 +4,10 @@
 
 import React from 'react';
 import { Table } from 'antd';
-import { CrudFilter } from '@refinedev/core';
+import type { CrudFilter } from '@refinedev/core';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import {
-  AuthorizationDtoProps,
-  IAuthorizationDto,
-  IdTokenDtoProps,
-} from '@citrineos/base';
+import type { IAuthorizationDto } from '@citrineos/base';
+import { AuthorizationDtoProps, IdTokenDtoProps } from '@citrineos/base';
 
 export const getAuthorizationColumns = (push: (path: string) => void) => (
   <>

@@ -5,11 +5,12 @@
 import { Alert } from 'antd';
 import { GenericDataTable } from './editable';
 import React from 'react';
-import { Constructable } from '@util/Constructable';
+import type { Constructable } from '@util/Constructable';
 import { plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
-import { useTable, useTableProps } from '@refinedev/antd';
-import { CustomAction } from '../custom-actions';
+import type { useTableProps } from '@refinedev/antd';
+import { useTable } from '@refinedev/antd';
+import type { CustomAction } from '../custom-actions';
 
 export interface AssociatedTableProps<AssociatedModel> {
   associatedRecordClass: Constructable<AssociatedModel>; // record class

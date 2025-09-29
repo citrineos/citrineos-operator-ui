@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Col, GetProps, Input, Row, Table } from 'antd';
+import type { GetProps } from 'antd';
+import { Col, Input, Row, Table } from 'antd';
 import React, { useMemo } from 'react';
 import { TRANSACTION_LIST_QUERY } from '../queries';
 import { useTable } from '@refinedev/antd';
@@ -13,7 +14,7 @@ import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
-import { getTransactionsFilters, getTransactionColumns } from '../columns';
+import { getTransactionColumns, getTransactionsFilters } from '../columns';
 
 type SearchProps = GetProps<typeof Input.Search>;
 

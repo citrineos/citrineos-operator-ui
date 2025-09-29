@@ -3,24 +3,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo, useState } from 'react';
-import { Table, Row } from 'antd';
+import { Row, Table } from 'antd';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
+  GET_OCPPMESSAGES_FOR_TRANSACTION_LIST_QUERY,
   GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY,
   TRANSACTION_EVENT_LIST_QUERY,
-  GET_OCPPMESSAGES_FOR_TRANSACTION_LIST_QUERY,
 } from '../queries';
 import { getTransactionEventColumns } from '../columns';
 import { MeterValuesList } from '../../meter-values/list/meter.values.list';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { OCPPMessageDto } from '../../../dtos/ocpp.message.dto';
 import { TransactionEventEnumType } from '@OCPP2_0_1';
-import {
-  ITransactionEventDto,
-  TransactionEventDtoProps,
-} from '@citrineos/base';
+import type { ITransactionEventDto } from '@citrineos/base';
+import { TransactionEventDtoProps } from '@citrineos/base';
 import { TransactionEventDto } from '../../../dtos/transaction.event.dto';
 
 type SortField =

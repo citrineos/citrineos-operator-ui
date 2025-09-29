@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Col, GetProps, Input, Row, Table } from 'antd';
+import type { GetProps } from 'antd';
+import { Button, Col, Input, Row, Table } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { CHARGING_STATIONS_LIST_QUERY } from '../queries';
 import './style.scss';
 import { useTable } from '@refinedev/antd';
-import { AccessDeniedFallback, ResourceType } from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
@@ -23,8 +24,7 @@ import { instanceToPlain } from 'class-transformer';
 import { ModalComponentType } from '../../../AppModal';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../redux/modal.slice';
-import { ActionType } from '@util/auth';
-import { IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto } from '@citrineos/base';
 import { PlusOutlined } from '@ant-design/icons';
 
 type SearchProps = GetProps<typeof Input.Search>;

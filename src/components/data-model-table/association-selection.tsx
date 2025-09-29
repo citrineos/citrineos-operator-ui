@@ -6,18 +6,17 @@
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Alert, Button, Spin } from 'antd';
 import { ExportOutlined, SaveOutlined } from '@ant-design/icons';
-import { useTable, useTableProps } from '@refinedev/antd';
+import type { useTableProps } from '@refinedev/antd';
+import { useTable } from '@refinedev/antd';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
-import {
-  FieldNameAndIsEditable,
-  PRIMARY_KEY_FIELD_NAME,
-} from '@util/decorators/PrimaryKeyFieldName';
+import type { FieldNameAndIsEditable } from '@util/decorators/PrimaryKeyFieldName';
+import { PRIMARY_KEY_FIELD_NAME } from '@util/decorators/PrimaryKeyFieldName';
 import { GenericDataTable } from './editable';
 import { ExpandableColumn } from './expandable-column';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { getSearchableKeys } from '@util/decorators/Searcheable';
-import { CrudFilters } from '@refinedev/core';
+import type { CrudFilters } from '@refinedev/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getSelectedAssociatedItems,
@@ -27,7 +26,7 @@ import { LABEL_FIELD } from '@util/decorators/LabelField';
 import { generateSearchFilters } from '@util/tables';
 import GenericTag from '../tag';
 import { SelectedAssociatedItems } from './selected-associated-items';
-import { AssociationSelectionProps } from '@interfaces';
+import type { AssociationSelectionProps } from '@interfaces';
 import { SelectionType } from '@enums';
 
 export const AssociationSelection = <

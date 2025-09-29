@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Popover, Tag } from 'antd';
-import { IDDisplayProps } from '@interfaces';
+import type { IDDisplayProps } from '@interfaces';
 import { DefaultColors } from '@enums';
 
 export const TruncateDisplay: React.FC<IDDisplayProps> = ({

@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { SubscriptionsListQuery } from '../../graphql/types';
+import type { SubscriptionsListQuery } from '../../graphql/types';
 import { Subscription } from './Subscription';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   SUBSCRIPTIONS_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   SUBSCRIPTIONS_LIST_QUERY,
 } from './queries';
 import { SUBSCRIPTIONS_COLUMNS } from './table-config';
-import { Subscriptions } from '../../graphql/schema.types';
+import type { Subscriptions } from '../../graphql/schema.types';
 import { LiaAssistiveListeningSystemsSolid } from 'react-icons/lia';
 
 export const SubscriptionsView: React.FC = () => {

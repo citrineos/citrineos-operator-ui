@@ -9,11 +9,11 @@ import { ChargingStation } from '../../../pages/charging-stations/ChargingStatio
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
 import { AuthorizationDtoProps, OCPPVersion } from '@citrineos/base';
+import type { GetCustomerProps } from './CustomerInformation';
 import {
   CustomerInformationRequest,
   CustomerPayload,
   GetCustomerInformationDataProps,
-  GetCustomerProps,
 } from './CustomerInformation';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { Authorization } from '../../../pages/authorizations/authorizations';

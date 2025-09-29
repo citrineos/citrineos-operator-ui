@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { MessageInfosListQuery } from '../../graphql/types';
+import type { MessageInfosListQuery } from '../../graphql/types';
 import { MessageInfo } from './MessageInfo';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   MESSAGE_INFOS_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   MESSAGE_INFOS_LIST_QUERY,
 } from './queries';
 import { MESSAGE_INFOS_COLUMNS } from './table-config';
-import { MessageInfos } from '../../graphql/schema.types';
+import type { MessageInfos } from '../../graphql/schema.types';
 import { IoInformationCircleSharp } from 'react-icons/io5';
 
 export const MessageInfosView: React.FC = () => {

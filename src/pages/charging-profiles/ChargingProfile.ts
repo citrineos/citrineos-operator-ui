@@ -5,7 +5,7 @@
 import { IsOptional } from 'class-validator';
 import TransformDatetime from '@util/TransformDatetime';
 import { Type } from 'class-transformer';
-import { IChargingProfileDto } from '@citrineos/base';
+import type { IChargingProfileDto } from '@citrineos/base';
 
 export class ChargingProfile implements Partial<IChargingProfileDto> {
   @Type(() => Date)

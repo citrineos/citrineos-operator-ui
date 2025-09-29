@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { Table, Button, Col, Row, Modal } from 'antd';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, Col, Modal, Row, Table } from 'antd';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { ConnectorsTable } from '../../connectors/list/connectors.table';
 import { useDispatch } from 'react-redux';
@@ -17,9 +17,11 @@ import { useOne } from '@refinedev/core';
 import { CHARGING_STATIONS_GET_QUERY } from '../../charging-stations/queries';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
-import { IChargingStationDto } from '@citrineos/base';
-import { IEvseDto } from '@citrineos/base';
-import { IConnectorDto } from '@citrineos/base';
+import type {
+  IChargingStationDto,
+  IConnectorDto,
+  IEvseDto,
+} from '@citrineos/base';
 
 interface EVSESListProps {
   stationId: string;

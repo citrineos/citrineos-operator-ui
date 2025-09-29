@@ -12,7 +12,8 @@ import { useList, useNavigation } from '@refinedev/core';
 import React from 'react';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ChargerRow } from '../charger.row';
-import { BaseDtoProps, IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto } from '@citrineos/base';
+import { BaseDtoProps } from '@citrineos/base';
 
 export const FaultedChargersCard = () => {
   const { push } = useNavigation();

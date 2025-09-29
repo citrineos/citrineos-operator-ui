@@ -2,13 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useCallback,
-} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   AdvancedMarker,
   APILoadingStatus,
@@ -19,12 +13,17 @@ import {
 } from '@vis.gl/react-google-maps';
 import { MapMarkerComponent } from './map.marker';
 import { ClusterIcon } from './marker.icons';
-import { ClusterInfo, LocationGroup, MapMarkerData, MapProps } from './types';
+import type {
+  ClusterInfo,
+  LocationGroup,
+  MapMarkerData,
+  MapProps,
+} from './types';
 import './style.scss';
 import { CanAccess } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 
 const apiKey = config.googleMapsApiKey;
 

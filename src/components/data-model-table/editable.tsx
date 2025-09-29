@@ -20,32 +20,25 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
 import { CLASS_GQL_LIST_QUERY } from '@util/decorators/ClassGqlListQuery';
 import { useForm } from '@refinedev/antd';
-import {
-  DataProvider,
-  HttpError,
-  useCustomMutation,
-  useDataProvider,
-} from '@refinedev/core';
-import {
-  FieldNameAndIsEditable,
-  PRIMARY_KEY_FIELD_NAME,
-} from '@util/decorators/PrimaryKeyFieldName';
-import { GetFields, GetVariables } from '@refinedev/hasura';
+import type { DataProvider, HttpError } from '@refinedev/core';
+import { useCustomMutation, useDataProvider } from '@refinedev/core';
+import type { FieldNameAndIsEditable } from '@util/decorators/PrimaryKeyFieldName';
+import { PRIMARY_KEY_FIELD_NAME } from '@util/decorators/PrimaryKeyFieldName';
+import type { GetFields, GetVariables } from '@refinedev/hasura';
 import { CLASS_GQL_EDIT_MUTATION } from '@util/decorators/ClassGqlEditMutation';
-import {
-  CLASS_GQL_CREATE_MUTATION,
-  MutationAndGetVariables,
-} from '@util/decorators/ClassGqlCreateMutation';
-import { CustomAction } from '../custom-actions';
+import type { MutationAndGetVariables } from '@util/decorators/ClassGqlCreateMutation';
+import { CLASS_GQL_CREATE_MUTATION } from '@util/decorators/ClassGqlCreateMutation';
+import type { CustomAction } from '../custom-actions';
 import { FieldPath } from '../form/state/fieldpath';
 import { AssociationSelection } from './association-selection';
 import { ActionsColumnEnhanced } from './actions-column-enhanced';
-import { Unknowns, UnknownsActions } from '../form/state/unknowns';
+import type { UnknownsActions } from '../form/state/unknowns';
+import { Unknowns } from '../form/state/unknowns';
 import { Flags } from '../form/state/flags';
+import type { GqlAssociationProps } from '@util/decorators/GqlAssociation';
 import {
   getAssociatedFields,
   GQL_ASSOCIATION,
-  GqlAssociationProps,
 } from '@util/decorators/GqlAssociation';
 import { TableWrapper } from './table-wrapper';
 import { NEW_IDENTIFIER } from '@util/consts';
@@ -55,9 +48,10 @@ import { useSelector } from 'react-redux';
 import { ArrayField } from '../form/array-field';
 import { CLASS_CUSTOM_CONSTRUCTOR } from '@util/decorators/ClassCustomConstructor';
 import NestedObjectField from '../form/nested-object-field';
-import { DocumentNode } from 'graphql';
-import { HIDDEN_WHEN, IsHiddenCheck } from '@util/decorators/HiddenWhen';
-import {
+import type { DocumentNode } from 'graphql';
+import type { IsHiddenCheck } from '@util/decorators/HiddenWhen';
+import { HIDDEN_WHEN } from '@util/decorators/HiddenWhen';
+import type {
   FieldSchema,
   GenericDataTableProps,
   RenderEditableCellProps,

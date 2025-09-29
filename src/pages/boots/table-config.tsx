@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { BOOTS_DELETE_MUTATION } from './queries';
 import { ResourceType } from '@util/auth';
-import { Boots } from '../../graphql/schema.types';
-import { CustomAction } from '../../components/custom-actions';
+import type { Boots } from '../../graphql/schema.types';
+import type { CustomAction } from '../../components/custom-actions';
 
 export const BOOTS_COLUMNS = (
   withActions: boolean,

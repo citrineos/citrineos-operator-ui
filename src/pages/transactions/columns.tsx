@@ -9,12 +9,14 @@ import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import { ChargingStateEnumType } from '@OCPP2_0_1';
-import { CrudFilters } from '@refinedev/core';
-import { BaseDtoProps } from '@citrineos/base';
-import { ITransactionDto, TransactionDtoProps } from '@citrineos/base';
-import { ChargingStationDtoProps } from '@citrineos/base';
-import { IdTokenDtoProps } from '@citrineos/base';
-import { LocationDtoProps } from '@citrineos/base';
+import type { CrudFilters } from '@refinedev/core';
+import type { ITransactionDto } from '@citrineos/base';
+import {
+  ChargingStationDtoProps,
+  IdTokenDtoProps,
+  LocationDtoProps,
+  TransactionDtoProps,
+} from '@citrineos/base';
 
 export const getTransactionsFilters = (value: string): CrudFilters => {
   return [

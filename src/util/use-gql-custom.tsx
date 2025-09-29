@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { BaseRecord, useCustom } from '@refinedev/core';
-import { DocumentNode, OperationDefinitionNode } from 'graphql';
+import type { BaseRecord } from '@refinedev/core';
+import { useCustom } from '@refinedev/core';
+import type { DocumentNode, OperationDefinitionNode } from 'graphql';
 import config from './config';
 
 interface UseGqlCustomProps {

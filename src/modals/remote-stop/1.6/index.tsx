@@ -8,8 +8,8 @@ import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import { ITransactionDto, OCPPVersion } from '@citrineos/base';
-import { IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto, ITransactionDto } from '@citrineos/base';
+import { OCPPVersion } from '@citrineos/base';
 
 export interface OCPP1_6_RemoteStopProps {
   station: IChargingStationDto;

@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
 import { CHARGING_PROFILES_DELETE_MUTATION } from './queries';
 import { ResourceType } from '@util/auth';
-import { ChargingProfiles } from '../../graphql/schema.types';
+import type { ChargingProfiles } from '../../graphql/schema.types';
 import { DEFAULT_EXPANDED_DATA_FILTER } from '../../components/defaults';
 import { ExpandableColumn } from '../../components/data-model-table/expandable-column';
 // import { ChargingStationsList } from '../charging-stations';

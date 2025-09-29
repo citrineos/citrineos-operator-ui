@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { ITransactionEventDto, IMeterValueDto } from '@citrineos/base';
-import { TransactionEventEnumType, TriggerReasonEnumType } from '@OCPP2_0_1';
+import type { IMeterValueDto, ITransactionEventDto } from '@citrineos/base';
+import { TriggerReasonEnumType } from '@OCPP2_0_1';
 
 export class TransactionEventDto implements Partial<ITransactionEventDto> {
   id?: number;

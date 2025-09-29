@@ -17,11 +17,10 @@ import {
   INSTALLED_CERTIFICATE_GET_QUERY,
   INSTALLED_CERTIFICATE_LIST_QUERY,
 } from './queries';
-import {
-  IInstalledCertificateDto,
-  InstalledCertificateDtoProps,
-} from '@citrineos/base';
+import type { IInstalledCertificateDto } from '@citrineos/base';
+import { InstalledCertificateDtoProps } from '@citrineos/base';
 import { IsInt, IsNotEmpty } from 'class-validator';
+
 @ClassResourceType(ResourceType.INSTALLED_CERTIFICATES)
 @ClassGqlListQuery(INSTALLED_CERTIFICATE_LIST_QUERY)
 @ClassGqlGetQuery(INSTALLED_CERTIFICATE_GET_QUERY)

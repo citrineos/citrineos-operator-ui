@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
 export class UnsuccessfulRequestException extends Error {
   iRestResponse?: AxiosResponse<any>;

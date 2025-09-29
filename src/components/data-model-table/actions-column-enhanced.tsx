@@ -10,13 +10,14 @@ import { EditButton, ShowButton } from '@refinedev/antd';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DeleteButton } from '../custom-actions/delete';
 import { CLASS_RESOURCE_TYPE } from '@util/decorators/ClassResourceType';
-import {
-  FieldNameAndIsEditable,
-  PRIMARY_KEY_FIELD_NAME,
-} from '@util/decorators/PrimaryKeyFieldName';
+import type { FieldNameAndIsEditable } from '@util/decorators/PrimaryKeyFieldName';
+import { PRIMARY_KEY_FIELD_NAME } from '@util/decorators/PrimaryKeyFieldName';
 import { plainToInstance } from 'class-transformer';
 import { CLASS_GQL_DELETE_MUTATION } from '@util/decorators/ClassGqlDeleteMutation';
-import { CancelButtonProps, IActionsColumnEnhancedProps } from '@interfaces';
+import type {
+  CancelButtonProps,
+  IActionsColumnEnhancedProps,
+} from '@interfaces';
 import { ColumnAction } from '@enums';
 
 export const CancelButton = ({ onCancel }: CancelButtonProps) => {

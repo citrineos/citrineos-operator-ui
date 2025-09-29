@@ -6,11 +6,8 @@ import { Flex, Layout as AntdLayout, Menu, theme } from 'antd';
 import React, { useContext, useMemo } from 'react';
 import { ColorModeContext } from '../../contexts/color-mode';
 import './style.scss';
-import { SearchIcon } from '../icons/search.icon';
-import { AvatarIcon } from '../icons/avatar.icon';
 import { useNavigate } from 'react-router-dom';
 import { MenuSection } from '../main-menu/main.menu';
-import { DarkModeSwitch } from './dark-mode-switch/dark.mode.switch';
 
 const { useToken } = theme;
 

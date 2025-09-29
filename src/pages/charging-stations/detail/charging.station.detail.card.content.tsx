@@ -4,12 +4,12 @@
 
 import { Button, Descriptions, Flex, message, Tooltip, Typography } from 'antd';
 import {
+  CanAccess,
   Link,
   useDelete,
   useList,
   useNavigation,
   useOne,
-  CanAccess,
 } from '@refinedev/core';
 import {
   DeleteOutlined,
@@ -25,7 +25,7 @@ import { ModalComponentType } from '../../../AppModal';
 import { instanceToPlain } from 'class-transformer';
 import { formatDate } from '../../../components/timestamp-display';
 import { TransactionDto } from '../../../dtos/transaction.dto';
-import { ResourceType } from '@util/auth';
+import { ActionType, CommandType, ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { OCPPMessageDto } from '../../../dtos/ocpp.message.dto';
@@ -36,13 +36,8 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
-import { ActionType, CommandType } from '@util/auth';
-import {
-  ChargingStationDtoProps,
-  IOCPPMessageDto,
-  OCPPMessageDtoProps,
-} from '@citrineos/base';
-import { IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto, IOCPPMessageDto } from '@citrineos/base';
+import { ChargingStationDtoProps, OCPPMessageDtoProps } from '@citrineos/base';
 import { NOT_APPLICABLE } from '@util/consts';
 import ProtocolTag from '../../../components/protocol-tag';
 

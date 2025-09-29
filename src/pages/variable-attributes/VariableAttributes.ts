@@ -12,7 +12,7 @@ import {
   COMPONENT_GET_QUERY,
   COMPONENT_LIST_QUERY,
 } from './components/queries';
-import { Variable, VariableProps } from './variables/Variable';
+import { VariableProps } from './variables/Variable';
 import { VARIABLE_GET_QUERY, VARIABLE_LIST_QUERY } from './variables/queries';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import {
@@ -28,10 +28,8 @@ import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
 import { LabelField } from '@util/decorators/LabelField';
-import {
-  IVariableAttributeDto,
-  VariableAttributeDtoProps,
-} from '@citrineos/base';
+import type { IVariableAttributeDto } from '@citrineos/base';
+import { VariableAttributeDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.VARIABLE_ATTRIBUTES)
 @LabelField(VariableAttributeDtoProps.stationId)

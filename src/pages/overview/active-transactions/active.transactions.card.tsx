@@ -12,11 +12,8 @@ import React from 'react';
 import { ArrowRightIcon } from '../../../components/icons/arrow.right.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { ActionType, ResourceType } from '@util/auth';
-import {
-  BaseDtoProps,
-  ITransactionDto,
-  TransactionDtoProps,
-} from '@citrineos/base';
+import type { ITransactionDto } from '@citrineos/base';
+import { BaseDtoProps, TransactionDtoProps } from '@citrineos/base';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useNavigation();

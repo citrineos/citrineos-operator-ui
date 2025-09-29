@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '@util/auth';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
@@ -45,15 +45,14 @@ import { EVSE_LIST_QUERY } from '../evses/queries';
 import { ClassCustomConstructor } from '@util/decorators/ClassCustomConstructor';
 import { NEW_IDENTIFIER } from '@util/consts';
 import { HiddenWhen } from '@util/decorators/HiddenWhen';
+import type { IStatusNotificationDto, ITransactionDto } from '@citrineos/base';
 import * as base from '@citrineos/base';
-import { Searchable } from '@util/decorators/Searcheable';
 import {
   ChargingStationDtoProps,
-  IStatusNotificationDto,
-  ITransactionDto,
   StatusNotificationDtoProps,
   TransactionDtoProps,
 } from '@citrineos/base';
+import { Searchable } from '@util/decorators/Searcheable';
 
 @ClassResourceType(ResourceType.CHARGING_STATIONS)
 @ClassGqlListQuery(CHARGING_STATIONS_LIST_QUERY)

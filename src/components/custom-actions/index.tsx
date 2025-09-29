@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
-import { Button, Drawer, Dropdown, Menu, MenuProps, Spin } from 'antd';
+import type { MenuProps } from 'antd';
+import { Button, Drawer, Dropdown, Menu, Spin } from 'antd';
 import {
   ClearOutlined,
   CloudUploadOutlined,
@@ -28,7 +29,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 
 export interface CustomAction<T> {
   label: string;

@@ -1,14 +1,15 @@
 // SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
 //
 // SPDX-License-Identifier: Apache-2.0
-
-import {
-  IAuthorizationDto,
+import type {
   AdditionalInfo,
-  AuthorizationStatusType,
-  IdTokenType,
-  AuthorizationWhitelistType,
+  IAuthorizationDto,
   ITenantPartnerDto,
+} from '@citrineos/base';
+import {
+  AuthorizationStatusType,
+  AuthorizationWhitelistType,
+  IdTokenType,
 } from '@citrineos/base';
 
 export class AuthorizationDto implements Partial<IAuthorizationDto> {

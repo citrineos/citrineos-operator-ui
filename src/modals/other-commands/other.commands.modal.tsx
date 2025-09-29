@@ -8,10 +8,11 @@ import { useSelector } from 'react-redux';
 import { selectIsModalOpen } from '../../redux/modal.slice';
 import { plainToInstance } from 'class-transformer';
 import { ChargingStationDto } from '../../dtos/charging.station.dto';
+import type { IChargingStationDto } from '@citrineos/base';
 import { OCPPVersion } from '@citrineos/base';
 import { OCPP1_6_Commands } from './1.6';
 import { OCPP2_0_1_Commands } from './2.0.1';
-import { IChargingStationDto } from '@citrineos/base';
+
 export interface OtherCommandsModalProps {
   station: any;
 }

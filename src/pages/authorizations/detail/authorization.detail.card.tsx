@@ -11,11 +11,8 @@ import { ClipboardIcon } from '../../../components/icons/clipboard.icon';
 import { useLocation } from 'react-router-dom';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
 import { ResourceType } from '@util/auth';
-import {
-  IAuthorizationDto,
-  AuthorizationStatusType,
-  IdTokenType,
-} from '@citrineos/base';
+import type { IAuthorizationDto } from '@citrineos/base';
+import { AuthorizationStatusType, IdTokenType } from '@citrineos/base';
 import GenericTag from '../../../components/tag';
 
 const { Text } = Typography;

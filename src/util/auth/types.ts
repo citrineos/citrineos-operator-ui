@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import {
+import type {
   BaseKey,
   CanParams,
   CanReturnType,

@@ -11,7 +11,7 @@ import { ExpandableColumn } from '../data-model-table/expandable-column';
 import { AssociatedTable } from '../data-model-table/associated-table';
 import { getProperty } from '@util/objects';
 import GenericTag from '../tag';
-import { ArrayFieldProps } from '@interfaces';
+import type { ArrayFieldProps } from '@interfaces';
 import { renderLabel } from '@util/renderUtil';
 import { SelectionType } from '@enums';
 

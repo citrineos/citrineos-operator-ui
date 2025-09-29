@@ -5,11 +5,11 @@
 import React, { useMemo } from 'react';
 import { Flex } from 'antd';
 import { ChargingStationDto } from '../../dtos/charging.station.dto';
+import type { IChargingStationDto } from '@citrineos/base';
 import { OCPPVersion } from '@citrineos/base';
 import { plainToInstance } from 'class-transformer';
 import { OCPP2_0_1_RemoteStart } from './2.0.1';
 import { OCPP1_6_RemoteStart } from './1.6';
-import { IChargingStationDto } from '@citrineos/base';
 
 export interface RemoteStartTransactionModalProps {
   station: any;

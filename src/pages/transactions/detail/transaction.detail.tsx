@@ -2,24 +2,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Card, Flex, Select, Tabs, TabsProps, Table } from 'antd';
+import type { TabsProps } from 'antd';
+import { Card, Flex, Select, Table, Tabs } from 'antd';
 import { useMemo, useState } from 'react';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
 import { CanAccess, useList, useNavigation, useOne } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
-  TRANSACTION_GET_QUERY,
   GET_TRANSACTIONS_BY_AUTHORIZATION,
+  TRANSACTION_GET_QUERY,
 } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import './style.scss';
 import {
+  CurrentOverTime,
+  EnergyOverTime,
   PowerOverTime,
   StateOfCharge,
-  EnergyOverTime,
   VoltageOverTime,
-  CurrentOverTime,
 } from '../chart';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
@@ -27,17 +28,16 @@ import { MeterValueDto } from '../../../dtos/meter.value.dto';
 import { AuthorizationDto } from '../../../dtos/authorization.dto';
 import { getAuthorizationColumns } from '../../authorizations/columns';
 import {
-  ResourceType,
-  ActionType,
   AccessDeniedFallback,
+  ActionType,
+  ResourceType,
   TransactionAccessType,
 } from '@util/auth';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { TransactionDetailCard } from './transaction.detail.card';
 import { renderEnumSelectOptions } from '@util/renderUtil';
-import { BaseDtoProps } from '@citrineos/base';
-import { ITransactionDto } from '@citrineos/base';
-import { IMeterValueDto, MeterValueDtoProps } from '@citrineos/base';
+import type { IMeterValueDto, ITransactionDto } from '@citrineos/base';
+import { BaseDtoProps, MeterValueDtoProps } from '@citrineos/base';
 
 enum ChartType {
   POWER = 'Power Over Time',

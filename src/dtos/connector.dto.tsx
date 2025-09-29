@@ -2,11 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  IConnectorDto,
-  ConnectorStatus,
-  ConnectorErrorCode,
-} from '@citrineos/base';
+import type { IConnectorDto } from '@citrineos/base';
+import { ConnectorErrorCode, ConnectorStatus } from '@citrineos/base';
 
 export class ConnectorDto implements Partial<IConnectorDto> {
   id?: number;

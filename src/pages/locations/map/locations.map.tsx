@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { AutoComplete, Input, Row } from 'antd';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { LocationDto } from '../../../dtos/location.dto';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
@@ -13,7 +13,7 @@ import { plainToInstance } from 'class-transformer';
 import './style.scss';
 // Import the new LocationMap component instead of GoogleMapWithMarkers
 import { LocationMap } from '../../../components/map';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 
 export interface LocationsMapProps {
   mapOnly?: boolean;

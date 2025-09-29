@@ -11,7 +11,7 @@ import { AiFillSafetyCertificate } from 'react-icons/ai';
 import { ResourceType } from '@util/auth';
 import { GenericView } from '../../components/view';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '../../model/interfaces';
 import { GenericForm } from '../../components/form';
 import { useRequestValidator } from '../../util/useRequestValidator';
 
@@ -24,9 +24,9 @@ import {
 } from './queries';
 import { CERTIFICATES_COLUMNS } from './table-config';
 import { Certificate, NewCertificateRequest } from './Certificate';
-import { Certificates } from '../../graphql/schema.types';
+import type { Certificates } from '../../graphql/schema.types';
 import { DEFAULT_SORTERS } from '../../components/defaults';
-import { CertificatesListQuery } from '../../graphql/types';
+import type { CertificatesListQuery } from '../../graphql/types';
 import { BaseRestClient } from '@util/BaseRestClient';
 
 const BUTTON_TEXT = 'Generate Certificates';

@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
+import type {
   FormInstance,
   FormListFieldData,
   TableColumnsType,
   TableProps,
 } from 'antd';
-import { UseFormReturnType } from '@refinedev/antd';
-import { CustomAction } from '../components/custom-actions';
+import type { UseFormReturnType } from '@refinedev/antd';
+import type { CustomAction } from '../components/custom-actions';
 import { ResourceType } from '@util/auth';
 import {
   ColumnAction,
@@ -20,15 +20,15 @@ import {
   SelectMode,
 } from '@enums';
 import { isDefined } from 'class-validator';
-import { Constructable } from '@util/Constructable';
-import { GqlAssociationProps } from '@util/decorators/GqlAssociation';
+import type { Constructable } from '@util/Constructable';
+import type { GqlAssociationProps } from '@util/decorators/GqlAssociation';
 import { FieldPath } from '../components/form/state/fieldpath';
 import { Flags } from '../components/form/state/flags';
 import { Unknowns } from '../components/form/state/unknowns';
-import { AnyObject } from 'antd/es/_util/type';
-import { BaseRecord } from '@refinedev/core';
-import { MouseEventHandler } from 'react';
-import { DocumentNode } from 'graphql';
+import type { AnyObject } from 'antd/es/_util/type';
+import type { BaseRecord } from '@refinedev/core';
+import type { MouseEventHandler } from 'react';
+import type { DocumentNode } from 'graphql';
 
 export interface FieldSelectOption {
   label: string;

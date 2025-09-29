@@ -6,11 +6,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
-import { ITransactionDto, OCPPVersion } from '@citrineos/base';
+import type {
+  IChargingStationDto,
+  IEvseDto,
+  ITransactionDto,
+} from '@citrineos/base';
+import { OCPPVersion } from '@citrineos/base';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
-import { IChargingStationDto } from '@citrineos/base';
-import { IEvseDto } from '@citrineos/base';
 
 export interface OCPP2_0_1_RemoteStopProps {
   station: IChargingStationDto;

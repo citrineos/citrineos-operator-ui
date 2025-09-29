@@ -13,12 +13,10 @@ import { useForm } from '@refinedev/antd';
 import { GenericParameterizedView } from '../view';
 import { LABEL_FIELD } from '@util/decorators/LabelField';
 import { NEW_IDENTIFIER } from '@util/consts';
-import {
-  FieldNameAndIsEditable,
-  PRIMARY_KEY_FIELD_NAME,
-} from '@util/decorators/PrimaryKeyFieldName';
+import type { FieldNameAndIsEditable } from '@util/decorators/PrimaryKeyFieldName';
+import { PRIMARY_KEY_FIELD_NAME } from '@util/decorators/PrimaryKeyFieldName';
 import { GenericViewState } from '@enums';
-import { AssociatedViewProps } from '@interfaces';
+import type { AssociatedViewProps } from '@interfaces';
 
 export const AssociatedView = <ParentModel, AssociatedModel>(
   props: AssociatedViewProps<ParentModel, AssociatedModel>,

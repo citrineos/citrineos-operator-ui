@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { useForm, SaveButton } from '@refinedev/antd';
+import { SaveButton, useForm } from '@refinedev/antd';
 import { TenantPartnerDto } from '../../../dtos/tenant.partner.dto';
-import { Form, Input, Select, Button, Space, Card } from 'antd';
+import { Button, Card, Form, Input, Select, Space } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { ResourceType } from '@util/auth';
 import {
@@ -12,9 +12,9 @@ import {
   PARTNER_DETAIL_QUERY,
   PARTNER_UPDATE_MUTATION,
 } from '../queries';
-import { GetOneResponse } from '@refinedev/core';
+import type { GetOneResponse } from '@refinedev/core';
 import { useParams } from 'react-router-dom';
-import { ITenantPartnerDtoProps } from '../../../../../citrineos-core/00_Base';
+import { ITenantPartnerDtoProps } from '@citrineos/base';
 import config from '@util/config';
 import { getSerializedValues } from '@util/middleware';
 

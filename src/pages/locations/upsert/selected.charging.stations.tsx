@@ -5,25 +5,20 @@
 import { useParams } from 'react-router';
 import { useSelect } from '@refinedev/antd';
 import React, { useEffect, useState } from 'react';
-import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
-import {
-  AutoComplete,
-  Button,
-  Flex,
-  FormInstance,
-  Table,
-  TableProps,
-} from 'antd';
+import type { CrudFilter } from '@refinedev/core';
+import { CanAccess, useNavigation } from '@refinedev/core';
+import type { FormInstance, TableProps } from 'antd';
+import { AutoComplete, Button, Flex, Table } from 'antd';
 
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { SearchIcon } from '../../../components/icons/search.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
-import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
+import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import type { IChargingStationDto } from '@citrineos/base';
 import {
   BaseDtoProps,
   ChargingStationDtoProps,
-  IChargingStationDto,
   LocationDtoProps,
 } from '@citrineos/base';
 import { PlusOutlined } from '@ant-design/icons';

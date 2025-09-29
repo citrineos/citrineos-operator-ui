@@ -3,19 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useForm, useSelect } from '@refinedev/antd';
-import { Form, Input, Button, Select, Tooltip, Switch } from 'antd';
+import { useForm } from '@refinedev/antd';
+import { Button, Form, Input, Switch, Tooltip } from 'antd';
 
 import { EvseDto } from '../../../dtos/evse.dto';
 import { ResourceType } from '@util/auth';
 import { getSerializedValues } from '@util/middleware';
 import { EVSE_CREATE_MUTATION, EVSE_EDIT_MUTATION } from '../queries';
-import { CONNECTOR_LIST_QUERY } from '../../connectors/queries';
-import { BaseDtoProps } from '@citrineos/base';
-import { IConnectorDto } from '@citrineos/base';
-import { IEvseDto, EvseDtoProps } from '@citrineos/base';
-import { useSelector } from 'react-redux';
-import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
+import type { IEvseDto } from '@citrineos/base';
+import { EvseDtoProps } from '@citrineos/base';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface EvseUpsertProps {

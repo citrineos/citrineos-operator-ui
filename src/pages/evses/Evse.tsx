@@ -22,12 +22,8 @@ import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
-import {
-  ConnectorDtoProps,
-  EvseDtoProps,
-  IConnectorDto,
-  IEvseDto,
-} from '@citrineos/base';
+import type { IConnectorDto, IEvseDto } from '@citrineos/base';
+import { ConnectorDtoProps, EvseDtoProps } from '@citrineos/base';
 import { Connector } from '../connectors/connector';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { GET_CONNECTOR_LIST_FOR_STATION_EVSE } from '../../message/queries';

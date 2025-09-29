@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { User } from '../types';
+import type { User } from '../types';
 
 export enum KeycloakRole {
   ADMIN = 'admin',

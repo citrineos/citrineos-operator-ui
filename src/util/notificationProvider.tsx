@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React from 'react';
 import { HasuraClaimType } from '@util/auth';
-import { NotificationProvider } from '@refinedev/core';
+import type { NotificationProvider } from '@refinedev/core';
 import { notification } from 'antd';
 
 const getNotificationMessageDescriptionAndType = (

@@ -16,10 +16,8 @@ import {
   CHARGING_STATION_SEQUENCES_GET_QUERY,
   CHARGING_STATION_SEQUENCES_LIST_QUERY,
 } from './queries';
-import {
-  ChargingStationSequenceDtoProps,
-  IChargingStationSequenceDto,
-} from '@citrineos/base';
+import type { IChargingStationSequenceDto } from '@citrineos/base';
+import { ChargingStationSequenceDtoProps } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CHARGING_STATION_SEQUENCES)
 @ClassGqlListQuery(CHARGING_STATION_SEQUENCES_LIST_QUERY)

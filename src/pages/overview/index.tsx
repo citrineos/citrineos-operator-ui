@@ -10,7 +10,6 @@ import { ChargerActivityCard } from './charger-activity/charger.activity.card';
 import { PluginSuccessRateCard } from './plugin-success-rate/plugin.success.rate.card';
 import { LocationsCard } from './locations/locations.card';
 import { ActiveTransactionsCard } from './active-transactions/active.transactions.card';
-import { FaultedChargersCard } from './faulted-chargers/faulted.chargers.card';
 import './style.scss';
 
 export const Overview = () => {

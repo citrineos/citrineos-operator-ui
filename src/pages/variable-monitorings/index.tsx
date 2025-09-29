@@ -7,10 +7,10 @@ import { Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { GenericView } from '../../components/view';
 import { useTable } from '@refinedev/antd';
-import { VariableMonitoringsListQuery } from '../../graphql/types';
+import type { VariableMonitoringsListQuery } from '../../graphql/types';
 import { VariableMonitoring } from './VariableMonitoring';
 import { DataModelTable } from '../../components';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { DEFAULT_SORTERS } from '../../components/defaults';
 import {
   VARIABLE_MONITORINGS_CREATE_MUTATION,
@@ -20,7 +20,7 @@ import {
   VARIABLE_MONITORINGS_LIST_QUERY,
 } from './queries';
 import { VARIABLE_MONITORINGS_COLUMNS } from './table-config';
-import { VariableMonitorings } from '../../graphql/schema.types';
+import type { VariableMonitorings } from '../../graphql/schema.types';
 import { AiOutlineMonitor } from 'react-icons/ai';
 
 export const VariableMonitoringsView: React.FC = () => {

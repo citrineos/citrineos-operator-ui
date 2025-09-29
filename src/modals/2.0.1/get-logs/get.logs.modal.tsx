@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LogEnumType } from '@OCPP2_0_1';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import { IChargingStationDto } from '@citrineos/base';
+import type { IChargingStationDto } from '@citrineos/base';
 
 export interface GetLogsModalProps {
   station: any;

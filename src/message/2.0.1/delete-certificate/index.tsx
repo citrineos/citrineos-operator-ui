@@ -8,11 +8,8 @@ import { MessageConfirmation } from '../../MessageConfirmation';
 import { ChargingStation } from '../../../pages/charging-stations/ChargingStation';
 import { triggerMessageAndHandleResponse } from '../../util';
 import { GenericForm } from '../../../components/form';
-import {
-  IInstalledCertificateDto,
-  InstalledCertificateDtoProps,
-  OCPPVersion,
-} from '@citrineos/base';
+import type { IInstalledCertificateDto } from '@citrineos/base';
+import { InstalledCertificateDtoProps, OCPPVersion } from '@citrineos/base';
 import { Type } from 'class-transformer';
 import {
   IsEnum,

@@ -8,9 +8,9 @@ import { ResourceType } from '@util/auth';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '../queries';
 import { getPlainToInstanceOptions } from '@util/tables';
 import {
+  OCPPMessageActionEnumType,
   OCPPMessageDto,
   OCPPMessageOriginEnumType,
-  OCPPMessageActionEnumType,
 } from '../../../dtos/ocpp.message.dto';
 import {
   Button,
@@ -24,10 +24,12 @@ import {
   Typography,
 } from 'antd';
 import { Dayjs } from 'dayjs';
-import { CrudFilter } from '@refinedev/core';
+import type { CrudFilter } from '@refinedev/core';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { LinkOutlined } from '@ant-design/icons';
-import { IOCPPMessageDto, OCPPMessageDtoProps } from '@citrineos/base';
+import type { IOCPPMessageDto } from '@citrineos/base';
+import { OCPPMessageDtoProps } from '@citrineos/base';
+
 const { Text } = Typography;
 
 export interface OCPPMessagesProps {

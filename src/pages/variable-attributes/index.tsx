@@ -5,7 +5,7 @@
 import { AiOutlineMonitor } from 'react-icons/ai';
 import { ResourceType } from '@util/auth';
 import { Route, Routes } from 'react-router-dom';
-import { IDataModelListProps } from '../../model/interfaces';
+import type { IDataModelListProps } from '@interfaces';
 import { GenericDataTable } from '../../components/data-model-table/editable';
 import { GenericView } from '../../components/view';
 import { VariableAttribute } from './VariableAttributes';

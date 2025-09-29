@@ -10,10 +10,10 @@ import { useList } from '@refinedev/core';
 import { ResourceType } from '@util/auth';
 import { plainToInstance } from 'class-transformer';
 import { LocationMap } from '../../../components/map';
-import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
+import { LOCATIONS_LIST_QUERY } from '../queries';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import './style.scss';
-import { ILocationDto } from '@citrineos/base';
+import type { ILocationDto } from '@citrineos/base';
 
 export interface CombinedMapProps {
   defaultCenter?: google.maps.LatLngLiteral;

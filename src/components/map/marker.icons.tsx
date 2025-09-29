@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { MarkerIconProps } from './types';
+import type { MarkerIconProps } from './types';
 
 export const MarkerIconCircle: React.FC<MarkerIconProps> = ({
   style,

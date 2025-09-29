@@ -16,7 +16,8 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { AuthorizationDtoProps, IAuthorizationDto } from '@citrineos/base';
+import type { IAuthorizationDto } from '@citrineos/base';
+import { AuthorizationDtoProps } from '@citrineos/base';
 import { Authorization } from '../../../pages/authorizations/authorizations';
 import {
   AUTHORIZATIONS_LIST_QUERY,

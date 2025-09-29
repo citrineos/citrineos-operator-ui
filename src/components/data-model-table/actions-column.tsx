@@ -7,7 +7,7 @@ import { Space } from 'antd';
 import { CustomActions } from '../custom-actions';
 import React from 'react';
 import { ColumnAction } from '@enums';
-import { ColumnActionProps, IActionsColumnProps } from '@interfaces';
+import type { ColumnActionProps, IActionsColumnProps } from '@interfaces';
 
 export const ColumnActionDefaultElements = {
   [ColumnAction.DELETE]: ({ record, idField, gqlDeleteMutation }: any) => (

@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { ActionsColumn } from '../../components/data-model-table/actions-column';
-import { SecurityEvents } from '../../graphql/schema.types';
+import type { SecurityEvents } from '../../graphql/schema.types';
 import { ResourceType } from '@util/auth';
 import { SECURITY_EVENTS_DELETE_MUTATION } from './queries';
 import { ColumnAction } from '@enums';
