@@ -23,7 +23,7 @@ import {
 import { useForm } from '@refinedev/antd';
 import { Country, countryStateData } from '../country.state.data';
 import { MapLocationPicker } from '../../../components/map';
-import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
+import { GeoPoint, PointProps } from '@util/GeoPoint';
 import { getSerializedValues } from '@util/middleware';
 import { LocationDto } from '../../../dtos/location.dto';
 import type { BaseKey } from '@refinedev/core';
@@ -149,6 +149,15 @@ export const LocationsUpsert = () => {
     form?.setFieldsValue({
       [LocationDtoProps.facilities]: query?.data?.data?.facilities,
     });
+    form.setFieldsValue({
+      [LocationDtoProps.coordinates]: {
+        type: 'Point',
+        coordinates: [
+          query?.data?.data?.coordinates.coordinates[0],
+          query?.data?.data?.coordinates.coordinates[1],
+        ],
+      },
+    });
     return;
   }, [query?.data?.data]);
 
@@ -158,14 +167,6 @@ export const LocationsUpsert = () => {
       if (isSubmitting) return;
       setIsSubmitting(true);
       const input = { ...formValuesRef.current };
-      // Ensure coordinates has type: 'Point' and is in GeoJSON format
-      if (input[LocationDtoProps.coordinates]) {
-        const coords = input[LocationDtoProps.coordinates];
-        input[LocationDtoProps.coordinates] = {
-          type: 'Point',
-          coordinates: [coords.longitude, coords.latitude],
-        };
-      }
       delete input[LocationDtoProps.chargingPool];
       const newItem: any = getSerializedValues(input, LocationDto);
       if (!locationId) {
@@ -180,7 +181,10 @@ export const LocationsUpsert = () => {
 
   const handleLocationSelect = (point: GeoPoint) => {
     form?.setFieldsValue({
-      coordinates: { latitude: point.latitude, longitude: point.longitude },
+      coordinates: {
+        type: 'Point',
+        coordinates: [point.longitude, point.latitude],
+      },
     });
   };
 
@@ -315,28 +319,34 @@ export const LocationsUpsert = () => {
                 <Col span={12}>
                   <Form.Item
                     label="Latitude"
-                    key={GeoPointProps.latitude}
+                    key={'Latitude'}
                     name={[
                       LocationDtoProps.coordinates,
-                      GeoPointProps.latitude,
+                      PointProps.coordinates,
                     ]}
-                    data-testid={GeoPointProps.latitude}
+                    data-testid={'Latitude'}
                   >
                     <InputNumber
                       placeholder="Click map or enter manually"
+                      value={
+                        form?.getFieldValue([
+                          LocationDtoProps.coordinates,
+                          PointProps.coordinates,
+                        ])?.[1]
+                      }
                       onChange={(value: number | null) => {
                         const lat = value;
                         const lng = parseFloat(
                           form?.getFieldValue([
                             LocationDtoProps.coordinates,
-                            GeoPointProps.longitude,
-                          ]),
+                            PointProps.coordinates,
+                          ])[0],
                         );
                         if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                           form.setFieldsValue({
                             [LocationDtoProps.coordinates]: {
-                              latitude: lat,
-                              longitude: lng,
+                              type: 'Point',
+                              coordinates: [lng, lat],
                             },
                           });
                         }
@@ -347,28 +357,34 @@ export const LocationsUpsert = () => {
                 <Col span={12}>
                   <Form.Item
                     label="Longitude"
-                    key={GeoPointProps.longitude}
+                    key={'Longitude'}
                     name={[
                       LocationDtoProps.coordinates,
-                      GeoPointProps.longitude,
+                      PointProps.coordinates,
                     ]}
-                    data-testid={GeoPointProps.longitude}
+                    data-testid={'Longitude'}
                   >
                     <InputNumber
                       placeholder="Click map or enter manually"
+                      value={
+                        form?.getFieldValue([
+                          LocationDtoProps.coordinates,
+                          PointProps.coordinates,
+                        ])?.[0]
+                      }
                       onChange={(value: number | null) => {
                         const lat = parseFloat(
                           form?.getFieldValue([
                             LocationDtoProps.coordinates,
-                            GeoPointProps.latitude,
-                          ]),
+                            PointProps.coordinates,
+                          ])[1],
                         );
                         const lng = value;
                         if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                           form.setFieldsValue({
                             [LocationDtoProps.coordinates]: {
-                              latitude: lat,
-                              longitude: lng,
+                              type: 'Point',
+                              coordinates: [lng, lat],
                             },
                           });
                         }

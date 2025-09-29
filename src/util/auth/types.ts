@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import type {
   BaseKey,
   CanParams,
@@ -9,15 +10,20 @@ import type {
   IResourceItem,
   ITreeMenu,
 } from '@refinedev/core';
+import { HasuraHeader } from './hasura';
 
 export type AuthenticationContextProvider = {
-  getToken: () => Promise<string | null>;
+  getToken: () => Promise<string | undefined>;
+  getUserRole: () => Promise<string | undefined>;
+  getHasuraHeaders: () => Promise<Map<HasuraHeader, string>>;
+  getInitialized: () => Promise<boolean>;
+  getLoginPage: () => React.ComponentType;
 };
 
 export type User = {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   roles: string[];
 };
 

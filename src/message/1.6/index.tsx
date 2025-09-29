@@ -9,10 +9,6 @@ import type { ChangeConfigurationProps } from './change-configuration';
 import { ChangeConfiguration } from './change-configuration';
 import type { GetConfigurationProps } from './get-configuration';
 import { GetConfiguration } from './get-configuration';
-import type { RemoteStartTransactionProps } from './remote-start-transaction';
-import { RemoteStartTransaction } from './remote-start-transaction';
-import type { RemoteStopTransactionProps } from './remote-stop-transaction';
-import { RemoteStopTransaction } from './remote-stop-transaction';
 import type { ResetChargingStationProps } from './reset';
 import { ResetChargingStation } from './reset';
 import type { TriggerMessageProps } from './trigger-message';
@@ -28,9 +24,6 @@ export const chargingStationActionMap: {
 } = {
   'Change Availability':
     ChangeAvailability as React.FC<ChangeAvailabilityProps>,
-  'Remote Start':
-    RemoteStartTransaction as React.FC<RemoteStartTransactionProps>,
-  'Remote Stop': RemoteStopTransaction as React.FC<RemoteStopTransactionProps>,
   Reset: ResetChargingStation as React.FC<ResetChargingStationProps>,
   'Change Configuration':
     ChangeConfiguration as React.FC<ChangeConfigurationProps>,

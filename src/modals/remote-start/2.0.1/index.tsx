@@ -52,7 +52,7 @@ export const OCPP2_0_1_RemoteStart = ({
     useCustom<IChargingStationSequenceDto>({
       meta: {
         gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-        variables: {
+        gqlVariables: {
           stationId: station.id,
           type: ChargingStationSequenceType.remoteStartId,
         },
@@ -78,7 +78,7 @@ export const OCPP2_0_1_RemoteStart = ({
       optionValue: (authorization) =>
         JSON.stringify({
           idToken: authorization.idToken,
-          type: authorization?.idTokenType,
+          idTokenType: authorization.idTokenType,
           additionalInfo: authorization.additionalInfo,
         }),
       meta: {
@@ -143,9 +143,9 @@ export const OCPP2_0_1_RemoteStart = ({
       remoteStartId,
       evseId,
       idToken: {
-        idToken: authorization?.idToken,
-        type: authorization?.idTokenType,
-        additionalInfo: authorization?.additionalInfo,
+        idToken: authorization!.idToken,
+        type: authorization!.idTokenType!,
+        additionalInfo: authorization!.additionalInfo || undefined,
       },
     };
 

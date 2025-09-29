@@ -38,7 +38,7 @@ export const UpdateFirmware: React.FC<UpdateFirmwareProps> = ({ station }) => {
     meta: {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-      variables: { stationId: station.id, type: 'updateFirmware' },
+      gqlVariables: { stationId: station.id, type: 'updateFirmware' },
     },
   });
 

@@ -4,50 +4,100 @@
 
 import type { AccessControlProvider, CanReturnType } from '@refinedev/core';
 import type { ListCanReturnType, OperatorCanParams } from './types';
-import { ActionType, CommandType, ResourceType } from './types';
+import { ActionType } from './types';
 
 /**
  * Configuration options for access provider
  */
-export interface AccessProviderConfig {}
+export interface AccessProviderConfig<TPermissions = unknown> {
+  getPermissions: (
+    params?: Record<string, any>,
+  ) => Promise<TPermissions | null>;
+  getUserRole: (permissions?: TPermissions) => Promise<string | undefined>;
+}
 
-export const createAccessProvider = (
-  config: AccessProviderConfig = {},
+/**
+ * Simple role-based permission mapping
+ */
+const ROLE_PERMISSIONS = {
+  admin: {
+    // Admin has full access to everything
+    [ActionType.LIST]: true,
+    [ActionType.SHOW]: true,
+    [ActionType.CREATE]: true,
+    [ActionType.EDIT]: true,
+    [ActionType.DELETE]: true,
+    [ActionType.ACCESS]: true,
+    [ActionType.COMMAND]: true,
+  },
+  user: {
+    [ActionType.LIST]: true,
+    [ActionType.SHOW]: true,
+    [ActionType.CREATE]: false,
+    [ActionType.EDIT]: false,
+    [ActionType.DELETE]: false,
+    [ActionType.ACCESS]: true,
+    [ActionType.COMMAND]: false,
+  },
+};
+
+export const createAccessProvider = <TPermissions = unknown>(
+  config: AccessProviderConfig<TPermissions>,
 ): AccessControlProvider => {
-  const canDefault = true; // Permissive By Default
+  const { getPermissions, getUserRole } = config;
+  const canDefault = true; // Least Permissions
+  const defaultReason = 'No explicit permissions defined';
 
   return {
     can: async (operatorCanParams: OperatorCanParams) => {
       const { resource, action, params } = operatorCanParams;
 
-      let canResponse: CanReturnType | ListCanReturnType = {
+      const canResponse: CanReturnType | ListCanReturnType = {
         can: canDefault,
-        reason: canDefault
-          ? undefined
-          : `No explicit permission defined for ${action} on ${resource}`,
+        reason: defaultReason,
       };
 
-      const check =
-        resource === ResourceType.CHARGING_STATIONS &&
-        action === ActionType.COMMAND &&
-        params?.commandType === CommandType.OTHER_COMMANDS;
+      const permissions = await getPermissions();
 
-      if (check) {
-        canResponse = {
-          can: true,
-          meta: {
-            // Excluding these as an example, and because they would be duplicates
-            exceptions: [
-              {
-                param: 'commandType',
-                values: ['Remote Start', 'Remote Stop', 'Reset'],
-              },
-            ],
-          },
+      if (!permissions) {
+        return canResponse;
+      }
+
+      const userRole = await getUserRole(permissions);
+
+      if (!userRole) {
+        return {
+          can: false,
+          reason: 'User has no valid role assigned',
         };
       }
 
-      return canResponse;
+      const rolePermissions =
+        ROLE_PERMISSIONS[userRole as keyof typeof ROLE_PERMISSIONS];
+
+      if (!rolePermissions) {
+        return {
+          can: false,
+          reason: `Unknown role '${userRole}'`,
+        };
+      }
+
+      // Check basic action permissions
+      const hasPermission = rolePermissions[action as ActionType];
+
+      if (hasPermission === false) {
+        return {
+          can: false,
+          reason: `Role '${userRole}' does not have permission for action '${action}'`,
+        };
+      }
+
+      return {
+        can: hasPermission,
+        reason: hasPermission
+          ? undefined
+          : `Role '${userRole}' does not have permission for action '${action}'`,
+      };
     },
   };
 };

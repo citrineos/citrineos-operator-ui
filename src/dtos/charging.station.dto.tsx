@@ -41,13 +41,13 @@ export class ChargingStationDto implements Partial<IChargingStationDto> {
   statusNotifications?: IStatusNotificationDto[] | null;
   evses?: IEvseDto[] | null;
   connectors?: IConnectorDto[] | null;
-  // Add missing properties from IChargingStationDto
+  // TODO: Add missing properties from IChargingStationDto
   location?: ILocationDto;
   networkProfiles?: any;
   transactions?: any[] | null;
 }
 
-// Add missing enums and types for local use
+// TODO: Add missing enums and types for local use
 export enum ChargingStationStatus {
   CHARGING = 'CHARGING',
   CHARGING_SUSPENDED = 'CHARGING_SUSPENDED',

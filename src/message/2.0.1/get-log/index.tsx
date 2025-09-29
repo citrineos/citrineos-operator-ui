@@ -40,7 +40,7 @@ export const GetLog: React.FC<GetLogProps> = ({ station }) => {
       meta: {
         operation: 'ChargingStationSequencesGet',
         gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-        variables: {
+        gqlVariables: {
           stationId: station.id,
           type: 'getLog',
         },

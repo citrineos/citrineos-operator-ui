@@ -6,9 +6,9 @@ import type { Point } from 'geojson';
 import type { ValidationOptions } from 'class-validator';
 import { buildMessage, IsNumber, ValidateBy } from 'class-validator';
 
-export enum GeoPointProps {
-  latitude = 'latitude',
-  longitude = 'longitude',
+export enum PointProps {
+  type = 'type',
+  coordinates = 'coordinates',
 }
 export class GeoPoint {
   private static TYPE = 'Point';

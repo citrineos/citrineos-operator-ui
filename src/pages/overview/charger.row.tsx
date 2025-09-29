@@ -4,20 +4,23 @@
 
 import { Flex } from 'antd';
 import { useNavigation } from '@refinedev/core';
-import { Circle, CircleStatusEnum } from './circle/circle';
+import { Circle } from './circle/circle';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
 import type { IChargingStationDto, IEvseDto } from '@citrineos/base';
+import { ChargerStatusEnum } from './charger-activity/charger.activity.card';
 
 export interface ChargerRowProps {
   chargingStation: IChargingStationDto;
   evse?: IEvseDto;
+  lastStatus?: ChargerStatusEnum;
   circleColor?: string;
 }
 
 export const ChargerRow: React.FC<ChargerRowProps> = ({
   chargingStation,
   evse,
+  lastStatus,
   circleColor,
 }) => {
   const { push } = useNavigation();
@@ -39,7 +42,7 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
               Station: <span className="link">{label}</span>
             </strong>
             <div style={{ width: '8px' }} />
-            <Circle color={circleColor} status={CircleStatusEnum.ERROR} />
+            <Circle color={circleColor} status={lastStatus} />
           </Flex>
         </Flex>
         <Flex

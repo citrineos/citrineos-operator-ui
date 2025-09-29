@@ -16,15 +16,19 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
+  stationId: string;
   evse: IEvseDto | null;
 }
 
-export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
+export const EvseUpsert: React.FC<EvseUpsertProps> = ({
+  onSubmit,
+  stationId,
+  evse,
+}) => {
   const [id, setId] = useState<number | undefined>(undefined);
 
   const initialFormData = useMemo(
     () => ({
-      stationId: evse?.stationId || '',
       evseTypeId: evse?.evseTypeId || undefined,
       evseId: evse?.evseId || '',
       physicalReference: evse?.physicalReference || '',
@@ -61,6 +65,7 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({ onSubmit, evse }) => {
       if (evse?.id) {
         setId(evse.id);
       }
+      newItem.stationId = stationId;
       formProps.onFinish?.(newItem);
     },
     [formProps, evse?.id],
