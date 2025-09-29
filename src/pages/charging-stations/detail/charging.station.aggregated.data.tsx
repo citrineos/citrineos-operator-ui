@@ -52,6 +52,17 @@ const ChartPanel: FC<ChartPanelProps> = ({
 }) => {
   const data = filterByDate(series, range);
 
+  const limitToRange = (current: Dayjs, info: { from?: Dayjs }) => {
+    if (!info.from) {
+      return false;
+    }
+
+    const maxDate = info.from.add(7, 'day');
+    const minDate = info.from.subtract(7, 'day');
+
+    return current && (current.isAfter(maxDate) || current.isBefore(minDate));
+  };
+
   return (
     <Flex vertical gap={16}>
       <Row gutter={16}>
@@ -62,6 +73,7 @@ const ChartPanel: FC<ChartPanelProps> = ({
               value={range}
               onChange={(d) => d && d[0] && d[1] && onRangeChange([d[0], d[1]])}
               style={{ width: '100%' }}
+              disabledDate={limitToRange}
             />
           </Flex>
         </Col>
