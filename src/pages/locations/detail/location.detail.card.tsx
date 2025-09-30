@@ -55,10 +55,7 @@ export interface LocationDetailCardProps {
   onRefresh?: () => void;
 }
 
-export const LocationDetailCard = ({
-  location,
-  onRefresh,
-}: LocationDetailCardProps) => {
+export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
   const { goBack, push } = useNavigation();
   const pageLocation = useLocation();
   const { open } = useNotification();
@@ -112,16 +109,25 @@ export const LocationDetailCard = ({
         open?.({
           type: 'success',
           message: 'Publication Successful',
-          description: `Location with ${data?.publishedEvses || 0} EVSEs and ${data?.publishedConnectors || 0} connectors published to ${data?.publishedToPartners?.length || 0} partners`,
+          description: `Location with ${
+            data?.publishedEvses || 0
+          } EVSEs and ${data?.publishedConnectors || 0} connectors published to ${
+            data?.publishedToPartners?.length || 0
+          } partners`,
         });
-        if (onRefresh) onRefresh();
       } else {
         open?.({
           type: 'error',
           message: 'Publication Failed',
-          description: data.validationErrors?.length
-            ? data.validationErrors.join(', ')
-            : 'Failed to publish location hierarchy to OCPI partners',
+          description: data.validationErrors?.length ? (
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
+              {data.validationErrors.map((e, i) => (
+                <li key={i}>{e}</li>
+              ))}
+            </ul>
+          ) : (
+            'Failed to publish location hierarchy to OCPI partners'
+          ),
         });
         setOptimisticPublished(false);
       }

@@ -40,7 +40,7 @@ export const LocationsDetail = () => {
     >
       <div>
         <Card className="location-details">
-          <LocationDetailCard location={location} onRefresh={refetch} />
+          <LocationDetailCard location={location} />
         </Card>
 
         <Card>

@@ -20,6 +20,7 @@ import { getPlainToInstanceOptions } from '@util/tables';
 import { IChargingStationDto } from '@citrineos/base';
 import { IEvseDto } from '@citrineos/base';
 import { IConnectorDto } from '@citrineos/base';
+import { EvsePublishSwitch } from './evse.publish.switch';
 
 interface EVSESListProps {
   stationId: string;
@@ -115,12 +116,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
                 handleExpandToggle(record);
               }}
             >
-              View Connectors
-              <ArrowDownIcon
-                className={
-                  expandedRowKeys.includes(evseId) ? 'arrow rotate' : 'arrow'
-                }
-              />
+              <EvsePublishSwitch evse={record} station={station!} />
               <Button
                 className="Secondary"
                 style={{ marginLeft: 8 }}
@@ -140,6 +136,11 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
               >
                 Add Connector
               </Button>
+              <ArrowDownIcon
+                className={
+                  expandedRowKeys.includes(evseId) ? 'arrow rotate' : 'arrow'
+                }
+              />
             </Row>
           );
         },
