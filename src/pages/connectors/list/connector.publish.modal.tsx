@@ -25,6 +25,7 @@ interface Partner {
   id: number;
   countryCode: string;
   partyId: string;
+  partnerProfileOCPI?: any;
 }
 
 interface PublishConnectorRequest {
@@ -61,10 +62,14 @@ export const ConnectorPublishModal = ({
   );
 
   const availablePartners =
-    partnersData?.data?.map((partner) => ({
-      id: partner.id.toString(),
-      name: `${partner.countryCode}-${partner.partyId}`,
-    })) || [];
+    partnersData?.data?.map((partner) => {
+      const businessName =
+        partner.partnerProfileOCPI?.roles?.[0]?.businessDetails?.name;
+      return {
+        id: partner.id.toString(),
+        name: businessName || `${partner.countryCode}-${partner.partyId}`,
+      };
+    }) || [];
 
   const { mutate: publishConnector, isLoading: isPublishing } = useMutation({
     mutationFn: async (request: PublishConnectorRequest) => {

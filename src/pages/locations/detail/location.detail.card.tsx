@@ -91,12 +91,16 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
   );
 
   const availablePartners =
-    partnersData?.data?.map((partner) => ({
-      id: partner.id.toString(),
-      name: `${partner.countryCode}-${partner.partyId}`,
-      countryCode: partner.countryCode,
-      partyId: partner.partyId,
-    })) || [];
+    partnersData?.data?.map((partner) => {
+      const businessName =
+        partner.partnerProfileOCPI?.roles?.[0]?.businessDetails?.name;
+      return {
+        id: partner.id.toString(),
+        name: businessName || `${partner.countryCode}-${partner.partyId}`,
+        countryCode: partner.countryCode,
+        partyId: partner.partyId,
+      };
+    }) || [];
 
   const { mutate: publishLocation, isLoading: isPublishing } = useMutation({
     mutationFn: async (request: PublishLocationRequest) => {
@@ -345,7 +349,9 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
               <Row>
                 {evses.map((evse) => (
                   <Col span={8} key={evse.id}>
-                    <Checkbox value={evse.id}>{evse.evseId}</Checkbox>
+                    <Checkbox value={evse.id}>
+                      {evse.physicalReference || evse.evseId}
+                    </Checkbox>
                   </Col>
                 ))}
               </Row>

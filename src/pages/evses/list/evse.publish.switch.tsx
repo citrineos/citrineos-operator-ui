@@ -36,6 +36,7 @@ interface Partner {
   id: number;
   countryCode: string;
   partyId: string;
+  partnerProfileOCPI?: any;
 }
 
 interface PublishEvseRequest {
@@ -80,10 +81,14 @@ export const EvsePublishSwitch = ({
   );
 
   const availablePartners =
-    partnersData?.data?.map((partner) => ({
-      id: partner.id.toString(),
-      name: `${partner.countryCode}-${partner.partyId}`,
-    })) || [];
+    partnersData?.data?.map((partner) => {
+      const businessName =
+        partner.partnerProfileOCPI?.roles?.[0]?.businessDetails?.name;
+      return {
+        id: partner.id.toString(),
+        name: businessName || `${partner.countryCode}-${partner.partyId}`,
+      };
+    }) || [];
 
   const { mutate: publishEvse, isLoading: isPublishing } = useMutation({
     mutationFn: async (request: PublishEvseRequest) => {
@@ -226,7 +231,7 @@ export const EvsePublishSwitch = ({
                 {connectors.map((connector) => (
                   <Col span={8} key={connector.id}>
                     <Checkbox value={connector.id}>
-                      {connector.connectorId}
+                      {`Connector ${connector.connectorId} - ${connector.type}`}
                     </Checkbox>
                   </Col>
                 ))}

@@ -504,7 +504,11 @@ export type AuthorizationsShowQuery = {
       | 'realTimeAuthUrl'
       | 'createdAt'
       | 'updatedAt'
-    >
+    > & {
+      tenantPartner?: Types.Maybe<
+        Pick<Types.TenantPartners, 'id' | 'partnerProfileOCPI'>
+      >;
+    }
   >;
 };
 
@@ -2048,14 +2052,18 @@ export type GetLocationByIdQuery = {
       | 'parkingType'
       | 'createdAt'
       | 'updatedAt'
+      | 'isPublished'
+      | 'validationErrors'
+      | 'publishedToPartners'
+      | 'lastPublicationAttempt'
     > & {
       chargingPool: Array<
         Pick<
           Types.ChargingStations,
           'id' | 'isOnline' | 'protocol' | 'createdAt' | 'updatedAt'
         > & {
-          Evses: Array<
-            Pick<Types.VariableAttributes, 'id' | 'createdAt' | 'updatedAt'>
+          evses: Array<
+            Pick<Types.Evses, 'id' | 'evseId' | 'physicalReference'>
           >;
           LatestStatusNotifications: Array<
             Pick<
@@ -2642,6 +2650,59 @@ export type GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransa
       }
     >;
   };
+
+export type TenantPartnersQueryVariables = Types.Exact<{
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  order_by?: Types.InputMaybe<
+    Array<Types.TenantPartners_Order_By> | Types.TenantPartners_Order_By
+  >;
+  where?: Types.InputMaybe<Types.TenantPartners_Bool_Exp>;
+}>;
+
+export type TenantPartnersQuery = {
+  TenantPartners: Array<
+    Pick<
+      Types.TenantPartners,
+      'id' | 'countryCode' | 'partyId' | 'partnerProfileOCPI'
+    >
+  >;
+  TenantPartners_aggregate: {
+    aggregate?: Types.Maybe<
+      Pick<Types.TenantPartners_Aggregate_Fields, 'count'>
+    >;
+  };
+};
+
+export type TenantPartnerQueryVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+}>;
+
+export type TenantPartnerQuery = {
+  TenantPartners_by_pk?: Types.Maybe<
+    Pick<
+      Types.TenantPartners,
+      'id' | 'countryCode' | 'partyId' | 'partnerProfileOCPI'
+    >
+  >;
+};
+
+export type CreatePartnerMutationVariables = Types.Exact<{
+  object: Types.TenantPartners_Insert_Input;
+}>;
+
+export type CreatePartnerMutation = {
+  insert_TenantPartners_one?: Types.Maybe<Pick<Types.TenantPartners, 'id'>>;
+};
+
+export type UpdatePartnerMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+  object: Types.TenantPartners_Set_Input;
+}>;
+
+export type UpdatePartnerMutation = {
+  update_TenantPartners_by_pk?: Types.Maybe<Pick<Types.TenantPartners, 'id'>>;
+};
 
 export type ReservationsListQueryVariables = Types.Exact<{
   offset: Types.Scalars['Int']['input'];

@@ -7786,10 +7786,13 @@ export type Connectors = {
   format?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
   info?: Maybe<Scalars['String']['output']>;
+  isPublished: Scalars['Boolean']['output'];
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   maximumAmperage?: Maybe<Scalars['Int']['output']>;
   maximumPowerWatts?: Maybe<Scalars['Int']['output']>;
   maximumVoltage?: Maybe<Scalars['Int']['output']>;
   powerType?: Maybe<Scalars['String']['output']>;
+  publishedToPartners?: Maybe<Scalars['jsonb']['output']>;
   stationId: Scalars['String']['output'];
   status?: Maybe<Scalars['enum_Connectors_status']['output']>;
   tenantId: Scalars['Int']['output'];
@@ -7797,6 +7800,7 @@ export type Connectors = {
   timestamp?: Maybe<Scalars['timestamptz']['output']>;
   type?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
+  validationErrors?: Maybe<Scalars['jsonb']['output']>;
   vendorErrorCode?: Maybe<Scalars['String']['output']>;
   vendorId?: Maybe<Scalars['String']['output']>;
 };
@@ -7855,6 +7859,16 @@ export type ConnectorsTransactions_AggregateArgs = {
   where?: InputMaybe<Transactions_Bool_Exp>;
 };
 
+/** columns and relationships of "Connectors" */
+export type ConnectorsPublishedToPartnersArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "Connectors" */
+export type ConnectorsValidationErrorsArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** aggregated selection of "Connectors" */
 export type Connectors_Aggregate = {
   aggregate?: Maybe<Connectors_Aggregate_Fields>;
@@ -7862,7 +7876,23 @@ export type Connectors_Aggregate = {
 };
 
 export type Connectors_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Connectors_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Connectors_Aggregate_Bool_Exp_Bool_Or>;
   count?: InputMaybe<Connectors_Aggregate_Bool_Exp_Count>;
+};
+
+export type Connectors_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Connectors_Select_Column_Connectors_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Connectors_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Connectors_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Connectors_Select_Column_Connectors_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Connectors_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
 };
 
 export type Connectors_Aggregate_Bool_Exp_Count = {
@@ -7906,6 +7936,12 @@ export type Connectors_Aggregate_Order_By = {
   var_pop?: InputMaybe<Connectors_Var_Pop_Order_By>;
   var_samp?: InputMaybe<Connectors_Var_Samp_Order_By>;
   variance?: InputMaybe<Connectors_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Connectors_Append_Input = {
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** input type for inserting array relation for remote table "Connectors" */
@@ -7961,10 +7997,13 @@ export type Connectors_Bool_Exp = {
   format?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
   info?: InputMaybe<String_Comparison_Exp>;
+  isPublished?: InputMaybe<Boolean_Comparison_Exp>;
+  lastPublicationAttempt?: InputMaybe<Timestamptz_Comparison_Exp>;
   maximumAmperage?: InputMaybe<Int_Comparison_Exp>;
   maximumPowerWatts?: InputMaybe<Int_Comparison_Exp>;
   maximumVoltage?: InputMaybe<Int_Comparison_Exp>;
   powerType?: InputMaybe<String_Comparison_Exp>;
+  publishedToPartners?: InputMaybe<Jsonb_Comparison_Exp>;
   stationId?: InputMaybe<String_Comparison_Exp>;
   status?: InputMaybe<Enum_Connectors_Status_Comparison_Exp>;
   tenantId?: InputMaybe<Int_Comparison_Exp>;
@@ -7972,6 +8011,7 @@ export type Connectors_Bool_Exp = {
   timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   type?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  validationErrors?: InputMaybe<Jsonb_Comparison_Exp>;
   vendorErrorCode?: InputMaybe<String_Comparison_Exp>;
   vendorId?: InputMaybe<String_Comparison_Exp>;
 };
@@ -7982,6 +8022,24 @@ export type Connectors_Constraint =
   | 'Connectors_pkey'
   /** unique or primary key constraint on columns "stationId", "connectorId" */
   | 'Connectors_stationId_connectorId_key';
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Connectors_Delete_At_Path_Input = {
+  publishedToPartners?: InputMaybe<Array<Scalars['String']['input']>>;
+  validationErrors?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Connectors_Delete_Elem_Input = {
+  publishedToPartners?: InputMaybe<Scalars['Int']['input']>;
+  validationErrors?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Connectors_Delete_Key_Input = {
+  publishedToPartners?: InputMaybe<Scalars['String']['input']>;
+  validationErrors?: InputMaybe<Scalars['String']['input']>;
+};
 
 /** input type for incrementing numeric columns in table "Connectors" */
 export type Connectors_Inc_Input = {
@@ -8011,10 +8069,13 @@ export type Connectors_Insert_Input = {
   format?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
   info?: InputMaybe<Scalars['String']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   maximumAmperage?: InputMaybe<Scalars['Int']['input']>;
   maximumPowerWatts?: InputMaybe<Scalars['Int']['input']>;
   maximumVoltage?: InputMaybe<Scalars['Int']['input']>;
   powerType?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['enum_Connectors_status']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
@@ -8022,6 +8083,7 @@ export type Connectors_Insert_Input = {
   timestamp?: InputMaybe<Scalars['timestamptz']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
   vendorErrorCode?: InputMaybe<Scalars['String']['input']>;
   vendorId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -8036,6 +8098,7 @@ export type Connectors_Max_Fields = {
   format?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   info?: Maybe<Scalars['String']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   maximumAmperage?: Maybe<Scalars['Int']['output']>;
   maximumPowerWatts?: Maybe<Scalars['Int']['output']>;
   maximumVoltage?: Maybe<Scalars['Int']['output']>;
@@ -8061,6 +8124,7 @@ export type Connectors_Max_Order_By = {
   format?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   info?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   maximumAmperage?: InputMaybe<Order_By>;
   maximumPowerWatts?: InputMaybe<Order_By>;
   maximumVoltage?: InputMaybe<Order_By>;
@@ -8086,6 +8150,7 @@ export type Connectors_Min_Fields = {
   format?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   info?: Maybe<Scalars['String']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   maximumAmperage?: Maybe<Scalars['Int']['output']>;
   maximumPowerWatts?: Maybe<Scalars['Int']['output']>;
   maximumVoltage?: Maybe<Scalars['Int']['output']>;
@@ -8111,6 +8176,7 @@ export type Connectors_Min_Order_By = {
   format?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   info?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   maximumAmperage?: InputMaybe<Order_By>;
   maximumPowerWatts?: InputMaybe<Order_By>;
   maximumVoltage?: InputMaybe<Order_By>;
@@ -8164,10 +8230,13 @@ export type Connectors_Order_By = {
   format?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   info?: InputMaybe<Order_By>;
+  isPublished?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   maximumAmperage?: InputMaybe<Order_By>;
   maximumPowerWatts?: InputMaybe<Order_By>;
   maximumVoltage?: InputMaybe<Order_By>;
   powerType?: InputMaybe<Order_By>;
+  publishedToPartners?: InputMaybe<Order_By>;
   stationId?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -8175,6 +8244,7 @@ export type Connectors_Order_By = {
   timestamp?: InputMaybe<Order_By>;
   type?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
+  validationErrors?: InputMaybe<Order_By>;
   vendorErrorCode?: InputMaybe<Order_By>;
   vendorId?: InputMaybe<Order_By>;
 };
@@ -8182,6 +8252,12 @@ export type Connectors_Order_By = {
 /** primary key columns input for table: Connectors */
 export type Connectors_Pk_Columns_Input = {
   id: Scalars['Int']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Connectors_Prepend_Input = {
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** select columns of table "Connectors" */
@@ -8203,6 +8279,10 @@ export type Connectors_Select_Column =
   /** column name */
   | 'info'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'maximumAmperage'
   /** column name */
   | 'maximumPowerWatts'
@@ -8210,6 +8290,8 @@ export type Connectors_Select_Column =
   | 'maximumVoltage'
   /** column name */
   | 'powerType'
+  /** column name */
+  | 'publishedToPartners'
   /** column name */
   | 'stationId'
   /** column name */
@@ -8225,9 +8307,21 @@ export type Connectors_Select_Column =
   /** column name */
   | 'updatedAt'
   /** column name */
+  | 'validationErrors'
+  /** column name */
   | 'vendorErrorCode'
   /** column name */
   | 'vendorId';
+
+/** select "Connectors_aggregate_bool_exp_bool_and_arguments_columns" columns of table "Connectors" */
+export type Connectors_Select_Column_Connectors_Aggregate_Bool_Exp_Bool_And_Arguments_Columns =
+  /** column name */
+  'isPublished';
+
+/** select "Connectors_aggregate_bool_exp_bool_or_arguments_columns" columns of table "Connectors" */
+export type Connectors_Select_Column_Connectors_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns =
+  /** column name */
+  'isPublished';
 
 /** input type for updating data in table "Connectors" */
 export type Connectors_Set_Input = {
@@ -8239,10 +8333,13 @@ export type Connectors_Set_Input = {
   format?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
   info?: InputMaybe<Scalars['String']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   maximumAmperage?: InputMaybe<Scalars['Int']['input']>;
   maximumPowerWatts?: InputMaybe<Scalars['Int']['input']>;
   maximumVoltage?: InputMaybe<Scalars['Int']['input']>;
   powerType?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['enum_Connectors_status']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
@@ -8250,6 +8347,7 @@ export type Connectors_Set_Input = {
   timestamp?: InputMaybe<Scalars['timestamptz']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
   vendorErrorCode?: InputMaybe<Scalars['String']['input']>;
   vendorId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -8344,10 +8442,13 @@ export type Connectors_Stream_Cursor_Value_Input = {
   format?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
   info?: InputMaybe<Scalars['String']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   maximumAmperage?: InputMaybe<Scalars['Int']['input']>;
   maximumPowerWatts?: InputMaybe<Scalars['Int']['input']>;
   maximumVoltage?: InputMaybe<Scalars['Int']['input']>;
   powerType?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<Scalars['enum_Connectors_status']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
@@ -8355,6 +8456,7 @@ export type Connectors_Stream_Cursor_Value_Input = {
   timestamp?: InputMaybe<Scalars['timestamptz']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
   vendorErrorCode?: InputMaybe<Scalars['String']['input']>;
   vendorId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -8402,6 +8504,10 @@ export type Connectors_Update_Column =
   /** column name */
   | 'info'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'maximumAmperage'
   /** column name */
   | 'maximumPowerWatts'
@@ -8409,6 +8515,8 @@ export type Connectors_Update_Column =
   | 'maximumVoltage'
   /** column name */
   | 'powerType'
+  /** column name */
+  | 'publishedToPartners'
   /** column name */
   | 'stationId'
   /** column name */
@@ -8424,13 +8532,25 @@ export type Connectors_Update_Column =
   /** column name */
   | 'updatedAt'
   /** column name */
+  | 'validationErrors'
+  /** column name */
   | 'vendorErrorCode'
   /** column name */
   | 'vendorId';
 
 export type Connectors_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Connectors_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Connectors_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Connectors_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Connectors_Delete_Key_Input>;
   /** increments the numeric columns with given value of the filtered values */
   _inc?: InputMaybe<Connectors_Inc_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Connectors_Prepend_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Connectors_Set_Input>;
   /** filter the rows which have to be updated */
@@ -9643,16 +9763,19 @@ export type Evses = {
   Transactions: Array<Transactions>;
   /** An aggregate relationship */
   Transactions_aggregate: Transactions_Aggregate;
-  connectorId?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['timestamptz']['output'];
   evseId?: Maybe<Scalars['String']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
   id: Scalars['Int']['output'];
+  isPublished: Scalars['Boolean']['output'];
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   physicalReference?: Maybe<Scalars['String']['output']>;
+  publishedToPartners?: Maybe<Scalars['jsonb']['output']>;
   removed?: Maybe<Scalars['Boolean']['output']>;
   stationId?: Maybe<Scalars['String']['output']>;
   tenantId: Scalars['Int']['output'];
   updatedAt: Scalars['timestamptz']['output'];
+  validationErrors?: Maybe<Scalars['jsonb']['output']>;
 };
 
 /** columns and relationships of "Evses" */
@@ -9707,6 +9830,16 @@ export type EvsesTransactions_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Transactions_Order_By>>;
   where?: InputMaybe<Transactions_Bool_Exp>;
+};
+
+/** columns and relationships of "Evses" */
+export type EvsesPublishedToPartnersArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "Evses" */
+export type EvsesValidationErrorsArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** aggregated selection of "Evses" */
@@ -9778,6 +9911,12 @@ export type Evses_Aggregate_Order_By = {
   variance?: InputMaybe<Evses_Variance_Order_By>;
 };
 
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Evses_Append_Input = {
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
 /** input type for inserting array relation for remote table "Evses" */
 export type Evses_Arr_Rel_Insert_Input = {
   data: Array<Evses_Insert_Input>;
@@ -9787,7 +9926,6 @@ export type Evses_Arr_Rel_Insert_Input = {
 
 /** aggregate avg on columns */
 export type Evses_Avg_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -9795,7 +9933,6 @@ export type Evses_Avg_Fields = {
 
 /** order by avg() on columns of table "Evses" */
 export type Evses_Avg_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -9814,30 +9951,46 @@ export type Evses_Bool_Exp = {
   _and?: InputMaybe<Array<Evses_Bool_Exp>>;
   _not?: InputMaybe<Evses_Bool_Exp>;
   _or?: InputMaybe<Array<Evses_Bool_Exp>>;
-  connectorId?: InputMaybe<Int_Comparison_Exp>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   evseId?: InputMaybe<String_Comparison_Exp>;
   evseTypeId?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
+  isPublished?: InputMaybe<Boolean_Comparison_Exp>;
+  lastPublicationAttempt?: InputMaybe<Timestamptz_Comparison_Exp>;
   physicalReference?: InputMaybe<String_Comparison_Exp>;
+  publishedToPartners?: InputMaybe<Jsonb_Comparison_Exp>;
   removed?: InputMaybe<Boolean_Comparison_Exp>;
   stationId?: InputMaybe<String_Comparison_Exp>;
   tenantId?: InputMaybe<Int_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  validationErrors?: InputMaybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Evses" */
 export type Evses_Constraint =
-  /** unique or primary key constraint on columns "id", "connectorId" */
-  | 'Evses_id_connectorId_key'
   /** unique or primary key constraint on columns "id" */
-  | 'Evses_pkey'
-  /** unique or primary key constraint on columns "id" */
-  | 'evses_id';
+  'Evses_pkey';
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Evses_Delete_At_Path_Input = {
+  publishedToPartners?: InputMaybe<Array<Scalars['String']['input']>>;
+  validationErrors?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Evses_Delete_Elem_Input = {
+  publishedToPartners?: InputMaybe<Scalars['Int']['input']>;
+  validationErrors?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Evses_Delete_Key_Input = {
+  publishedToPartners?: InputMaybe<Scalars['String']['input']>;
+  validationErrors?: InputMaybe<Scalars['String']['input']>;
+};
 
 /** input type for incrementing numeric columns in table "Evses" */
 export type Evses_Inc_Input = {
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
@@ -9850,25 +10003,28 @@ export type Evses_Insert_Input = {
   Connectors?: InputMaybe<Connectors_Arr_Rel_Insert_Input>;
   Tenant?: InputMaybe<Tenants_Obj_Rel_Insert_Input>;
   Transactions?: InputMaybe<Transactions_Arr_Rel_Insert_Input>;
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   evseId?: InputMaybe<Scalars['String']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   physicalReference?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   removed?: InputMaybe<Scalars['Boolean']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate max on columns */
 export type Evses_Max_Fields = {
-  connectorId?: Maybe<Scalars['Int']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   evseId?: Maybe<Scalars['String']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   physicalReference?: Maybe<Scalars['String']['output']>;
   stationId?: Maybe<Scalars['String']['output']>;
   tenantId?: Maybe<Scalars['Int']['output']>;
@@ -9877,11 +10033,11 @@ export type Evses_Max_Fields = {
 
 /** order by max() on columns of table "Evses" */
 export type Evses_Max_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   evseId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   physicalReference?: InputMaybe<Order_By>;
   stationId?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -9890,11 +10046,11 @@ export type Evses_Max_Order_By = {
 
 /** aggregate min on columns */
 export type Evses_Min_Fields = {
-  connectorId?: Maybe<Scalars['Int']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   evseId?: Maybe<Scalars['String']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   physicalReference?: Maybe<Scalars['String']['output']>;
   stationId?: Maybe<Scalars['String']['output']>;
   tenantId?: Maybe<Scalars['Int']['output']>;
@@ -9903,11 +10059,11 @@ export type Evses_Min_Fields = {
 
 /** order by min() on columns of table "Evses" */
 export type Evses_Min_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   evseId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   physicalReference?: InputMaybe<Order_By>;
   stationId?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -9943,16 +10099,19 @@ export type Evses_Order_By = {
   Connectors_aggregate?: InputMaybe<Connectors_Aggregate_Order_By>;
   Tenant?: InputMaybe<Tenants_Order_By>;
   Transactions_aggregate?: InputMaybe<Transactions_Aggregate_Order_By>;
-  connectorId?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   evseId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  isPublished?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   physicalReference?: InputMaybe<Order_By>;
+  publishedToPartners?: InputMaybe<Order_By>;
   removed?: InputMaybe<Order_By>;
   stationId?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
+  validationErrors?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: Evses */
@@ -9960,10 +10119,14 @@ export type Evses_Pk_Columns_Input = {
   id: Scalars['Int']['input'];
 };
 
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Evses_Prepend_Input = {
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
+};
+
 /** select columns of table "Evses" */
 export type Evses_Select_Column =
-  /** column name */
-  | 'connectorId'
   /** column name */
   | 'createdAt'
   /** column name */
@@ -9973,7 +10136,13 @@ export type Evses_Select_Column =
   /** column name */
   | 'id'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'physicalReference'
+  /** column name */
+  | 'publishedToPartners'
   /** column name */
   | 'removed'
   /** column name */
@@ -9981,35 +10150,43 @@ export type Evses_Select_Column =
   /** column name */
   | 'tenantId'
   /** column name */
-  | 'updatedAt';
+  | 'updatedAt'
+  /** column name */
+  | 'validationErrors';
 
 /** select "Evses_aggregate_bool_exp_bool_and_arguments_columns" columns of table "Evses" */
 export type Evses_Select_Column_Evses_Aggregate_Bool_Exp_Bool_And_Arguments_Columns =
   /** column name */
-  'removed';
+  | 'isPublished'
+  /** column name */
+  | 'removed';
 
 /** select "Evses_aggregate_bool_exp_bool_or_arguments_columns" columns of table "Evses" */
 export type Evses_Select_Column_Evses_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns =
   /** column name */
-  'removed';
+  | 'isPublished'
+  /** column name */
+  | 'removed';
 
 /** input type for updating data in table "Evses" */
 export type Evses_Set_Input = {
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   evseId?: InputMaybe<Scalars['String']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   physicalReference?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   removed?: InputMaybe<Scalars['Boolean']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate stddev on columns */
 export type Evses_Stddev_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10017,7 +10194,6 @@ export type Evses_Stddev_Fields = {
 
 /** order by stddev() on columns of table "Evses" */
 export type Evses_Stddev_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10025,7 +10201,6 @@ export type Evses_Stddev_Order_By = {
 
 /** aggregate stddev_pop on columns */
 export type Evses_Stddev_Pop_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10033,7 +10208,6 @@ export type Evses_Stddev_Pop_Fields = {
 
 /** order by stddev_pop() on columns of table "Evses" */
 export type Evses_Stddev_Pop_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10041,7 +10215,6 @@ export type Evses_Stddev_Pop_Order_By = {
 
 /** aggregate stddev_samp on columns */
 export type Evses_Stddev_Samp_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10049,7 +10222,6 @@ export type Evses_Stddev_Samp_Fields = {
 
 /** order by stddev_samp() on columns of table "Evses" */
 export type Evses_Stddev_Samp_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10065,21 +10237,23 @@ export type Evses_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Evses_Stream_Cursor_Value_Input = {
-  connectorId?: InputMaybe<Scalars['Int']['input']>;
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   evseId?: InputMaybe<Scalars['String']['input']>;
   evseTypeId?: InputMaybe<Scalars['Int']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   physicalReference?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   removed?: InputMaybe<Scalars['Boolean']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate sum on columns */
 export type Evses_Sum_Fields = {
-  connectorId?: Maybe<Scalars['Int']['output']>;
   evseTypeId?: Maybe<Scalars['Int']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   tenantId?: Maybe<Scalars['Int']['output']>;
@@ -10087,7 +10261,6 @@ export type Evses_Sum_Fields = {
 
 /** order by sum() on columns of table "Evses" */
 export type Evses_Sum_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10095,8 +10268,6 @@ export type Evses_Sum_Order_By = {
 
 /** update columns of table "Evses" */
 export type Evses_Update_Column =
-  /** column name */
-  | 'connectorId'
   /** column name */
   | 'createdAt'
   /** column name */
@@ -10106,7 +10277,13 @@ export type Evses_Update_Column =
   /** column name */
   | 'id'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'physicalReference'
+  /** column name */
+  | 'publishedToPartners'
   /** column name */
   | 'removed'
   /** column name */
@@ -10114,11 +10291,23 @@ export type Evses_Update_Column =
   /** column name */
   | 'tenantId'
   /** column name */
-  | 'updatedAt';
+  | 'updatedAt'
+  /** column name */
+  | 'validationErrors';
 
 export type Evses_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Evses_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Evses_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Evses_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Evses_Delete_Key_Input>;
   /** increments the numeric columns with given value of the filtered values */
   _inc?: InputMaybe<Evses_Inc_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Evses_Prepend_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Evses_Set_Input>;
   /** filter the rows which have to be updated */
@@ -10127,7 +10316,6 @@ export type Evses_Updates = {
 
 /** aggregate var_pop on columns */
 export type Evses_Var_Pop_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10135,7 +10323,6 @@ export type Evses_Var_Pop_Fields = {
 
 /** order by var_pop() on columns of table "Evses" */
 export type Evses_Var_Pop_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10143,7 +10330,6 @@ export type Evses_Var_Pop_Order_By = {
 
 /** aggregate var_samp on columns */
 export type Evses_Var_Samp_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10151,7 +10337,6 @@ export type Evses_Var_Samp_Fields = {
 
 /** order by var_samp() on columns of table "Evses" */
 export type Evses_Var_Samp_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -10159,7 +10344,6 @@ export type Evses_Var_Samp_Order_By = {
 
 /** aggregate variance on columns */
 export type Evses_Variance_Fields = {
-  connectorId?: Maybe<Scalars['Float']['output']>;
   evseTypeId?: Maybe<Scalars['Float']['output']>;
   id?: Maybe<Scalars['Float']['output']>;
   tenantId?: Maybe<Scalars['Float']['output']>;
@@ -10167,7 +10351,6 @@ export type Evses_Variance_Fields = {
 
 /** order by variance() on columns of table "Evses" */
 export type Evses_Variance_Order_By = {
-  connectorId?: InputMaybe<Order_By>;
   evseTypeId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
@@ -12408,15 +12591,19 @@ export type Locations = {
   createdAt: Scalars['timestamptz']['output'];
   facilities?: Maybe<Scalars['jsonb']['output']>;
   id: Scalars['Int']['output'];
+  isPublished: Scalars['Boolean']['output'];
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   openingHours?: Maybe<Scalars['jsonb']['output']>;
   parkingType?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
   publishUpstream?: Maybe<Scalars['Boolean']['output']>;
+  publishedToPartners?: Maybe<Scalars['jsonb']['output']>;
   state?: Maybe<Scalars['String']['output']>;
   tenantId: Scalars['Int']['output'];
   timeZone?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['timestamptz']['output'];
+  validationErrors?: Maybe<Scalars['jsonb']['output']>;
 };
 
 /** columns and relationships of "Locations" */
@@ -12462,6 +12649,16 @@ export type LocationsFacilitiesArgs = {
 
 /** columns and relationships of "Locations" */
 export type LocationsOpeningHoursArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "Locations" */
+export type LocationsPublishedToPartnersArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "Locations" */
+export type LocationsValidationErrorsArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -12538,6 +12735,8 @@ export type Locations_Aggregate_Order_By = {
 export type Locations_Append_Input = {
   facilities?: InputMaybe<Scalars['jsonb']['input']>;
   openingHours?: InputMaybe<Scalars['jsonb']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** input type for inserting array relation for remote table "Locations" */
@@ -12576,15 +12775,19 @@ export type Locations_Bool_Exp = {
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   facilities?: InputMaybe<Jsonb_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
+  isPublished?: InputMaybe<Boolean_Comparison_Exp>;
+  lastPublicationAttempt?: InputMaybe<Timestamptz_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   openingHours?: InputMaybe<Jsonb_Comparison_Exp>;
   parkingType?: InputMaybe<String_Comparison_Exp>;
   postalCode?: InputMaybe<String_Comparison_Exp>;
   publishUpstream?: InputMaybe<Boolean_Comparison_Exp>;
+  publishedToPartners?: InputMaybe<Jsonb_Comparison_Exp>;
   state?: InputMaybe<String_Comparison_Exp>;
   tenantId?: InputMaybe<Int_Comparison_Exp>;
   timeZone?: InputMaybe<String_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  validationErrors?: InputMaybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Locations" */
@@ -12596,18 +12799,24 @@ export type Locations_Constraint =
 export type Locations_Delete_At_Path_Input = {
   facilities?: InputMaybe<Array<Scalars['String']['input']>>;
   openingHours?: InputMaybe<Array<Scalars['String']['input']>>;
+  publishedToPartners?: InputMaybe<Array<Scalars['String']['input']>>;
+  validationErrors?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
 export type Locations_Delete_Elem_Input = {
   facilities?: InputMaybe<Scalars['Int']['input']>;
   openingHours?: InputMaybe<Scalars['Int']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['Int']['input']>;
+  validationErrors?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** delete key/value pair or string element. key/value pairs are matched based on their key value */
 export type Locations_Delete_Key_Input = {
   facilities?: InputMaybe<Scalars['String']['input']>;
   openingHours?: InputMaybe<Scalars['String']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['String']['input']>;
+  validationErrors?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** input type for incrementing numeric columns in table "Locations" */
@@ -12628,15 +12837,19 @@ export type Locations_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   facilities?: InputMaybe<Scalars['jsonb']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   openingHours?: InputMaybe<Scalars['jsonb']['input']>;
   parkingType?: InputMaybe<Scalars['String']['input']>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
   publishUpstream?: InputMaybe<Scalars['Boolean']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate max on columns */
@@ -12646,6 +12859,7 @@ export type Locations_Max_Fields = {
   country?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   parkingType?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
@@ -12662,6 +12876,7 @@ export type Locations_Max_Order_By = {
   country?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   parkingType?: InputMaybe<Order_By>;
   postalCode?: InputMaybe<Order_By>;
@@ -12678,6 +12893,7 @@ export type Locations_Min_Fields = {
   country?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   parkingType?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
@@ -12694,6 +12910,7 @@ export type Locations_Min_Order_By = {
   country?: InputMaybe<Order_By>;
   createdAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   parkingType?: InputMaybe<Order_By>;
   postalCode?: InputMaybe<Order_By>;
@@ -12737,15 +12954,19 @@ export type Locations_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   facilities?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  isPublished?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   openingHours?: InputMaybe<Order_By>;
   parkingType?: InputMaybe<Order_By>;
   postalCode?: InputMaybe<Order_By>;
   publishUpstream?: InputMaybe<Order_By>;
+  publishedToPartners?: InputMaybe<Order_By>;
   state?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
   timeZone?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
+  validationErrors?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: Locations */
@@ -12757,6 +12978,8 @@ export type Locations_Pk_Columns_Input = {
 export type Locations_Prepend_Input = {
   facilities?: InputMaybe<Scalars['jsonb']['input']>;
   openingHours?: InputMaybe<Scalars['jsonb']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** select columns of table "Locations" */
@@ -12776,6 +12999,10 @@ export type Locations_Select_Column =
   /** column name */
   | 'id'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'name'
   /** column name */
   | 'openingHours'
@@ -12786,23 +13013,31 @@ export type Locations_Select_Column =
   /** column name */
   | 'publishUpstream'
   /** column name */
+  | 'publishedToPartners'
+  /** column name */
   | 'state'
   /** column name */
   | 'tenantId'
   /** column name */
   | 'timeZone'
   /** column name */
-  | 'updatedAt';
+  | 'updatedAt'
+  /** column name */
+  | 'validationErrors';
 
 /** select "Locations_aggregate_bool_exp_bool_and_arguments_columns" columns of table "Locations" */
 export type Locations_Select_Column_Locations_Aggregate_Bool_Exp_Bool_And_Arguments_Columns =
   /** column name */
-  'publishUpstream';
+  | 'isPublished'
+  /** column name */
+  | 'publishUpstream';
 
 /** select "Locations_aggregate_bool_exp_bool_or_arguments_columns" columns of table "Locations" */
 export type Locations_Select_Column_Locations_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns =
   /** column name */
-  'publishUpstream';
+  | 'isPublished'
+  /** column name */
+  | 'publishUpstream';
 
 /** input type for updating data in table "Locations" */
 export type Locations_Set_Input = {
@@ -12813,15 +13048,19 @@ export type Locations_Set_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   facilities?: InputMaybe<Scalars['jsonb']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   openingHours?: InputMaybe<Scalars['jsonb']['input']>;
   parkingType?: InputMaybe<Scalars['String']['input']>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
   publishUpstream?: InputMaybe<Scalars['Boolean']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate stddev on columns */
@@ -12877,15 +13116,19 @@ export type Locations_Stream_Cursor_Value_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   facilities?: InputMaybe<Scalars['jsonb']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   openingHours?: InputMaybe<Scalars['jsonb']['input']>;
   parkingType?: InputMaybe<Scalars['String']['input']>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
   publishUpstream?: InputMaybe<Scalars['Boolean']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate sum on columns */
@@ -12917,6 +13160,10 @@ export type Locations_Update_Column =
   /** column name */
   | 'id'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'name'
   /** column name */
   | 'openingHours'
@@ -12927,13 +13174,17 @@ export type Locations_Update_Column =
   /** column name */
   | 'publishUpstream'
   /** column name */
+  | 'publishedToPartners'
+  /** column name */
   | 'state'
   /** column name */
   | 'tenantId'
   /** column name */
   | 'timeZone'
   /** column name */
-  | 'updatedAt';
+  | 'updatedAt'
+  /** column name */
+  | 'validationErrors';
 
 export type Locations_Updates = {
   /** append existing jsonb value of filtered columns with new jsonb value */
@@ -19914,15 +20165,19 @@ export type Tariffs = {
   createdAt: Scalars['timestamptz']['output'];
   currency: Scalars['bpchar']['output'];
   id: Scalars['Int']['output'];
+  isPublished: Scalars['Boolean']['output'];
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   paymentFee?: Maybe<Scalars['numeric']['output']>;
   pricePerKwh: Scalars['numeric']['output'];
   pricePerMin?: Maybe<Scalars['numeric']['output']>;
   pricePerSession?: Maybe<Scalars['numeric']['output']>;
+  publishedToPartners?: Maybe<Scalars['jsonb']['output']>;
   stationId?: Maybe<Scalars['String']['output']>;
   tariffAltText?: Maybe<Scalars['String']['output']>;
   taxRate?: Maybe<Scalars['numeric']['output']>;
   tenantId: Scalars['Int']['output'];
   updatedAt: Scalars['timestamptz']['output'];
+  validationErrors?: Maybe<Scalars['jsonb']['output']>;
 };
 
 /** columns and relationships of "Tariffs" */
@@ -19961,6 +20216,16 @@ export type TariffsTransactions_AggregateArgs = {
   where?: InputMaybe<Transactions_Bool_Exp>;
 };
 
+/** columns and relationships of "Tariffs" */
+export type TariffsPublishedToPartnersArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "Tariffs" */
+export type TariffsValidationErrorsArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** aggregated selection of "Tariffs" */
 export type Tariffs_Aggregate = {
   aggregate?: Maybe<Tariffs_Aggregate_Fields>;
@@ -19968,7 +20233,23 @@ export type Tariffs_Aggregate = {
 };
 
 export type Tariffs_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Tariffs_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Tariffs_Aggregate_Bool_Exp_Bool_Or>;
   count?: InputMaybe<Tariffs_Aggregate_Bool_Exp_Count>;
+};
+
+export type Tariffs_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Tariffs_Select_Column_Tariffs_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Tariffs_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Tariffs_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Tariffs_Select_Column_Tariffs_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<Tariffs_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
 };
 
 export type Tariffs_Aggregate_Bool_Exp_Count = {
@@ -20012,6 +20293,12 @@ export type Tariffs_Aggregate_Order_By = {
   var_pop?: InputMaybe<Tariffs_Var_Pop_Order_By>;
   var_samp?: InputMaybe<Tariffs_Var_Samp_Order_By>;
   variance?: InputMaybe<Tariffs_Variance_Order_By>;
+};
+
+/** append existing jsonb value of filtered columns with new jsonb value */
+export type Tariffs_Append_Input = {
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** input type for inserting array relation for remote table "Tariffs" */
@@ -20063,15 +20350,19 @@ export type Tariffs_Bool_Exp = {
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   currency?: InputMaybe<Bpchar_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
+  isPublished?: InputMaybe<Boolean_Comparison_Exp>;
+  lastPublicationAttempt?: InputMaybe<Timestamptz_Comparison_Exp>;
   paymentFee?: InputMaybe<Numeric_Comparison_Exp>;
   pricePerKwh?: InputMaybe<Numeric_Comparison_Exp>;
   pricePerMin?: InputMaybe<Numeric_Comparison_Exp>;
   pricePerSession?: InputMaybe<Numeric_Comparison_Exp>;
+  publishedToPartners?: InputMaybe<Jsonb_Comparison_Exp>;
   stationId?: InputMaybe<String_Comparison_Exp>;
   tariffAltText?: InputMaybe<String_Comparison_Exp>;
   taxRate?: InputMaybe<Numeric_Comparison_Exp>;
   tenantId?: InputMaybe<Int_Comparison_Exp>;
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
+  validationErrors?: InputMaybe<Jsonb_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "Tariffs" */
@@ -20080,6 +20371,24 @@ export type Tariffs_Constraint =
   | 'Tariffs_pkey'
   /** unique or primary key constraint on columns "stationId" */
   | 'Tariffs_stationId_key';
+
+/** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+export type Tariffs_Delete_At_Path_Input = {
+  publishedToPartners?: InputMaybe<Array<Scalars['String']['input']>>;
+  validationErrors?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+/** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+export type Tariffs_Delete_Elem_Input = {
+  publishedToPartners?: InputMaybe<Scalars['Int']['input']>;
+  validationErrors?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** delete key/value pair or string element. key/value pairs are matched based on their key value */
+export type Tariffs_Delete_Key_Input = {
+  publishedToPartners?: InputMaybe<Scalars['String']['input']>;
+  validationErrors?: InputMaybe<Scalars['String']['input']>;
+};
 
 /** input type for incrementing numeric columns in table "Tariffs" */
 export type Tariffs_Inc_Input = {
@@ -20105,15 +20414,19 @@ export type Tariffs_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   currency?: InputMaybe<Scalars['bpchar']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   paymentFee?: InputMaybe<Scalars['numeric']['input']>;
   pricePerKwh?: InputMaybe<Scalars['numeric']['input']>;
   pricePerMin?: InputMaybe<Scalars['numeric']['input']>;
   pricePerSession?: InputMaybe<Scalars['numeric']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   tariffAltText?: InputMaybe<Scalars['String']['input']>;
   taxRate?: InputMaybe<Scalars['numeric']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate max on columns */
@@ -20123,6 +20436,7 @@ export type Tariffs_Max_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   currency?: Maybe<Scalars['bpchar']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   paymentFee?: Maybe<Scalars['numeric']['output']>;
   pricePerKwh?: Maybe<Scalars['numeric']['output']>;
   pricePerMin?: Maybe<Scalars['numeric']['output']>;
@@ -20141,6 +20455,7 @@ export type Tariffs_Max_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   currency?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   paymentFee?: InputMaybe<Order_By>;
   pricePerKwh?: InputMaybe<Order_By>;
   pricePerMin?: InputMaybe<Order_By>;
@@ -20159,6 +20474,7 @@ export type Tariffs_Min_Fields = {
   createdAt?: Maybe<Scalars['timestamptz']['output']>;
   currency?: Maybe<Scalars['bpchar']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
+  lastPublicationAttempt?: Maybe<Scalars['timestamptz']['output']>;
   paymentFee?: Maybe<Scalars['numeric']['output']>;
   pricePerKwh?: Maybe<Scalars['numeric']['output']>;
   pricePerMin?: Maybe<Scalars['numeric']['output']>;
@@ -20177,6 +20493,7 @@ export type Tariffs_Min_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   currency?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   paymentFee?: InputMaybe<Order_By>;
   pricePerKwh?: InputMaybe<Order_By>;
   pricePerMin?: InputMaybe<Order_By>;
@@ -20221,20 +20538,30 @@ export type Tariffs_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   currency?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  isPublished?: InputMaybe<Order_By>;
+  lastPublicationAttempt?: InputMaybe<Order_By>;
   paymentFee?: InputMaybe<Order_By>;
   pricePerKwh?: InputMaybe<Order_By>;
   pricePerMin?: InputMaybe<Order_By>;
   pricePerSession?: InputMaybe<Order_By>;
+  publishedToPartners?: InputMaybe<Order_By>;
   stationId?: InputMaybe<Order_By>;
   tariffAltText?: InputMaybe<Order_By>;
   taxRate?: InputMaybe<Order_By>;
   tenantId?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
+  validationErrors?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: Tariffs */
 export type Tariffs_Pk_Columns_Input = {
   id: Scalars['Int']['input'];
+};
+
+/** prepend existing jsonb value of filtered columns with new jsonb value */
+export type Tariffs_Prepend_Input = {
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** select columns of table "Tariffs" */
@@ -20250,6 +20577,10 @@ export type Tariffs_Select_Column =
   /** column name */
   | 'id'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'paymentFee'
   /** column name */
   | 'pricePerKwh'
@@ -20257,6 +20588,8 @@ export type Tariffs_Select_Column =
   | 'pricePerMin'
   /** column name */
   | 'pricePerSession'
+  /** column name */
+  | 'publishedToPartners'
   /** column name */
   | 'stationId'
   /** column name */
@@ -20266,7 +20599,19 @@ export type Tariffs_Select_Column =
   /** column name */
   | 'tenantId'
   /** column name */
-  | 'updatedAt';
+  | 'updatedAt'
+  /** column name */
+  | 'validationErrors';
+
+/** select "Tariffs_aggregate_bool_exp_bool_and_arguments_columns" columns of table "Tariffs" */
+export type Tariffs_Select_Column_Tariffs_Aggregate_Bool_Exp_Bool_And_Arguments_Columns =
+  /** column name */
+  'isPublished';
+
+/** select "Tariffs_aggregate_bool_exp_bool_or_arguments_columns" columns of table "Tariffs" */
+export type Tariffs_Select_Column_Tariffs_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns =
+  /** column name */
+  'isPublished';
 
 /** input type for updating data in table "Tariffs" */
 export type Tariffs_Set_Input = {
@@ -20275,15 +20620,19 @@ export type Tariffs_Set_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   currency?: InputMaybe<Scalars['bpchar']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   paymentFee?: InputMaybe<Scalars['numeric']['input']>;
   pricePerKwh?: InputMaybe<Scalars['numeric']['input']>;
   pricePerMin?: InputMaybe<Scalars['numeric']['input']>;
   pricePerSession?: InputMaybe<Scalars['numeric']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   tariffAltText?: InputMaybe<Scalars['String']['input']>;
   taxRate?: InputMaybe<Scalars['numeric']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate stddev on columns */
@@ -20379,15 +20728,19 @@ export type Tariffs_Stream_Cursor_Value_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']['input']>;
   currency?: InputMaybe<Scalars['bpchar']['input']>;
   id?: InputMaybe<Scalars['Int']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lastPublicationAttempt?: InputMaybe<Scalars['timestamptz']['input']>;
   paymentFee?: InputMaybe<Scalars['numeric']['input']>;
   pricePerKwh?: InputMaybe<Scalars['numeric']['input']>;
   pricePerMin?: InputMaybe<Scalars['numeric']['input']>;
   pricePerSession?: InputMaybe<Scalars['numeric']['input']>;
+  publishedToPartners?: InputMaybe<Scalars['jsonb']['input']>;
   stationId?: InputMaybe<Scalars['String']['input']>;
   tariffAltText?: InputMaybe<Scalars['String']['input']>;
   taxRate?: InputMaybe<Scalars['numeric']['input']>;
   tenantId?: InputMaybe<Scalars['Int']['input']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']['input']>;
+  validationErrors?: InputMaybe<Scalars['jsonb']['input']>;
 };
 
 /** aggregate sum on columns */
@@ -20429,6 +20782,10 @@ export type Tariffs_Update_Column =
   /** column name */
   | 'id'
   /** column name */
+  | 'isPublished'
+  /** column name */
+  | 'lastPublicationAttempt'
+  /** column name */
   | 'paymentFee'
   /** column name */
   | 'pricePerKwh'
@@ -20436,6 +20793,8 @@ export type Tariffs_Update_Column =
   | 'pricePerMin'
   /** column name */
   | 'pricePerSession'
+  /** column name */
+  | 'publishedToPartners'
   /** column name */
   | 'stationId'
   /** column name */
@@ -20445,11 +20804,23 @@ export type Tariffs_Update_Column =
   /** column name */
   | 'tenantId'
   /** column name */
-  | 'updatedAt';
+  | 'updatedAt'
+  /** column name */
+  | 'validationErrors';
 
 export type Tariffs_Updates = {
+  /** append existing jsonb value of filtered columns with new jsonb value */
+  _append?: InputMaybe<Tariffs_Append_Input>;
+  /** delete the field or element with specified path (for JSON arrays, negative integers count from the end) */
+  _delete_at_path?: InputMaybe<Tariffs_Delete_At_Path_Input>;
+  /** delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array */
+  _delete_elem?: InputMaybe<Tariffs_Delete_Elem_Input>;
+  /** delete key/value pair or string element. key/value pairs are matched based on their key value */
+  _delete_key?: InputMaybe<Tariffs_Delete_Key_Input>;
   /** increments the numeric columns with given value of the filtered values */
   _inc?: InputMaybe<Tariffs_Inc_Input>;
+  /** prepend existing jsonb value of filtered columns with new jsonb value */
+  _prepend?: InputMaybe<Tariffs_Prepend_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Tariffs_Set_Input>;
   /** filter the rows which have to be updated */
@@ -29495,14 +29866,24 @@ export type Mutation_RootUpdate_CompositeSchedules_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_ConnectorsArgs = {
+  _append?: InputMaybe<Connectors_Append_Input>;
+  _delete_at_path?: InputMaybe<Connectors_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Connectors_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Connectors_Delete_Key_Input>;
   _inc?: InputMaybe<Connectors_Inc_Input>;
+  _prepend?: InputMaybe<Connectors_Prepend_Input>;
   _set?: InputMaybe<Connectors_Set_Input>;
   where: Connectors_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Connectors_By_PkArgs = {
+  _append?: InputMaybe<Connectors_Append_Input>;
+  _delete_at_path?: InputMaybe<Connectors_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Connectors_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Connectors_Delete_Key_Input>;
   _inc?: InputMaybe<Connectors_Inc_Input>;
+  _prepend?: InputMaybe<Connectors_Prepend_Input>;
   _set?: InputMaybe<Connectors_Set_Input>;
   pk_columns: Connectors_Pk_Columns_Input;
 };
@@ -29552,14 +29933,24 @@ export type Mutation_RootUpdate_EvseTypes_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_EvsesArgs = {
+  _append?: InputMaybe<Evses_Append_Input>;
+  _delete_at_path?: InputMaybe<Evses_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Evses_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Evses_Delete_Key_Input>;
   _inc?: InputMaybe<Evses_Inc_Input>;
+  _prepend?: InputMaybe<Evses_Prepend_Input>;
   _set?: InputMaybe<Evses_Set_Input>;
   where: Evses_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Evses_By_PkArgs = {
+  _append?: InputMaybe<Evses_Append_Input>;
+  _delete_at_path?: InputMaybe<Evses_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Evses_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Evses_Delete_Key_Input>;
   _inc?: InputMaybe<Evses_Inc_Input>;
+  _prepend?: InputMaybe<Evses_Prepend_Input>;
   _set?: InputMaybe<Evses_Set_Input>;
   pk_columns: Evses_Pk_Columns_Input;
 };
@@ -30011,14 +30402,24 @@ export type Mutation_RootUpdate_Subscriptions_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_TariffsArgs = {
+  _append?: InputMaybe<Tariffs_Append_Input>;
+  _delete_at_path?: InputMaybe<Tariffs_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Tariffs_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Tariffs_Delete_Key_Input>;
   _inc?: InputMaybe<Tariffs_Inc_Input>;
+  _prepend?: InputMaybe<Tariffs_Prepend_Input>;
   _set?: InputMaybe<Tariffs_Set_Input>;
   where: Tariffs_Bool_Exp;
 };
 
 /** mutation root */
 export type Mutation_RootUpdate_Tariffs_By_PkArgs = {
+  _append?: InputMaybe<Tariffs_Append_Input>;
+  _delete_at_path?: InputMaybe<Tariffs_Delete_At_Path_Input>;
+  _delete_elem?: InputMaybe<Tariffs_Delete_Elem_Input>;
+  _delete_key?: InputMaybe<Tariffs_Delete_Key_Input>;
   _inc?: InputMaybe<Tariffs_Inc_Input>;
+  _prepend?: InputMaybe<Tariffs_Prepend_Input>;
   _set?: InputMaybe<Tariffs_Set_Input>;
   pk_columns: Tariffs_Pk_Columns_Input;
 };
