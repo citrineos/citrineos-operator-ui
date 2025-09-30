@@ -2,20 +2,33 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table, Button } from 'antd';
-import React, { useMemo } from 'react';
+import { Table, Button, Space } from 'antd';
+import React, { useMemo, useState } from 'react';
 import { IConnectorDto } from '@citrineos/base';
+import { ConnectorPublishModal } from './connector.publish.modal';
 
 interface ConnectorsTableProps {
   connectors: IConnectorDto[];
   onEdit: (connector: IConnectorDto) => void;
-  onAdd: () => void;
 }
 
 export const ConnectorsTable: React.FC<ConnectorsTableProps> = ({
   connectors,
   onEdit,
 }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedConnector, setSelectedConnector] = useState<IConnectorDto | null>(null);
+
+  const showModal = (connector: IConnectorDto) => {
+    setSelectedConnector(connector);
+    setIsModalVisible(true);
+  };
+
+  const handleClose = () => {
+    setIsModalVisible(false);
+    setSelectedConnector(null);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -49,9 +62,14 @@ export const ConnectorsTable: React.FC<ConnectorsTableProps> = ({
         title: 'Actions',
         key: 'actions',
         render: (_: any, record: IConnectorDto) => (
-          <Button className="Secondary" onClick={() => onEdit(record)}>
-            Edit
-          </Button>
+          <Space>
+            <Button className="Secondary" onClick={() => onEdit(record)}>
+              Edit
+            </Button>
+            <Button className="Primary" onClick={() => showModal(record)}>
+              Publish
+            </Button>
+          </Space>
         ),
       },
     ],
@@ -67,6 +85,13 @@ export const ConnectorsTable: React.FC<ConnectorsTableProps> = ({
         pagination={false}
         size="small"
       />
+      {selectedConnector && (
+        <ConnectorPublishModal
+          connector={selectedConnector}
+          visible={isModalVisible}
+          onClose={handleClose}
+        />
+      )}
     </div>
   );
 };

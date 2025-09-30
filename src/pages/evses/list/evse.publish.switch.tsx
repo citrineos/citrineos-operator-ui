@@ -3,14 +3,24 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Alert, Modal, Select, Space, Switch, Tooltip } from 'antd';
+import {
+  Alert,
+  Modal,
+  Select,
+  Space,
+  Switch,
+  Tooltip,
+  Checkbox,
+  Row,
+  Col,
+} from 'antd';
 import { useList } from '@refinedev/core';
 import { useNotification } from '@refinedev/core';
 import { useMutation } from '@tanstack/react-query';
 import { OcpiRestClient } from '@util/OcpiRestClient';
 import { PARTNERS_LIST_QUERY } from '../../partners/queries';
 import config from '@util/config';
-import { IEvseDto, IChargingStationDto } from '@citrineos/base';
+import { IEvseDto, IChargingStationDto, IConnectorDto } from '@citrineos/base';
 
 // TODO: These should be defined in a shared types file
 interface PublishResponse {
@@ -28,8 +38,9 @@ interface Partner {
   partyId: string;
 }
 
-interface PublishRequest {
+interface PublishEvseRequest {
   partnerIds?: string[];
+  connectorIds?: string[];
 }
 
 export interface EvsePublishSwitchProps {
@@ -47,7 +58,12 @@ export const EvsePublishSwitch = ({
   const [isPublishModalVisible, setIsPublishModalVisible] =
     React.useState(false);
   const [selectedPartners, setSelectedPartners] = React.useState<string[]>([]);
+  const [selectedConnectors, setSelectedConnectors] = React.useState<string[]>(
+    [],
+  );
   const effectivePublished = evse.isPublished || optimisticPublished;
+
+  const connectors = (evse.connectors as IConnectorDto[]) || [];
 
   const { data: partnersData, isLoading: isLoadingPartners } = useList<Partner>(
     {
@@ -70,18 +86,12 @@ export const EvsePublishSwitch = ({
     })) || [];
 
   const { mutate: publishEvse, isLoading: isPublishing } = useMutation({
-    mutationFn: async (partnerIds?: string[]) => {
+    mutationFn: async (request: PublishEvseRequest) => {
       const client = new OcpiRestClient();
-      const requestData: PublishRequest = {};
-
-      if (partnerIds && partnerIds.length > 0) {
-        requestData.partnerIds = partnerIds;
-      }
-
       return client.post<PublishResponse>(
         `locations/${station.locationId}/evses/${evse.id}/publish`,
         {},
-        requestData,
+        request,
       );
     },
     onSuccess: (data: PublishResponse) => {
@@ -89,7 +99,7 @@ export const EvsePublishSwitch = ({
         open?.({
           type: 'success',
           message: 'Publication Successful',
-          description: `EVSE with ${data?.publishedConnectors || 0} connectors published to ${data?.publishedToPartners?.length || 0} partners`,
+          description: `EVSE published to ${data?.publishedToPartners?.length || 0} partners. ${data?.publishedConnectors || 0} connectors updated.`,
         });
       } else {
         open?.({
@@ -102,23 +112,25 @@ export const EvsePublishSwitch = ({
               ))}
             </ul>
           ) : (
-            'Failed to publish EVSE hierarchy'
+            'Failed to publish EVSE'
           ),
         });
         setOptimisticPublished(false);
       }
       setIsPublishModalVisible(false);
       setSelectedPartners([]);
+      setSelectedConnectors([]);
     },
     onError: (error: any) => {
       open?.({
         type: 'error',
         message: 'Publication Failed',
-        description: error?.message || 'Failed to publish EVSE hierarchy',
+        description: error?.message || 'Failed to publish EVSE',
       });
       setOptimisticPublished(false);
       setIsPublishModalVisible(false);
       setSelectedPartners([]);
+      setSelectedConnectors([]);
     },
   });
 
@@ -129,21 +141,27 @@ export const EvsePublishSwitch = ({
 
   const handlePublish = () => {
     setOptimisticPublished(true);
-    publishEvse(selectedPartners.length > 0 ? selectedPartners : undefined);
+    const request: PublishEvseRequest = {};
+    if (selectedPartners.length > 0) {
+      request.partnerIds = selectedPartners;
+    }
+    if (selectedConnectors.length > 0) {
+      request.connectorIds = selectedConnectors;
+    }
+    publishEvse(request);
   };
 
   const handleModalCancel = () => {
     setIsPublishModalVisible(false);
     setSelectedPartners([]);
+    setSelectedConnectors([]);
   };
 
   return (
     <>
       <Tooltip
         title={
-          effectivePublished
-            ? 'Already published'
-            : 'Publish EVSE & its connectors upstream'
+          effectivePublished ? 'Already published' : 'Publish EVSE upstream'
         }
       >
         <Switch
@@ -157,19 +175,19 @@ export const EvsePublishSwitch = ({
       </Tooltip>
 
       <Modal
-        title="Publish EVSE Hierarchy to OCPI Partners"
+        title="Publish EVSE to OCPI Partners"
         open={isPublishModalVisible}
         onOk={handlePublish}
         onCancel={handleModalCancel}
         confirmLoading={isPublishing}
-        okText="Publish EVSE & Connectors"
+        okText="Publish EVSE"
         cancelText="Cancel"
         width={600}
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           <Alert
-            message="EVSE Hierarchy Publication"
-            description="This will publish the EVSE and all its connectors as a complete unit to OCPI partners."
+            message="EVSE Publication"
+            description="This will publish the EVSE to OCPI partners. You can also select connectors to publish."
             type="info"
             showIcon
           />
@@ -193,6 +211,27 @@ export const EvsePublishSwitch = ({
               loading={isLoadingPartners}
               disabled={isLoadingPartners || availablePartners.length === 0}
             />
+          </div>
+
+          <div>
+            <span>Select connectors to publish (optional):</span>
+            <Checkbox.Group
+              style={{ width: '100%', marginTop: 8 }}
+              onChange={(checkedValues) =>
+                setSelectedConnectors(checkedValues as string[])
+              }
+              value={selectedConnectors}
+            >
+              <Row>
+                {connectors.map((connector) => (
+                  <Col span={8} key={connector.id}>
+                    <Checkbox value={connector.id}>
+                      {connector.connectorId}
+                    </Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </Checkbox.Group>
           </div>
 
           {selectedPartners.length === 0 && availablePartners.length > 0 && (

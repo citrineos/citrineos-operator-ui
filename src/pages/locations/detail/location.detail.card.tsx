@@ -15,13 +15,16 @@ import {
   Modal,
   Select,
   Space,
+  Checkbox,
+  Row,
+  Col,
 } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CanAccess, useNavigation, useList } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
-import { ILocationDto } from '@citrineos/base';
+import { ILocationDto, IEvseDto } from '@citrineos/base';
 import { EditOutlined } from '@ant-design/icons';
 import { NOT_APPLICABLE } from '@util/consts';
 import { useNotification } from '@refinedev/core';
@@ -48,6 +51,7 @@ interface Partner {
 
 interface PublishLocationRequest {
   partnerIds?: string[];
+  evseIds?: string[];
 }
 
 export interface LocationDetailCardProps {
@@ -64,7 +68,12 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
   const [isPublishModalVisible, setIsPublishModalVisible] =
     React.useState(false);
   const [selectedPartners, setSelectedPartners] = React.useState<string[]>([]);
+  const [selectedEvses, setSelectedEvses] = React.useState<string[]>([]);
   const effectivePublished = location.isPublished || optimisticPublished;
+
+  const evses = location.chargingPool?.flatMap(
+    (cp) => cp.evses || [],
+  ) as IEvseDto[];
 
   // Fetch partners data
   const { data: partnersData, isLoading: isLoadingPartners } = useList<Partner>(
@@ -90,18 +99,12 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
     })) || [];
 
   const { mutate: publishLocation, isLoading: isPublishing } = useMutation({
-    mutationFn: async (partnerIds?: string[]) => {
+    mutationFn: async (request: PublishLocationRequest) => {
       const client = new OcpiRestClient();
-      const requestData: PublishLocationRequest = {};
-
-      if (partnerIds && partnerIds.length > 0) {
-        requestData.partnerIds = partnerIds;
-      }
-
       return client.post<PublishLocationResponse>(
         `locations/${location.id}/publish`,
         {},
-        requestData,
+        request,
       );
     },
     onSuccess: (data: PublishLocationResponse) => {
@@ -109,11 +112,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
         open?.({
           type: 'success',
           message: 'Publication Successful',
-          description: `Location with ${
-            data?.publishedEvses || 0
-          } EVSEs and ${data?.publishedConnectors || 0} connectors published to ${
-            data?.publishedToPartners?.length || 0
-          } partners`,
+          description: `Location published to ${data?.publishedToPartners?.length || 0} partners. ${data?.publishedEvses || 0} EVSEs updated.`,
         });
       } else {
         open?.({
@@ -126,46 +125,51 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
               ))}
             </ul>
           ) : (
-            'Failed to publish location hierarchy to OCPI partners'
+            'Failed to publish location to OCPI partners'
           ),
         });
         setOptimisticPublished(false);
       }
       setIsPublishModalVisible(false);
       setSelectedPartners([]);
+      setSelectedEvses([]);
     },
     onError: (error: any) => {
       open?.({
         type: 'error',
         message: 'Publication Failed',
         description:
-          error?.message ||
-          'Failed to publish location hierarchy to OCPI partners',
+          error?.message || 'Failed to publish location to OCPI partners',
       });
       setOptimisticPublished(false);
       setIsPublishModalVisible(false);
       setSelectedPartners([]);
+      setSelectedEvses([]);
     },
   });
 
   const handleToggleChange = (checked: boolean) => {
-    // Only support publishing (one-way). Ignore attempts to un-check.
     if (!checked) return;
     if (effectivePublished || isPublishing) return;
-
-    // Show partner selection modal
     setIsPublishModalVisible(true);
   };
 
   const handlePublish = () => {
-    // Optimistic UI update
     setOptimisticPublished(true);
-    publishLocation(selectedPartners.length > 0 ? selectedPartners : undefined);
+    const request: PublishLocationRequest = {};
+    if (selectedPartners.length > 0) {
+      request.partnerIds = selectedPartners;
+    }
+    if (selectedEvses.length > 0) {
+      request.evseIds = selectedEvses;
+    }
+    publishLocation(request);
   };
 
   const handleModalCancel = () => {
     setIsPublishModalVisible(false);
     setSelectedPartners([]);
+    setSelectedEvses([]);
   };
 
   return (
@@ -242,7 +246,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
             title={
               effectivePublished
                 ? 'Already published'
-                : 'Publish location & full hierarchy upstream'
+                : 'Publish location upstream'
             }
           >
             <Switch
@@ -259,8 +263,8 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
           message={effectivePublished ? 'Published' : 'Not Published'}
           description={
             effectivePublished
-              ? 'This location hierarchy has been (or is being) published to OCPI partners.'
-              : 'Toggle to publish this location (including EVSEs & connectors) to all OCPI partners.'
+              ? 'This location has been (or is being) published to OCPI partners.'
+              : 'Toggle to publish this location to all OCPI partners.'
           }
           type={effectivePublished ? 'success' : 'info'}
           showIcon
@@ -289,19 +293,19 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
 
       {/* Publish Modal */}
       <Modal
-        title="Publish Location Hierarchy to OCPI Partners"
+        title="Publish Location to OCPI Partners"
         open={isPublishModalVisible}
         onOk={handlePublish}
         onCancel={handleModalCancel}
         confirmLoading={isPublishing}
-        okText="Publish Complete Location"
+        okText="Publish Location"
         cancelText="Cancel"
         width={600}
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           <Alert
-            message="Complete Location Publication"
-            description="This will publish the location and all its charging stations, EVSEs, and connectors as a complete unit to OCPI partners."
+            message="Location Publication"
+            description="This will publish the location to OCPI partners. You can also select EVSEs to publish."
             type="info"
             showIcon
           />
@@ -327,15 +331,25 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
               loading={isLoadingPartners}
               disabled={isLoadingPartners || availablePartners.length === 0}
             />
-            {!isLoadingPartners && availablePartners.length === 0 && (
-              <Alert
-                message="No OCPI partners configured"
-                description="No partners are available for this tenant. Please configure OCPI partners before publishing."
-                type="warning"
-                showIcon
-                style={{ marginTop: 8 }}
-              />
-            )}
+          </div>
+
+          <div>
+            <span>Select EVSEs to publish (optional):</span>
+            <Checkbox.Group
+              style={{ width: '100%', marginTop: 8 }}
+              onChange={(checkedValues) =>
+                setSelectedEvses(checkedValues as string[])
+              }
+              value={selectedEvses}
+            >
+              <Row>
+                {evses.map((evse) => (
+                  <Col span={8} key={evse.id}>
+                    <Checkbox value={evse.id}>{evse.evseId}</Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </Checkbox.Group>
           </div>
 
           {selectedPartners.length === 0 && availablePartners.length > 0 && (
@@ -346,29 +360,6 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
               showIcon
             />
           )}
-
-          <Alert
-            message="Validation Requirements"
-            description={
-              <ul style={{ margin: 0, paddingLeft: 16 }}>
-                <li>
-                  Location must have name, address, city, country, and
-                  coordinates
-                </li>
-                <li>Location must have at least one charging station</li>
-                <li>
-                  Each charging station must have at least one EVSE with an EVSE
-                  ID
-                </li>
-                <li>
-                  Each EVSE must have at least one connector with type, format,
-                  and power type
-                </li>
-              </ul>
-            }
-            type="warning"
-            showIcon
-          />
         </Space>
       </Modal>
     </Flex>
