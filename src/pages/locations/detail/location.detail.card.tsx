@@ -273,21 +273,7 @@ export const LocationDetailCard = ({ location }: LocationDetailCardProps) => {
           type={effectivePublished ? 'success' : 'info'}
           showIcon
         />
-        {location.validationErrors?.length ? (
-          <Alert
-            style={{ marginTop: 8 }}
-            message="Last Validation Errors"
-            description={
-              <ul style={{ margin: 0, paddingLeft: 18 }}>
-                {location.validationErrors.map((e, i) => (
-                  <li key={i}>{e}</li>
-                ))}
-              </ul>
-            }
-            type="error"
-            showIcon
-          />
-        ) : null}
+
         {optimisticPublished && !location.isPublished && (
           <Tag color="processing" style={{ marginTop: 8 }}>
             Publishing…

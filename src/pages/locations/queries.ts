@@ -111,8 +111,6 @@ export const LOCATIONS_GET_QUERY = gql`
       createdAt
       updatedAt
       isPublished
-      validationErrors
-      publishedToPartners
       lastPublicationAttempt
       chargingPool: ChargingStations {
         id

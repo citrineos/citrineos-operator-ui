@@ -2053,8 +2053,6 @@ export type GetLocationByIdQuery = {
       | 'createdAt'
       | 'updatedAt'
       | 'isPublished'
-      | 'validationErrors'
-      | 'publishedToPartners'
       | 'lastPublicationAttempt'
     > & {
       chargingPool: Array<
