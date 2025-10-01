@@ -75,7 +75,7 @@ export const ConnectorPublishModal = ({
     mutationFn: async (request: PublishConnectorRequest) => {
       const client = new OcpiRestClient();
       return client.post<PublishResponse>(
-        `locations/${connector.evse?.chargingStation?.locationId}/evses/${connector.evseId}/connectors/${connector.id}/publish`,
+        `locations/evses/${connector.evseId}/connectors/${connector.id}/publish`,
         {},
         request,
       );

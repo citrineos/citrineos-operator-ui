@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table, Button, Space } from 'antd';
+import { Table, Button, Space, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { IConnectorDto } from '@citrineos/base';
 import { ConnectorPublishModal } from './connector.publish.modal';
@@ -17,7 +17,8 @@ export const ConnectorsTable: React.FC<ConnectorsTableProps> = ({
   onEdit,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedConnector, setSelectedConnector] = useState<IConnectorDto | null>(null);
+  const [selectedConnector, setSelectedConnector] =
+    useState<IConnectorDto | null>(null);
 
   const showModal = (connector: IConnectorDto) => {
     setSelectedConnector(connector);
@@ -66,9 +67,19 @@ export const ConnectorsTable: React.FC<ConnectorsTableProps> = ({
             <Button className="Secondary" onClick={() => onEdit(record)}>
               Edit
             </Button>
-            <Button className="Primary" onClick={() => showModal(record)}>
-              Publish
-            </Button>
+            <Tooltip
+              title={
+                record.isPublished ? 'Already published' : 'Publish connector'
+              }
+            >
+              <Button
+                className="Primary"
+                onClick={() => showModal(record)}
+                disabled={record.isPublished}
+              >
+                {record.isPublished ? 'Published' : 'Publish'}
+              </Button>
+            </Tooltip>
           </Space>
         ),
       },

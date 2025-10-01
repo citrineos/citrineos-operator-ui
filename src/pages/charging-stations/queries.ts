@@ -194,6 +194,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         evseTypeId
         evseId
         physicalReference
+        isPublished
         removed
         createdAt
         updatedAt
@@ -218,6 +219,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
           vendorErrorCode
           createdAt
           updatedAt
+          isPublished
         }
       }
       LatestStatusNotifications {
@@ -271,6 +273,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         vendorErrorCode
         createdAt
         updatedAt
+        isPublished
       }
     }
   }
