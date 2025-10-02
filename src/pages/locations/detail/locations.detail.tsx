@@ -18,7 +18,7 @@ import { ILocationDto } from '@citrineos/base';
 export const LocationsDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data, isLoading, refetch } = useOne<ILocationDto>({
+  const { data, isLoading } = useOne<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     id,
     meta: {
