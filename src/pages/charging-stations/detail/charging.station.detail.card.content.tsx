@@ -258,14 +258,18 @@ export const ChargingStationDetailCardContent = ({
             )}
           </Descriptions.Item>
           <Descriptions.Item label="Latitude">
-            {station.location?.coordinates
-              ? station.location.coordinates.coordinates[1].toFixed(4)
-              : NOT_APPLICABLE}
+            {station.coordinates
+              ? station.coordinates.coordinates[1].toFixed(4)
+              : station.location?.coordinates
+                ? station.location.coordinates.coordinates[1].toFixed(4)
+                : NOT_APPLICABLE}
           </Descriptions.Item>
           <Descriptions.Item label="Longitude">
-            {station.location?.coordinates
-              ? station.location.coordinates.coordinates[0].toFixed(4)
-              : NOT_APPLICABLE}
+            {station.coordinates
+              ? station.coordinates.coordinates[0].toFixed(4)
+              : station.location?.coordinates
+                ? station.location.coordinates.coordinates[0].toFixed(4)
+                : NOT_APPLICABLE}
           </Descriptions.Item>
           <Descriptions.Item label="Status">
             {(station.evses?.length ?? 0) > 0 ? (

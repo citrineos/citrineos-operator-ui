@@ -10,7 +10,17 @@ import {
 } from '../queries';
 import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
-import { AutoComplete, Button, Flex, Form, Input, Modal, Select } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Checkbox,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+} from 'antd';
 import {
   LOCATIONS_LIST_QUERY,
   LOCATIONS_GET_QUERY_BY_ID,
@@ -38,6 +48,7 @@ export const ChargingStationUpsert = () => {
   const stationId = params.id ? params.id : undefined;
   const locationId = searchParams.get('locationId');
   const [isFormChanged, setIsFormChanged] = useState(false);
+  const [useLocationCoordinates, setUseLocationCoordinates] = useState(false);
 
   const { replace, goBack } = useNavigation();
 
@@ -65,6 +76,25 @@ export const ChargingStationUpsert = () => {
   });
 
   const station = formProps.initialValues;
+
+  useEffect(() => {
+    if (station) {
+      const { coordinates } = station;
+      if (coordinates) {
+        formProps.form?.setFieldsValue({
+          longitude: coordinates.coordinates[0],
+          latitude: coordinates.coordinates[1],
+          useLocationCoordinates: false,
+        });
+        setUseLocationCoordinates(false);
+      } else {
+        formProps.form?.setFieldsValue({
+          useLocationCoordinates: true,
+        });
+        setUseLocationCoordinates(true);
+      }
+    }
+  }, [station, formProps.form]);
 
   const { selectProps } = useSelect<ILocationDto>({
     resource: ResourceType.LOCATIONS,
@@ -125,9 +155,20 @@ export const ChargingStationUpsert = () => {
           locationId: selected.value,
           locationName: getLocationNameFromLocation(location),
         });
+        if (useLocationCoordinates) {
+          formProps.form?.setFieldsValue({
+            latitude: location.coordinates?.coordinates[1],
+            longitude: location.coordinates?.coordinates[0],
+          });
+        }
       }
     }
-  }, [station?.locationId, selectProps.options, formProps.form]);
+  }, [
+    station?.locationId,
+    selectProps.options,
+    formProps.form,
+    useLocationCoordinates,
+  ]);
 
   useEffect(() => {
     resetSelectedLocation();
@@ -142,6 +183,12 @@ export const ChargingStationUpsert = () => {
           locationId: locationId,
           locationName: getLocationNameFromLocation(location),
         });
+        if (useLocationCoordinates) {
+          formProps.form?.setFieldsValue({
+            latitude: location.coordinates?.coordinates[1],
+            longitude: location.coordinates?.coordinates[0],
+          });
+        }
       }
     }
   }, [
@@ -149,6 +196,7 @@ export const ChargingStationUpsert = () => {
     selectProps.options,
     locationId,
     resetSelectedLocation,
+    useLocationCoordinates,
   ]);
 
   const getLocationNameFromLocation = useCallback((location: ILocationDto) => {
@@ -166,10 +214,21 @@ export const ChargingStationUpsert = () => {
           locationId: value,
           locationName: getLocationNameFromLocation(location),
         });
+        if (useLocationCoordinates) {
+          formProps.form?.setFieldsValue({
+            latitude: location.coordinates?.coordinates[1],
+            longitude: location.coordinates?.coordinates[0],
+          });
+        }
         handleOnChange();
       }
     },
-    [selectProps.options, formProps.form, getLocationNameFromLocation],
+    [
+      selectProps.options,
+      formProps.form,
+      getLocationNameFromLocation,
+      useLocationCoordinates,
+    ],
   );
 
   const handleOnChange = useCallback(() => {
@@ -203,12 +262,23 @@ export const ChargingStationUpsert = () => {
     async (input: any) => {
       delete input.locationName; // placeholder for AutoComplete input
       const newItem: any = getSerializedValues(input, ChargingStationDto);
+      if (useLocationCoordinates) {
+        newItem.coordinates = null;
+      } else if (newItem.latitude && newItem.longitude) {
+        newItem.coordinates = {
+          type: 'Point',
+          coordinates: [newItem.longitude, newItem.latitude],
+        };
+      }
+      delete newItem.latitude;
+      delete newItem.longitude;
+      delete newItem.useLocationCoordinates;
       if (!stationId) {
         newItem.tenantId = config.tenantId;
       }
       formProps.onFinish?.(newItem);
     },
-    [formProps],
+    [formProps, useLocationCoordinates],
   );
 
   const memoizedOptions = useMemo(() => {
@@ -299,6 +369,58 @@ export const ChargingStationUpsert = () => {
                 onSelect={handleSelect as any}
                 filterOption={false}
                 placeholder="Select a location"
+              />
+            </Form.Item>
+            <Form.Item
+              key="useLocationCoordinates"
+              name="useLocationCoordinates"
+              valuePropName="checked"
+              style={{ width: '32%' }}
+            >
+              <Checkbox
+                onChange={(e) => {
+                  setUseLocationCoordinates(e.target.checked);
+                  if (e.target.checked) {
+                    const locationId =
+                      formProps.form?.getFieldValue('locationId');
+                    const selected = selectProps.options?.find(
+                      (option) => option.value?.toString() === locationId,
+                    );
+                    if (selected) {
+                      const location = JSON.parse(
+                        selected.label as string,
+                      ) as ILocationDto;
+                      formProps.form?.setFieldsValue({
+                        latitude: location.coordinates?.coordinates[1],
+                        longitude: location.coordinates?.coordinates[0],
+                      });
+                    }
+                  }
+                }}
+              >
+                Use Location Coordinates
+              </Checkbox>
+            </Form.Item>
+            <Form.Item
+              key="latitude"
+              label="Latitude"
+              name="latitude"
+              style={{ width: '32%' }}
+            >
+              <InputNumber
+                style={{ width: '100%' }}
+                disabled={useLocationCoordinates}
+              />
+            </Form.Item>
+            <Form.Item
+              key="longitude"
+              label="Longitude"
+              name="longitude"
+              style={{ width: '32%' }}
+            >
+              <InputNumber
+                style={{ width: '100%' }}
+                disabled={useLocationCoordinates}
               />
             </Form.Item>
             <Form.Item
