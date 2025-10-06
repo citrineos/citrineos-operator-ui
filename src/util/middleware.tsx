@@ -10,6 +10,10 @@ import { defaultMetadataStorage } from '@util/DefaultMetadataStorage';
 import 'reflect-metadata';
 
 const convertTimestampsToPlain = (obj: any, dtoClass?: any): any => {
+  if (obj instanceof Date) {
+    return obj.toISOString();
+  }
+
   if (Array.isArray(obj)) {
     return obj.map((item: any) => convertTimestampsToPlain(item, dtoClass));
   }
@@ -34,6 +38,8 @@ const convertTimestampsToPlain = (obj: any, dtoClass?: any): any => {
         acc[transformedKey] = dayjs(value).toISOString();
       } else if (value?._isAMomentObject) {
         acc[transformedKey] = moment(value).toISOString();
+      } else if (value instanceof Date) {
+        acc[transformedKey] = value.toISOString();
       } else {
         acc[transformedKey] = convertTimestampsToPlain(value, dtoClass); // Recursively process nested objects
       }

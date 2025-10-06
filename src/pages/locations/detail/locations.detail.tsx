@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Card } from 'antd';
+import { Card, Tabs } from 'antd';
 import './style.scss';
 import { useParams } from 'react-router-dom';
 import { CanAccess, useOne } from '@refinedev/core';
@@ -14,6 +14,7 @@ import { LocationsChargingStationsTable } from '../list/locations.charging.stati
 import { LocationDetailCard } from './location.detail.card';
 import { ActionType, ResourceType } from '@util/auth';
 import { ILocationDto } from '@citrineos/base';
+import { OpeningHoursDisplay } from '../../../components/opening-hours';
 
 export const LocationsDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,7 +45,14 @@ export const LocationsDetail = () => {
         </Card>
 
         <Card>
-          <LocationsChargingStationsTable location={location} showHeader />
+          <Tabs defaultActiveKey="1">
+            <Tabs.TabPane tab="Charging Stations" key="1">
+              <LocationsChargingStationsTable location={location} showHeader />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Opening Hours" key="2">
+              <OpeningHoursDisplay openingHours={location.openingHours} />
+            </Tabs.TabPane>
+          </Tabs>
         </Card>
       </div>
     </CanAccess>
