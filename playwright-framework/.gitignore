@@ -1,0 +1,19 @@
+# IDE
+.vscode/
+.idea/
+
+# Editor directories and files
+.env
+
+# dependencies
+node_modules/
+package-lock.json
+
+# artifacts
+test-results/
+playwright-report/
+
+# data
+
+apqpData1.json
+context/
