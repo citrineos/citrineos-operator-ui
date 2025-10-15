@@ -14,9 +14,9 @@ import {
 } from '../queries';
 import { GetOneResponse } from '@refinedev/core';
 import { useParams } from 'react-router-dom';
-import { ITenantPartnerDtoProps } from '../../../../../citrineos-core/00_Base';
 import config from '@util/config';
 import { getSerializedValues } from '@util/middleware';
+import { ITenantPartnerDtoProps } from '@citrineos/base';
 
 export const PartnersUpsert = () => {
   const { id } = useParams();

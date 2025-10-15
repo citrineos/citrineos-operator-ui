@@ -74,7 +74,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
       const enhancedLocation = { ...location };
 
       // Add react content to the location's charging stations if needed
-      enhancedLocation.chargingPool = enhancedLocation.chargingPool.map(
+      enhancedLocation.chargingPool = enhancedLocation.chargingPool?.map(
         (station) => ({
           ...station,
           reactContent: null, // If you need custom content for station markers
