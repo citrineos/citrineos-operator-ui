@@ -4,26 +4,29 @@
 
 import { Flex } from 'antd';
 import { useNavigation } from '@refinedev/core';
-import { Circle, CircleStatusEnum } from './circle/circle';
+import { Circle } from './circle/circle';
 import React from 'react';
-import { ChargingStationDto } from '../../dtos/charging.station.dto';
-import { EvseDto } from 'src/dtos/evse.dto';
 import { MenuSection } from '../../components/main-menu/main.menu';
+import { IChargingStationDto } from '@citrineos/base';
+import { IEvseDto } from '@citrineos/base';
+import { ChargerStatusEnum } from './charger-activity/charger.activity.card';
 
 export interface ChargerRowProps {
-  chargingStation: ChargingStationDto;
-  evse?: EvseDto;
+  chargingStation: IChargingStationDto;
+  evse?: IEvseDto;
+  lastStatus?: ChargerStatusEnum;
   circleColor?: string;
 }
 
 export const ChargerRow: React.FC<ChargerRowProps> = ({
   chargingStation,
   evse,
+  lastStatus,
   circleColor,
 }) => {
   const { push } = useNavigation();
   const label = evse
-    ? `${chargingStation.id}:EVSE ${evse.connectorId}`
+    ? `${chargingStation.id}:EVSE ${evse.id}`
     : chargingStation.id;
 
   return (
@@ -40,18 +43,18 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
               Station: <span className="link">{label}</span>
             </strong>
             <div style={{ width: '8px' }} />
-            <Circle color={circleColor} status={CircleStatusEnum.ERROR} />
+            <Circle color={circleColor} status={lastStatus} />
           </Flex>
         </Flex>
         <Flex
           justify="space-between"
           onClick={() =>
-            push(`/${MenuSection.LOCATIONS}/${chargingStation.Location?.id}`)
+            push(`/${MenuSection.LOCATIONS}/${chargingStation.location?.id}`)
           }
         >
           <div>
             Location:{' '}
-            <span className="link">{chargingStation.Location?.name}</span>
+            <span className="link">{chargingStation.location?.name}</span>
           </div>
         </Flex>
       </Flex>

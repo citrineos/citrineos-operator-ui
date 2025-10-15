@@ -5,7 +5,6 @@
 import { AutoComplete, Input, Row } from 'antd';
 import React, { useState, useMemo } from 'react';
 import { LocationDto } from '../../../dtos/location.dto';
-import { LocationMarker } from './location-marker';
 import { useTable } from '@refinedev/antd';
 import { ResourceType } from '@util/auth';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
@@ -13,7 +12,8 @@ import { LOCATIONS_LIST_QUERY } from '../queries';
 import { plainToInstance } from 'class-transformer';
 import './style.scss';
 // Import the new LocationMap component instead of GoogleMapWithMarkers
-import { LocationMap } from '../../../components/map/map';
+import { LocationMap } from '../../../components/map';
+import { ILocationDto } from '@citrineos/base';
 
 export interface LocationsMapProps {
   mapOnly?: boolean;
@@ -22,7 +22,9 @@ export interface LocationsMapProps {
 export const LocationsMap: React.FC<LocationsMapProps> = ({
   mapOnly = false,
 }: LocationsMapProps) => {
-  const [filteredLocations, setFilteredLocations] = useState<LocationDto[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<ILocationDto[]>(
+    [],
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocationId, setSelectedLocationId] = useState<
     string | undefined
@@ -47,9 +49,9 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const lowerCaseQuery = query.toLowerCase();
 
     const filtered =
-      (tableProps.dataSource as unknown as LocationDto[])?.filter(
-        (location: LocationDto) =>
-          location.chargingStations?.some((station) =>
+      (tableProps.dataSource as unknown as ILocationDto[])?.filter(
+        (location: ILocationDto) =>
+          location.chargingPool?.some((station) =>
             station.id.includes(lowerCaseQuery),
           ) ||
           location.address?.toLowerCase().includes(lowerCaseQuery) ||
@@ -64,7 +66,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const locationsData =
       (searchQuery.length > 0
         ? filteredLocations
-        : (tableProps.dataSource as unknown as LocationDto[])) || [];
+        : (tableProps.dataSource as ILocationDto[])) || [];
 
     // Enhance locations with custom react content for markers
     return locationsData.map((location) => {
@@ -72,7 +74,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
       const enhancedLocation = { ...location };
 
       // Add react content to the location's charging stations if needed
-      enhancedLocation.chargingStations = enhancedLocation.chargingStations.map(
+      enhancedLocation.chargingPool = enhancedLocation.chargingPool?.map(
         (station) => ({
           ...station,
           reactContent: null, // If you need custom content for station markers
@@ -89,7 +91,6 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     type: 'station' | 'location' | 'mixed',
   ) => {
     console.debug(`Marker ${id} clicked, type: ${type}`);
-    setSelectedLocationId(id);
 
     if (type === 'location') {
       // Navigate to location detail page when a location marker is clicked
@@ -125,9 +126,8 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
             onSearch={handleSearch}
             onChange={setSearchQuery}
             onSelect={(value, option) => {
-              // Access the location through the option's data property
-              if (option && option.data) {
-                window.location.href = `/locations/${option.data.id}`;
+              if (option?.data && option.data.id) {
+                setSelectedLocationId(option.data.id.toString());
               }
             }}
             filterOption={(inputValue, option) =>

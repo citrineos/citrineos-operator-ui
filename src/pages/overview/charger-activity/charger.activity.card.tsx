@@ -12,13 +12,17 @@ import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { ChargerRow } from '../charger.row';
 import { AnimatePresence, motion } from 'framer-motion';
 import { IoClose } from 'react-icons/io5';
-import { TransactionDto } from 'src/dtos/transaction.dto';
-import { EvseDto } from 'src/dtos/evse.dto';
 import { plainToInstance } from 'class-transformer';
-import { LatestStatusNotificationDto } from 'src/dtos/latest.status.notification.dto';
 import { CanAccess } from '@refinedev/core';
 import { ResourceType, ActionType } from '@util/auth';
 import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
+import {
+  IChargingStationDto,
+  ILatestStatusNotificationDto,
+  ITransactionDto,
+  IEvseDto,
+} from '@citrineos/base';
+import { LatestStatusNotificationDto } from '../../../dtos/latest.status.notification.dto';
 
 export enum ChargerStatusEnum {
   CHARGING = 'Charging',
@@ -26,22 +30,37 @@ export enum ChargerStatusEnum {
   AVAILABLE = 'Available',
   UNAVAILABLE = 'Unavailable',
   FAULTED = 'Faulted',
+  OFFLINE = 'Offline',
+  ONLINE = 'Online',
 }
 
 interface ChargerItem {
-  station: ChargingStationDto;
-  evse: EvseDto;
+  station: IChargingStationDto;
+  evse: IEvseDto;
+  lastStatus?: ChargerStatusEnum;
 }
 
+const statusPriority: Record<ChargerStatusEnum, number> = {
+  [ChargerStatusEnum.AVAILABLE]: 1,
+  [ChargerStatusEnum.CHARGING]: 2,
+  [ChargerStatusEnum.CHARGING_SUSPENDED]: 3,
+  [ChargerStatusEnum.UNAVAILABLE]: 4,
+  [ChargerStatusEnum.FAULTED]: 5,
+  [ChargerStatusEnum.OFFLINE]: 6,
+  [ChargerStatusEnum.ONLINE]: 7,
+};
+
 interface OnlineStatusCounts {
-  [ChargerStatusEnum.CHARGING]: { count: number; items: Set<ChargerItem> };
+  [ChargerStatusEnum.CHARGING]: { count: number; items: Array<ChargerItem> };
   [ChargerStatusEnum.CHARGING_SUSPENDED]: {
     count: number;
-    items: Set<ChargerItem>;
+    items: Array<ChargerItem>;
   };
-  [ChargerStatusEnum.AVAILABLE]: { count: number; items: Set<ChargerItem> };
-  [ChargerStatusEnum.UNAVAILABLE]: { count: number; items: Set<ChargerItem> };
-  [ChargerStatusEnum.FAULTED]: { count: number; items: Set<ChargerItem> };
+  [ChargerStatusEnum.AVAILABLE]: { count: number; items: Array<ChargerItem> };
+  [ChargerStatusEnum.UNAVAILABLE]: { count: number; items: Array<ChargerItem> };
+  [ChargerStatusEnum.FAULTED]: { count: number; items: Array<ChargerItem> };
+  [ChargerStatusEnum.OFFLINE]: { count: number; items: Array<ChargerItem> };
+  [ChargerStatusEnum.ONLINE]: { count: number; items: Array<ChargerItem> };
 }
 
 const aggregateOnlineStatusCounts = (
@@ -51,111 +70,140 @@ const aggregateOnlineStatusCounts = (
   Object.values(ChargerStatusEnum).forEach((status) => {
     finalCounts[status].count += stationCounts[status].count;
     stationCounts[status].items.forEach((item) =>
-      finalCounts[status].items.add(item),
+      finalCounts[status].items.push(item),
     );
   });
 };
 
 const getNewCounts = (): OnlineStatusCounts => ({
-  [ChargerStatusEnum.CHARGING]: { count: 0, items: new Set() },
-  [ChargerStatusEnum.CHARGING_SUSPENDED]: { count: 0, items: new Set() },
-  [ChargerStatusEnum.AVAILABLE]: { count: 0, items: new Set() },
-  [ChargerStatusEnum.UNAVAILABLE]: { count: 0, items: new Set() },
-  [ChargerStatusEnum.FAULTED]: { count: 0, items: new Set() },
+  [ChargerStatusEnum.CHARGING]: { count: 0, items: [] },
+  [ChargerStatusEnum.CHARGING_SUSPENDED]: { count: 0, items: [] },
+  [ChargerStatusEnum.AVAILABLE]: { count: 0, items: [] },
+  [ChargerStatusEnum.UNAVAILABLE]: { count: 0, items: [] },
+  [ChargerStatusEnum.FAULTED]: { count: 0, items: [] },
+  [ChargerStatusEnum.OFFLINE]: { count: 0, items: [] },
+  [ChargerStatusEnum.ONLINE]: { count: 0, items: [] },
 });
 
 const getOnlineStatusCountsForStation = (
-  chargingStation: ChargingStationDto,
+  chargingStation: IChargingStationDto,
 ): OnlineStatusCounts => {
-  chargingStation = plainToInstance(ChargingStationDto, chargingStation);
+  chargingStation = plainToInstance(
+    ChargingStationDto,
+    chargingStation,
+  ) as IChargingStationDto;
   const counts: OnlineStatusCounts = getNewCounts();
 
-  chargingStation.evses?.forEach((evse) => {
-    const latestStatus = chargingStation.latestStatusNotifications?.find(
+  chargingStation.evses?.forEach((evse: IEvseDto) => {
+    const latestStatusNotification: LatestStatusNotificationDto = (
+      chargingStation as any
+    ).latestStatusNotifications?.find(
       (latest: LatestStatusNotificationDto) =>
         latest.statusNotification &&
-        (latest.statusNotification.evseId === undefined ||
-          latest.statusNotification.evseId === evse.id) &&
-        latest.statusNotification.connectorId === evse.connectorId,
+        (latest.statusNotification.evseId === null ||
+          latest.statusNotification.evseId === evse.evseTypeId),
+      //   &&
+      // latest.statusNotification.connectorId === evse.connectorId,
     );
 
-    if (latestStatus) {
-      const status = latestStatus.statusNotification!.connectorStatus;
-      switch (status) {
-        case ConnectorStatusEnumType.Available:
-          counts[ChargerStatusEnum.AVAILABLE].count++;
-          counts[ChargerStatusEnum.AVAILABLE].items.add({
-            station: chargingStation,
-            evse,
-          });
-          break;
+    // Use type guard to filter for ILatestStatusNotificationDto, but do not cast
+    // const statusNotifications = (
+    //   chargingStation.statusNotifications || []
+    // ).filter(isLatestStatusNotificationDto);
+    // Find the latest status notification for this EVSE and its first connector
+    // const latestStatus = statusNotifications.find(
+    //   (status) =>
+    //     status &&
+    //     (status.evseId === undefined || status.evseId === evse.id) &&
+    //     status.connectorId === evse.connectors?.[0]?.id,
+    // );
 
-        case ConnectorStatusEnumType.Occupied: {
-          const activeTx = chargingStation.transactions?.find(
-            (tx: TransactionDto) => tx.evseDatabaseId === evse.databaseId,
-          );
-          if (activeTx) {
-            if (activeTx.chargingState === ChargingStateEnumType.Charging) {
-              counts[ChargerStatusEnum.CHARGING].count++;
-              counts[ChargerStatusEnum.CHARGING].items.add({
-                station: chargingStation,
-                evse,
-              });
-            } else {
-              counts[ChargerStatusEnum.CHARGING_SUSPENDED].count++;
-              counts[ChargerStatusEnum.CHARGING_SUSPENDED].items.add({
-                station: chargingStation,
-                evse,
-              });
-            }
-          }
-          break;
-        }
+    if (latestStatusNotification) {
+      const status =
+        latestStatusNotification.statusNotification!.connectorStatus;
 
-        case ConnectorStatusEnumType.Faulted:
-          counts[ChargerStatusEnum.FAULTED].count++;
-          counts[ChargerStatusEnum.FAULTED].items.add({
-            station: chargingStation,
-            evse,
-          });
-          break;
+      const chargerStatus = connectorStatusToChargerStatus(status);
 
-        case ConnectorStatusEnumType.Unavailable:
-          counts[ChargerStatusEnum.UNAVAILABLE].count++;
-          counts[ChargerStatusEnum.UNAVAILABLE].items.add({
-            station: chargingStation,
-            evse,
-          });
-          break;
-
-        default:
-          break;
+      if (chargingStation.isOnline !== true) {
+        counts[ChargerStatusEnum.OFFLINE].count++;
+        counts[ChargerStatusEnum.OFFLINE].items.push({
+          station: chargingStation,
+          evse,
+          lastStatus: chargerStatus,
+        });
+      } else {
+        counts[chargerStatus].count++;
+        counts[chargerStatus].items.push({
+          station: chargingStation,
+          evse,
+          lastStatus: chargerStatus,
+        });
       }
     } else {
-      counts[ChargerStatusEnum.UNAVAILABLE].count++;
-      counts[ChargerStatusEnum.UNAVAILABLE].items.add({
-        station: chargingStation,
-        evse,
-      });
+      if (chargingStation.isOnline !== true) {
+        counts[ChargerStatusEnum.OFFLINE].count++;
+        counts[ChargerStatusEnum.OFFLINE].items.push({
+          station: chargingStation,
+          evse,
+        });
+      } else {
+        counts[ChargerStatusEnum.UNAVAILABLE].count++;
+        counts[ChargerStatusEnum.UNAVAILABLE].items.push({
+          station: chargingStation,
+          evse,
+        });
+      }
     }
   });
 
   return counts;
 };
 
+function connectorStatusToChargerStatus(
+  connectorStatus: ConnectorStatusEnumType,
+): ChargerStatusEnum {
+  switch (connectorStatus) {
+    case ConnectorStatusEnumType.Available:
+      return ChargerStatusEnum.AVAILABLE;
+
+    case ConnectorStatusEnumType.Preparing:
+    case ConnectorStatusEnumType.Charging:
+    case ConnectorStatusEnumType.Finishing:
+    case ConnectorStatusEnumType.SuspendedEV:
+    case ConnectorStatusEnumType.SuspendedEVSE:
+    case ConnectorStatusEnumType.Occupied:
+      // const activeTx = chargingStation.transactions?.find(
+      //   (tx: ITransactionDto) => tx.evseId === evse.id,
+      // );
+      // if (activeTx) {
+      //   if (activeTx.chargingState === ChargingStateEnumType.Charging) {
+      //     return ChargerStatusEnum.CHARGING;
+      //   } else {
+      //     return ChargerStatusEnum.CHARGING_SUSPENDED;
+      //   }
+      // }
+      return ChargerStatusEnum.CHARGING;
+
+    case ConnectorStatusEnumType.Faulted:
+      return ChargerStatusEnum.FAULTED;
+
+    case ConnectorStatusEnumType.Unavailable:
+    default:
+      return ChargerStatusEnum.UNAVAILABLE;
+  }
+}
+
 export const ChargerActivityCard: React.FC = () => {
   const [selectedStatus, setSelectedStatus] =
     useState<ChargerStatusEnum | null>(null);
-  const [selectedItems, setSelectedItems] = useState<Set<ChargerItem>>(
-    new Set(),
-  );
+  const [selectedItems, setSelectedItems] = useState<Array<ChargerItem>>([]);
 
   const { data, isLoading, error } = useGqlCustom({
     gqlQuery:
       GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS,
   });
 
-  const stations: ChargingStationDto[] = data?.data.ChargingStations || [];
+  const stations: IChargingStationDto[] = data?.data.ChargingStations || [];
 
   if (isLoading) return <Spin />;
   if (error) return <p>Error loading counts</p>;
@@ -175,12 +223,22 @@ export const ChargerActivityCard: React.FC = () => {
 
   const handleGaugeClick = (status: ChargerStatusEnum) => {
     setSelectedStatus(status);
-    setSelectedItems(new Set(finalCounts[status].items));
+
+    const sortedItemArray = Array.from(finalCounts[status].items).sort(
+      (a, b) => {
+        if (!a.lastStatus && !b.lastStatus) return 0;
+        if (!a.lastStatus) return 1; // undefined goes last
+        if (!b.lastStatus) return -1;
+
+        return statusPriority[a.lastStatus] - statusPriority[b.lastStatus];
+      },
+    );
+    setSelectedItems(sortedItemArray);
   };
 
   const handleClose = () => {
     setSelectedStatus(null);
-    setSelectedItems(new Set());
+    setSelectedItems([]);
   };
 
   return (
@@ -192,10 +250,11 @@ export const ChargerActivityCard: React.FC = () => {
         <h4>Charger Activity</h4>
         <Flex gap={8} flex={1}>
           {[
+            ChargerStatusEnum.CHARGING,
             ChargerStatusEnum.AVAILABLE,
             ChargerStatusEnum.UNAVAILABLE,
-            ChargerStatusEnum.CHARGING,
             ChargerStatusEnum.FAULTED,
+            ChargerStatusEnum.OFFLINE,
           ].map((status) => (
             <Flex
               key={status}
@@ -209,7 +268,7 @@ export const ChargerActivityCard: React.FC = () => {
                 percentage={Math.round(
                   (finalCounts[status].count / total) * 100,
                 )}
-                color={getGaugeColor(status)}
+                color={getStatusColor(status)}
               />
               <span className={selectedStatus === status ? 'link' : ''}>
                 {status}
@@ -245,10 +304,10 @@ export const ChargerActivityCard: React.FC = () => {
                 {Array.from(selectedItems).length > 0 ? (
                   Array.from(selectedItems).map((item) => (
                     <ChargerRow
-                      key={`${item.station.id}-${item.evse.connectorId}`}
+                      key={`${item.station.id}-${item.evse.connectors?.[0]?.id}`}
                       chargingStation={item.station}
                       evse={item.evse}
-                      circleColor={getGaugeColor(selectedStatus!)}
+                      lastStatus={item.lastStatus}
                     />
                   ))
                 ) : (
@@ -271,13 +330,15 @@ export const ChargerActivityCard: React.FC = () => {
   );
 };
 
-const getGaugeColor = (status: ChargerStatusEnum): string => {
+export const getStatusColor = (status: ChargerStatusEnum): string => {
   const colors: Record<ChargerStatusEnum, string> = {
     [ChargerStatusEnum.AVAILABLE]: '#00C999',
     [ChargerStatusEnum.UNAVAILABLE]: '#F6962E',
     [ChargerStatusEnum.CHARGING]: '#008CC0',
     [ChargerStatusEnum.CHARGING_SUSPENDED]: '#FFC107',
-    [ChargerStatusEnum.FAULTED]: '#F61631',
+    [ChargerStatusEnum.FAULTED]: '#000000',
+    [ChargerStatusEnum.OFFLINE]: '#F61631',
+    [ChargerStatusEnum.ONLINE]: '#00C999',
   };
-  return colors[status] || '#000000';
+  return colors[status];
 };

@@ -2,28 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsNumber, IsOptional } from 'class-validator';
-import { BaseDto } from './base.dto';
+import { IChargingStationDto, IConnectorDto, IEvseDto } from '@citrineos/base';
 
-export enum EvseDtoProps {
-  databaseId = 'databaseId',
-  id = 'id',
-  connectorId = 'connectorId',
-}
-
-export class EvseDto extends BaseDto {
-  @IsNumber()
-  databaseId!: number;
-
-  @IsNumber()
-  id!: number;
-
-  @IsOptional()
-  @IsNumber()
-  connectorId?: number | null;
-
-  /* @Type(() => CustomDataType)
-  @IsOptional()
-  customData: CustomDataType | null = null;
-  */
+export class EvseDto implements Partial<IEvseDto> {
+  id?: number;
+  stationId!: string;
+  evseTypeId?: number;
+  evseId!: string;
+  physicalReference?: string | null;
+  removed?: boolean;
+  chargingStation?: IChargingStationDto;
+  connectors?: IConnectorDto[] | null;
 }

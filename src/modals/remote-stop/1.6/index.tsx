@@ -4,17 +4,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
-import { OCPPVersion } from '@citrineos/base';
+import { ITransactionDto, OCPPVersion } from '@citrineos/base';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface OCPP1_6_RemoteStopProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
-
 export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -73,7 +72,7 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
             rules={[{ required: true, message: 'Please select a transaction' }]}
           >
             <Select className="full-width" placeholder="Select a transaction">
-              {station.transactions.map((transaction) => {
+              {station.transactions.map((transaction: ITransactionDto) => {
                 return (
                   <Select.Option
                     key={transaction.transactionId}

@@ -45,13 +45,6 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
-      Evse {
-        databaseId
-        id
-        connectorId
-        createdAt
-        updatedAt
-      }
     }
     VariableAttributes_aggregate(where: $where) {
       aggregate {
@@ -92,13 +85,6 @@ export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
         instance
         name
         evseDatabaseId
-        createdAt
-        updatedAt
-      }
-      Evse {
-        databaseId
-        id
-        connectorId
         createdAt
         updatedAt
       }

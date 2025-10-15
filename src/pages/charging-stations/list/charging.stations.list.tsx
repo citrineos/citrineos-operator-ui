@@ -9,7 +9,6 @@ import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { AccessDeniedFallback, ResourceType } from '@util/auth';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { getPlainToInstanceOptions } from '@util/tables';
@@ -25,6 +24,8 @@ import { ModalComponentType } from '../../../AppModal';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../redux/modal.slice';
 import { ActionType } from '@util/auth';
+import { IChargingStationDto } from '@citrineos/base';
+import { PlusOutlined } from '@ant-design/icons';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -50,7 +51,7 @@ export const ChargingStationsList = () => {
   };
 
   const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Start',
@@ -63,7 +64,7 @@ export const ChargingStationsList = () => {
   );
 
   const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Stop',
@@ -78,7 +79,7 @@ export const ChargingStationsList = () => {
   );
 
   const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Reset',
@@ -121,12 +122,13 @@ export const ChargingStationsList = () => {
               action={ActionType.CREATE}
             >
               <Button
-                type="primary"
+                className="success"
+                icon={<PlusOutlined />}
+                iconPosition="end"
                 style={{ marginRight: '20px' }}
                 onClick={() => push(`/${MenuSection.CHARGING_STATIONS}/new`)}
               >
-                Add New Charging Station
-                <PlusIcon />
+                Add Charging Station
               </Button>
             </CanAccess>
             <DebounceSearch

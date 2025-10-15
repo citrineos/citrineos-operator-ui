@@ -9,18 +9,19 @@ import { plainToInstance } from 'class-transformer';
 import { OCPPVersion } from '@citrineos/base';
 import { OCPP2_0_1_RemoteStop } from './2.0.1';
 import { OCPP1_6_RemoteStop } from './1.6';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface RemoteStopTransactionModalProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const RemoteStopTransactionModal = ({
   station,
 }: RemoteStopTransactionModalProps) => {
-  const parsedStation: ChargingStationDto = useMemo(
+  const parsedStation: IChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationDto, station),
     [station],
-  );
+  ) as IChargingStationDto;
 
   // Dynamically render the appropriate component based on protocol version
   const renderCommandsByProtocol = () => {

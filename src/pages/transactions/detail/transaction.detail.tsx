@@ -14,7 +14,6 @@ import {
 } from '../queries';
 import { TransactionDto } from '../../../dtos/transaction.dto';
 import './style.scss';
-import { BaseDtoProps } from '../../../dtos/base.dto';
 import {
   PowerOverTime,
   StateOfCharge,
@@ -24,12 +23,9 @@ import {
 } from '../chart';
 import { TransactionEventsList } from '../../transaction-events/list/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '../../meter-values/queries';
-import {
-  MeterValueDto,
-  MeterValueDtoProps,
-} from '../../../dtos/meter.value.dto';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
-import { getAuthorizationColumns } from '../../../pages/authorizations/columns';
+import { MeterValueDto } from '../../../dtos/meter.value.dto';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
+import { getAuthorizationColumns } from '../../authorizations/columns';
 import {
   ResourceType,
   ActionType,
@@ -39,6 +35,9 @@ import {
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { TransactionDetailCard } from './transaction.detail.card';
 import { renderEnumSelectOptions } from '@util/renderUtil';
+import { BaseDtoProps } from '@citrineos/base';
+import { ITransactionDto } from '@citrineos/base';
+import { IMeterValueDto, MeterValueDtoProps } from '@citrineos/base';
 
 enum ChartType {
   POWER = 'Power Over Time',
@@ -64,7 +63,7 @@ export const TransactionDetail = () => {
     ReadingContextEnumType.Transaction_End,
   ]);
 
-  const { data: transactionData, isLoading } = useOne<TransactionDto>({
+  const { data: transactionData, isLoading } = useOne<ITransactionDto>({
     resource: ResourceType.TRANSACTIONS,
     id,
     meta: { gqlQuery: TRANSACTION_GET_QUERY },
@@ -72,7 +71,7 @@ export const TransactionDetail = () => {
   });
   const transaction = transactionData?.data;
 
-  const { data: meterValuesData } = useList<MeterValueDto>({
+  const { data: meterValuesData } = useList<IMeterValueDto>({
     resource: ResourceType.METER_VALUES,
     meta: {
       gqlQuery: GET_METER_VALUES_FOR_TRANSACTION,
@@ -83,29 +82,16 @@ export const TransactionDetail = () => {
   });
   const meterValues = meterValuesData?.data ?? [];
 
-  let idTokenDatabaseId =
-    transaction?.transactionEvents && transaction.transactionEvents.length > 0
-      ? transaction.transactionEvents[0].idTokenId
-      : transaction?.startTransaction?.idTokenDatabaseId;
-  idTokenDatabaseId = Number(idTokenDatabaseId) || null;
+  const authorization = transaction?.authorization;
 
   const { tableProps } = useTable<AuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
     sorters: { permanent: [{ field: BaseDtoProps.updatedAt, order: 'desc' }] },
-    filters: {
-      permanent: [
-        {
-          field: 'IdToken.id',
-          operator: 'eq',
-          value: idTokenDatabaseId,
-        },
-      ],
-    },
     meta: {
       gqlQuery: GET_TRANSACTIONS_BY_AUTHORIZATION,
-      gqlVariables: { limit: 10000 },
+      gqlVariables: { id: authorization?.id, limit: 10000 },
     },
-    queryOptions: getPlainToInstanceOptions(AuthorizationDto, true),
+    queryOptions: getPlainToInstanceOptions(),
   });
 
   const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);

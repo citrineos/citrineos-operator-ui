@@ -11,17 +11,12 @@ import {
 import { CanAccess, CrudFilter, useNavigation } from '@refinedev/core';
 import { getSerializedValues } from '@util/middleware';
 import { AutoComplete, Button, Flex, Form, Input, Modal, Select } from 'antd';
-import { LocationDto, LocationDtoProps } from '../../../dtos/location.dto';
 import {
   LOCATIONS_LIST_QUERY,
   LOCATIONS_GET_QUERY_BY_ID,
 } from '../../locations/queries';
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../../dtos/charging.station.dto';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { LocationIcon } from '../../../components/icons/location.icon';
 import { useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { useSearchParams } from 'react-router-dom';
@@ -29,6 +24,13 @@ import { MenuSection } from '../../../components/main-menu/main.menu';
 import { debounce } from 'lodash';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import {
+  ChargingStationCapability,
+  ChargingStationDtoProps,
+  ChargingStationParkingRestriction,
+  ILocationDto,
+  LocationDtoProps,
+} from '@citrineos/base';
 
 export const ChargingStationUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -64,9 +66,9 @@ export const ChargingStationUpsert = () => {
 
   const station = formProps.initialValues;
 
-  const { selectProps } = useSelect<LocationDto>({
+  const { selectProps } = useSelect<ILocationDto>({
     resource: ResourceType.LOCATIONS,
-    optionLabel: (location: LocationDto) => {
+    optionLabel: (location: ILocationDto) => {
       return JSON.stringify(location);
     },
     optionValue: 'id',
@@ -118,7 +120,7 @@ export const ChargingStationUpsert = () => {
       );
 
       if (selected) {
-        const location = JSON.parse(selected.label as string) as LocationDto;
+        const location = JSON.parse(selected.label as string) as ILocationDto;
         formProps.form?.setFieldsValue({
           locationId: selected.value,
           locationName: getLocationNameFromLocation(location),
@@ -135,7 +137,7 @@ export const ChargingStationUpsert = () => {
       );
 
       if (selected) {
-        const location = JSON.parse(selected.label as string) as LocationDto;
+        const location = JSON.parse(selected.label as string) as ILocationDto;
         formProps.form?.setFieldsValue({
           locationId: locationId,
           locationName: getLocationNameFromLocation(location),
@@ -149,7 +151,7 @@ export const ChargingStationUpsert = () => {
     resetSelectedLocation,
   ]);
 
-  const getLocationNameFromLocation = useCallback((location: LocationDto) => {
+  const getLocationNameFromLocation = useCallback((location: ILocationDto) => {
     return `${location.name} - ${location.address}, ${location.city}, ${location.state} ${location.postalCode}`;
   }, []);
 
@@ -159,7 +161,7 @@ export const ChargingStationUpsert = () => {
         (option) => option.value?.toString() === value,
       );
       if (selected) {
-        const location = JSON.parse(selected.label as string) as LocationDto;
+        const location = JSON.parse(selected.label as string) as ILocationDto;
         formProps.form?.setFieldsValue({
           locationId: value,
           locationName: getLocationNameFromLocation(location),
@@ -188,7 +190,12 @@ export const ChargingStationUpsert = () => {
         onOk: () => replace('/charging-stations'),
       });
     } else {
-      replace('/charging-stations');
+      const stationId = station?.id;
+      if (stationId) {
+        replace(`/${MenuSection.CHARGING_STATIONS}/${stationId}`);
+      } else {
+        replace('/charging-stations');
+      }
     }
   }, [isFormChanged, replace]);
 
@@ -206,7 +213,7 @@ export const ChargingStationUpsert = () => {
 
   const memoizedOptions = useMemo(() => {
     return selectProps.options?.map((option) => {
-      const item = JSON.parse(option.label as string) as LocationDto;
+      const item = JSON.parse(option.label as string) as ILocationDto;
       return {
         value: option.value?.toString(), // AutoComplete expects string
         label: (
@@ -234,27 +241,17 @@ export const ChargingStationUpsert = () => {
         onChange={handleOnChange}
         data-testid="charging-stations-create-form"
       >
-        <Flex gap={32}>
-          <Flex flex={1} vertical>
-            <Flex
-              align="center"
-              className="relative"
-              style={{ marginBottom: 16 }}
-            >
-              <ArrowLeftIcon
-                style={{
-                  cursor: 'pointer',
-                  position: 'absolute',
-                  transform: 'translateX(-100%)',
-                }}
-                onClick={() => goBack()}
-              />
-              <h3>
-                {stationId
-                  ? 'Edit Charging Station'
-                  : 'Create Charging Station'}
-              </h3>
-            </Flex>
+        <Flex vertical gap={16}>
+          <Flex gap={12} align={'center'}>
+            <ArrowLeftIcon
+              style={{
+                cursor: 'pointer',
+              }}
+              onClick={() => goBack()}
+            />
+            <h3>{stationId ? 'Edit' : 'Create'} Charging Station</h3>
+          </Flex>
+          <Flex gap={16} wrap>
             <Form.Item
               key={ChargingStationDtoProps.id}
               label="Charging Station Id"
@@ -263,6 +260,7 @@ export const ChargingStationUpsert = () => {
                 { required: true, message: 'Charging Station ID is required' },
               ]}
               data-testid={ChargingStationDtoProps.id}
+              style={{ width: '32%' }}
             >
               <Input />
             </Form.Item>
@@ -271,6 +269,7 @@ export const ChargingStationUpsert = () => {
               label="Is Online"
               name={ChargingStationDtoProps.isOnline}
               data-testid={ChargingStationDtoProps.isOnline}
+              style={{ width: '32%' }}
             >
               <Select onChange={handleOnChange}>
                 <Select.Option value={true}>Yes</Select.Option>
@@ -292,6 +291,7 @@ export const ChargingStationUpsert = () => {
               name="locationName"
               data-testid="locationName"
               rules={[{ required: true, message: 'Please select a location' }]}
+              style={{ width: '32%' }}
             >
               <AutoComplete
                 {...selectProps}
@@ -301,39 +301,71 @@ export const ChargingStationUpsert = () => {
                 placeholder="Select a location"
               />
             </Form.Item>
-            <Form.Item>
-              <Flex gap={16}>
-                {stationId && (
-                  <Button onClick={handleReset} disabled={!isFormChanged}>
-                    Reset
-                  </Button>
+            <Form.Item
+              key={ChargingStationDtoProps.floorLevel}
+              label="Floor Level"
+              name={ChargingStationDtoProps.floorLevel}
+              data-testid={ChargingStationDtoProps.floorLevel}
+              style={{ width: '32%' }}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              key={ChargingStationDtoProps.parkingRestrictions}
+              label="Parking Restrictions"
+              name={ChargingStationDtoProps.parkingRestrictions}
+              data-testid={ChargingStationDtoProps.parkingRestrictions}
+              style={{ width: '32%' }}
+            >
+              <Select
+                mode="tags"
+                placeholder="Select parking restrictions"
+                allowClear
+              >
+                {Object.keys(ChargingStationParkingRestriction).map(
+                  (restriction) => (
+                    <Select.Option key={restriction} value={restriction}>
+                      {restriction}
+                    </Select.Option>
+                  ),
                 )}
-                <Button onClick={handleCancel} danger>
-                  Cancel
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  data-testid="locations-create-form-submit"
-                >
-                  Submit
-                </Button>
-              </Flex>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              key={ChargingStationDtoProps.capabilities}
+              label="Capabilities"
+              name={ChargingStationDtoProps.capabilities}
+              data-testid={ChargingStationDtoProps.capabilities}
+              style={{ width: '32%' }}
+            >
+              <Select mode="tags" placeholder="Select capabilities" allowClear>
+                {Object.keys(ChargingStationCapability).map((capability) => (
+                  <Select.Option key={capability} value={capability}>
+                    {capability}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Flex>
-          <Flex
-            vertical
-            flex={1}
-            align={'center'}
-            justify={'center'}
-            style={{
-              background: '#D9D9D9',
-              color: '#C3BDB9',
-            }}
-          >
-            <LocationIcon width={100} height={100} />
-            UPLOAD CHARGING STATION IMAGE
-          </Flex>
+          <Form.Item>
+            <Flex gap={16}>
+              {stationId && (
+                <Button onClick={handleReset} disabled={!isFormChanged}>
+                  Reset
+                </Button>
+              )}
+              <Button onClick={handleCancel} danger>
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                data-testid="locations-create-form-submit"
+              >
+                Submit
+              </Button>
+            </Flex>
+          </Form.Item>
         </Flex>
       </Form>
     </CanAccess>

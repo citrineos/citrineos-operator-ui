@@ -2,13 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, ValidateNested } from 'class-validator';
 
 import { Type } from 'class-transformer';
 import { FieldLabel } from '@util/decorators/FieldLabel';
 import { ResourceType } from '@util/auth';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
-import { GqlAssociation } from '@util/decorators/GqlAssociation';
 
 import {
   EVSE_CREATE_MUTATION,
@@ -23,17 +22,15 @@ import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ClassGqlEditMutation } from '@util/decorators/ClassGqlEditMutation';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
 import { ClassGqlCreateMutation } from '@util/decorators/ClassGqlCreateMutation';
-import { BaseModel } from '@util/BaseModel';
-import { EvseProps } from './EvseProps';
 import {
-  VariableAttribute,
-  VariableAttributeProps,
-} from '../variable-attributes/VariableAttributes';
-import {
-  VARIABLE_ATTRIBUTE_GET_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-  VARIABLE_ATTRIBUTE_LIST_QUERY,
-} from '../variable-attributes/queries';
+  ConnectorDtoProps,
+  EvseDtoProps,
+  IConnectorDto,
+  IEvseDto,
+} from '@citrineos/base';
+import { Connector } from '../connectors/connector';
+import { GqlAssociation } from '@util/decorators/GqlAssociation';
+import { GET_CONNECTOR_LIST_FOR_STATION_EVSE } from '../../message/queries';
 
 @ClassResourceType(ResourceType.EVSES)
 @ClassGqlListQuery(EVSE_LIST_QUERY)
@@ -41,54 +38,70 @@ import {
 @ClassGqlCreateMutation(EVSE_CREATE_MUTATION)
 @ClassGqlEditMutation(EVSE_EDIT_WITH_VARIABLE_ATTRIBUTES_MUTATION)
 @ClassGqlDeleteMutation(EVSE_DELETE_MUTATION)
-@PrimaryKeyFieldName(EvseProps.databaseId)
-export class Evse extends BaseModel {
-  @IsNumber()
-  databaseId!: number;
-
+@PrimaryKeyFieldName(EvseDtoProps.id)
+export class Evse implements Partial<IEvseDto> {
   @IsNumber()
   id!: number;
 
-  @IsOptional()
-  @IsNumber()
-  connectorId?: number | null;
+  // @IsNumber()
+  // @FieldLabel('Station ID')
+  // stationId!: string;
 
-  /* @Type(() => CustomDataType)
-  @IsOptional()
-  customData: CustomDataType | null = null;
-  */
+  @IsNumber()
+  @FieldLabel('EVSE Type ID')
+  evseTypeId?: number;
+
+  @FieldLabel('EVSE ID')
+  evseId!: string;
+
+  @FieldLabel('Physical Reference')
+  physicalReference?: string | null;
+
+  @FieldLabel('Removed')
+  removed?: boolean;
+
+  // @ValidateNested()
+  // @Type(() => Object)
+  // @FieldLabel('Charging Station')
+  // chargingStation?: IChargingStationDto;
 
   @IsArray()
-  @Type(() => VariableAttribute)
   @ValidateNested({ each: true })
-  @FieldLabel('Device Model')
   @GqlAssociation({
-    parentIdFieldName: EvseProps.databaseId,
-    associatedIdFieldName: VariableAttributeProps.evseDatabaseId,
+    parentIdFieldName: EvseDtoProps.id,
+    associatedIdFieldName: ConnectorDtoProps.evseId,
     hasNewAssociatedIdsVariable: true,
     gqlQuery: {
-      query: VARIABLE_ATTRIBUTE_GET_QUERY,
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
     },
     gqlListQuery: {
-      query: VARIABLE_ATTRIBUTE_LIST_QUERY,
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
     },
     gqlListSelectedQuery: {
-      query: VARIABLE_ATTRIBUTE_LIST_FOR_EVSE_QUERY,
-      getQueryVariables: (evse: Evse) => ({
-        [VariableAttributeProps.evseDatabaseId]: evse.databaseId,
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+      getQueryVariables: (evse: IEvseDto) => ({
+        stationId: evse.stationId,
+        where: {
+          evseId: { _eq: evse.id },
+        },
       }),
     },
   })
-  VariableAttributes?: VariableAttribute[];
+  @Type(() => Connector)
+  @FieldLabel('Connectors')
+  connectors?: IConnectorDto[] | null;
 
-  constructor(data?: Partial<Evse>) {
-    super();
+  constructor(data?: Partial<IEvseDto>) {
     if (data) {
       Object.assign(this, {
-        [EvseProps.databaseId]: data.databaseId,
-        [EvseProps.id]: data.id,
-        [EvseProps.connectorId]: data.connectorId,
-        [EvseProps.VariableAttributes]: data.VariableAttributes,
+        id: data.id,
+        // stationId: data.stationId,
+        evseTypeId: data.evseTypeId,
+        evseId: data.evseId,
+        physicalReference: data.physicalReference,
+        removed: data.removed,
+        // chargingStation: data.chargingStation,
+        connectors: data.connectors,
       });
     }
   }

@@ -7,17 +7,17 @@ import { Button } from 'antd';
 import { useNavigation } from '@refinedev/core';
 import './style.scss';
 import { ResourceType } from '@util/auth';
-import { LocationDto } from '../../../../dtos/location.dto';
+import { ILocationDto } from '@citrineos/base';
 
 interface LocationMarkerProps {
-  location: LocationDto;
+  location: ILocationDto;
 }
 
 export const LocationMarker: React.FC<LocationMarkerProps> = ({ location }) => {
   const { show } = useNavigation();
 
   const handleShowClick = () => {
-    show(ResourceType.LOCATIONS, location.id);
+    show(ResourceType.LOCATIONS, location.id!); // Use non-null assertion
   };
 
   return (

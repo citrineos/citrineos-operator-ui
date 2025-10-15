@@ -2,15 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  ArrayMinSize,
-  IsArray,
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  ValidateNested,
-} from 'class-validator';
-import { BaseModel } from '@util/BaseModel';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ClassGqlListQuery } from '@util/decorators/ClassGqlListQuery';
 import { ClassGqlGetQuery } from '@util/decorators/ClassGqlGetQuery';
@@ -26,22 +17,8 @@ import {
   AUTHORIZATIONS_LIST_QUERY,
   AUTHORIZATIONS_SHOW_QUERY,
 } from './queries';
-import { Type } from 'class-transformer';
-import { GqlAssociation } from '@util/decorators/GqlAssociation';
-import { IdToken, IdTokenProps } from '../id-tokens/id-token';
-import {
-  ID_TOKENS_LIST_QUERY,
-  ID_TOKENS_SHOW_QUERY,
-} from '../id-tokens/queries';
-import {
-  IdTokenInfos,
-  IdTokenInfosProps,
-} from '../id-tokens-infos/id-token-infos';
-import {
-  ID_TOKEN_INFOS_LIST_QUERY,
-  ID_TOKEN_INFOS_SHOW_QUERY,
-} from '../id-tokens-infos/queries';
-import { AllowedConnectorTypes, DisallowedEvseIdPrefixes } from '@enums';
+import { IAuthorizationDto } from '@citrineos/base';
+import { IsNumber } from 'class-validator';
 
 export enum AuthorizationsProps {
   id = 'id',
@@ -59,53 +36,7 @@ export enum AuthorizationsProps {
 @ClassGqlEditMutation(AUTHORIZATIONS_EDIT_MUTATION)
 @ClassGqlDeleteMutation(AUTHORIZATIONS_DELETE_MUTATION)
 @PrimaryKeyFieldName(AuthorizationsProps.id)
-export class Authorizations extends BaseModel {
-  @IsInt()
-  @IsNotEmpty()
+export class Authorization implements Partial<IAuthorizationDto> {
+  @IsNumber()
   id!: number;
-
-  @ArrayMinSize(1)
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => AllowedConnectorTypes as any)
-  @IsNotEmpty()
-  allowedConnectorTypes!: AllowedConnectorTypes[];
-
-  @ArrayMinSize(1)
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => DisallowedEvseIdPrefixes as any)
-  @IsNotEmpty()
-  disallowedEvseIdPrefixes!: DisallowedEvseIdPrefixes[];
-
-  @GqlAssociation({
-    parentIdFieldName: AuthorizationsProps.idTokenId,
-    associatedIdFieldName: IdTokenProps.id,
-    gqlQuery: {
-      query: ID_TOKENS_SHOW_QUERY,
-    },
-    gqlListQuery: {
-      query: ID_TOKENS_LIST_QUERY,
-    },
-  })
-  @Type(() => IdToken)
-  @IsNotEmpty()
-  idTokenId!: IdToken;
-
-  @GqlAssociation({
-    parentIdFieldName: AuthorizationsProps.idTokenInfoId,
-    associatedIdFieldName: IdTokenInfosProps.id,
-    gqlQuery: {
-      query: ID_TOKEN_INFOS_SHOW_QUERY,
-    },
-    gqlListQuery: {
-      query: ID_TOKEN_INFOS_LIST_QUERY,
-    },
-  })
-  @Type(() => IdTokenInfos)
-  @IsNotEmpty()
-  idTokenInfoId!: IdTokenInfos;
-
-  @IsBoolean()
-  concurrentTransaction?: boolean;
 }

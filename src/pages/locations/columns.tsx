@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { LocationDtoProps } from '../../dtos/location.dto';
-import { CanAccess, ConditionalFilter, CrudFilters } from '@refinedev/core';
+import { ConditionalFilter, CrudFilters } from '@refinedev/core';
 import { Table } from 'antd';
 import React from 'react';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import { LocationDtoProps } from '@citrineos/base';
+import { getFullAddress } from '@util/geocoding';
 
 /**
  * Get column definitions for locations table
@@ -24,55 +24,35 @@ export const getLocationsColumns = (
         title="Name"
         sorter={true}
         onCell={(record) => ({
-          className: `column-${LocationDtoProps.name}`,
-          onClick: (event: React.MouseEvent) => {
+          className: 'hoverable-column',
+          onClick: () => {
             const path = `/${MenuSection.LOCATIONS}/${record.id}`;
-
-            // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-            if (event.ctrlKey || event.metaKey) {
-              window.open(path, '_blank');
-            } else {
-              // Default behavior - navigate in current window
-              push(path);
-            }
+            window.open(path, '_blank');
           },
-          style: { cursor: 'pointer' },
         })}
+        width="25%"
         render={(_: any, record) => {
-          return <h4>{record.name}</h4>;
+          return <strong>{record.name}</strong>;
         }}
       />
       <Table.Column
         key={LocationDtoProps.address}
         dataIndex={LocationDtoProps.address}
         title="Address"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.address}`,
-        })}
+        width="45%"
+        render={(_: any, record) => <span>{getFullAddress(record)}</span>}
       />
       <Table.Column
-        key={LocationDtoProps.city}
-        dataIndex={LocationDtoProps.city}
-        title="City"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.city}`,
-        })}
-      />
-      <Table.Column
-        key={LocationDtoProps.postalCode}
-        dataIndex={LocationDtoProps.postalCode}
-        title="Postal Code"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.postalCode}`,
-        })}
-      />
-      <Table.Column
-        key={LocationDtoProps.state}
-        dataIndex={LocationDtoProps.state}
-        title="State"
-        onCell={() => ({
-          className: `column-${LocationDtoProps.state}`,
-        })}
+        key="totalStations"
+        title="Total Stations"
+        width="15%"
+        render={(_: any, record) => (
+          <span>
+            {record[LocationDtoProps.chargingPool]
+              ? record[LocationDtoProps.chargingPool].length
+              : 0}
+          </span>
+        )}
       />
     </>
   );

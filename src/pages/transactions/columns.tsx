@@ -4,25 +4,17 @@
 
 import { Table } from 'antd';
 import React from 'react';
-import {
-  TransactionDto,
-  TransactionDtoProps,
-} from '../../dtos/transaction.dto';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import GenericTag from '../../components/tag';
 import { StatusIcon } from '../../components/status-icon';
-import { CanAccess } from '@refinedev/core';
-import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
 import { MenuSection } from '../../components/main-menu/main.menu';
-import { ChargingStateEnumType, TransactionEventEnumType } from '@OCPP2_0_1';
-import { BaseDtoProps } from '../../dtos/base.dto';
-import { IdTokenProps } from '../id-tokens/id-token';
+import { ChargingStateEnumType } from '@OCPP2_0_1';
 import { CrudFilters } from '@refinedev/core';
-import { LocationDtoProps } from '../../dtos/location.dto';
-import { ChargingStationDtoProps } from '../../dtos/charging.station.dto';
-import { TransactionEventDtoProps } from '../../dtos/transaction.event.dto';
-import { IdTokenDtoProps } from '../../dtos/id.token.dto';
-import { StartTransactionDtoProps } from '../../dtos/start.transaction.dto';
+import { BaseDtoProps } from '@citrineos/base';
+import { ITransactionDto, TransactionDtoProps } from '@citrineos/base';
+import { ChargingStationDtoProps } from '@citrineos/base';
+import { IdTokenDtoProps } from '@citrineos/base';
+import { LocationDtoProps } from '@citrineos/base';
 
 export const getTransactionsFilters = (value: string): CrudFilters => {
   return [
@@ -35,7 +27,7 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: `${TransactionDtoProps.chargingStation}.${ChargingStationDtoProps.location}.${LocationDtoProps.name}`,
+          field: `${TransactionDtoProps.location}.${LocationDtoProps.name}`,
           operator: 'contains',
           value,
         },
@@ -50,12 +42,7 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: `${TransactionDtoProps.transactionEvents}.${TransactionEventDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
-          operator: 'contains',
-          value,
-        },
-        {
-          field: `${TransactionDtoProps.startTransaction}.${StartTransactionDtoProps.idToken}.${IdTokenDtoProps.idToken}`,
+          field: `${TransactionDtoProps.authorization}.${IdTokenDtoProps.idToken}`,
           operator: 'contains',
           value,
         },
@@ -74,7 +61,7 @@ export const getTransactionColumns = (
         dataIndex={TransactionDtoProps.transactionId}
         title="Transaction ID"
         sorter={true}
-        onCell={(record: TransactionDto) => ({
+        onCell={(record: ITransactionDto) => ({
           className: `column-${TransactionDtoProps.transactionId}`,
           onClick: (e: React.MouseEvent) => {
             const path = `/${MenuSection.TRANSACTIONS}/${record.id}`;
@@ -86,7 +73,7 @@ export const getTransactionColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: TransactionDto) => (
+        render={(_: any, record: ITransactionDto) => (
           <h4>{record.transactionId}</h4>
         )}
       />
@@ -97,7 +84,7 @@ export const getTransactionColumns = (
         onCell={() => ({
           className: `column-${TransactionDtoProps.isActive}`,
         })}
-        render={(_: any, record: TransactionDto) => (
+        render={(_: any, record: ITransactionDto) => (
           <StatusIcon value={record.isActive} />
         )}
       />
@@ -106,7 +93,7 @@ export const getTransactionColumns = (
         dataIndex="chargingStation"
         title="Station ID"
         sorter={true}
-        onCell={(record: TransactionDto) => ({
+        onCell={(record: ITransactionDto) => ({
           className: `column-${ChargingStationDtoProps.id}`,
           onClick: (e: React.MouseEvent) => {
             const path = `/${MenuSection.CHARGING_STATIONS}/${record.chargingStation?.id}`;
@@ -118,7 +105,7 @@ export const getTransactionColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: TransactionDto) => (
+        render={(_: any, record: ITransactionDto) => (
           <h4>{record.chargingStation?.id}</h4>
         )}
       />
@@ -127,7 +114,7 @@ export const getTransactionColumns = (
         dataIndex="location"
         title="Location Name"
         sorter={true}
-        onCell={(record: TransactionDto) => ({
+        onCell={(record: ITransactionDto) => ({
           className: `column-${LocationDtoProps.name}`,
           onClick: (e: React.MouseEvent) => {
             const path = `/${MenuSection.LOCATIONS}/${record.chargingStation?.location?.id}`;
@@ -139,31 +126,20 @@ export const getTransactionColumns = (
           },
           style: { cursor: 'pointer' },
         })}
-        render={(_: any, record: TransactionDto) => (
+        render={(_: any, record: ITransactionDto) => (
           <h4>{record.chargingStation?.location?.name}</h4>
         )}
       />
       <Table.Column
-        key={IdTokenProps.idToken}
-        dataIndex={IdTokenProps.idToken}
+        key={IdTokenDtoProps.idToken}
+        dataIndex={IdTokenDtoProps.idToken}
         title="ID Token"
         onCell={() => ({
-          className: `column-${IdTokenProps.idToken}`,
+          className: `column-${IdTokenDtoProps.idToken}`,
         })}
-        render={(_: any, record: TransactionDto) => {
-          if (record.transactionEvents) {
-            const startedEvent = record.transactionEvents.find(
-              (event) => event.eventType === TransactionEventEnumType.Started,
-            );
-            if (startedEvent && startedEvent.idToken) {
-              return <h4>{startedEvent.idToken.idToken}</h4>;
-            }
-          } else if (record.startTransaction) {
-            if (record.startTransaction.idToken) {
-              return <h4>{record.startTransaction.idToken.idToken}</h4>;
-            }
-          }
-          return '';
+        render={(_: any, record: ITransactionDto) => {
+          const idToken = record.authorization?.idToken;
+          return idToken ? <h4>{idToken ?? 'N/A'}</h4> : '';
         }}
       />
       <Table.Column
@@ -174,7 +150,7 @@ export const getTransactionColumns = (
         onCell={() => ({
           className: `column-${TransactionDtoProps.totalKwh}`,
         })}
-        render={(_: any, record: TransactionDto) => (
+        render={(_: any, record: ITransactionDto) => (
           <>{record.totalKwh?.toFixed(2)} kWh</>
         )}
       />
@@ -185,7 +161,7 @@ export const getTransactionColumns = (
         onCell={() => ({
           className: 'column-status',
         })}
-        render={(_: any, record: TransactionDto) =>
+        render={(_: any, record: ITransactionDto) =>
           record.chargingState ? (
             <GenericTag
               enumValue={record.chargingState}
@@ -195,22 +171,22 @@ export const getTransactionColumns = (
         }
       />
       <Table.Column
-        key={BaseDtoProps.createdAt}
-        dataIndex={BaseDtoProps.createdAt}
-        title="Created At"
+        key={TransactionDtoProps.startTime}
+        dataIndex={TransactionDtoProps.startTime}
+        title="Start Time"
         sorter={true}
         onCell={() => ({
-          className: `column-${BaseDtoProps.createdAt}`,
+          className: `column-${TransactionDtoProps.startTime}`,
         })}
         render={(createdAt) => <TimestampDisplay isoTimestamp={createdAt} />}
       />
       <Table.Column
-        key={BaseDtoProps.updatedAt}
-        dataIndex={BaseDtoProps.updatedAt}
+        key={TransactionDtoProps.endTime}
+        dataIndex={TransactionDtoProps.endTime}
         title="Updated At"
         sorter={true}
         onCell={() => ({
-          className: `column-${BaseDtoProps.updatedAt}`,
+          className: `column-${TransactionDtoProps.endTime}`,
         })}
         render={(updatedAt) => <TimestampDisplay isoTimestamp={updatedAt} />}
       />

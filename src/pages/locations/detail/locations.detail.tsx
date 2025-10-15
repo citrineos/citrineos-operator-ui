@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Card, Tabs, TabsProps } from 'antd';
+import { Card } from 'antd';
 import './style.scss';
 import { useParams } from 'react-router-dom';
 import { CanAccess, useOne } from '@refinedev/core';
@@ -13,11 +13,12 @@ import { LOCATIONS_GET_QUERY } from '../queries';
 import { LocationsChargingStationsTable } from '../list/locations.charging.stations.table';
 import { LocationDetailCard } from './location.detail.card';
 import { ActionType, ResourceType } from '@util/auth';
+import { ILocationDto } from '@citrineos/base';
 
 export const LocationsDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data, isLoading } = useOne<LocationDto>({
+  const { data, isLoading } = useOne<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     id,
     meta: {
@@ -31,32 +32,19 @@ export const LocationsDetail = () => {
   if (isLoading) return <p>Loading...</p>;
   if (!location) return <p>No Data Found</p>;
 
-  const tabItems: TabsProps['items'] = [
-    {
-      key: '1',
-      label: 'Charging Stations',
-      children: <LocationsChargingStationsTable location={location} />,
-    },
-    // {
-    //   key: '2',
-    //   label: 'KPI Charts',
-    //   children: 'KPI Charts Content',
-    // },
-  ];
-
   return (
     <CanAccess
       resource={ResourceType.LOCATIONS}
       action={ActionType.SHOW}
       params={{ id: location.id }}
     >
-      <div style={{ padding: '16px' }}>
+      <div>
         <Card className="location-details">
           <LocationDetailCard location={location} />
         </Card>
 
         <Card>
-          <Tabs defaultActiveKey="1" items={tabItems} />
+          <LocationsChargingStationsTable location={location} showHeader />
         </Card>
       </div>
     </CanAccess>

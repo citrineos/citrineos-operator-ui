@@ -15,17 +15,18 @@ import {
   TableProps,
 } from 'antd';
 
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../../dtos/charging.station.dto';
-import { BaseDtoProps } from '../../../dtos/base.dto';
-import { LocationDtoProps } from '../../../dtos/location.dto';
-import { PlusIcon } from '../../../components/icons/plus.icon';
+import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { SearchIcon } from '../../../components/icons/search.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import { ResourceType, ActionType, AccessDeniedFallback } from '@util/auth';
+import {
+  BaseDtoProps,
+  ChargingStationDtoProps,
+  IChargingStationDto,
+  LocationDtoProps,
+} from '@citrineos/base';
+import { PlusOutlined } from '@ant-design/icons';
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>['rowSelection'];
@@ -41,12 +42,10 @@ export const SelectedChargingStations = ({
   const params: any = useParams<{ id: string }>();
   const locationId = params.id ? params.id : undefined;
 
-  const chargingStations = form.getFieldValue(
-    LocationDtoProps.chargingStations,
-  );
+  const chargingStations = form.getFieldValue(LocationDtoProps.chargingPool);
 
   const [selectedChargingStations, setSelectedChargingStations] = useState<
-    ChargingStationDto[]
+    IChargingStationDto[]
   >([]);
 
   const handleAddNewChargingStation = () => {
@@ -55,9 +54,9 @@ export const SelectedChargingStations = ({
 
   useEffect(() => {
     setSelectedChargingStations(
-      form.getFieldValue(LocationDtoProps.chargingStations) || [],
+      form.getFieldValue(LocationDtoProps.chargingPool) || [],
     );
-  }, [form.getFieldValue(LocationDtoProps.chargingStations)]);
+  }, [form.getFieldValue(LocationDtoProps.chargingPool)]);
 
   const [
     chargingStationAutoCompleteValue,
@@ -68,9 +67,9 @@ export const SelectedChargingStations = ({
   });
 
   const { selectProps: selectedChargingStationsProps } =
-    useSelect<ChargingStationDto>({
+    useSelect<IChargingStationDto>({
       resource: ResourceType.CHARGING_STATIONS,
-      optionLabel: (chargingStation: ChargingStationDto) => {
+      optionLabel: (chargingStation: IChargingStationDto) => {
         return JSON.stringify(chargingStation);
       },
       optionValue: 'id',
@@ -105,17 +104,17 @@ export const SelectedChargingStations = ({
     });
 
   const handleCheckboxSelection = (newSelectedRowKeys: React.Key[]) => {
-    const prev = form.getFieldValue(LocationDtoProps.chargingStations);
-    const newValue = prev.filter((chargingStation: ChargingStationDto) =>
+    const prev = form.getFieldValue(LocationDtoProps.chargingPool);
+    const newValue = prev.filter((chargingStation: IChargingStationDto) =>
       newSelectedRowKeys.includes(chargingStation.id),
     );
     form.setFieldsValue({
-      [LocationDtoProps.chargingStations]: newValue,
+      [LocationDtoProps.chargingPool]: newValue,
     });
     setSelectedChargingStations(newValue);
   };
 
-  const selectedChargingStationsRowSelection: TableRowSelection<ChargingStationDto> =
+  const selectedChargingStationsRowSelection: TableRowSelection<IChargingStationDto> =
     {
       selectedRowKeys: selectedChargingStations.map((item) => item.id),
       onChange: handleCheckboxSelection,
@@ -123,10 +122,10 @@ export const SelectedChargingStations = ({
 
   const handleAutoCompleteSelection = (value: string) => {
     const chargingStation = JSON.parse(value) as ChargingStationDto;
-    const prev = form.getFieldValue(LocationDtoProps.chargingStations);
+    const prev = form.getFieldValue(LocationDtoProps.chargingPool);
     const newValue = [...prev, chargingStation];
     form.setFieldsValue({
-      [LocationDtoProps.chargingStations]: newValue,
+      [LocationDtoProps.chargingPool]: newValue,
     });
     setSelectedChargingStations(newValue);
     setChargingStationAutoCompleteValue({
@@ -160,11 +159,12 @@ export const SelectedChargingStations = ({
                 fallback={<AccessDeniedFallback />}
               >
                 <Button
-                  className="secondary"
+                  className="success"
+                  icon={<PlusOutlined />}
+                  iconPosition="end"
                   onClick={handleAddNewChargingStation}
                 >
-                  Add New Charging Station
-                  <PlusIcon />
+                  Create Charging Station
                 </Button>
               </CanAccess>
             </Flex>
@@ -184,7 +184,7 @@ export const SelectedChargingStations = ({
                     ? selectedChargingStationsProps.options.map((option) => {
                         const item = JSON.parse(
                           option.label as string,
-                        ) as ChargingStationDto;
+                        ) as IChargingStationDto;
                         return {
                           value: option.label,
                           label: (
@@ -230,7 +230,7 @@ export const SelectedChargingStations = ({
             onCell={() => ({
               className: 'column-id',
             })}
-            render={(_: any, record: ChargingStationDto) => {
+            render={(_: any, record: IChargingStationDto) => {
               return `Station id: ${record.id}`;
             }}
           />
@@ -241,7 +241,7 @@ export const SelectedChargingStations = ({
             onCell={() => ({
               className: 'column-status',
             })}
-            render={(_: any, record: ChargingStationDto) => {
+            render={(_: any, record: IChargingStationDto) => {
               return (
                 <div className={record.isOnline ? 'online' : 'offline'}>
                   {record.isOnline ? 'Online' : 'Offline'}
@@ -256,7 +256,7 @@ export const SelectedChargingStations = ({
             onCell={() => ({
               className: 'column-configuration',
             })}
-            render={(_: any, record: ChargingStationDto) => {
+            render={(_: any, record: IChargingStationDto) => {
               return (
                 <div>{record.firmwareVersion ?? 'Needs configuration'}</div>
               );
@@ -269,7 +269,7 @@ export const SelectedChargingStations = ({
             onCell={() => ({
               className: 'column-model',
             })}
-            render={(_: any, record: ChargingStationDto) => {
+            render={(_: any, record: IChargingStationDto) => {
               return <div>{record.chargePointModel ?? 'Needs model'}</div>;
             }}
           />
@@ -280,7 +280,7 @@ export const SelectedChargingStations = ({
             onCell={() => ({
               className: 'column-vendor',
             })}
-            render={(_: any, record: ChargingStationDto) => {
+            render={(_: any, record: IChargingStationDto) => {
               return <div>{record.chargePointVendor ?? 'Needs Vendor'}</div>;
             }}
           />

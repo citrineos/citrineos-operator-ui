@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  ChargignStationStatus,
-  ChargingStationDto,
+  ChargingStationStatus,
   getChargingStationStatus,
 } from '../../dtos/charging.station.dto';
 import GenericTag from '../../components/tag';
 import React from 'react';
+import { IChargingStationDto } from '@citrineos/base';
 
 export interface ChargingStationStatusTagProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 export const ChargingStationStatusTag = ({
   station,
@@ -20,13 +20,13 @@ export const ChargingStationStatusTag = ({
   return (
     <GenericTag
       colorMap={{
-        [ChargignStationStatus.AVAILABLE]: 'green',
-        [ChargignStationStatus.CHARGING]: 'blue',
-        [ChargignStationStatus.CHARGING_SUSPENDED]: 'violet',
-        [ChargignStationStatus.UNAVAILABLE]: 'gray',
-        [ChargignStationStatus.FAULTED]: 'red',
+        [ChargingStationStatus.AVAILABLE]: 'green',
+        [ChargingStationStatus.CHARGING]: 'blue',
+        [ChargingStationStatus.CHARGING_SUSPENDED]: 'violet',
+        [ChargingStationStatus.UNAVAILABLE]: 'gray',
+        [ChargingStationStatus.FAULTED]: 'red',
       }}
-      enumType={ChargignStationStatus}
+      enumType={ChargingStationStatus}
       enumValue={status}
     />
   );

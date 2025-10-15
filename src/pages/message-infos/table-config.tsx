@@ -14,8 +14,8 @@ import { StatusIcon } from '../../components/status-icon';
 import { TimestampDisplay } from '../../components/timestamp-display';
 import React from 'react';
 import GenericTag from '../../components/tag';
-import { MessageInfo } from './MessageInfo';
 import { DefaultColors } from '@enums';
+import { IMessageInfoDto } from '@citrineos/base';
 
 export const MESSAGE_INFOS_COLUMNS = (
   withActions: boolean,
@@ -145,11 +145,11 @@ export const MESSAGE_INFOS_COLUMNS = (
       dataIndex: 'displayComponentId',
       title: 'Display Component ID',
       render: (_: any, record: any) => {
-        if (!(record as unknown as MessageInfo)?.displayComponentId) {
+        if (!(record as unknown as IMessageInfoDto)?.displayComponentId) {
           return '';
         }
 
-        const displayComponentId = (record as unknown as MessageInfo)
+        const displayComponentId = (record as unknown as IMessageInfoDto)
           .displayComponentId;
         if (parentView === ResourceType.COMPONENTS) {
           return displayComponentId;

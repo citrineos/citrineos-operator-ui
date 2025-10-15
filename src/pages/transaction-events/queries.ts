@@ -23,7 +23,6 @@ export const TRANSACTION_EVENT_LIST_QUERY = gql`
       stationId
       triggerReason
       evseId
-      idTokenId
       numberOfPhasesUsed
       reservationId
       seqNo
@@ -60,7 +59,6 @@ export const TRANSACTION_EVENT_GET_QUERY = gql`
       stationId
       triggerReason
       evseId
-      idTokenId
       numberOfPhasesUsed
       reservationId
       seqNo
@@ -83,7 +81,6 @@ export const TRANSACTION_EVENT_CREATE_MUTATION = gql`
       stationId
       triggerReason
       evseId
-      idTokenId
       numberOfPhasesUsed
       reservationId
       seqNo
@@ -109,7 +106,6 @@ export const TRANSACTION_EVENT_EDIT_MUTATION = gql`
       stationId
       triggerReason
       evseId
-      idTokenId
       numberOfPhasesUsed
       reservationId
       seqNo
@@ -132,7 +128,6 @@ export const TRANSACTION_EVENT_DELETE_MUTATION = gql`
       stationId
       triggerReason
       evseId
-      idTokenId
       numberOfPhasesUsed
       reservationId
       seqNo
@@ -147,12 +142,12 @@ export const TRANSACTION_EVENT_DELETE_MUTATION = gql`
 `;
 
 export const GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY = gql`
-  query TransactionEventList(
+  query TransactionEventForTransactionList(
     $transactionDatabaseId: Int!
     $offset: Int!
     $limit: Int!
     $order_by: [TransactionEvents_order_by!]
-    $where: TransactionEvents_bool_exp! = []
+    $where: TransactionEvents_bool_exp! = {}
   ) {
     TransactionEvents(
       offset: $offset
@@ -169,7 +164,6 @@ export const GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY = gql`
       stationId
       triggerReason
       evseId
-      idTokenId
       numberOfPhasesUsed
       reservationId
       seqNo
@@ -199,7 +193,7 @@ export const GET_OCPPMESSAGES_FOR_TRANSACTION_LIST_QUERY = gql`
     $offset: Int!
     $limit: Int!
     $order_by: [OCPPMessages_order_by!]
-    $where: OCPPMessages_bool_exp!
+    $where: OCPPMessages_bool_exp! = {}
   ) {
     OCPPMessages(
       offset: $offset

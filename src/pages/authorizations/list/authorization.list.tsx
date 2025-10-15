@@ -11,12 +11,12 @@ import { DebounceSearch } from '../../../components/debounce-search';
 import { EMPTY_FILTER } from '@util/consts';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AUTHORIZATIONS_LIST_QUERY } from '../queries';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 import { getAuthorizationFilters, getAuthorizationColumns } from '../columns';
 import './style.scss';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { PlusIcon } from '../../../components/icons/plus.icon';
+import { PlusOutlined } from '@ant-design/icons';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -51,12 +51,13 @@ export const AuthorizationsList: React.FC = () => {
           <h2>Authorizations</h2>
           <Row>
             <Button
-              type="primary"
+              className="success"
+              icon={<PlusOutlined />}
+              iconPosition="end"
               style={{ marginRight: '20px' }}
               onClick={() => push(`/${MenuSection.AUTHORIZATIONS}/new`)}
             >
-              Add New Authorization
-              <PlusIcon />
+              Add Authorization
             </Button>
             <DebounceSearch
               onSearch={onSearch}

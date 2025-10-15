@@ -3,17 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import './telemetry';
-import type { ResourceProps } from '@refinedev/core';
-import { Authenticated, Refine } from '@refinedev/core';
+import { Authenticated, Refine, ResourceProps } from '@refinedev/core';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import './style.scss';
 
-import {
-  AuthPage,
-  ErrorComponent,
-  ThemedLayoutContextProvider,
-  useNotificationProvider,
-} from '@refinedev/antd';
+import { ErrorComponent, ThemedLayoutContextProvider } from '@refinedev/antd';
 import '@refinedev/antd/dist/reset.css';
 import { App as AntdApp, ConfigProvider, Layout as AntdLayout } from 'antd';
 
@@ -26,7 +20,6 @@ import dataProvider, {
 } from '@refinedev/hasura';
 import routerBindings, {
   DocumentTitleHandler,
-  NavigateToResource,
   UnsavedChangesNotifier,
 } from '@refinedev/react-router-v6';
 
@@ -37,6 +30,7 @@ import {
   Route,
   Routes,
   useLocation,
+  useNavigate,
 } from 'react-router-dom';
 import { Header } from './components';
 import {
@@ -52,14 +46,18 @@ import {
   routes as ChargingStationsRoutes,
 } from './pages/charging-stations';
 import {
-  routes as TransactionsRoutes,
   resources as transactionResources,
+  routes as TransactionsRoutes,
 } from './pages/transactions';
 import { routes as OverviewRoutes } from './pages/overview';
 import {
-  routes as AuthorizationsRoutes,
   resources as authoriationResources,
+  routes as AuthorizationsRoutes,
 } from './pages/authorizations';
+import {
+  resources as partnerResources,
+  routes as PartnersRoutes,
+} from './pages/partners';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { darkTheme, lightTheme } from './theme';
 import { MainMenu, MenuSection } from './components/main-menu/main.menu';
@@ -70,19 +68,52 @@ import {
 } from '@util/TelemetryConsentModal';
 import { initTelemetry } from './telemetry';
 import AppModal from './AppModal';
-import { authProvider, createAccessProvider } from '@util/auth';
+import {
+  createAccessProvider,
+  createGenericAuthProvider,
+  createKeycloakAuthProvider,
+  HasuraHeader,
+  ResourceType,
+} from '@util/auth';
+import { notificationProvider } from '@util/notificationProvider';
+
 import config from '@util/config';
 
-const accessControlProvider = createAccessProvider({});
+const KEYCLOAK_URL = config.keycloakUrl;
+const KEYCLOAK_REALM = config.keycloakRealm;
+export const authProvider =
+  KEYCLOAK_URL && KEYCLOAK_REALM
+    ? createKeycloakAuthProvider({
+        keycloakUrl: KEYCLOAK_URL,
+        keycloakRealm: KEYCLOAK_REALM,
+      })
+    : createGenericAuthProvider();
+
+const accessControlProvider = createAccessProvider({
+  getPermissions: authProvider.getPermissions!,
+  getUserRole: authProvider.getUserRole!,
+});
 
 const requestMiddleware = async (request: any) => {
+  const requestHeaders = {
+    ...request.headers,
+  };
+  if (authProvider) {
+    const token = await authProvider.getToken();
+    if (token) {
+      requestHeaders['Authorization'] = 'Bearer ' + token;
+    }
+    const hasuraHeaders = await authProvider.getHasuraHeaders();
+    if (hasuraHeaders) {
+      const hasuraRole = hasuraHeaders.get(HasuraHeader.X_HASURA_ROLE);
+      if (hasuraRole) {
+        requestHeaders[HasuraHeader.X_HASURA_ROLE] = hasuraRole;
+      }
+    }
+  }
   return {
     ...request,
-    headers: {
-      ...request.headers,
-      'x-hasura-role': 'admin',
-      'x-hasura-admin-secret': config.hasuraAdminSecret,
-    },
+    headers: requestHeaders,
   };
 };
 
@@ -95,10 +126,35 @@ const client = new GraphQLClient(API_URL, {
 
 const webSocketClient = graphqlWS.createClient({
   url: WS_URL,
+  connectionParams: async () => {
+    const token = await authProvider.getToken();
+    if (token) {
+      const hasuraHeaders = await authProvider.getHasuraHeaders();
+      if (hasuraHeaders) {
+        const hasuraRole = hasuraHeaders.get(HasuraHeader.X_HASURA_ROLE);
+        if (hasuraRole)
+          // If a role is set, include it in the connection params
+          return {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              [HasuraHeader.X_HASURA_ROLE]: hasuraRole,
+            },
+          };
+      }
+      return {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+    }
+  },
 });
 
 const hasuraProviderOptions = {
-  idType: 'String',
+  idType: (resource: string) => {
+    if (resource === ResourceType.CHARGING_STATIONS) return 'String';
+    return 'Int';
+  },
   namingConvention: 'hasura-default',
 };
 
@@ -121,6 +177,7 @@ const resources: ResourceProps[] = [
   ...locationResources,
   ...transactionResources,
   ...authoriationResources,
+  ...partnerResources,
 ];
 
 const MainAntDApp: React.FC<MainAntdAppProps> = ({
@@ -143,12 +200,16 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
       return MenuSection.AUTHORIZATIONS;
     if (location.pathname.startsWith(`/${MenuSection.TRANSACTIONS}`))
       return MenuSection.TRANSACTIONS;
+    if (location.pathname.startsWith(`/${MenuSection.PARTNERS}`))
+      return MenuSection.PARTNERS;
     return MenuSection.OVERVIEW;
   }, [location.pathname]);
 
   const tabTitleHandler = () => {
-    return 'CitrineOS';
+    return config.appName;
   };
+
+  const LoginPage = authProvider.getLoginPage();
 
   return (
     <AntdApp>
@@ -166,7 +227,7 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
             webSocketClient,
             hasuraProviderOptions as HasuraLiveProviderOptions,
           )}
-          notificationProvider={useNotificationProvider}
+          notificationProvider={notificationProvider}
           routerProvider={routerBindings}
           resources={resources}
           options={{
@@ -178,7 +239,7 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
           }}
         >
           <Routes>
-            <Route path="/login" element={<AuthPage type="login" />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route
               element={
                 <Authenticated key="login">
@@ -191,7 +252,6 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
                         <MainMenu activeSection={activeSection} />
                         <AntdLayout>
                           <AppModal />
-                          <Header activeSection={activeSection} />
                           <AntdLayout.Content
                             className={`content-container ${routeClassName}`}
                           >
@@ -223,6 +283,7 @@ const MainAntDApp: React.FC<MainAntdAppProps> = ({
                 path="/charging-stations/*"
                 element={<ChargingStationsRoutes />}
               />
+              <Route path="/partners/*" element={<PartnersRoutes />} />
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>

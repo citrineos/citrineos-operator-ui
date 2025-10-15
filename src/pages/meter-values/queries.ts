@@ -9,7 +9,7 @@ export const METER_VALUE_LIST_QUERY = gql`
     $offset: Int!
     $limit: Int!
     $order_by: [MeterValues_order_by!]
-    $where: MeterValues_bool_exp
+    $where: MeterValues_bool_exp! = {}
   ) {
     MeterValues(
       offset: $offset
@@ -90,12 +90,12 @@ export const METER_VALUE_DELETE_MUTATION = gql`
 `;
 
 export const GET_METER_VALUES_FOR_TRANSACTION_EVENT = gql`
-  query MeterValueList(
+  query MeterValueForTransactionEventList(
     $transactionEventId: Int!
     $offset: Int!
     $limit: Int!
     $order_by: [MeterValues_order_by!]
-    $where: MeterValues_bool_exp! = []
+    $where: MeterValues_bool_exp! = {}
   ) {
     MeterValues(
       offset: $offset
@@ -128,12 +128,11 @@ export const GET_METER_VALUES_FOR_TRANSACTION_EVENT = gql`
 `;
 
 export const GET_METER_VALUES_FOR_TRANSACTION = gql`
-  query MeterValueList(
+  query MeterValueForTransactionList(
     $transactionDatabaseId: Int!
     $offset: Int!
     $limit: Int!
     $order_by: [MeterValues_order_by!]
-    $where: MeterValues_bool_exp! = []
   ) {
     MeterValues(
       offset: $offset

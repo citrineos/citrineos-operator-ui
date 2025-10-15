@@ -17,17 +17,26 @@ export const CONNECTOR_LIST_QUERY = gql`
       order_by: $order_by
       where: $where
     ) {
-      connectorId
-      createdAt
-      errorCode
       id
-      info
       stationId
+      evseId
+      evseTypeConnectorId
+      connectorId
       status
+      type
+      maximumPowerWatts
+      maximumAmperage
+      maximumVoltage
+      format
+      powerType
+      termsAndConditionsUrl
+      errorCode
       timestamp
-      updatedAt
-      vendorErrorCode
+      info
       vendorId
+      vendorErrorCode
+      createdAt
+      updatedAt
     }
     Connectors_aggregate(where: $where) {
       aggregate {
@@ -39,18 +48,27 @@ export const CONNECTOR_LIST_QUERY = gql`
 
 export const CONNECTOR_GET_QUERY = gql`
   query GetConnectorById($id: Int!) {
-    Connectors_by_pk(connectorId: $id) {
-      connectorId
-      createdAt
-      errorCode
+    Connectors_by_pk(id: $id) {
       id
-      info
       stationId
+      evseId
+      evseTypeConnectorId
+      connectorId
       status
+      type
+      maximumPowerWatts
+      maximumAmperage
+      maximumVoltage
+      format
+      powerType
+      termsAndConditionsUrl
+      errorCode
       timestamp
-      updatedAt
-      vendorErrorCode
+      info
       vendorId
+      vendorErrorCode
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -58,50 +76,80 @@ export const CONNECTOR_GET_QUERY = gql`
 export const CONNECTOR_CREATE_MUTATION = gql`
   mutation ConnectorCreate($object: Connectors_insert_input!) {
     insert_Connectors_one(object: $object) {
-      connectorId
-      createdAt
-      errorCode
       id
-      info
       stationId
+      evseId
+      evseTypeConnectorId
+      connectorId
       status
+      type
+      maximumPowerWatts
+      maximumAmperage
+      maximumVoltage
+      format
+      powerType
+      termsAndConditionsUrl
+      errorCode
       timestamp
-      updatedAt
-      vendorErrorCode
+      info
       vendorId
+      vendorErrorCode
+      createdAt
+      updatedAt
     }
   }
 `;
 
 export const CONNECTOR_EDIT_MUTATION = gql`
-  mutation ConnectorEdit($id: Int!, $object: Connectors_insert_input!) {
-    update_Connectors_by_pk(pk_columns: { connectorId: $id }, _set: $object) {
-      connectorId
-      createdAt
-      errorCode
+  mutation ConnectorEdit($id: Int!, $object: Connectors_set_input!) {
+    update_Connectors_by_pk(pk_columns: { id: $id }, _set: $object) {
       id
-      info
+      stationId
+      evseId
+      evseTypeConnectorId
+      connectorId
       status
-      vendorErrorCode
+      type
+      maximumPowerWatts
+      maximumAmperage
+      maximumVoltage
+      format
+      powerType
+      termsAndConditionsUrl
+      errorCode
+      timestamp
+      info
       vendorId
+      vendorErrorCode
+      createdAt
+      updatedAt
     }
   }
 `;
 
 export const CONNECTOR_DELETE_MUTATION = gql`
   mutation ConnectorDelete($id: Int!) {
-    delete_Connectors_by_pk(connectorId: $id) {
-      connectorId
-      createdAt
-      errorCode
+    delete_Connectors_by_pk(id: $id) {
       id
-      info
       stationId
+      evseId
+      evseTypeConnectorId
+      connectorId
       status
+      type
+      maximumPowerWatts
+      maximumAmperage
+      maximumVoltage
+      format
+      powerType
+      termsAndConditionsUrl
+      errorCode
       timestamp
-      updatedAt
-      vendorErrorCode
+      info
       vendorId
+      vendorErrorCode
+      createdAt
+      updatedAt
     }
   }
 `;

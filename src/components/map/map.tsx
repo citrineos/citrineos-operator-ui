@@ -18,15 +18,17 @@ import {
   useMap,
 } from '@vis.gl/react-google-maps';
 import { MapMarkerComponent } from './map.marker';
-import { mapStyles } from './map.styles';
 import { ClusterIcon } from './marker.icons';
 import { ClusterInfo, LocationGroup, MapMarkerData, MapProps } from './types';
 import './style.scss';
 import { CanAccess } from '@refinedev/core';
 import { ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import { ILocationDto } from '@citrineos/base';
 
 const apiKey = config.googleMapsApiKey;
+
+const singleElementZoom = 12;
 
 /**
  * Main map component that supports marker clustering
@@ -42,25 +44,24 @@ export const LocationMap: React.FC<MapProps> = ({
   // Create station markers from location data
   const stationMarkers: MapMarkerData[] = useMemo(() => {
     return locations.flatMap((location) => {
-      return (location.chargingStations || [])
-        .filter((station) => station.location?.coordinates)
-        .map((station) => {
-          const position = {
-            lat: station.location!.coordinates!.latitude,
-            lng: station.location!.coordinates!.longitude,
-          };
+      return (location.chargingPool || []).map((station) => {
+        const coordinates = station.coordinates || location.coordinates;
+        const position = {
+          lat: coordinates.coordinates[1],
+          lng: coordinates.coordinates[0],
+        };
 
-          return {
-            position,
-            identifier: station.id,
-            type: 'station' as const,
-            locationId: station.location!.id,
-            status: station.isOnline ? 'online' : ('offline' as const),
-            color: station.isOnline
-              ? 'var(--primary-color-1)'
-              : 'var(--secondary-color-2)',
-          } as MapMarkerData;
-        });
+        return {
+          position,
+          identifier: station.id,
+          type: 'station' as const,
+          locationId: location.id!.toString(),
+          status: station.isOnline ? 'online' : ('offline' as const),
+          color: station.isOnline
+            ? 'var(--primary-color-1)'
+            : 'var(--secondary-color-2)',
+        } as MapMarkerData;
+      });
     });
   }, [locations]);
 
@@ -70,15 +71,15 @@ export const LocationMap: React.FC<MapProps> = ({
       .filter((location) => location.coordinates)
       .map((location) => {
         const position = {
-          lat: location.coordinates!.latitude,
-          lng: location.coordinates!.longitude,
+          lat: location.coordinates.coordinates[1],
+          lng: location.coordinates.coordinates[0],
         };
 
         const status = determineLocationStatus(location);
 
         return {
           position,
-          identifier: location.id,
+          identifier: location.id!.toString(),
           type: 'location' as const,
           status,
           color: determineLocationColor(status),
@@ -145,81 +146,72 @@ const MapWithClustering: React.FC<{
   const [visibleElements, setVisibleElements] = useState<
     (ClusterInfo | MapMarkerData)[]
   >([]);
-  const [zoom, setZoom] = useState(initialZoom || 10);
+  const [zoom, setZoom] = useState(initialZoom || singleElementZoom);
+  const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
   const map = useMap();
-  const boundsRef = useRef<google.maps.LatLngBounds | null>(null);
 
+  // Wait until the map API is fully loaded
   useEffect(() => {
     if (status === APILoadingStatus.LOADED) {
-      // Small delay to ensure the map is fully rendered bc google maps has issues
-      const timer = setTimeout(() => {
-        setMapFullyInitialized(true);
-      }, 1000);
-
-      return () => clearTimeout(timer);
+      setMapFullyInitialized(true);
     } else {
       setMapFullyInitialized(false);
     }
   }, [status]);
 
   // Update visible elements when map bounds change or markers change
-  const updateVisibleElements = useCallback(() => {
-    if (!map) return;
-
-    const currentBounds = map.getBounds();
-    if (!currentBounds) return;
-
-    boundsRef.current = currentBounds;
+  useEffect(() => {
+    if (!map || !bounds || !markers) return;
 
     // Filter markers to those in the current view
     const visibleMarkers = markers.filter((marker) =>
-      currentBounds.contains(marker.position),
+      bounds.contains(marker.position),
     );
 
     // Set up clustering based on zoom level and location grouping preference
-    if (zoom <= 10 && clusterByLocation) {
+    if (zoom <= singleElementZoom && clusterByLocation) {
       // High-level clustering - create clusters of locations
       const clusters = createLocationClusters(
         visibleMarkers,
         locations,
-        currentBounds,
+        bounds,
       );
       setVisibleElements(clusters);
-    } else if (zoom <= 14 && clusterByLocation) {
-      // Mid-level clustering - show individual locations and cluster stations
-      const elements = createLocationBasedElements(visibleMarkers, locations);
-      setVisibleElements(elements);
+      // } else if (zoom <= 14 && clusterByLocation) {
+      //   // Mid-level clustering - show individual locations and cluster stations
+      //   const elements = createLocationBasedElements(visibleMarkers, locations);
+      //   setVisibleElements(elements);
     } else {
       // Low-level - show individual stations
       setVisibleElements(visibleMarkers);
     }
-  }, [map, markers, zoom, locations, clusterByLocation]);
+  }, [map, bounds, zoom, markers, locations, clusterByLocation]);
 
   // Set up event listeners for map changes
   useEffect(() => {
     if (!map) return;
 
-    const zoomListener = map.addListener('zoom_changed', () => {
-      setZoom(map.getZoom() || initialZoom || 10);
-    });
+    const updateZoom = () => {
+      const newZoom = map.getZoom();
+      if (newZoom) setZoom(newZoom);
+    };
+    updateZoom();
+    const zoomListener = map.addListener('zoom_changed', updateZoom);
 
-    const boundsListener = map.addListener('idle', updateVisibleElements);
-
-    // Initial update
-    updateVisibleElements();
+    const updateBounds = () => {
+      const newBounds = map.getBounds();
+      if (newBounds) setBounds(newBounds);
+    };
+    updateBounds();
+    const boundsListener = map.addListener('bounds_changed', updateBounds);
 
     return () => {
       google.maps.event.removeListener(zoomListener);
       google.maps.event.removeListener(boundsListener);
     };
-  }, [map, updateVisibleElements, initialZoom]);
+  }, [map]);
 
-  // Update visible elements when markers or zoom changes
-  useEffect(() => {
-    updateVisibleElements();
-  }, [markers, zoom, updateVisibleElements]);
-
-  // Set map bounds to include all markers on initial load
+  // Set map bounds to include all markers when map is initialized or markers change
   useEffect(() => {
     if (map && markers.length > 0) {
       const newBounds = new google.maps.LatLngBounds();
@@ -229,14 +221,6 @@ const MapWithClustering: React.FC<{
       });
 
       map.fitBounds(newBounds);
-
-      // Prevent excessive zoom for single markers
-      google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
-        const mapZoom = map.getZoom();
-        if (markers.length === 1 && mapZoom && mapZoom > 15) {
-          map.setZoom(15);
-        }
-      });
     }
   }, [map, markers]);
 
@@ -250,29 +234,28 @@ const MapWithClustering: React.FC<{
         map.panTo(selectedMarker.position);
 
         // Zoom in a bit if we're zoomed out too far
-        if (zoom < 14) {
-          map.setZoom(14);
+        if (zoom < singleElementZoom) {
+          map.setZoom(singleElementZoom);
         }
       }
     }
-  }, [map, selectedMarkerId, markers, zoom]);
+  }, [selectedMarkerId]);
 
   // Render the map and markers/clusters
   return (
     <GoogleMap
-      mapId="citrine-map"
+      mapId={config.googleMapsOverviewMapId}
       defaultCenter={defaultCenter}
       defaultZoom={initialZoom}
       gestureHandling="cooperative"
       disableDefaultUI={false}
-      styles={mapStyles}
       zoomControl={true}
       fullscreenControl={false}
     >
       {mapFullyInitialized &&
         visibleElements.map((element, index) => {
           // Handle cluster elements
-          if ('count' in element && element.count > 1) {
+          if ('count' in element) {
             return (
               <AdvancedMarker
                 key={`cluster-${index}`}
@@ -424,21 +407,21 @@ function createLocationBasedElements(
 
   // Add location markers for complete location groups
   locationGroups.forEach((group) => {
-    if (group.isComplete) {
-      // Add the location marker
-      elements.push(group.locationMarker);
+    // if (group.isComplete) {
+    // Add the location marker
+    elements.push(group.locationMarker);
 
-      // Mark these stations as processed
-      group.stationMarkers.forEach((station) => {
-        processedStationIds.add(station.identifier);
-      });
-    } else {
-      // For incomplete location groups, just add the individual station markers
-      group.stationMarkers.forEach((station) => {
-        elements.push(station);
-        processedStationIds.add(station.identifier);
-      });
-    }
+    // Mark these stations as processed
+    group.stationMarkers.forEach((station) => {
+      processedStationIds.add(station.identifier);
+    });
+    // } else {
+    //   // For incomplete location groups, just add the individual station markers
+    //   group.stationMarkers.forEach((station) => {
+    //     elements.push(station);
+    //     processedStationIds.add(station.identifier);
+    //   });
+    // }
   });
 
   // Add any markers that weren't in a location group
@@ -472,23 +455,23 @@ function createLocationGroups(
   // Create location groups
   return Array.from(markersByLocation.entries())
     .map(([locationId, stationMarkers]) => {
-      const location = locations.find((l) => l.id === locationId);
+      const location = locations.find((l) => l.id!.toString() === locationId);
       if (!location || !location.coordinates) return null;
 
       // Create a marker for this location
       const locationMarker: MapMarkerData = {
         position: {
-          lat: location.coordinates.latitude,
-          lng: location.coordinates.longitude,
+          lat: location.coordinates.coordinates[1],
+          lng: location.coordinates.coordinates[0],
         },
-        identifier: location.id,
+        identifier: location.id!.toString(),
         type: 'location',
         status: determineLocationStatus(location),
         color: determineLocationColor(determineLocationStatus(location)),
       };
 
       // Check if all stations from this location are present in the markers
-      const totalStationsInLocation = location.chargingStations?.length || 0;
+      const totalStationsInLocation = location.chargingPool?.length || 0;
       const isComplete = stationMarkers.length === totalStationsInLocation;
 
       return {
@@ -575,17 +558,17 @@ function calculateCenter(
 
 // Helper function to determine a location's status based on its charging stations
 function determineLocationStatus(
-  location: any,
+  location: ILocationDto,
 ): 'online' | 'offline' | 'partial' {
-  if (!location.chargingStations || location.chargingStations.length === 0) {
+  if (!location.chargingPool || location.chargingPool.length === 0) {
     return 'offline';
   }
 
-  const onlineCount = location.chargingStations.filter(
+  const onlineCount = location.chargingPool.filter(
     (station: any) => station.isOnline,
   ).length;
 
-  if (onlineCount === location.chargingStations.length) {
+  if (onlineCount === location.chargingPool.length) {
     return 'online';
   } else if (onlineCount === 0) {
     return 'offline';

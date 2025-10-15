@@ -5,34 +5,34 @@
 import { Button, Flex, GetProps, Input, Row, Table } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import { LOCATIONS_LIST_QUERY } from '../queries';
-import { LocationDto } from '../../../dtos/location.dto';
 import './style.scss';
 import { ArrowDownIcon } from '../../../components/icons/arrow.down.icon';
 import { LocationsChargingStationsTable } from './locations.charging.stations.table';
 import { useTable } from '@refinedev/antd';
 import { DEFAULT_SORTERS } from '../../../components/defaults';
-import { PlusIcon } from '../../../components/icons/plus.icon';
 import { CanAccess, useNavigation } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { DebounceSearch } from '../../../components/debounce-search';
 import { getLocationAndStationsFilters, getLocationsColumns } from '../columns';
 import { EMPTY_FILTER } from '@util/consts';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
+import { ILocationDto, IChargingStationDto } from '@citrineos/base';
+import { LocationDto } from '../../../dtos/location.dto';
+import { PlusOutlined } from '@ant-design/icons';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
 export const LocationsList = () => {
-  const [expandedRowByToggle, setExpandedRowByToggle] = useState<string>();
+  const [expandedRowByToggle, setExpandedRowByToggle] = useState<number>();
   const [searchValue, setSearchValue] = useState<string>('');
   const [filteredStationsByLocation, setFilteredStationsByLocation] = useState<
-    Record<string, ChargingStationDto[]>
+    Record<string, IChargingStationDto[]>
   >({});
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const { push } = useNavigation();
 
-  const { tableProps, setFilters } = useTable<LocationDto>({
+  const { tableProps, setFilters } = useTable<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     sorters: DEFAULT_SORTERS,
     meta: {
@@ -41,8 +41,8 @@ export const LocationsList = () => {
     queryOptions: getPlainToInstanceOptions(LocationDto),
   });
 
-  const handleExpandToggle = (record: LocationDto) => {
-    const isCurrentlyExpanded = expandedRowKeys.includes(record.id);
+  const handleExpandToggle = (record: ILocationDto) => {
+    const isCurrentlyExpanded = expandedRowKeys.includes(record.id!);
 
     if (isCurrentlyExpanded) {
       // Remove this location from expanded rows
@@ -52,8 +52,8 @@ export const LocationsList = () => {
       setExpandedRowByToggle(undefined);
     } else {
       // Add this location to expanded rows
-      setExpandedRowKeys((prevKeys) => [...prevKeys, record.id]);
-      setExpandedRowByToggle(record.id);
+      setExpandedRowKeys((prevKeys) => [...prevKeys, record.id!]);
+      setExpandedRowByToggle(record.id!);
     }
   };
 
@@ -69,7 +69,7 @@ export const LocationsList = () => {
 
       // Ensure all rows are collapsed when search is reset
       if (tableProps.dataSource) {
-        const allLocations = tableProps.dataSource as LocationDto[];
+        const allLocations = tableProps.dataSource as ILocationDto[];
         setExpandedRowKeys([]);
       }
     } else {
@@ -89,16 +89,16 @@ export const LocationsList = () => {
       return;
     }
 
-    const matchedStations: Record<string, ChargingStationDto[]> = {};
+    const matchedStations: Record<string, IChargingStationDto[]> = {};
     const newExpandedKeys: React.Key[] = [];
     const lowercaseValue = value.toLowerCase();
 
     // Find matching stations for each location
-    tableProps.dataSource?.forEach((location: LocationDto) => {
-      if (!location.chargingStations?.length) return;
+    tableProps.dataSource?.forEach((location: ILocationDto) => {
+      if (!location.chargingPool?.length) return;
 
-      const matchingStations = location.chargingStations.filter(
-        (station) =>
+      const matchingStations = location.chargingPool.filter(
+        (station: IChargingStationDto) =>
           // Match against station ID
           (station.id && station.id.toLowerCase().includes(lowercaseValue)) ||
           // Match against online status
@@ -107,12 +107,12 @@ export const LocationsList = () => {
               lowercaseValue,
             )) ||
           // Match against status notifications if available
-          station.latestStatusNotifications?.[0]?.statusNotification?.connectorStatus
+          station.statusNotifications?.[0]?.connectorStatus
             ?.toLowerCase()
             .includes(lowercaseValue),
       );
 
-      if (matchingStations.length > 0) {
+      if (matchingStations.length > 0 && location.id !== undefined) {
         matchedStations[location.id] = matchingStations;
         // Automatically expand locations with matching stations
         newExpandedKeys.push(location.id);
@@ -135,13 +135,13 @@ export const LocationsList = () => {
   }, [searchValue]);
 
   // Determine if a location should be highlighted based on search results
-  const shouldHighlightLocation = (record: LocationDto): boolean => {
-    return !!filteredStationsByLocation[record.id]?.length;
+  const shouldHighlightLocation = (record: ILocationDto): boolean => {
+    return !!filteredStationsByLocation[record.id!]?.length;
   };
 
   // With backend filtering, all returned locations should be shown
   // This function is kept for compatibility but is simplified
-  const shouldShowLocation = (record: LocationDto): boolean => {
+  const shouldShowLocation = (record: ILocationDto): boolean => {
     return true; // Backend filtering handles which locations to show
   };
 
@@ -176,12 +176,13 @@ export const LocationsList = () => {
             action={ActionType.CREATE}
           >
             <Button
-              type="primary"
+              className="success"
+              icon={<PlusOutlined />}
+              iconPosition="end"
               style={{ marginRight: '20px' }}
               onClick={() => push(`/${MenuSection.LOCATIONS}/new`)}
             >
-              Add New Location
-              <PlusIcon />
+              Add Location
             </Button>
           </CanAccess>
           <DebounceSearch onSearch={onSearch} placeholder="Search Locations" />
@@ -198,11 +199,11 @@ export const LocationsList = () => {
           showHeader={true}
           expandable={{
             expandIconColumnIndex: -1,
-            expandedRowRender: (record: LocationDto) => {
+            expandedRowRender: (record: ILocationDto) => {
               return (
                 <LocationsChargingStationsTable
                   location={record}
-                  filteredStations={filteredStationsByLocation[record.id]}
+                  filteredStations={filteredStationsByLocation[record.id!]}
                 />
               );
             },
@@ -219,7 +220,7 @@ export const LocationsList = () => {
               }
             },
           }}
-          rowClassName={(record: LocationDto) =>
+          rowClassName={(record: ILocationDto) =>
             shouldHighlightLocation(record) ? 'selected-row' : ''
           }
         >
@@ -227,11 +228,12 @@ export const LocationsList = () => {
           <Table.Column
             key="actions"
             dataIndex="actions"
-            title="Actions"
+            title=""
+            width="15%"
             onCell={() => ({
               className: 'column-actions',
             })}
-            render={(_: any, record: LocationDto) => (
+            render={(_: any, record: ILocationDto) => (
               <Row
                 className="view-charging-stations"
                 justify="end"
@@ -241,10 +243,10 @@ export const LocationsList = () => {
                   handleExpandToggle(record);
                 }}
               >
-                View All Charging Stations
+                View Stations
                 <ArrowDownIcon
                   className={
-                    expandedRowKeys.includes(record.id)
+                    expandedRowKeys.includes(record.id!)
                       ? 'arrow rotate'
                       : 'arrow'
                   }

@@ -2,55 +2,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsArray, IsInt, IsOptional, ValidateNested } from 'class-validator';
-import { Sortable } from '@util/decorators/Sortable';
-import { Type } from 'class-transformer';
-import { TransformDate } from '@util/TransformDate';
-import { BaseDto } from './base.dto';
-import { SampledValueDto } from './sampled.value.dto';
 import {
+  IMeterValueDto,
   MeasurandEnumType,
-  PhaseEnumType,
-  ReadingContextEnumType,
-} from '@OCPP2_0_1';
-import { UnitOfMeasure } from 'src/pages/meter-values/SampledValue';
+  ISampledValueDto,
+} from '@citrineos/base';
+import { PhaseEnumType, ReadingContextEnumType } from '@OCPP2_0_1';
 
-export enum MeterValueDtoProps {
-  id = 'id',
-  transactionEventId = 'transactionEventId',
-  transactionDatabaseId = 'transactionDatabaseId',
-  sampledValue = 'sampledValue',
-  timestamp = 'timestamp',
-}
-
-export class MeterValueDto extends BaseDto {
-  @IsInt()
-  id!: number;
-
-  @IsInt()
-  @IsOptional()
-  transactionEventId?: number | null;
-
-  @IsInt()
-  @IsOptional()
-  transactionDatabaseId?: number | null;
-
-  @IsArray()
-  @Type(() => SampledValueDto)
-  @ValidateNested({ each: true })
-  sampledValue!: SampledValueDto[];
-
-  @Sortable()
-  @TransformDate()
-  timestamp!: Date;
-
-  @IsInt()
-  @IsOptional()
-  connectorId?: number | null;
-
-  // todo: handle custom data
-  // customData?: CustomDataType | null;
-}
+export class MeterValueDto implements Partial<IMeterValueDto> {}
 
 // todo share below code with @citrineos/base
 const TWO_HOURS = 60 * 60 * 2;
@@ -62,7 +21,7 @@ const validContexts = new Set([
 ]);
 
 export const getTimestampToMeasurandArray = (
-  sortedMeterValues: MeterValueDto[],
+  sortedMeterValues: IMeterValueDto[],
   measurand: MeasurandEnumType,
   validContextsArg: Set<ReadingContextEnumType>,
 ): [number, string][] => {
@@ -74,9 +33,15 @@ export const getTimestampToMeasurandArray = (
   for (const meterValue of sortedMeterValues) {
     if (
       !meterValue.sampledValue[0].context ||
-      validContextsArg.has(meterValue.sampledValue[0].context)
+      (typeof meterValue.sampledValue[0].context === 'string' &&
+        validContextsArg.has(
+          meterValue.sampledValue[0].context as ReadingContextEnumType,
+        ))
     ) {
-      const overallValue = findOverallValue(meterValue.sampledValue, measurand);
+      const overallValue = findOverallValue(
+        meterValue.sampledValue as unknown as ISampledValueDto[],
+        measurand,
+      );
       if (overallValue) {
         const timestampEpoch = meterValue.timestamp;
         // @ts-expect-error timestamp is moment object
@@ -100,9 +65,9 @@ export const getTimestampToMeasurandArray = (
 };
 
 export const findOverallValue = (
-  sampledValues: SampledValueDto[],
+  sampledValues: ISampledValueDto[],
   measurand: MeasurandEnumType,
-): SampledValueDto | undefined => {
+): ISampledValueDto | undefined => {
   const measurandSampledValues = sampledValues.filter(
     (sv) =>
       sv.measurand === measurand ||
@@ -126,12 +91,10 @@ export const findOverallValue = (
     if (summableSampledValues.length < 3) {
       return undefined; // Not all phases are present, cannot sum
     }
-    const summedPhasesValue = summableSampledValues.reduce((acc, sv) => {
-      if (sv.phase) {
-        return acc + sv.value;
-      }
-      return acc;
-    }, 0);
+    const summedPhasesValue = summableSampledValues.reduce(
+      (acc, sv) => acc + Number(sv.value),
+      0,
+    );
     summedPhasesSampledValue = {
       ...measurandSampledValues[0],
       value: summedPhasesValue,
@@ -142,7 +105,7 @@ export const findOverallValue = (
 };
 
 export const normalizeValue = (
-  overallValue: SampledValueDto,
+  overallValue: ISampledValueDto,
 ): string | null => {
   let powerOfTen = overallValue.unitOfMeasure?.multiplier ?? 0;
   const unit = overallValue.unitOfMeasure?.unit?.toUpperCase();

@@ -13,6 +13,7 @@ import { LocationMap } from '../../../components/map';
 import { LOCATIONS_LIST_QUERY } from '../../locations/queries';
 import { CHARGING_STATIONS_LIST_QUERY } from '../../charging-stations/queries';
 import './style.scss';
+import { ILocationDto } from '@citrineos/base';
 
 export interface CombinedMapProps {
   defaultCenter?: google.maps.LatLngLiteral;
@@ -32,7 +33,7 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
   >(null);
 
   // Fetch locations data
-  const { data: locationsData } = useList<LocationDto>({
+  const { data: locationsData } = useList<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     meta: {
       gqlQuery: LOCATIONS_LIST_QUERY,
@@ -40,7 +41,9 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
     queryOptions: {
       select: (data) => ({
         ...data,
-        data: data.data.map((item) => plainToInstance(LocationDto, item)),
+        data: data.data.map((item) =>
+          plainToInstance(LocationDto, item),
+        ) as ILocationDto[],
       }),
     },
   });
@@ -156,17 +159,17 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
 
 // Helper functions
 const determineLocationStatus = (
-  location: LocationDto,
+  location: ILocationDto,
 ): 'online' | 'offline' | 'partial' => {
-  if (!location.chargingStations || location.chargingStations.length === 0) {
+  if (!location.chargingPool || location.chargingPool.length === 0) {
     return 'offline';
   }
 
-  const onlineCount = location.chargingStations.filter(
+  const onlineCount = location.chargingPool.filter(
     (station) => station.isOnline,
   ).length;
 
-  if (onlineCount === location.chargingStations.length) {
+  if (onlineCount === location.chargingPool.length) {
     return 'online';
   } else if (onlineCount === 0) {
     return 'offline';
@@ -175,7 +178,7 @@ const determineLocationStatus = (
   }
 };
 
-const determineLocationColor = (location: LocationDto): string => {
+const determineLocationColor = (location: ILocationDto): string => {
   const status = determineLocationStatus(location);
 
   switch (status) {

@@ -2,26 +2,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { Card, Flex, Table, Tabs, TabsProps } from 'antd';
 import { useNavigation, useOne, CanAccess } from '@refinedev/core';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
-import {
-  TransactionDto,
-  TransactionDtoProps,
-} from '../../../dtos/transaction.dto';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
+import { TransactionDto } from '../../../dtos/transaction.dto';
 import {
   AUTHORIZATIONS_SHOW_QUERY,
   GET_TRANSACTIONS_FOR_AUTHORIZATION,
@@ -32,12 +18,14 @@ import { AuthorizationDetailCard } from './authorization.detail.card';
 import './style.scss';
 import { useTable } from '@refinedev/antd';
 import { useParams } from 'react-router-dom';
+import { TransactionDtoProps, IAuthorizationDto } from '@citrineos/base';
+import { AuthorizationDto } from '../../../dtos/authorization.dto';
 
 export const AuthorizationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { push } = useNavigation();
 
-  const { data: authData, isLoading: authLoading } = useOne<AuthorizationDto>({
+  const { data: authData, isLoading: authLoading } = useOne<IAuthorizationDto>({
     resource: ResourceType.AUTHORIZATIONS,
     id,
     meta: { gqlQuery: AUTHORIZATIONS_SHOW_QUERY },
@@ -45,10 +33,7 @@ export const AuthorizationDetail: React.FC = () => {
   });
   const authorization = authData?.data;
 
-  const authIdTokenId =
-    authorization && authorization.idTokenId != null
-      ? Number(authorization.idTokenId)
-      : undefined;
+  const authIdToken = authorization?.idToken;
 
   const { tableProps: transactionTableProps } = useTable<TransactionDto>({
     resource: ResourceType.TRANSACTIONS,
@@ -56,11 +41,11 @@ export const AuthorizationDetail: React.FC = () => {
       gqlQuery: GET_TRANSACTIONS_FOR_AUTHORIZATION,
       gqlVariables: {
         limit: 10000, // trying to get all the authorized transactions
-        id: Number(authorization?.idTokenId),
+        id: authorization?.id,
       },
     },
     queryOptions: {
-      enabled: !!authIdTokenId,
+      enabled: !!authIdToken,
       ...getPlainToInstanceOptions(TransactionDto, true),
     },
   });

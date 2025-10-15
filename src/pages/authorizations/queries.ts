@@ -18,30 +18,19 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       where: $where
     ) {
       id
-      allowedConnectorTypes
-      disallowedEvseIdPrefixes
-      idTokenId
-      idTokenInfoId
+      idToken
+      idTokenType
+      status
+      groupAuthorizationId
+      additionalInfo
       concurrentTransaction
-      IdToken {
-        createdAt
-        id
-        idToken
-        type
-        updatedAt
-      }
-      IdTokenInfo {
-        cacheExpiryDateTime
-        chargingPriority
-        createdAt
-        groupIdTokenId
-        id
-        language1
-        language2
-        personalMessage
-        status
-        updatedAt
-      }
+      chargingPriority
+      language1
+      language2
+      personalMessage
+      cacheExpiryDateTime
+      createdAt
+      updatedAt
     }
     Authorizations_aggregate(where: $where) {
       aggregate {
@@ -55,75 +44,38 @@ export const AUTHORIZATIONS_CREATE_MUTATION = gql`
   mutation AuthorizationsCreate($object: Authorizations_insert_input!) {
     insert_Authorizations_one(object: $object) {
       id
-      allowedConnectorTypes
-      disallowedEvseIdPrefixes
-      idTokenId
-      idTokenInfoId
+      idToken
+      idTokenType
+      status
+      groupAuthorizationId
+      additionalInfo
       concurrentTransaction
+      chargingPriority
+      language1
+      language2
+      personalMessage
+      cacheExpiryDateTime
       createdAt
       updatedAt
-      IdToken {
-        id
-        idToken
-        type
-        createdAt
-        updatedAt
-      }
-      IdTokenInfo {
-        id
-        cacheExpiryDateTime
-        chargingPriority
-        language1
-        language2
-        personalMessage
-        status
-        createdAt
-        updatedAt
-      }
     }
   }
 `;
 
 export const AUTHORIZATIONS_EDIT_MUTATION = gql`
-  mutation AuthorizationsEdit(
-    $id: Int!
-    $object: Authorizations_set_input!
-    $updateIdToken: Boolean = false
-    $idTokenId: Int
-    $idTokenData: IdToken_set_input
-    $updateIdTokenInfo: Boolean = false
-    $idTokenInfoId: Int
-    $idTokenInfoData: IdTokenInfo_set_input
-  ) {
+  mutation AuthorizationsEdit($id: Int!, $object: Authorizations_set_input!) {
     update_Authorizations_by_pk(pk_columns: { id: $id }, _set: $object) {
       id
-      allowedConnectorTypes
-      disallowedEvseIdPrefixes
-      idTokenId
-      idTokenInfoId
-      concurrentTransaction
-      createdAt
-      updatedAt
-    }
-    update_IdToken_by_pk(pk_columns: { id: $idTokenId }, _set: $idTokenData)
-      @include(if: $updateIdToken) {
-      id
       idToken
-      type
-      createdAt
-      updatedAt
-    }
-    update_IdTokenInfo_by_pk(
-      pk_columns: { id: $idTokenInfoId }
-      _set: $idTokenInfoData
-    ) @include(if: $updateIdTokenInfo) {
-      id
-      cacheExpiryDateTime
+      idTokenType
+      status
+      groupAuthorizationId
+      additionalInfo
+      concurrentTransaction
       chargingPriority
       language1
       language2
       personalMessage
-      status
+      cacheExpiryDateTime
       createdAt
       updatedAt
     }
@@ -134,9 +86,17 @@ export const AUTHORIZATIONS_DELETE_MUTATION = gql`
   mutation AuthorizationsDelete($id: Int!) {
     delete_Authorizations_by_pk(id: $id) {
       id
-      allowedConnectorTypes
-      disallowedEvseIdPrefixes
+      idToken
+      idTokenType
+      status
+      groupAuthorizationId
+      additionalInfo
       concurrentTransaction
+      chargingPriority
+      language1
+      language2
+      personalMessage
+      cacheExpiryDateTime
       createdAt
       updatedAt
     }
@@ -147,31 +107,26 @@ export const AUTHORIZATIONS_SHOW_QUERY = gql`
   query AuthorizationsShow($id: Int!) {
     Authorizations_by_pk(id: $id) {
       id
+      idToken
+      idTokenType
+      status
+      groupAuthorizationId
+      additionalInfo
+      concurrentTransaction
+      chargingPriority
+      language1
+      language2
+      personalMessage
+      cacheExpiryDateTime
       allowedConnectorTypes
       disallowedEvseIdPrefixes
-      idTokenId
-      idTokenInfoId
-      concurrentTransaction
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
-      IdToken {
+      tenantPartner: TenantPartner {
         id
-        idToken
-        type
-        createdAt
-        updatedAt
-      }
-      IdTokenInfo {
-        id
-        cacheExpiryDateTime
-        chargingPriority
-        createdAt
-        groupIdTokenId
-        language1
-        language2
-        personalMessage
-        status
-        updatedAt
+        partnerProfileOCPI
       }
     }
   }
@@ -189,9 +144,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: {
-        _and: [{ TransactionEvents: { IdToken: { id: { _eq: $id } } } }, $where]
-      }
+      where: { _and: [{ authorizationId: { _eq: $id } }, $where] }
     ) {
       id
       timeSpentCharging
@@ -200,7 +153,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       stationId
       stoppedReason
       transactionId
-      evseDatabaseId
+      evseId
       remoteStartId
       totalKwh
       createdAt
@@ -227,20 +180,15 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       }
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
         eventType
-        IdToken {
-          idToken
-        }
+        idTokenValue
+        idTokenType
       }
       StartTransaction {
-        IdToken {
-          idToken
-        }
+        idTokenDatabaseId
       }
     }
     Transactions_aggregate(
-      where: {
-        _and: [{ TransactionEvents: { IdToken: { id: { _eq: $id } } } }, $where]
-      }
+      where: { _and: [{ authorizationId: { _eq: $id } }, $where] }
     ) {
       aggregate {
         count

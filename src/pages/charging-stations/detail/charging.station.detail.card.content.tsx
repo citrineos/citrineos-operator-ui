@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Flex, message, Tooltip, Typography } from 'antd';
-import { ChargingStationIcon } from '../../../components/icons/charging.station.icon';
+import { Button, Descriptions, Flex, message, Tooltip, Typography } from 'antd';
 import {
   Link,
   useDelete,
@@ -11,9 +10,13 @@ import {
   useNavigation,
   useOne,
   CanAccess,
-  useCan,
 } from '@refinedev/core';
-import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
 import React, { useCallback } from 'react';
 import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { useDispatch } from 'react-redux';
@@ -25,10 +28,7 @@ import { TransactionDto } from '../../../dtos/transaction.dto';
 import { ResourceType } from '@util/auth';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { MenuSection } from '../../../components/main-menu/main.menu';
-import {
-  OCPPMessageDto,
-  OCPPMessageDtoProps,
-} from '../../../dtos/ocpp.message.dto';
+import { OCPPMessageDto } from '../../../dtos/ocpp.message.dto';
 import { ChargingStationStatusTag } from '../charging.station.status.tag';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { useLocation } from 'react-router-dom';
@@ -36,9 +36,18 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '../queries';
-import { ActionType, ChargingStationAccessType, CommandType } from '@util/auth';
+import { ActionType, CommandType } from '@util/auth';
+import {
+  ChargingStationDtoProps,
+  IOCPPMessageDto,
+  OCPPMessageDtoProps,
+} from '@citrineos/base';
+import { IChargingStationDto } from '@citrineos/base';
+import { NOT_APPLICABLE } from '@util/consts';
+import ProtocolTag from '../../../components/protocol-tag';
 
 const { Text } = Typography;
+const UNKNOWN_TEXT = 'Unknown';
 
 export interface ChargingStationDetailCardContentProps {
   stationId: string;
@@ -53,7 +62,7 @@ export const ChargingStationDetailCardContent = ({
   const pageLocation = useLocation();
   const dispatch = useDispatch();
 
-  const { data, isLoading } = useOne<ChargingStationDto>({
+  const { data, isLoading } = useOne<IChargingStationDto>({
     resource: ResourceType.CHARGING_STATIONS,
     id: stationId,
     meta: {
@@ -64,7 +73,7 @@ export const ChargingStationDetailCardContent = ({
 
   const station = data?.data;
 
-  const { data: latestLogsData } = useList<OCPPMessageDto>({
+  const { data: latestLogsData } = useList<IOCPPMessageDto>({
     resource: ResourceType.OCPP_MESSAGES,
     meta: {
       fields: [OCPPMessageDtoProps.id, OCPPMessageDtoProps.timestamp],
@@ -109,7 +118,7 @@ export const ChargingStationDetailCardContent = ({
   }, [station, mutate, push]);
 
   const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Start',
@@ -122,7 +131,7 @@ export const ChargingStationDetailCardContent = ({
   );
 
   const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Remote Stop',
@@ -137,7 +146,7 @@ export const ChargingStationDetailCardContent = ({
   );
 
   const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
+    (station: IChargingStationDto) => {
       dispatch(
         openModal({
           title: 'Reset',
@@ -167,25 +176,15 @@ export const ChargingStationDetailCardContent = ({
   const hasActiveTransactions =
     station.transactions && station.transactions.length > 0;
 
-  let latestTimestamp = 'N/A';
+  let latestTimestamp = NOT_APPLICABLE;
   if (latestLog) {
-    latestTimestamp = formatDate(latestLog.updatedAt);
+    latestTimestamp = formatDate(latestLog.timestamp);
   }
 
   return (
     <Flex gap={16}>
-      <Flex vertical>
-        <div className="image-placeholder">
-          <ChargingStationIcon width={108} height={108} />
-        </div>
-      </Flex>
-      <Flex vertical flex="1 1 auto">
-        <Flex
-          gap={8}
-          align={'center'}
-          style={{ marginBottom: 16 }}
-          key={`${station.isOnline}`}
-        >
+      <Flex gap={16} vertical flex="1 1 auto">
+        <Flex gap={16} align={'center'} key={`${station.isOnline}`}>
           <ArrowLeftIcon
             onClick={() => {
               if (pageLocation.key === 'default') {
@@ -200,142 +199,115 @@ export const ChargingStationDetailCardContent = ({
           <span className={station.isOnline ? 'online' : 'offline'}>
             {station.isOnline ? 'Online' : 'Offline'}
           </span>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.EDIT}
+            params={{ id: station.id }}
+          >
+            <Button
+              className="secondary btn-md"
+              icon={<EditOutlined />}
+              iconPosition="end"
+              onClick={() =>
+                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
+              }
+            >
+              Edit
+            </Button>
+          </CanAccess>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.DELETE}
+            params={{ id: station.id }}
+          >
+            <Button
+              className="error btn-md"
+              icon={<DeleteOutlined />}
+              iconPosition="end"
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </CanAccess>
         </Flex>
-        <Flex justify="space-between" gap={16}>
-          <Flex vertical>
-            <Text className="nowrap">Station ID: {station.id}</Text>
-            <Text className="nowrap">
-              Location ID:{' '}
+        <Descriptions
+          layout="vertical"
+          column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+          colon={false}
+          classNames={{
+            label: 'description-label',
+          }}
+        >
+          <Descriptions.Item label="Protocol">
+            <ProtocolTag protocol={station[ChargingStationDtoProps.protocol]} />
+          </Descriptions.Item>
+          <Descriptions.Item label="Location ID">
+            {station?.location?.name ? (
               <Link to={`/locations/${station.locationId}`}>
                 <Tooltip title={station?.location?.name}>
-                  <Typography.Text
+                  <Text
                     ellipsis
-                    style={{ maxWidth: 150, display: 'inline-block' }}
+                    style={{ maxWidth: 100, display: 'inline-block' }}
                   >
                     {station?.location?.name}
-                  </Typography.Text>
+                  </Text>
                 </Tooltip>
               </Link>
-            </Text>
-            <Text className="nowrap">
-              Latitude: {station.location?.coordinates?.latitude}
-            </Text>
-            <Text className="nowrap">
-              Longitude: {station.location?.coordinates?.longitude}
-            </Text>
-          </Flex>
+            ) : (
+              NOT_APPLICABLE
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Latitude">
+            {station.location?.coordinates
+              ? station.location.coordinates.coordinates[1].toFixed(4)
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Longitude">
+            {station.location?.coordinates
+              ? station.location.coordinates.coordinates[0].toFixed(4)
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            {(station.evses?.length ?? 0) > 0 ? (
+              <ChargingStationStatusTag station={station} />
+            ) : (
+              NOT_APPLICABLE
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Last OCPP Message">
+            {latestTimestamp}
+          </Descriptions.Item>
+          <Descriptions.Item label="Vendor & Model">
+            {(station.chargePointModel ?? UNKNOWN_TEXT) +
+              ' ' +
+              (station.chargePointVendor ?? UNKNOWN_TEXT)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Floor Level">
+            {station.floorLevel ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Parking Restrictions">
+            {station.parkingRestrictions ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Capabilities">
+            {station.capabilities?.join(', ') ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Firmware Version">
+            {station.firmwareVersion ?? UNKNOWN_TEXT}
+          </Descriptions.Item>
+          <Descriptions.Item label="Connector Types">
+            {(station.connectors?.length ?? 0) > 0
+              ? station
+                  .connectors!.map((c) => c.type)
+                  .filter(Boolean)
+                  .join(', ')
+              : NOT_APPLICABLE}
+          </Descriptions.Item>
+          <Descriptions.Item label="Total EVSEs">
+            {station.evses?.length ?? 0}
+          </Descriptions.Item>
+        </Descriptions>
 
-          <Flex vertical className="border-left">
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Status</h5>
-                  </td>
-                  <td>
-                    <ChargingStationStatusTag station={station} />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>TimeStamp</h5>
-                  </td>
-                  <td>{latestTimestamp}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Model</h5>
-                  </td>
-                  <td>
-                    {station.chargePointModel ? (
-                      station.chargePointModel
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Vendor</h5>
-                  </td>
-                  <td>
-                    {station.chargePointVendor ? (
-                      station.chargePointVendor
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-
-          <Flex vertical className="border-left">
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <h5>Firmware Version</h5>
-                  </td>
-                  <td>
-                    {station.firmwareVersion ? (
-                      station.firmwareVersion
-                    ) : (
-                      <Text>Unknown</Text>
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Connector Type</h5>
-                  </td>
-                  <td>
-                    <Text>
-                      {station.connectorTypes &&
-                      station.connectorTypes.length > 0
-                        ? station.connectorTypes.join(', ')
-                        : 'N/A'}
-                    </Text>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h5>Number of EVSEs</h5>
-                  </td>
-                  <td>
-                    <Text>{station.evses?.length || '0'}</Text>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Flex>
-
-          <Flex vertical>
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.EDIT}
-              params={{ id: station.id }}
-            >
-              <Button
-                type="text"
-                icon={<EditOutlined />}
-                onClick={() =>
-                  push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
-                }
-              />
-            </CanAccess>
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.DELETE}
-              params={{ id: station.id }}
-            >
-              <Button className="secondary" onClick={handleDeleteClick}>
-                Delete
-              </Button>
-            </CanAccess>
-          </Flex>
-        </Flex>
-        <Flex style={{ marginTop: '32px' }}>
+        <Flex>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.COMMAND}
@@ -349,66 +321,78 @@ export const ChargingStationDetailCardContent = ({
               align="center"
               flex="1 1 auto"
             >
-              <Flex gap={16} flex="1 1 auto">
-                {station.isOnline ? (
-                  <Flex gap={16} flex="1 1 auto">
-                    {!hasActiveTransactions && (
-                      <CanAccess
-                        resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.COMMAND}
-                        params={{
-                          id: station.id,
-                          commandType: CommandType.START_TRANSACTION,
-                        }}
-                      >
-                        <Button onClick={() => showRemoteStartModal(station)}>
-                          Start Transaction
-                        </Button>
-                      </CanAccess>
-                    )}
-                    {hasActiveTransactions && (
-                      <CanAccess
-                        resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.COMMAND}
-                        params={{
-                          id: station.id,
-                          commandType: CommandType.STOP_TRANSACTION,
-                        }}
-                      >
-                        <Button
-                          onClick={() => handleStopTransactionClick(station)}
-                        >
-                          Stop Transaction
-                        </Button>
-                      </CanAccess>
-                    )}
+              <Flex vertical gap={8} flex="1 1 auto">
+                {!station.isOnline && (
+                  <Typography.Text type="secondary">
+                    <InfoCircleOutlined style={{ marginRight: 8 }} />
+                    Station offline - commands unavailable
+                  </Typography.Text>
+                )}
+                <Flex gap={16} flex="1 1 auto">
+                  {!hasActiveTransactions && (
                     <CanAccess
                       resource={ResourceType.CHARGING_STATIONS}
                       action={ActionType.COMMAND}
                       params={{
                         id: station.id,
-                        commandType: CommandType.RESET,
+                        commandType: CommandType.START_TRANSACTION,
                       }}
                     >
-                      <Button onClick={() => showResetStartModal(station)}>
-                        Reset
+                      <Button
+                        type="primary"
+                        className="btn-md"
+                        disabled={!station.isOnline}
+                        onClick={() => showRemoteStartModal(station)}
+                      >
+                        Start Transaction
                       </Button>
                     </CanAccess>
-                  </Flex>
-                ) : (
-                  <Flex gap={16} flex="1 1 auto" align="center">
-                    <Typography.Text type="secondary">
-                      <InfoCircleOutlined style={{ marginRight: 8 }} />
-                      Station offline - commands unavailable
-                    </Typography.Text>
-                  </Flex>
-                )}
-              </Flex>
-
-              <Flex>
-                <Button type="link" onClick={showOtherCommandsModal}>
-                  Other Commands →
-                </Button>
+                  )}
+                  {hasActiveTransactions && (
+                    <CanAccess
+                      resource={ResourceType.CHARGING_STATIONS}
+                      action={ActionType.COMMAND}
+                      params={{
+                        id: station.id,
+                        commandType: CommandType.STOP_TRANSACTION,
+                      }}
+                    >
+                      <Button
+                        className="error btn-md"
+                        onClick={() => handleStopTransactionClick(station)}
+                        disabled={!station.isOnline}
+                      >
+                        Stop Transaction
+                      </Button>
+                    </CanAccess>
+                  )}
+                  <CanAccess
+                    resource={ResourceType.CHARGING_STATIONS}
+                    action={ActionType.COMMAND}
+                    params={{
+                      id: station.id,
+                      commandType: CommandType.RESET,
+                    }}
+                  >
+                    <Button
+                      className="warning btn-md"
+                      onClick={() => showResetStartModal(station)}
+                      disabled={!station.isOnline}
+                    >
+                      Reset
+                    </Button>
+                  </CanAccess>
+                  <Button
+                    type="primary"
+                    className="btn-md"
+                    icon={<EllipsisOutlined />}
+                    iconPosition="end"
+                    onClick={showOtherCommandsModal}
+                    disabled={!station.isOnline}
+                  >
+                    Other Commands
+                  </Button>
+                </Flex>
               </Flex>
             </Flex>
           </CanAccess>

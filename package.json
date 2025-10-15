@@ -1,13 +1,13 @@
 {
   "name": "citrineos-operator-ui",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "dependencies": {
     "@ant-design/icons": "^5.3.2",
     "@babel/plugin-proposal-decorators": "^7.24.7",
     "@babel/plugin-proposal-explicit-resource-management": "^7.24.7",
-    "@citrineos/base": "^1.6.0",
+    "@citrineos/base": "~1.8.0",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.57.0",
     "@opentelemetry/sdk-metrics": "^1.30.0",
@@ -31,6 +31,7 @@
     "graphql": "^15.6.1",
     "graphql-request": "^5.2.0",
     "graphql-tag": "^2.12.6",
+    "keycloak-js": "^26.1.5",
     "lodash.debounce": "^4.0.8",
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",

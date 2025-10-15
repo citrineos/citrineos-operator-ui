@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { ConnectorStatusEnumType, ErrorCodes } from '@OCPP2_0_1';
 import { PrimaryKeyFieldName } from '@util/decorators/PrimaryKeyFieldName';
 import { ClassResourceType } from '@util/decorators/ClassResourceType';
 import { ResourceType } from '@util/auth';
@@ -19,13 +17,7 @@ import {
   CONNECTOR_GET_QUERY,
   CONNECTOR_LIST_QUERY,
 } from './queries';
-import { BaseModel } from '@util/BaseModel';
-
-export enum ConnectorProps {
-  id = 'id',
-  stationId = 'stationId',
-  connectorId = 'connectorId',
-}
+import { ConnectorDtoProps, IConnectorDto } from '@citrineos/base';
 
 @ClassResourceType(ResourceType.CONNECTORS)
 @ClassGqlListQuery(CONNECTOR_LIST_QUERY)
@@ -33,32 +25,5 @@ export enum ConnectorProps {
 @ClassGqlCreateMutation(CONNECTOR_CREATE_MUTATION)
 @ClassGqlEditMutation(CONNECTOR_EDIT_MUTATION)
 @ClassGqlDeleteMutation(CONNECTOR_DELETE_MUTATION)
-@PrimaryKeyFieldName(ConnectorProps.id)
-export class Connector extends BaseModel {
-  @IsNumber()
-  id!: number;
-
-  @IsString()
-  stationId!: string;
-
-  @IsNumber()
-  connectorId!: number;
-
-  @IsOptional()
-  status?: ConnectorStatusEnumType;
-
-  @IsOptional()
-  errorCode?: ErrorCodes;
-
-  @IsString()
-  @IsOptional()
-  info?: string;
-
-  @IsString()
-  @IsOptional()
-  vendorId?: string;
-
-  @IsString()
-  @IsOptional()
-  vendorErrorCode?: string;
-}
+@PrimaryKeyFieldName(ConnectorDtoProps.id)
+export class Connector implements Partial<IConnectorDto> {}

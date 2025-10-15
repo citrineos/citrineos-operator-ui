@@ -7,21 +7,21 @@ import { Button, Flex, message, Typography } from 'antd';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { MenuSection } from '../../../components/main-menu/main.menu';
 import { useDelete, useNavigation } from '@refinedev/core';
-import { AuthorizationDto } from '../../../dtos/authoriation.dto';
 import { ClipboardIcon } from '../../../components/icons/clipboard.icon';
-import GenericTag from '../../../components/tag';
-import { IdTokenEnumType, AuthorizationStatusEnumType } from '@OCPP2_0_1';
-import { useLocation, Link } from 'react-router-dom';
-import { EditOutlined } from '@ant-design/icons';
+import { useLocation } from 'react-router-dom';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '../queries';
-import { ID_TOKEN_INFOS_DELETE_MUTATION } from '../../../pages/id-tokens-infos/queries';
-import { ID_TOKENS_DELETE_MUTATION } from '../../../pages/id-tokens/queries';
 import { ResourceType } from '@util/auth';
+import {
+  IAuthorizationDto,
+  AuthorizationStatusType,
+  IdTokenType,
+} from '@citrineos/base';
+import GenericTag from '../../../components/tag';
 
 const { Text } = Typography;
 
 export interface AuthorizationDetailCardProps {
-  authorization: AuthorizationDto;
+  authorization: IAuthorizationDto;
 }
 
 export const AuthorizationDetailCard: React.FC<
@@ -36,7 +36,7 @@ export const AuthorizationDetailCard: React.FC<
 
     mutate(
       {
-        id: authorization.id.toString(),
+        id: authorization.id?.toString() || '',
         resource: ResourceType.AUTHORIZATIONS,
         meta: {
           gqlMutation: AUTHORIZATIONS_DELETE_MUTATION,
@@ -44,34 +44,6 @@ export const AuthorizationDetailCard: React.FC<
       },
       {
         onSuccess: () => {
-          mutate(
-            {
-              id: authorization.idTokenId.toString(),
-              resource: ResourceType.ID_TOKENS,
-              meta: {
-                gqlMutation: ID_TOKENS_DELETE_MUTATION,
-              },
-            },
-            {
-              onError: () => {
-                message.error('Failed to delete id token.');
-              },
-            },
-          );
-          mutate(
-            {
-              id: authorization.idTokenInfoId.toString(),
-              resource: ResourceType.ID_TOKEN_INFOS,
-              meta: {
-                gqlMutation: ID_TOKEN_INFOS_DELETE_MUTATION,
-              },
-            },
-            {
-              onError: () => {
-                message.error('Failed to delete id token info.');
-              },
-            },
-          );
           push(`/${MenuSection.AUTHORIZATIONS}`);
         },
         onError: () => {
@@ -79,7 +51,7 @@ export const AuthorizationDetailCard: React.FC<
         },
       },
     );
-  }, [authorization, mutate, push]);
+  }, [authorization, mutate, goBack]);
 
   return (
     <Flex gap={24}>
@@ -102,13 +74,12 @@ export const AuthorizationDetailCard: React.FC<
           <Text
             style={{ marginLeft: 8 }}
             type={
-              authorization.idTokenInfo?.status ===
-              AuthorizationStatusEnumType.Accepted
+              authorization.status === AuthorizationStatusType.Accepted
                 ? 'success'
                 : 'danger'
             }
           >
-            {authorization.idTokenInfo?.status}
+            {authorization.status}
           </Text>
         </Flex>
 
@@ -120,29 +91,41 @@ export const AuthorizationDetailCard: React.FC<
             <Text className="nowrap">
               <strong>Type:</strong>{' '}
               <GenericTag
-                enumValue={authorization.idToken?.type}
-                enumType={IdTokenEnumType}
+                enumValue={
+                  authorization.idTokenType
+                    ? authorization.idTokenType
+                    : undefined
+                }
+                enumType={IdTokenType}
               />
             </Text>
             <Text className="nowrap">
               <strong>Status:</strong>{' '}
               <GenericTag
-                enumValue={authorization.idTokenInfo?.status}
-                enumType={AuthorizationStatusEnumType}
-                colorMap={{ [AuthorizationStatusEnumType.Accepted]: 'green' }}
+                enumValue={authorization.status}
+                enumType={AuthorizationStatusType}
               />
             </Text>
           </Flex>
 
           <Flex vertical gap={16} className="border-left">
             <Text className="nowrap">
-              <strong>ID Token:</strong>{' '}
-              <Link to={`/id-tokens/${authorization.idTokenId}`}>
-                {authorization.idTokenId}
-              </Link>
+              <strong>ID Token:</strong> {authorization.idToken}
             </Text>
             <Text className="nowrap">
-              <strong>Token Info ID:</strong> {authorization.idTokenInfoId}
+              <strong>Partner:</strong>{' '}
+              <a
+                onClick={() =>
+                  push(
+                    `/${MenuSection.PARTNERS}/${authorization.tenantPartner?.id}`,
+                  )
+                }
+              >
+                {
+                  authorization.tenantPartner?.partnerProfileOCPI?.roles?.[0]
+                    ?.businessDetails?.name
+                }
+              </a>
             </Text>
           </Flex>
 
@@ -162,6 +145,14 @@ export const AuthorizationDetailCard: React.FC<
             <Text className="nowrap">
               <strong>Allowing Concurrent Transactions:</strong>{' '}
               {authorization.concurrentTransaction ? 'True' : 'False'}
+            </Text>
+            <Text className="nowrap">
+              <strong>Real-Time Authentication:</strong>{' '}
+              {authorization.realTimeAuth || '—'}
+            </Text>
+            <Text className="nowrap">
+              <strong>Real-Time Authentication URL:</strong>{' '}
+              {authorization.realTimeAuthUrl || '—'}
             </Text>
           </Flex>
 

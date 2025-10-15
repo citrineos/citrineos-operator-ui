@@ -2,173 +2,52 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import { Expose, plainToInstance } from 'class-transformer';
+import { IsBoolean, validateSync } from 'class-validator';
+
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  MaxLength,
-  validateSync,
-} from 'class-validator';
-import { Expose, plainToInstance, Type } from 'class-transformer';
-import { StatusNotificationDto } from './status.notification.dto';
-import { EvseDto } from './evse.dto';
-import { BaseDto } from './base.dto';
-import { TransactionDto } from './transaction.dto';
-import { LatestStatusNotificationDto } from './latest.status.notification.dto';
-import { LocationDto } from './location.dto';
+  IChargingStationDto,
+  IStatusNotificationDto,
+  IEvseDto,
+  ILocationDto,
+  IConnectorDto,
+  ChargingStationParkingRestriction,
+  ChargingStationCapability,
+} from '@citrineos/base';
+import { Point } from 'geojson';
 import { ChargingStateEnumType, ConnectorStatusEnumType } from '@OCPP2_0_1';
-import { ToClass } from '@util/Transformers';
-import { OCPPMessageDto } from './ocpp.message.dto';
-import { OCPPVersion } from '@citrineos/base';
 
-export enum ChargingStationDtoProps {
-  id = 'id',
-  isOnline = 'isOnline',
-  protocol = 'protocol',
-  locationId = 'locationId',
-  statusNotifications = 'statusNotifications',
-  latestStatusNotifications = 'latestStatusNotifications',
-  evses = 'evses',
-  transactions = 'transactions',
-  ocppLogs = 'ocppLogs',
-  location = 'Location',
-  chargePointVendor = 'chargePointVendor',
-  chargePointModel = 'chargePointModel',
-  chargePointSerialNumber = 'chargePointSerialNumber',
-  chargeBoxSerialNumber = 'chargeBoxSerialNumber',
-  firmwareVersion = 'firmwareVersion',
-  iccid = 'iccid',
-  imsi = 'imsi',
-  meterSerialNumber = 'meterSerialNumber',
-}
-
-export class ChargingStationDto extends BaseDto {
-  @IsString()
+export class ChargingStationDto implements Partial<IChargingStationDto> {
   id!: string;
-
   @IsBoolean()
   isOnline!: boolean;
-
-  @IsEnum(OCPPVersion)
-  protocol?: OCPPVersion;
-
-  @IsOptional()
-  locationId?: string;
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => StatusNotificationDto)
+  protocol?: any;
+  chargePointVendor?: string | null;
+  chargePointModel?: string | null;
+  chargePointSerialNumber?: string | null;
+  chargeBoxSerialNumber?: string | null;
+  firmwareVersion?: string | null;
+  iccid?: string | null;
+  imsi?: string | null;
+  meterType?: string | null;
+  meterSerialNumber?: string | null;
+  coordinates?: Point | null;
+  floorLevel?: string | null;
+  parkingRestrictions?: ChargingStationParkingRestriction[] | null;
+  capabilities?: ChargingStationCapability[] | null;
+  locationId?: number | null;
   @Expose({ name: 'StatusNotifications' })
-  statusNotifications?: StatusNotificationDto[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => LatestStatusNotificationDto)
-  @Expose({ name: 'LatestStatusNotifications' })
-  latestStatusNotifications?: LatestStatusNotificationDto[];
-
-  @IsArray()
-  @IsOptional()
-  @Expose({ name: 'Evses' })
-  @ToClass((value: { Evse: EvseDto }[]) => {
-    if (value === null || value === undefined) {
-      return undefined;
-    }
-    return value.map((val: any) => {
-      if ('Evse' in val) {
-        return plainToInstance(EvseDto, val.Evse);
-      } else {
-        const instance = plainToInstance(EvseDto, val);
-        const errors = validateSync(value, { whitelist: true });
-        if (errors.length === 0) {
-          return instance;
-        } else {
-          return val;
-        }
-      }
-    });
-  })
-  evses?: EvseDto[];
-
-  @IsArray()
-  @IsOptional()
-  @Expose({ name: 'ConnectorTypes' })
-  @ToClass((value: { value: string }[]) => {
-    if (value === null || value === undefined) {
-      return undefined;
-    }
-    return value
-      .filter((val: { value: string }) => !!val.value)
-      .map((val: { value: string }) => val.value);
-  })
-  connectorTypes?: string[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => TransactionDto)
-  @Expose({ name: 'Transactions' })
-  transactions?: TransactionDto[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => OCPPMessageDto)
-  ocppLogs?: OCPPMessageDto[];
-
-  @IsOptional()
-  @Type(() => LocationDto)
-  @Expose({ name: 'Location' })
-  location?: Partial<LocationDto>;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  chargePointVendor?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  chargePointModel?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  chargePointSerialNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  chargeBoxSerialNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  firmwareVersion?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  iccid?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  imsi?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  meterType?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(25)
-  meterSerialNumber?: string;
-  Location: any;
+  statusNotifications?: IStatusNotificationDto[] | null;
+  evses?: IEvseDto[] | null;
+  connectors?: IConnectorDto[] | null;
+  // TODO: Add missing properties from IChargingStationDto
+  location?: ILocationDto;
+  networkProfiles?: any;
+  transactions?: any[] | null;
 }
 
-export enum ChargignStationStatus {
+// TODO: Add missing enums and types for local use
+export enum ChargingStationStatus {
   CHARGING = 'CHARGING',
   CHARGING_SUSPENDED = 'CHARGING_SUSPENDED',
   AVAILABLE = 'AVAILABLE',
@@ -177,78 +56,79 @@ export enum ChargignStationStatus {
 }
 
 export interface ChargingStationStatusCounts {
-  [ChargignStationStatus.CHARGING]: number;
-  [ChargignStationStatus.CHARGING_SUSPENDED]: number;
-  [ChargignStationStatus.AVAILABLE]: number;
-  [ChargignStationStatus.UNAVAILABLE]: number;
-  [ChargignStationStatus.FAULTED]: number;
+  [ChargingStationStatus.CHARGING]: number;
+  [ChargingStationStatus.CHARGING_SUSPENDED]: number;
+  [ChargingStationStatus.AVAILABLE]: number;
+  [ChargingStationStatus.UNAVAILABLE]: number;
+  [ChargingStationStatus.FAULTED]: number;
 }
 
 export const getChargingStationStatus = (
-  chargingStation: ChargingStationDto,
+  chargingStation: IChargingStationDto,
 ) => {
   const counts = getChargingStationStatusCounts(chargingStation);
 
-  if (counts[ChargignStationStatus.FAULTED] > 0) {
-    return ChargignStationStatus.FAULTED;
-  } else if (counts[ChargignStationStatus.AVAILABLE] > 0) {
-    return ChargignStationStatus.AVAILABLE;
+  if (counts[ChargingStationStatus.FAULTED] > 0) {
+    return ChargingStationStatus.FAULTED;
+  } else if (counts[ChargingStationStatus.AVAILABLE] > 0) {
+    return ChargingStationStatus.AVAILABLE;
   } else {
-    if (counts[ChargignStationStatus.CHARGING_SUSPENDED] > 0) {
-      return ChargignStationStatus.CHARGING_SUSPENDED;
-    } else if (counts[ChargignStationStatus.UNAVAILABLE] > 0) {
-      return ChargignStationStatus.UNAVAILABLE;
+    if (counts[ChargingStationStatus.CHARGING_SUSPENDED] > 0) {
+      return ChargingStationStatus.CHARGING_SUSPENDED;
+    } else if (counts[ChargingStationStatus.UNAVAILABLE] > 0) {
+      return ChargingStationStatus.UNAVAILABLE;
     }
   }
 };
 
 export const getChargingStationStatusCounts = (
-  chargingStation: ChargingStationDto,
+  chargingStation: IChargingStationDto,
 ) => {
   const counts: ChargingStationStatusCounts = {
-    [ChargignStationStatus.CHARGING]: 0,
-    [ChargignStationStatus.CHARGING_SUSPENDED]: 0,
-    [ChargignStationStatus.AVAILABLE]: 0,
-    [ChargignStationStatus.UNAVAILABLE]: 0,
-    [ChargignStationStatus.FAULTED]: 0,
+    [ChargingStationStatus.CHARGING]: 0,
+    [ChargingStationStatus.CHARGING_SUSPENDED]: 0,
+    [ChargingStationStatus.AVAILABLE]: 0,
+    [ChargingStationStatus.UNAVAILABLE]: 0,
+    [ChargingStationStatus.FAULTED]: 0,
   };
   const evses = chargingStation?.evses;
   if (evses && evses.length > 0) {
     for (const evse of evses) {
       const latestStatusNotificationForEvse =
-        chargingStation?.latestStatusNotifications?.find(
+        chargingStation?.statusNotifications?.find(
           (latestStatusNotification) =>
-            latestStatusNotification?.statusNotification?.evseId === evse.id &&
-            latestStatusNotification?.statusNotification?.connectorId ===
-              evse.connectorId,
+            latestStatusNotification?.evseId === evse.id &&
+            latestStatusNotification?.connectorId === evse.connectors?.[0]?.id,
         );
       if (latestStatusNotificationForEvse) {
         const connectorStatus: ConnectorStatusEnumType =
-          latestStatusNotificationForEvse?.statusNotification
-            ?.connectorStatus || ConnectorStatusEnumType.Unavailable;
+          latestStatusNotificationForEvse?.connectorStatus ||
+          ConnectorStatusEnumType.Unavailable;
         switch (connectorStatus) {
           case ConnectorStatusEnumType.Available:
-            counts[ChargignStationStatus.AVAILABLE]++;
+            counts[ChargingStationStatus.AVAILABLE]++;
             break;
           case ConnectorStatusEnumType.Occupied: {
-            const activeTransaction = chargingStation?.transactions?.find(
-              (transaction) => transaction.evseDatabaseId === evse.databaseId,
+            const activeTransaction = (
+              chargingStation as ChargingStationDto
+            )?.transactions?.find(
+              (transaction) => transaction.evse?.id === evse.id,
             );
             if (activeTransaction && activeTransaction.isActive) {
               const chargingState = activeTransaction.chargingState;
               if (chargingState === ChargingStateEnumType.Charging) {
-                counts[ChargignStationStatus.CHARGING]++;
+                counts[ChargingStationStatus.CHARGING]++;
               } else {
-                counts[ChargignStationStatus.CHARGING_SUSPENDED]++;
+                counts[ChargingStationStatus.CHARGING_SUSPENDED]++;
               }
             }
             break;
           }
           case ConnectorStatusEnumType.Faulted:
-            counts[ChargignStationStatus.FAULTED]++;
+            counts[ChargingStationStatus.FAULTED]++;
             break;
           case ConnectorStatusEnumType.Unavailable:
-            counts[ChargignStationStatus.UNAVAILABLE]++;
+            counts[ChargingStationStatus.UNAVAILABLE]++;
             break;
           case ConnectorStatusEnumType.Reserved:
           default:
@@ -256,7 +136,7 @@ export const getChargingStationStatusCounts = (
             break;
         }
       } else {
-        counts[ChargignStationStatus.UNAVAILABLE]++;
+        counts[ChargingStationStatus.UNAVAILABLE]++;
       }
     }
   }

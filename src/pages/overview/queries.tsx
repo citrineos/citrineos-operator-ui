@@ -28,8 +28,8 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
       locationId
       createdAt
       updatedAt
-      LatestStatusNotifications {
-        StatusNotification {
+      latestStatusNotifications: LatestStatusNotifications {
+        statusNotification: StatusNotification {
           id
           stationId
           evseId
@@ -40,7 +40,7 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
           updatedAt
         }
       }
-      Transactions(where: { isActive: { _eq: true } }) {
+      transactions: Transactions(where: { isActive: { _eq: true } }) {
         id
         timeSpentCharging
         isActive
@@ -48,13 +48,13 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
         stationId
         stoppedReason
         transactionId
-        evseDatabaseId
+        evseId
         remoteStartId
         totalKwh
         createdAt
         updatedAt
       }
-      Location {
+      location: Location {
         id
         name
         address
@@ -66,20 +66,11 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
         createdAt
         updatedAt
       }
-      Evses: VariableAttributes(
-        distinct_on: evseDatabaseId
-        where: {
-          evseDatabaseId: { _is_null: false }
-          Evse: { connectorId: { _is_null: false } }
-        }
-      ) {
-        Evse {
-          databaseId
-          id
-          connectorId
-          createdAt
-          updatedAt
-        }
+      evses: Evses {
+        id
+        evseTypeId
+        createdAt
+        updatedAt
       }
     }
   }

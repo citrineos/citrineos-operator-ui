@@ -2,30 +2,30 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   LOCATIONS_CREATE_MUTATION,
   LOCATIONS_EDIT_MUTATION,
   LOCATIONS_GET_QUERY,
 } from '../queries';
 import {
+  App,
   Button,
   Col,
   Flex,
   Form,
   Input,
   InputNumber,
-  message,
   Row,
   Select,
   Upload,
 } from 'antd';
 import { useForm } from '@refinedev/antd';
 import { Country, countryStateData } from '../country.state.data';
-import { MapLocationPicker } from '../../../components/map/map.location.picker';
-import { GeoPoint, GeoPointProps } from '@util/GeoPoint';
+import { MapLocationPicker } from '../../../components/map';
+import { GeoPoint, PointProps } from '@util/GeoPoint';
 import { getSerializedValues } from '@util/middleware';
-import { LocationDto, LocationDtoProps } from '../../../dtos/location.dto';
+import { LocationDto } from '../../../dtos/location.dto';
 import {
   BaseKey,
   CanAccess,
@@ -35,25 +35,30 @@ import {
 import { UploadOutlined } from '@ant-design/icons';
 import { ArrowLeftIcon } from '../../../components/icons/arrow.left.icon';
 import { SelectedChargingStations } from './selected.charging.stations';
-import {
-  ChargingStationDto,
-  ChargingStationDtoProps,
-} from '../../../dtos/charging.station.dto';
 import { useParams } from 'react-router-dom';
 import { getPlainToInstanceOptions } from '@util/tables';
 import { AccessDeniedFallback, ActionType, ResourceType } from '@util/auth';
 import config from '@util/config';
+import {
+  ChargingStationDtoProps,
+  IChargingStationDto,
+  ILocationDto,
+  LocationDtoProps,
+  LocationFacilityType,
+  LocationParkingType,
+} from '@citrineos/base';
+import { MenuSection } from '../../../components/main-menu/main.menu';
 
 export const LocationsUpsert = () => {
   const params: any = useParams<{ id: string }>();
   const locationId = params.id ? params.id : undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formValuesRef = useRef<Record<string, any>>({});
-
+  const { message } = App.useApp();
   const { replace, goBack } = useNavigation();
   const { mutate } = useUpdateMany();
 
-  const { form, formProps, query } = useForm<LocationDto>({
+  const { form, formProps, query } = useForm<ILocationDto>({
     resource: ResourceType.LOCATIONS,
     id: locationId,
     queryOptions: {
@@ -64,15 +69,15 @@ export const LocationsUpsert = () => {
     successNotification: false,
     onMutationSuccess: async (locationResponse) => {
       const currentStations =
-        formValuesRef.current[LocationDtoProps.chargingStations] || [];
+        formValuesRef.current[LocationDtoProps.chargingPool] || [];
       const prevStations =
-        form.getFieldValue(LocationDtoProps.chargingStations) || [];
+        form.getFieldValue(LocationDtoProps.chargingPool) || [];
 
       const currentIds = new Set(
-        currentStations.map((cs: ChargingStationDto) => cs.id),
+        currentStations.map((cs: IChargingStationDto) => cs.id),
       );
       const prevIds = new Set(
-        prevStations.map((cs: ChargingStationDto) => cs.id),
+        prevStations.map((cs: IChargingStationDto) => cs.id),
       );
       const addedIds = [...currentIds].filter(
         (id) => !prevIds.has(id),
@@ -128,7 +133,8 @@ export const LocationsUpsert = () => {
       } catch (_error) {
         message.error('Failed to update charging stations').then();
       } finally {
-        replace('/locations');
+        const newId = locationResponse.data.id;
+        replace(`/${MenuSection.LOCATIONS}/${newId}`);
         setIsSubmitting(false);
       }
     },
@@ -145,13 +151,20 @@ export const LocationsUpsert = () => {
   });
 
   useEffect(() => {
-    if (!locationId) {
-      form?.setFieldsValue({
-        [LocationDtoProps.country]: Country.USA,
-      });
-      return;
-    }
-  }, [locationId, query?.data?.data, form]);
+    form?.setFieldsValue({
+      [LocationDtoProps.facilities]: query?.data?.data?.facilities,
+    });
+    form.setFieldsValue({
+      [LocationDtoProps.coordinates]: {
+        type: 'Point',
+        coordinates: [
+          query?.data?.data?.coordinates.coordinates[0],
+          query?.data?.data?.coordinates.coordinates[1],
+        ],
+      },
+    });
+    return;
+  }, [query?.data?.data]);
 
   const onFinish = () => {
     try {
@@ -159,7 +172,7 @@ export const LocationsUpsert = () => {
       if (isSubmitting) return;
       setIsSubmitting(true);
       const input = { ...formValuesRef.current };
-      delete input[LocationDtoProps.chargingStations];
+      delete input[LocationDtoProps.chargingPool];
       const newItem: any = getSerializedValues(input, LocationDto);
       if (!locationId) {
         newItem.tenantId = config.tenantId;
@@ -173,7 +186,10 @@ export const LocationsUpsert = () => {
 
   const handleLocationSelect = (point: GeoPoint) => {
     form?.setFieldsValue({
-      coordinates: { latitude: point.latitude, longitude: point.longitude },
+      coordinates: {
+        type: 'Point',
+        coordinates: [point.longitude, point.latitude],
+      },
     });
   };
 
@@ -191,16 +207,14 @@ export const LocationsUpsert = () => {
         data-testid="locations-create-form"
       >
         <Flex vertical gap={16}>
-          <Flex align="center" className="relative">
+          <Flex gap={12} align={'center'}>
             <ArrowLeftIcon
               style={{
                 cursor: 'pointer',
-                position: 'absolute',
-                transform: 'translateX(-100%)',
               }}
               onClick={() => goBack()}
             />
-            <h3>{locationId ? 'Edit Location' : 'Create Location'}</h3>
+            <h3>{locationId ? 'Edit' : 'Create'} Location</h3>
           </Flex>
           <Flex gap={16}>
             <Flex vertical flex={1}>
@@ -275,11 +289,11 @@ export const LocationsUpsert = () => {
                       {countryStateData[
                         form.getFieldValue(LocationDtoProps.country) ||
                           Country.USA
-                      ].map((state) => (
+                      ]?.map((state) => (
                         <Select.Option key={state} value={state}>
                           {state}
                         </Select.Option>
-                      ))}
+                      )) || []}
                     </Select>
                   </Form.Item>
                 </Col>
@@ -310,28 +324,34 @@ export const LocationsUpsert = () => {
                 <Col span={12}>
                   <Form.Item
                     label="Latitude"
-                    key={GeoPointProps.latitude}
+                    key={'Latitude'}
                     name={[
                       LocationDtoProps.coordinates,
-                      GeoPointProps.latitude,
+                      PointProps.coordinates,
                     ]}
-                    data-testid={GeoPointProps.latitude}
+                    data-testid={'Latitude'}
                   >
                     <InputNumber
                       placeholder="Click map or enter manually"
+                      value={
+                        form?.getFieldValue([
+                          LocationDtoProps.coordinates,
+                          PointProps.coordinates,
+                        ])?.[1]
+                      }
                       onChange={(value: number | null) => {
                         const lat = value;
                         const lng = parseFloat(
                           form?.getFieldValue([
                             LocationDtoProps.coordinates,
-                            GeoPointProps.longitude,
-                          ]),
+                            PointProps.coordinates,
+                          ])[0],
                         );
                         if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                           form.setFieldsValue({
                             [LocationDtoProps.coordinates]: {
-                              latitude: lat,
-                              longitude: lng,
+                              type: 'Point',
+                              coordinates: [lng, lat],
                             },
                           });
                         }
@@ -342,33 +362,89 @@ export const LocationsUpsert = () => {
                 <Col span={12}>
                   <Form.Item
                     label="Longitude"
-                    key={GeoPointProps.longitude}
+                    key={'Longitude'}
                     name={[
                       LocationDtoProps.coordinates,
-                      GeoPointProps.longitude,
+                      PointProps.coordinates,
                     ]}
-                    data-testid={GeoPointProps.longitude}
+                    data-testid={'Longitude'}
                   >
                     <InputNumber
                       placeholder="Click map or enter manually"
+                      value={
+                        form?.getFieldValue([
+                          LocationDtoProps.coordinates,
+                          PointProps.coordinates,
+                        ])?.[0]
+                      }
                       onChange={(value: number | null) => {
                         const lat = parseFloat(
                           form?.getFieldValue([
                             LocationDtoProps.coordinates,
-                            GeoPointProps.latitude,
-                          ]),
+                            PointProps.coordinates,
+                          ])[1],
                         );
                         const lng = value;
                         if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                           form.setFieldsValue({
                             [LocationDtoProps.coordinates]: {
-                              latitude: lat,
-                              longitude: lng,
+                              type: 'Point',
+                              coordinates: [lng, lat],
                             },
                           });
                         }
                       }}
                     />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    key={LocationDtoProps.timeZone}
+                    label="Timezone"
+                    name={LocationDtoProps.timeZone}
+                    data-testid={LocationDtoProps.timeZone}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    key={LocationDtoProps.parkingType}
+                    label="Parking Type"
+                    name={LocationDtoProps.parkingType}
+                    data-testid={LocationDtoProps.parkingType}
+                  >
+                    <Select placeholder="Select a parking type" allowClear>
+                      {Object.keys(LocationParkingType).map((parkingType) => (
+                        <Select.Option key={parkingType} value={parkingType}>
+                          {parkingType}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    key={LocationDtoProps.facilities}
+                    label="Facilities"
+                    name={LocationDtoProps.facilities}
+                    data-testid={LocationDtoProps.facilities}
+                  >
+                    <Select
+                      mode="tags"
+                      placeholder="Select facilities"
+                      allowClear
+                    >
+                      {Object.keys(LocationFacilityType).map((facility) => (
+                        <Select.Option key={facility} value={facility}>
+                          {facility}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
@@ -407,7 +483,7 @@ export const LocationsUpsert = () => {
               />
             </Flex>
           </Flex>
-          <SelectedChargingStations form={form} />
+          {locationId && <SelectedChargingStations form={form} />}
         </Flex>
       </Form>
     </CanAccess>

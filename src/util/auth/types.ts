@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import {
   BaseKey,
   CanParams,
@@ -9,23 +10,25 @@ import {
   IResourceItem,
   ITreeMenu,
 } from '@refinedev/core';
+import { HasuraHeader } from './hasura';
 
 export type AuthenticationContextProvider = {
-  getToken: () => Promise<string | null>;
+  getToken: () => Promise<string | undefined>;
+  getUserRole: () => Promise<string | undefined>;
+  getHasuraHeaders: () => Promise<Map<HasuraHeader, string>>;
+  getInitialized: () => Promise<boolean>;
+  getLoginPage: () => React.ComponentType;
 };
 
 export type User = {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   roles: string[];
 };
 
 export enum ResourceType {
-  ADDITIONAL_INFOS = 'AdditionalInfos',
   AUTHORIZATIONS = 'Authorizations',
-  ID_TOKENS = 'IdTokens',
-  ID_TOKEN_INFOS = 'IdTokenInfos',
   BOOTS = 'Boots',
   SECURITY_EVENTS = 'SecurityEvents',
   CHARGING_STATIONS = 'ChargingStations',
@@ -50,6 +53,7 @@ export enum ResourceType {
   INSTALLED_CERTIFICATES = 'InstalledCertificates',
   RESERVATIONS = 'Reservations',
   SERVER_NETWORK_PROFILES = 'ServerNetworkProfiles',
+  PARTNERS = 'TenantPartners',
 }
 
 export enum ActionType {

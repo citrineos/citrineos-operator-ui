@@ -30,6 +30,8 @@ import {
 } from '../../transactions/chart';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
 import { ResourceType } from '@util/auth';
+import { ITransactionDto } from '@citrineos/base';
+import { IMeterValueDto } from '@citrineos/base';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -49,14 +51,14 @@ const allContexts = [
   ReadingContextEnumType.Transaction_End,
 ];
 
-const filterByDate = (series: MeterValueDto[], [s, e]: [Dayjs, Dayjs]) =>
+const filterByDate = (series: IMeterValueDto[], [s, e]: [Dayjs, Dayjs]) =>
   series.filter((mv) => {
     const ts = dayjs(mv.timestamp);
     return (ts.isAfter(s) || ts.isSame(s)) && (ts.isBefore(e) || ts.isSame(e));
   });
 
 interface ChartPanelProps {
-  series: MeterValueDto[];
+  series: IMeterValueDto[];
   contexts: ReadingContextEnumType[];
   onContextsChange: (vals: ReadingContextEnumType[]) => void;
   selected: ChartType;
@@ -155,7 +157,7 @@ const ChartPanel: FC<ChartPanelProps> = ({
 export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
   stationId,
 }) => {
-  const { data: txData, isLoading: txLoading } = useList<TransactionDto>({
+  const { data: txData, isLoading: txLoading } = useList<ITransactionDto>({
     resource: ResourceType.TRANSACTIONS,
     meta: {
       gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
@@ -170,7 +172,7 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
   });
   const txIds = useMemo(() => txData?.data.map((tx) => tx.id) ?? [], [txData]);
 
-  const { data: mvData, isLoading: mvLoading } = useList<MeterValueDto>({
+  const { data: mvData, isLoading: mvLoading } = useList<IMeterValueDto>({
     resource: ResourceType.METER_VALUES,
     meta: {
       gqlQuery: GET_METER_VALUES_FOR_STATION,

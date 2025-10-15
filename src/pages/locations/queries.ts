@@ -27,26 +27,20 @@ export const LOCATIONS_LIST_QUERY = gql`
       coordinates
       createdAt
       updatedAt
-      ChargingStations {
+      timeZone
+      parkingType
+      chargingPool: ChargingStations {
         id
         isOnline
         protocol
         createdAt
         updatedAt
-        Evses: VariableAttributes(
-          distinct_on: evseDatabaseId
-          where: {
-            evseDatabaseId: { _is_null: false }
-            Evse: { connectorId: { _is_null: false } }
-          }
-        ) {
-          Evse {
-            databaseId
-            id
-            connectorId
-            createdAt
-            updatedAt
-          }
+        evses: Evses {
+          id
+          evseTypeId
+          evseId
+          createdAt
+          updatedAt
         }
         LatestStatusNotifications {
           id
@@ -65,7 +59,7 @@ export const LOCATIONS_LIST_QUERY = gql`
             updatedAt
           }
         }
-        Transactions(where: { isActive: { _eq: true } }) {
+        transactions: Transactions(where: { isActive: { _eq: true } }) {
           id
           timeSpentCharging
           isActive
@@ -73,13 +67,13 @@ export const LOCATIONS_LIST_QUERY = gql`
           stationId
           stoppedReason
           transactionId
-          evseDatabaseId
+          evseId
           remoteStartId
           totalKwh
           createdAt
           updatedAt
         }
-        Connectors {
+        connectors: Connectors {
           connectorId
           status
           errorCode
@@ -111,9 +105,12 @@ export const LOCATIONS_GET_QUERY = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
-      ChargingStations {
+      chargingPool: ChargingStations {
         id
         isOnline
         protocol
@@ -121,18 +118,11 @@ export const LOCATIONS_GET_QUERY = gql`
         updatedAt
         Evses: VariableAttributes(
           distinct_on: evseDatabaseId
-          where: {
-            evseDatabaseId: { _is_null: false }
-            Evse: { connectorId: { _is_null: false } }
-          }
+          where: { evseDatabaseId: { _is_null: false } }
         ) {
-          Evse {
-            databaseId
-            id
-            connectorId
-            createdAt
-            updatedAt
-          }
+          id
+          createdAt
+          updatedAt
         }
         LatestStatusNotifications {
           id
@@ -159,7 +149,7 @@ export const LOCATIONS_GET_QUERY = gql`
           stationId
           stoppedReason
           transactionId
-          evseDatabaseId
+          evseId
           remoteStartId
           totalKwh
           createdAt
@@ -171,7 +161,7 @@ export const LOCATIONS_GET_QUERY = gql`
 `;
 
 export const LOCATIONS_GET_QUERY_BY_ID = gql`
-  query GetLocationById($id: Int!, $where: Locations_bool_exp) {
+  query GetLocationByIdAndWhere($id: Int!, $where: Locations_bool_exp) {
     Locations_by_pk(id: $id) {
       id
       name
@@ -181,28 +171,23 @@ export const LOCATIONS_GET_QUERY_BY_ID = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
-      ChargingStations {
+      chargingPool: ChargingStations {
         id
         isOnline
         protocol
         createdAt
         updatedAt
-        Evses: VariableAttributes(
-          distinct_on: evseDatabaseId
-          where: {
-            evseDatabaseId: { _is_null: false }
-            Evse: { connectorId: { _is_null: false } }
-          }
-        ) {
-          Evse {
-            databaseId
-            id
-            connectorId
-            createdAt
-            updatedAt
-          }
+        evses: Evses {
+          id
+          evseTypeId
+          evseId
+          createdAt
+          updatedAt
         }
         LatestStatusNotifications {
           id
@@ -232,6 +217,9 @@ export const LOCATIONS_GET_QUERY_BY_ID = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }
@@ -254,6 +242,9 @@ export const LOCATIONS_CREATE_MUTATION = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }
@@ -271,6 +262,9 @@ export const LOCATIONS_DELETE_MUTATION = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }
@@ -288,6 +282,9 @@ export const LOCATIONS_EDIT_MUTATION = gql`
       state
       country
       coordinates
+      facilities
+      timeZone
+      parkingType
       createdAt
       updatedAt
     }

@@ -3,27 +3,32 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import { Tooltip } from 'antd';
 import './style.scss';
-
-export enum CircleStatusEnum {
-  SUCCESS = 'success',
-  ERROR = 'error',
-  WARNING = 'warning',
-}
+import {
+  ChargerStatusEnum,
+  getStatusColor,
+} from '../charger-activity/charger.activity.card';
 
 export interface CircleProps {
-  status?: CircleStatusEnum;
+  status?: ChargerStatusEnum;
   color?: string;
 }
 
 export const Circle = ({
-  status = CircleStatusEnum.SUCCESS,
+  status = ChargerStatusEnum.OFFLINE,
   color,
 }: CircleProps) => {
   return (
-    <div
-      className={`status-circle ${status}`}
-      style={color ? { backgroundColor: color } : {}}
-    ></div>
+    <Tooltip title={status}>
+      <div
+        className={`status-circle`}
+        style={
+          color
+            ? { backgroundColor: color }
+            : { backgroundColor: getStatusColor(status) }
+        }
+      ></div>
+    </Tooltip>
   );
 };

@@ -11,7 +11,15 @@ import {
   triggerMessageAndHandleResponse,
 } from '../../util';
 import { GenericForm } from '../../../components/form';
-import { OCPPVersion } from '@citrineos/base';
+import {
+  EvseDtoProps,
+  type IEvseDto,
+  OCPPVersion,
+  type IConnectorDto,
+} from '@citrineos/base';
+import { Connector } from '../../../pages/connectors/connector';
+import { GET_CONNECTOR_LIST_FOR_STATION_EVSE } from '../../queries';
+import { IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { MessageTriggerEnumType } from '@OCPP2_0_1';
@@ -19,7 +27,6 @@ import { CustomDataType } from '../../../model/CustomData';
 import { GqlAssociation } from '@util/decorators/GqlAssociation';
 import { NEW_IDENTIFIER } from '@util/consts';
 import {
-  GET_CHARGING_STATION_LIST_FOR_EVSE,
   GET_EVSE_LIST_FOR_STATION,
   GET_EVSES_FOR_STATION,
 } from '../../queries';
@@ -28,8 +35,6 @@ import { FieldCustomActions } from '@util/decorators/FieldCustomActions';
 import { useSelector } from 'react-redux';
 import { getSelectedChargingStation } from '../../../redux/selected.charging.station.slice';
 import { CustomAction } from '../../../components/custom-actions';
-import { ChargingStationProps } from '../../../pages/charging-stations/ChargingStationProps';
-import { EvseProps } from '../../../pages/evses/EvseProps';
 
 enum TriggerMessageRequestProps {
   customData = 'customData',
@@ -46,27 +51,10 @@ export const TriggerMessageForEvseCustomAction: CustomAction<Evse> = {
 };
 
 export class TriggerMessageRequest {
-  @GqlAssociation({
-    parentIdFieldName: TriggerMessageRequestProps.chargingStation,
-    associatedIdFieldName: ChargingStationProps.id,
-    gqlQuery: {
-      query: GET_CHARGING_STATION_LIST_FOR_EVSE,
-    },
-    gqlListQuery: {
-      query: GET_CHARGING_STATION_LIST_FOR_EVSE,
-      getQueryVariables: (_: TriggerMessageRequest) => ({
-        [EvseProps.databaseId]: 1,
-      }),
-    },
-  })
-  @Type(() => ChargingStation)
-  @IsNotEmpty()
-  chargingStation!: ChargingStation | null;
-
   @FieldCustomActions([TriggerMessageForEvseCustomAction])
   @GqlAssociation({
     parentIdFieldName: TriggerMessageRequestProps.evse,
-    associatedIdFieldName: EvseProps.databaseId,
+    associatedIdFieldName: EvseDtoProps.id,
     gqlQuery: {
       query: GET_EVSES_FOR_STATION,
     },
@@ -82,7 +70,35 @@ export class TriggerMessageRequest {
   })
   @Type(() => Evse)
   @IsNotEmpty()
-  evse!: Evse | null;
+  evse!: IEvseDto | null;
+
+  @GqlAssociation({
+    parentIdFieldName: TriggerMessageRequestProps.evse,
+    associatedIdFieldName: EvseDtoProps.id,
+    gqlQuery: {
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+    },
+    gqlListQuery: {
+      query: GET_CONNECTOR_LIST_FOR_STATION_EVSE,
+      getQueryVariables: (formData: TriggerMessageRequest, selector: any) => {
+        const station = selector(getSelectedChargingStation()) || {};
+        const selectedEvse = formData.evse;
+        const hasValidEvse =
+          selectedEvse &&
+          selectedEvse.id &&
+          (selectedEvse.id as any) !== NEW_IDENTIFIER;
+
+        return {
+          stationId: station.id,
+          where: hasValidEvse ? { evseId: { _eq: selectedEvse.id } } : {},
+        };
+      },
+    },
+  })
+  @Type(() => Connector)
+  @ValidateNested()
+  @IsOptional()
+  connector?: IConnectorDto | null;
 
   @IsEnum(MessageTriggerEnumType)
   @IsNotEmpty()
@@ -101,11 +117,6 @@ export interface TriggerMessageProps {
 const TriggerMessageRequestWithoutEvse = createClassWithoutProperty(
   TriggerMessageRequest,
   TriggerMessageRequestProps.evse,
-);
-
-const TriggerMessageRequestWithoutStation = createClassWithoutProperty(
-  TriggerMessageRequest,
-  TriggerMessageRequestProps.chargingStation,
 );
 
 export const TriggerMessage: React.FC<TriggerMessageProps> = ({
@@ -127,44 +138,29 @@ export const TriggerMessage: React.FC<TriggerMessageProps> = ({
       : undefined;
 
   const triggerMessageRequest = new TriggerMessageRequest();
-  triggerMessageRequest[TriggerMessageRequestProps.evse] = new Evse();
-  triggerMessageRequest[TriggerMessageRequestProps.evse][EvseProps.databaseId] =
+  triggerMessageRequest[TriggerMessageRequestProps.evse] =
+    new Evse() as unknown as IEvseDto;
+  triggerMessageRequest[TriggerMessageRequestProps.evse].id =
     NEW_IDENTIFIER as unknown as number;
-
-  const triggerMessageRequestWithoutEvse =
-    new TriggerMessageRequestWithoutEvse() as Omit<
-      TriggerMessageRequest,
-      'evse'
-    >;
-  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation] =
-    new ChargingStation();
-  triggerMessageRequestWithoutEvse[TriggerMessageRequestProps.chargingStation][
-    ChargingStationProps.id
-  ] = NEW_IDENTIFIER;
-
   const dtoClass = evse
     ? TriggerMessageRequestWithoutEvse
-    : stationId
-      ? TriggerMessageRequestWithoutStation
-      : TriggerMessageRequest;
-  const parentRecord = evse
-    ? triggerMessageRequestWithoutEvse
-    : triggerMessageRequest;
+    : TriggerMessageRequest;
+  const parentRecord = evse ? triggerMessageRequest : triggerMessageRequest;
 
   const handleSubmit = async (request: TriggerMessageRequest) => {
     const evse = request[TriggerMessageRequestProps.evse];
+    const connector = request.connector;
+
     const data: any = {
       requestedMessage: request[TriggerMessageRequestProps.requestedMessage],
       customData: request[TriggerMessageRequestProps.customData],
     };
 
-    if (evse && evse[EvseProps.id]) {
+    if (evse && evse.id && evse.id !== (NEW_IDENTIFIER as unknown as number)) {
       data.evse = {
-        id: evse[EvseProps.id],
+        id: evse.id,
+        ...(connector && connector.id ? { connectorId: connector.id } : {}),
       };
-      if (evse[EvseProps.connectorId]) {
-        data.evse.connectorId = evse[EvseProps.connectorId];
-      }
     }
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({

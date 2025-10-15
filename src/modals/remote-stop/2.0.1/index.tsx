@@ -4,24 +4,24 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, Form, Select, Spin } from 'antd';
-import { ChargingStationDto } from '../../../dtos/charging.station.dto';
 import { closeModal, selectIsModalOpen } from '../../../redux/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
-import { EvseDto } from '../../../dtos/evse.dto';
-import { OCPPVersion } from '@citrineos/base';
+import { ITransactionDto, OCPPVersion } from '@citrineos/base';
 import { MessageConfirmation } from '../../../message/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '../../../message/util';
+import { IChargingStationDto } from '@citrineos/base';
+import { IEvseDto } from '@citrineos/base';
 
 export interface OCPP2_0_1_RemoteStopProps {
-  station: ChargingStationDto;
+  station: IChargingStationDto;
 }
 
 export const OCPP2_0_1_RemoteStop = ({
   station,
 }: OCPP2_0_1_RemoteStopProps) => {
-  const evseMap: Map<number, EvseDto> = useMemo(() => {
-    if (!station.evses) return new Map<number, EvseDto>();
-    return new Map(station.evses.map((evse) => [evse.databaseId, evse]));
+  const evseMap: Map<number, IEvseDto> = useMemo(() => {
+    if (!station.evses) return new Map<number, IEvseDto>();
+    return new Map(station.evses.map((evse) => [evse.id!, evse]));
   }, [station.evses]);
 
   const [form] = Form.useForm();
@@ -59,8 +59,13 @@ export const OCPP2_0_1_RemoteStop = ({
     return <Spin />;
   }
 
+  // Filter out inactive transactions
+  const activeTransactions = station.transactions.filter(
+    (tx: ITransactionDto) => tx.isActive,
+  );
+
   // Handle the case when there are no active transactions
-  if (station.transactions.length === 0) {
+  if (activeTransactions.length === 0) {
     return (
       <Flex vertical gap={16}>
         <div>No active transactions found for this charging station.</div>
@@ -81,9 +86,9 @@ export const OCPP2_0_1_RemoteStop = ({
             rules={[{ required: true, message: 'Please select a transaction' }]}
           >
             <Select className="full-width" placeholder="Select a transaction">
-              {station.transactions.map((transaction) => {
-                const evse = transaction.evseDatabaseId
-                  ? evseMap.get(transaction.evseDatabaseId)
+              {activeTransactions.map((transaction: ITransactionDto) => {
+                const evse = transaction.evseId
+                  ? evseMap.get(transaction.evseId)
                   : null;
 
                 return (
