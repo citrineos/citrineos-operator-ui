@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   LOCATIONS_CREATE_MUTATION,
   LOCATIONS_EDIT_MUTATION,
@@ -48,6 +48,8 @@ import {
   LocationParkingType,
 } from '@citrineos/base';
 import { MenuSection } from '../../../components/main-menu/main.menu';
+import { OpeningHoursForm } from '../../../components/opening-hours';
+import dayjs from 'dayjs';
 
 export const LocationsUpsert = () => {
   const params: any = useParams<{ id: string }>();
@@ -172,6 +174,53 @@ export const LocationsUpsert = () => {
       if (isSubmitting) return;
       setIsSubmitting(true);
       const input = { ...formValuesRef.current };
+      // Clean up openingHours before serialization
+      if (input.openingHours) {
+        const {
+          exceptionalOpenings,
+          exceptionalClosings,
+          regularHours,
+          ...rest
+        } = input.openingHours;
+
+        const cleanedOpeningHours: any = { ...rest };
+
+        // Final, aggressive filtering before serialization
+        const filterValidPeriods = (periods: any) =>
+          (periods || []).filter((p: any) => {
+            if (!p || typeof p !== 'object') return false;
+            const begin = p.periodBegin ? dayjs(p.periodBegin) : null;
+            const end = p.periodEnd ? dayjs(p.periodEnd) : null;
+            return begin && begin.isValid() && end && end.isValid();
+          });
+
+        const validOpenings = filterValidPeriods(exceptionalOpenings);
+        if (validOpenings.length > 0) {
+          cleanedOpeningHours.exceptionalOpenings = validOpenings;
+        }
+
+        const validClosings = filterValidPeriods(exceptionalClosings);
+        if (validClosings.length > 0) {
+          cleanedOpeningHours.exceptionalClosings = validClosings;
+        }
+
+        if (regularHours && regularHours.length > 0) {
+          cleanedOpeningHours.regularHours = regularHours;
+        }
+
+        // If after cleaning, the object only contains `twentyfourSeven`, and it's false,
+        // we can consider the whole object empty.
+        if (
+          Object.keys(cleanedOpeningHours).length === 1 &&
+          'twentyfourSeven' in cleanedOpeningHours &&
+          !cleanedOpeningHours.twentyfourSeven
+        ) {
+          input.openingHours = null; // Set to null to avoid saving empty object
+        } else {
+          input.openingHours = cleanedOpeningHours;
+        }
+      }
+
       delete input[LocationDtoProps.chargingPool];
       const newItem: any = getSerializedValues(input, LocationDto);
       if (!locationId) {
@@ -445,6 +494,18 @@ export const LocationsUpsert = () => {
                         </Select.Option>
                       ))}
                     </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    key={LocationDtoProps.openingHours}
+                    label="Opening Hours"
+                    name={LocationDtoProps.openingHours}
+                    data-testid={LocationDtoProps.openingHours}
+                  >
+                    <OpeningHoursForm />
                   </Form.Item>
                 </Col>
               </Row>

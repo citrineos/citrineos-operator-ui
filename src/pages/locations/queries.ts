@@ -110,6 +110,7 @@ export const LOCATIONS_GET_QUERY = gql`
       parkingType
       createdAt
       updatedAt
+      openingHours
       chargingPool: ChargingStations {
         id
         isOnline
