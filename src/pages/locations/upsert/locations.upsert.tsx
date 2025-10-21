@@ -21,7 +21,12 @@ import {
   Upload,
 } from 'antd';
 import { useForm } from '@refinedev/antd';
-import { Country, countryStateData } from '../country.state.data';
+import {
+  Country,
+  countryStateData,
+  countryCoordinates,
+  countryZoom,
+} from '../country.state.data';
 import { MapLocationPicker } from '../../../components/map';
 import { GeoPoint, PointProps } from '@util/GeoPoint';
 import { getSerializedValues } from '@util/middleware';
@@ -193,6 +198,13 @@ export const LocationsUpsert = () => {
     });
   };
 
+  const countryWatch = Form.useWatch(LocationDtoProps.country, form);
+
+  // if country is changed, clear state.
+  useEffect(() => {
+    form.setFieldValue(LocationDtoProps.state, undefined);
+  }, [countryWatch, form]);
+
   return (
     <CanAccess
       resource={ResourceType.LOCATIONS}
@@ -286,14 +298,13 @@ export const LocationsUpsert = () => {
                     data-testid={LocationDtoProps.state}
                   >
                     <Select placeholder="Select a state" allowClear>
-                      {countryStateData[
-                        form.getFieldValue(LocationDtoProps.country) ||
-                          Country.USA
-                      ]?.map((state) => (
-                        <Select.Option key={state} value={state}>
-                          {state}
-                        </Select.Option>
-                      )) || []}
+                      {countryStateData[countryWatch || Country.USA]?.map(
+                        (state) => (
+                          <Select.Option key={state} value={state}>
+                            {state}
+                          </Select.Option>
+                        ),
+                      ) || []}
                     </Select>
                   </Form.Item>
                 </Col>
@@ -476,9 +487,15 @@ export const LocationsUpsert = () => {
                 <strong>Please select a location</strong>
               </Row>
               <MapLocationPicker
+                key={countryWatch}
                 point={form.getFieldValue(LocationDtoProps.coordinates)}
-                defaultCenter={{ lat: 39.8283, lng: -98.5795 }}
-                zoom={3}
+                defaultCenter={
+                  countryCoordinates[countryWatch] || {
+                    lat: 39.8283,
+                    lng: -98.5795,
+                  }
+                }
+                zoom={countryZoom[countryWatch] || 3}
                 onLocationSelect={handleLocationSelect}
               />
             </Flex>
