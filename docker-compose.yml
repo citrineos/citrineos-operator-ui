@@ -9,3 +9,9 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 3000:3000
+    networks:
+      - citrine-network
+
+networks:
+  citrineos-network:
+    external: true
