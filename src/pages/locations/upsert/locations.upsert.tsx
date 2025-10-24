@@ -157,7 +157,7 @@ export const LocationsUpsert = () => {
     form.setFieldsValue({
       [LocationDtoProps.coordinates]: {
         type: 'Point',
-        coordinates: [
+        [PointProps.coordinates]: [
           query?.data?.data?.coordinates.coordinates[0],
           query?.data?.data?.coordinates.coordinates[1],
         ],
@@ -173,6 +173,15 @@ export const LocationsUpsert = () => {
       setIsSubmitting(true);
       const input = { ...formValuesRef.current };
       delete input[LocationDtoProps.chargingPool];
+
+      if (input[LocationDtoProps.coordinates]?.[PointProps.coordinates]) {
+        const coords =
+          input[LocationDtoProps.coordinates][PointProps.coordinates];
+        input[LocationDtoProps.coordinates][PointProps.coordinates] = [
+          coords[0],
+          coords[1],
+        ];
+      }
       const newItem: any = getSerializedValues(input, LocationDto);
       if (!locationId) {
         newItem.tenantId = config.tenantId;
@@ -186,9 +195,9 @@ export const LocationsUpsert = () => {
 
   const handleLocationSelect = (point: GeoPoint) => {
     form?.setFieldsValue({
-      coordinates: {
+      [LocationDtoProps.coordinates]: {
         type: 'Point',
-        coordinates: [point.longitude, point.latitude],
+        [PointProps.coordinates]: [point.longitude, point.latitude],
       },
     });
   };
@@ -328,24 +337,25 @@ export const LocationsUpsert = () => {
                     name={[
                       LocationDtoProps.coordinates,
                       PointProps.coordinates,
+                      1,
                     ]}
                     data-testid={'Latitude'}
                   >
                     <InputNumber
                       placeholder="Click map or enter manually"
-                      value={
-                        form?.getFieldValue([
-                          LocationDtoProps.coordinates,
-                          PointProps.coordinates,
-                        ])?.[1]
-                      }
+                      value={form?.getFieldValue([
+                        LocationDtoProps.coordinates,
+                        PointProps.coordinates,
+                        1,
+                      ])}
                       onChange={(value: number | null) => {
                         const lat = value;
                         const lng = parseFloat(
                           form?.getFieldValue([
                             LocationDtoProps.coordinates,
                             PointProps.coordinates,
-                          ])[0],
+                            0,
+                          ]),
                         );
                         if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                           form.setFieldsValue({
@@ -366,23 +376,24 @@ export const LocationsUpsert = () => {
                     name={[
                       LocationDtoProps.coordinates,
                       PointProps.coordinates,
+                      0,
                     ]}
                     data-testid={'Longitude'}
                   >
                     <InputNumber
                       placeholder="Click map or enter manually"
-                      value={
-                        form?.getFieldValue([
-                          LocationDtoProps.coordinates,
-                          PointProps.coordinates,
-                        ])?.[0]
-                      }
+                      value={form?.getFieldValue([
+                        LocationDtoProps.coordinates,
+                        PointProps.coordinates,
+                        0,
+                      ])}
                       onChange={(value: number | null) => {
                         const lat = parseFloat(
                           form?.getFieldValue([
                             LocationDtoProps.coordinates,
                             PointProps.coordinates,
-                          ])[1],
+                            1,
+                          ]),
                         );
                         const lng = value;
                         if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
