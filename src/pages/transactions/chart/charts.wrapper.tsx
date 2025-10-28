@@ -2,24 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Col, Flex, Row, Select } from 'antd';
 import { ReadingContextEnumType } from '@OCPP2_0_1';
-import { renderEnumSelectOptions } from '@util/renderUtil';
 import { PowerOverTime } from './power.over.time';
 import { EnergyOverTime } from './energy.over.time';
 import { StateOfCharge } from './state.of.charge';
 import { VoltageOverTime } from './voltage.over.time';
 import { CurrentOverTime } from './current.over.time';
-import { IMeterValueDto } from '../../../../../citrineos-core/00_Base';
-
-enum ChartType {
-  POWER = 'Power Over Time',
-  ENERGY = 'Energy Over Time',
-  SOC = 'State of Charge Over Time',
-  VOLTAGE = 'Voltage Over Time',
-  CURRENT = 'Current Over Time',
-}
+import { IMeterValueDto } from '@citrineos/base';
 
 const columnProps = {
   xs: { flex: '100%' },
