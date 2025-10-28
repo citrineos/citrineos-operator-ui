@@ -2,14 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import { AuthProvider } from '@refinedev/core';
 import { AuthenticationContextProvider, User } from './types';
 import config from '@util/config';
+import { HasuraHeader, HasuraRole } from './hasura';
+import { AuthPage } from '@refinedev/antd';
 
 /**
  * Configuration for the auth provider
  */
-export interface AuthProviderConfig {
+export interface GenericAuthProviderConfig {
   tokenKey?: string;
   userKey?: string;
 }
@@ -24,8 +27,8 @@ const ADMIN_PASSWORD = config.adminPassword;
  * Creates a default permissive auth provider that uses localStorage
  * for persistence and always grants permissions
  */
-const createAuthProvider = (
-  config: AuthProviderConfig = {},
+export const createGenericAuthProvider = (
+  config: GenericAuthProviderConfig = {},
 ): AuthProvider & AuthenticationContextProvider => {
   const { tokenKey = 'auth_token', userKey = 'auth_user' } = config;
 
@@ -35,6 +38,8 @@ const createAuthProvider = (
     email: ADMIN_EMAIL,
     roles: ['admin'],
   };
+
+  const LoginPage: React.FC = () => <AuthPage type="login" />;
 
   /**
    * Save token to storage
@@ -46,8 +51,8 @@ const createAuthProvider = (
   /**
    * Get token from storage
    */
-  const getToken = async (): Promise<string | null> => {
-    return localStorage.getItem(tokenKey);
+  const getToken = async (): Promise<string | undefined> => {
+    return localStorage.getItem(tokenKey) || undefined;
   };
 
   /**
@@ -78,6 +83,33 @@ const createAuthProvider = (
     return {
       roles: user?.roles || [],
     };
+  };
+
+  const getUserRole = async (): Promise<string | undefined> => {
+    const roles = (await getPermissions()).roles;
+    if (roles && roles.length > 0) {
+      if (roles.includes(HasuraRole.ADMIN)) {
+        return HasuraRole.ADMIN;
+      }
+      return HasuraRole.USER;
+    }
+    return undefined;
+  };
+
+  /**
+   * Get the Hasura role from the identity
+   */
+  const getHasuraHeaders = async (): Promise<Map<HasuraHeader, string>> => {
+    const hasuraHeaders = new Map<HasuraHeader, string>();
+
+    const roles = (await getPermissions()).roles;
+    if (roles && roles.length > 0 && roles.includes(HasuraRole.ADMIN)) {
+      hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.ADMIN);
+    } else {
+      hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.USER);
+    }
+
+    return hasuraHeaders;
   };
 
   // Return the auth provider implementation
@@ -160,7 +192,9 @@ const createAuthProvider = (
     // AuthenticationContextProvider methods
 
     getToken,
+    getUserRole,
+    getHasuraHeaders,
+    getInitialized: async (): Promise<boolean> => true,
+    getLoginPage: () => LoginPage,
   };
 };
-
-export const authProvider = createAuthProvider();

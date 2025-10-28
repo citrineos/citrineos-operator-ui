@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { OCPPVersion } from '../../../../citrineos-core/00_Base';
 import { Tag } from 'antd';
+import { OCPPVersion } from '@citrineos/base';
 
 const ProtocolTag = ({ protocol }: { protocol: string | null | undefined }) => {
   let color: string;

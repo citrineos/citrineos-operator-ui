@@ -66,7 +66,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const locationsData =
       (searchQuery.length > 0
         ? filteredLocations
-        : (tableProps.dataSource as unknown as ILocationDto[])) || [];
+        : (tableProps.dataSource as ILocationDto[])) || [];
 
     // Enhance locations with custom react content for markers
     return locationsData.map((location) => {
@@ -74,7 +74,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
       const enhancedLocation = { ...location };
 
       // Add react content to the location's charging stations if needed
-      enhancedLocation.chargingPool = enhancedLocation.chargingPool.map(
+      enhancedLocation.chargingPool = enhancedLocation.chargingPool?.map(
         (station) => ({
           ...station,
           reactContent: null, // If you need custom content for station markers
@@ -91,7 +91,6 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     type: 'station' | 'location' | 'mixed',
   ) => {
     console.debug(`Marker ${id} clicked, type: ${type}`);
-    setSelectedLocationId(id);
 
     if (type === 'location') {
       // Navigate to location detail page when a location marker is clicked
@@ -127,9 +126,8 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
             onSearch={handleSearch}
             onChange={setSearchQuery}
             onSelect={(value, option) => {
-              // Access the location through the option's data property
-              if (option && option.data) {
-                window.location.href = `/locations/${option.data.id}`;
+              if (option?.data && option.data.id) {
+                setSelectedLocationId(option.data.id.toString());
               }
             }}
             filterOption={(inputValue, option) =>

@@ -10,9 +10,9 @@ import {
   ValidationOptions,
 } from 'class-validator';
 
-export enum GeoPointProps {
-  latitude = 'latitude',
-  longitude = 'longitude',
+export enum PointProps {
+  type = 'type',
+  coordinates = 'coordinates',
 }
 export class GeoPoint {
   private static TYPE = 'Point';

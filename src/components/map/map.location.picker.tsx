@@ -12,7 +12,6 @@ import {
   useApiLoadingStatus,
   APILoadingStatus,
 } from '@vis.gl/react-google-maps';
-import { mapStyles } from './map.styles';
 import config from '@util/config';
 import { GeoPoint } from '@util/GeoPoint';
 import { LocationPickerMapProps } from './types';
@@ -106,11 +105,10 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
     <div className="map-wrapper">
       <APIProvider apiKey={apiKey}>
         <Map
-          mapId="location-picker-map"
+          mapId={config.googleMapsLocationPickerMapId}
           defaultCenter={defaultCenter}
           defaultZoom={zoom}
           onClick={handleMapClick}
-          styles={mapStyles}
           gestureHandling="cooperative"
           disableDefaultUI={false}
           zoomControl={true}

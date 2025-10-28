@@ -504,7 +504,11 @@ export type AuthorizationsShowQuery = {
       | 'realTimeAuthUrl'
       | 'createdAt'
       | 'updatedAt'
-    >
+    > & {
+      tenantPartner?: Types.Maybe<
+        Pick<Types.TenantPartners, 'id' | 'partnerProfileOCPI'>
+      >;
+    }
   >;
 };
 
@@ -2589,8 +2593,8 @@ export type GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransa
         | 'createdAt'
         | 'updatedAt'
       > & {
-        LatestStatusNotifications: Array<{
-          StatusNotification?: Types.Maybe<
+        latestStatusNotifications: Array<{
+          statusNotification?: Types.Maybe<
             Pick<
               Types.StatusNotifications,
               | 'id'
@@ -2637,11 +2641,64 @@ export type GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransa
           >
         >;
         evses: Array<
-          Pick<Types.VariableAttributes, 'id' | 'createdAt' | 'updatedAt'>
+          Pick<Types.Evses, 'id' | 'evseTypeId' | 'createdAt' | 'updatedAt'>
         >;
       }
     >;
   };
+
+export type TenantPartnersQueryVariables = Types.Exact<{
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  order_by?: Types.InputMaybe<
+    Array<Types.TenantPartners_Order_By> | Types.TenantPartners_Order_By
+  >;
+  where?: Types.InputMaybe<Types.TenantPartners_Bool_Exp>;
+}>;
+
+export type TenantPartnersQuery = {
+  TenantPartners: Array<
+    Pick<
+      Types.TenantPartners,
+      'id' | 'countryCode' | 'partyId' | 'partnerProfileOCPI'
+    >
+  >;
+  TenantPartners_aggregate: {
+    aggregate?: Types.Maybe<
+      Pick<Types.TenantPartners_Aggregate_Fields, 'count'>
+    >;
+  };
+};
+
+export type TenantPartnerQueryVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+}>;
+
+export type TenantPartnerQuery = {
+  TenantPartners_by_pk?: Types.Maybe<
+    Pick<
+      Types.TenantPartners,
+      'id' | 'countryCode' | 'partyId' | 'partnerProfileOCPI'
+    >
+  >;
+};
+
+export type CreatePartnerMutationVariables = Types.Exact<{
+  object: Types.TenantPartners_Insert_Input;
+}>;
+
+export type CreatePartnerMutation = {
+  insert_TenantPartners_one?: Types.Maybe<Pick<Types.TenantPartners, 'id'>>;
+};
+
+export type UpdatePartnerMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+  object: Types.TenantPartners_Set_Input;
+}>;
+
+export type UpdatePartnerMutation = {
+  update_TenantPartners_by_pk?: Types.Maybe<Pick<Types.TenantPartners, 'id'>>;
+};
 
 export type ReservationsListQueryVariables = Types.Exact<{
   offset: Types.Scalars['Int']['input'];
@@ -3645,7 +3702,7 @@ export type TransactionListQuery = {
       | 'createdAt'
       | 'updatedAt'
     > & {
-      Location?: Types.Maybe<
+      location?: Types.Maybe<
         Pick<
           Types.Locations,
           | 'id'
@@ -3660,14 +3717,14 @@ export type TransactionListQuery = {
           | 'updatedAt'
         >
       >;
-      Evse?: Types.Maybe<Pick<Types.Evses, 'id' | 'createdAt' | 'updatedAt'>>;
-      Connector?: Types.Maybe<
+      evse?: Types.Maybe<Pick<Types.Evses, 'id' | 'createdAt' | 'updatedAt'>>;
+      connector?: Types.Maybe<
         Pick<
           Types.Connectors,
           'id' | 'connectorId' | 'type' | 'createdAt' | 'updatedAt'
         >
       >;
-      Authorization?: Types.Maybe<
+      authorization?: Types.Maybe<
         Pick<
           Types.Authorizations,
           | 'id'
@@ -3686,7 +3743,7 @@ export type TransactionListQuery = {
           | 'updatedAt'
         >
       >;
-      ChargingStation?: Types.Maybe<
+      chargingStation?: Types.Maybe<
         Pick<
           Types.ChargingStations,
           | 'id'
@@ -3696,7 +3753,7 @@ export type TransactionListQuery = {
           | 'createdAt'
           | 'updatedAt'
         > & {
-          Location?: Types.Maybe<
+          location?: Types.Maybe<
             Pick<
               Types.Locations,
               | 'id'
@@ -3741,7 +3798,7 @@ export type GetTransactionByIdQuery = {
       | 'createdAt'
       | 'updatedAt'
     > & {
-      Location?: Types.Maybe<
+      location?: Types.Maybe<
         Pick<
           Types.Locations,
           | 'name'
@@ -3755,19 +3812,19 @@ export type GetTransactionByIdQuery = {
           | 'updatedAt'
         >
       >;
-      Evse?: Types.Maybe<
+      evse?: Types.Maybe<
         Pick<
           Types.Evses,
           'id' | 'evseTypeId' | 'evseId' | 'createdAt' | 'updatedAt'
         >
       >;
-      Connector?: Types.Maybe<
+      connector?: Types.Maybe<
         Pick<
           Types.Connectors,
           'id' | 'connectorId' | 'type' | 'createdAt' | 'updatedAt'
         >
       >;
-      Authorization?: Types.Maybe<
+      authorization?: Types.Maybe<
         Pick<
           Types.Authorizations,
           | 'id'

@@ -31,7 +31,7 @@ export const TRANSACTION_LIST_QUERY = gql`
       updatedAt
       startTime
       endTime
-      Location {
+      location: Location {
         id
         name
         address
@@ -43,19 +43,19 @@ export const TRANSACTION_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
-      Evse {
+      evse: Evse {
         id
         createdAt
         updatedAt
       }
-      Connector {
+      connector: Connector {
         id
         connectorId
         type
         createdAt
         updatedAt
       }
-      Authorization {
+      authorization: Authorization {
         id
         idToken
         idTokenType
@@ -71,14 +71,14 @@ export const TRANSACTION_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
-      ChargingStation {
+      chargingStation: ChargingStation {
         id
         isOnline
         protocol
         locationId
         createdAt
         updatedAt
-        Location {
+        location: Location {
           id
           name
           address
@@ -117,7 +117,9 @@ export const TRANSACTION_GET_QUERY = gql`
       endTime
       locationId
       authorizationId
-      Location {
+      createdAt
+      updatedAt
+      location: Location {
         name
         address
         city
@@ -128,21 +130,21 @@ export const TRANSACTION_GET_QUERY = gql`
         createdAt
         updatedAt
       }
-      Evse {
+      evse: Evse {
         id
         evseTypeId
         evseId
         createdAt
         updatedAt
       }
-      Connector {
+      connector: Connector {
         id
         connectorId
         type
         createdAt
         updatedAt
       }
-      Authorization {
+      authorization: Authorization {
         id
         idToken
         idTokenType
