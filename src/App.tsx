@@ -135,7 +135,7 @@ const webSocketClient = graphqlWS.createClient({
   connectionParams: async () => {
     const token = await authProvider.getToken();
     if (token) {
-      const requestHeaders = {
+      const requestHeaders: Record<string, string> = {
         Authorization: `Bearer ${token}`,
       };
 
