@@ -5,7 +5,7 @@
 import React from 'react';
 import { AuthProvider } from '@refinedev/core';
 import { AuthenticationContextProvider, User } from './types';
-import config from '@util/config';
+import appConfig from '@util/config';
 import { HasuraHeader, HasuraRole } from './hasura';
 import { AuthPage } from '@refinedev/antd';
 
@@ -20,8 +20,8 @@ export interface GenericAuthProviderConfig {
 /**
  * Default auth provider implementation
  */
-const ADMIN_EMAIL = config.adminEmail;
-const ADMIN_PASSWORD = config.adminPassword;
+const ADMIN_EMAIL = appConfig.adminEmail;
+const ADMIN_PASSWORD = appConfig.adminPassword;
 
 /**
  * Creates a default permissive auth provider that uses localStorage
@@ -101,6 +101,11 @@ export const createGenericAuthProvider = (
    */
   const getHasuraHeaders = async (): Promise<Map<HasuraHeader, string>> => {
     const hasuraHeaders = new Map<HasuraHeader, string>();
+
+    const hasuraSecret = appConfig.hasuraAdminSecret;
+    if (hasuraSecret) {
+      hasuraHeaders.set(HasuraHeader.X_HASURA_ADMIN_SECRET, hasuraSecret);
+    }
 
     const roles = (await getPermissions()).roles;
     if (roles && roles.length > 0 && roles.includes(HasuraRole.ADMIN)) {

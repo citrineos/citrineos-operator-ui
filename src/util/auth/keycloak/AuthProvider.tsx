@@ -9,7 +9,7 @@ import {
   KeycloakUserIdentity,
 } from './types';
 import Keycloak from 'keycloak-js';
-import config from '@util/config';
+import appConfig from '@util/config';
 import { AuthenticationContextProvider } from '../types';
 import { HasuraClaimType, HasuraHeader, HasuraRole } from '../hasura';
 import React, { useEffect } from 'react';
@@ -23,7 +23,7 @@ export interface KeycloakAuthProviderConfig {
   keycloakRealm: string;
 }
 
-const HASURA_CLAIM = config.hasuraClaim;
+const HASURA_CLAIM = appConfig.hasuraClaim;
 
 /**
  * Creates a keycloak auth provider for use with Refine
@@ -157,7 +157,10 @@ export const createKeycloakAuthProvider = (
     if (!hasuraClaims) {
       return hasuraHeaders;
     }
-
+    const hasuraSecret = appConfig.hasuraAdminSecret;
+    if (hasuraSecret) {
+      hasuraHeaders.set(HasuraHeader.X_HASURA_ADMIN_SECRET, hasuraSecret);
+    }
     const roles = hasuraClaims[HasuraClaimType.X_HARSURA_ALLOWED_ROLES];
     if (roles && roles.length > 0 && roles.includes(KeycloakRole.ADMIN)) {
       hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.ADMIN);

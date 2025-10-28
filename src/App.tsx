@@ -105,6 +105,12 @@ const requestMiddleware = async (request: any) => {
     }
     const hasuraHeaders = await authProvider.getHasuraHeaders();
     if (hasuraHeaders) {
+      const hasuraAdminSecret = hasuraHeaders.get(
+        HasuraHeader.X_HASURA_ADMIN_SECRET,
+      );
+      if (hasuraAdminSecret) {
+        requestHeaders[HasuraHeader.X_HASURA_ADMIN_SECRET] = hasuraAdminSecret;
+      }
       const hasuraRole = hasuraHeaders.get(HasuraHeader.X_HASURA_ROLE);
       if (hasuraRole) {
         requestHeaders[HasuraHeader.X_HASURA_ROLE] = hasuraRole;
@@ -129,22 +135,28 @@ const webSocketClient = graphqlWS.createClient({
   connectionParams: async () => {
     const token = await authProvider.getToken();
     if (token) {
+      const requestHeaders = {
+        Authorization: `Bearer ${token}`,
+      };
+
       const hasuraHeaders = await authProvider.getHasuraHeaders();
       if (hasuraHeaders) {
+        const hasuraAdminSecret = hasuraHeaders.get(
+          HasuraHeader.X_HASURA_ADMIN_SECRET,
+        );
+        if (hasuraAdminSecret) {
+          requestHeaders[HasuraHeader.X_HASURA_ADMIN_SECRET] =
+            hasuraAdminSecret;
+        }
+
         const hasuraRole = hasuraHeaders.get(HasuraHeader.X_HASURA_ROLE);
-        if (hasuraRole)
-          // If a role is set, include it in the connection params
-          return {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              [HasuraHeader.X_HASURA_ROLE]: hasuraRole,
-            },
-          };
+        if (hasuraRole) {
+          requestHeaders[HasuraHeader.X_HASURA_ROLE] = hasuraRole;
+        }
       }
+
       return {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: requestHeaders,
       };
     }
   },

@@ -14,7 +14,8 @@ export enum HasuraClaimType {
 }
 
 export enum HasuraHeader {
-  X_AUTH_TOKEN = 'x-auth-token',
+  //  X_AUTH_TOKEN = 'x-auth-token',
+  X_HASURA_ADMIN_SECRET = 'x-hasura-admin-secret',
   X_HASURA_ROLE = 'x-hasura-role',
   X_HASURA_TENANT_ID = 'x-hasura-tenant-id',
 }
