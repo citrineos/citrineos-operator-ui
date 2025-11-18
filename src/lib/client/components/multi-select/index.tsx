@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
 'use client';
 
 import { Button } from '@lib/client/components/ui/button';
@@ -35,7 +38,10 @@ export function MultiSelect<T extends string>({
 }: MultiSelectProps<T>): JSX.Element {
   // Handle null, undefined and single value
   const selectedArray = Array.isArray(selectedValues)
-    ? selectedValues : selectedValues ? [selectedValues as unknown as T] : [];
+    ? selectedValues
+    : selectedValues
+      ? [selectedValues as unknown as T]
+      : [];
 
   return (
     <Popover>

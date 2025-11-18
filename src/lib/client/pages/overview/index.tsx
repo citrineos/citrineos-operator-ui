@@ -9,7 +9,6 @@ import { ChargerActivityCard } from '@lib/client/pages/overview/charger-activity
 import { LocationsCard } from '@lib/client/pages/overview/locations/locations.card';
 import { OnlineStatusCard } from '@lib/client/pages/overview/online-status/online.status.card';
 import { PluginSuccessRateCard } from '@lib/client/pages/overview/plugin-success-rate/plugin.success.rate.card';
-import '@lib/client/pages/overview/style.scss';
 
 export const Overview = () => {
   return (

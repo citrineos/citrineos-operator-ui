@@ -13,7 +13,6 @@ import {
   ChargerStatusEnum,
   getStatusColor,
 } from '@lib/client/pages/overview/charger-activity/charger.activity.card';
-import '@lib/client/pages/overview/circle/style.scss';
 
 export interface CircleProps {
   status?: ChargerStatusEnum;

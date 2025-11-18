@@ -4,7 +4,6 @@
 'use client';
 
 import { Loader } from '@lib/client/components/ui/loader';
-import '@lib/client/pages/overview/plugin-success-rate/style.scss';
 import { TRANSACTION_SUCCESS_RATE_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';

@@ -1,14 +1,17 @@
 // SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
 //
 // SPDX-License-Identifier: Apache-2.0
+'use client';
 
-// map.marker.tsx
 import React from 'react';
 import {
   AdvancedMarker,
   useAdvancedMarkerRef,
 } from '@vis.gl/react-google-maps';
-import { ChargingStationIcon, LocationIcon } from '@lib/client/components/map/marker.icons';
+import {
+  ChargingStationIcon,
+  LocationIcon,
+} from '@lib/client/components/map/marker.icons';
 import type { BaseMapMarkerProps } from '@lib/client/components/map/types';
 
 export const MapMarkerComponent: React.FC<

@@ -11,7 +11,6 @@ import {
 } from '@citrineos/base';
 import { Loader } from '@lib/client/components/ui/loader';
 import { Gauge } from '@lib/client/pages/overview/charger-activity/gauge';
-import '@lib/client/pages/overview/charger-activity/style.scss';
 import { ChargerRow } from '@lib/client/pages/overview/charger.row';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { LatestStatusNotificationClass } from '@lib/cls/latest.status.notification.dto';
@@ -291,7 +290,9 @@ export const ChargerActivityCard: React.FC = () => {
                   className="flex justify-between items-center border-b"
                   style={{ borderColor: 'var(--grayscale-color-0)' }}
                 >
-                  <h4 className="text-lg font-semibold">{selectedStatus} chargers</h4>
+                  <h4 className="text-lg font-semibold">
+                    {selectedStatus} chargers
+                  </h4>
                   <X
                     onClick={handleClose}
                     size={20}

@@ -7,7 +7,6 @@ import { Button } from '@lib/client/components/ui/button';
 import { ResourceType } from '@lib/utils/access.types';
 import { useNavigation } from '@refinedev/core';
 import React from 'react';
-import './style.scss';
 
 interface LocationMarkerProps {
   location: LocationDto;

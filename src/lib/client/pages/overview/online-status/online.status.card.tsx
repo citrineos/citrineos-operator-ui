@@ -7,7 +7,6 @@ import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Loader } from '@lib/client/components/ui/loader';
 import { ChargerStatusEnum } from '@lib/client/pages/overview/charger-activity/charger.activity.card';
 import { Circle } from '@lib/client/pages/overview/circle/circle';
-import '@lib/client/pages/overview/online-status/style.scss';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';

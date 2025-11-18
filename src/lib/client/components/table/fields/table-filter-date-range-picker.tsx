@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+'use client';
+
 import { Badge } from '@lib/client/components/ui/badge';
 import { Button } from '@lib/client/components/ui/button';
 import { Calendar } from '@lib/client/components/ui/calendar';

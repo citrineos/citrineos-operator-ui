@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
 'use server';
 
 import { DEFAULT_LOCALE, I18N_COOKIE_NAME } from '@lib/utils/consts';

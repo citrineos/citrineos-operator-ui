@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePresignedPutUrl } from '@lib/server/clients/file/s3';
 
@@ -6,7 +9,10 @@ export async function POST(req: NextRequest) {
     const { fileName, contentType } = await req.json();
 
     if (!fileName || !contentType) {
-      return NextResponse.json({ error: 'Missing fileName or contentType' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing fileName or contentType' },
+        { status: 400 },
+      );
     }
 
     const { url, key } = await generatePresignedPutUrl(fileName, contentType);

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePresignedGetUrlIfExists } from '@lib/server/clients/file/s3';
 

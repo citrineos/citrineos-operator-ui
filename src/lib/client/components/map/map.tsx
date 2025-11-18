@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
 //
 // SPDX-License-Identifier: Apache-2.0
+'use client';
 
 import type { LocationDto } from '@citrineos/base';
 import { MapMarkerComponent } from '@lib/client/components/map/map.marker';
 import { ClusterIcon } from '@lib/client/components/map/marker.icons';
-import '@lib/client/components/map/style.scss';
 import type {
   ClusterInfo,
   LocationGroup,

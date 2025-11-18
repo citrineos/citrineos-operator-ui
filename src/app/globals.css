@@ -1,3 +1,8 @@
+/* 
+ SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+
+ SPDX-License-Identifier: Apache-2.0
+ */
 @import 'tailwindcss';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
@@ -34,10 +39,10 @@
   --font-sans: var(--font-roobert), system-ui, sans-serif;
 
   /* Non-themed Colors */
-  --light-mode: #FFAE0B;
-  --light-mode-foreground: #442B00;
-  --dark-mode: #D7DCFF;
-  --dark-mode-foreground: #000D37;
+  --light-mode: #ffae0b;
+  --light-mode-foreground: #442b00;
+  --dark-mode: #d7dcff;
+  --dark-mode-foreground: #000d37;
 }
 
 :root {
@@ -50,41 +55,41 @@
   --card-foreground: #131211;
   --popover: oklch(1 0 0);
   --popover-foreground: #131211;
-  --primary: #FFAE0B;
-  --primary-foreground: #6E4900;
-  --secondary: #A5B2FF;
-  --secondary-foreground: #000D37;
-  --muted: #E7E6E4;
-  --muted-foreground: #32302E;
+  --primary: #ffae0b;
+  --primary-foreground: #6e4900;
+  --secondary: #a5b2ff;
+  --secondary-foreground: #000d37;
+  --muted: #e7e6e4;
+  --muted-foreground: #32302e;
   --accent: hsl(40, 5.88%, 95%);
-  --accent-foreground: #6E87FF;
-  --destructive: #F61631;
-  --success: #3DB014;
-  --warning: #FF7300;
-  --border: #E7E6E4;
-  --input: #C3BDB9;
-  --ring: #9C9793;
+  --accent-foreground: #6e87ff;
+  --destructive: #f61631;
+  --success: #3db014;
+  --warning: #ff7300;
+  --border: #e7e6e4;
+  --input: #c3bdb9;
+  --ring: #9c9793;
 }
 
 [data-theme='dark'] {
   /* Dark mode colors */
-  --background: #16151E;
-  --foreground: #F0F0F0;
-  --card: #23242E;
-  --card-foreground: #F0F0F0;
-  --popover: #23242E;
-  --popover-foreground: #F0F0F0;
+  --background: #16151e;
+  --foreground: #f0f0f0;
+  --card: #23242e;
+  --card-foreground: #f0f0f0;
+  --popover: #23242e;
+  --popover-foreground: #f0f0f0;
   --primary: hsl(40.08, 100%, 60%);
-  --primary-foreground: #6E4900;
-  --secondary: #D7DCFF;
-  --secondary-foreground: #00226E;
-  --muted: #32302E;
-  --muted-foreground: #C3BDB9;
+  --primary-foreground: #6e4900;
+  --secondary: #d7dcff;
+  --secondary-foreground: #00226e;
+  --muted: #32302e;
+  --muted-foreground: #c3bdb9;
   --accent: hsl(234.55, 13.58%, 25%);
-  --accent-foreground: #A5B2FF;
+  --accent-foreground: #a5b2ff;
   --destructive: hsl(352.77, 92.56%, 60%);
   --success: hsl(104.23, 79.59%, 40%);
-  --warning: #FFA45A;
+  --warning: #ffa45a;
   --border: hsl(234.55, 13.58%, 30%);
   --input: hsl(234.55, 13.58%, 35%);
   --ring: hsl(234.55, 13.58%, 30%);

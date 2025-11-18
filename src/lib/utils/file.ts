@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   GENERATE_PRESIGNED_GET_URL,
   GENERATE_PRESIGNED_PUT_URL,

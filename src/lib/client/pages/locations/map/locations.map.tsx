@@ -12,7 +12,6 @@ import { ResourceType } from '@lib/utils/access.types';
 import { useList } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
 import React, { useMemo, useState } from 'react';
-import './style.scss';
 
 export interface LocationsMapProps {
   mapOnly?: boolean;

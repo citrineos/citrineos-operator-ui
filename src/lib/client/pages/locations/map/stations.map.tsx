@@ -20,7 +20,6 @@ import { ResourceType } from '@lib/utils/access.types';
 import { useList } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
 import React, { useState } from 'react';
-import './style.scss';
 
 export interface CombinedMapProps {
   defaultCenter?: google.maps.LatLngLiteral;
@@ -97,7 +96,12 @@ export const CombinedMap: React.FC<CombinedMapProps> = ({
       <div className="map-controls flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Network Overview</h2>
         <div className="flex items-center gap-4">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'all' | 'locations' | 'stations')}>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) =>
+              setActiveTab(value as 'all' | 'locations' | 'stations')
+            }
+          >
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="locations">Locations</TabsTrigger>

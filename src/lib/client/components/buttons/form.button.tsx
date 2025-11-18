@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+'use client';
+
 import { Button, type ButtonProps } from '@lib/client/components/ui/button';
 import { CanAccess, useSaveButton, useTranslation } from '@refinedev/core';
 import type {
