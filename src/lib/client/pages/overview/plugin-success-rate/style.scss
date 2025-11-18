@@ -1,0 +1,16 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.plugin-success-rate {
+  .plugin-success-rate-percentage {
+    font-size: 24px;
+    font-weight: 300;
+  }
+
+  .up {
+    color: var(--ui-color-success);
+  }
+}

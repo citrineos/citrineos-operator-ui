@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.content-locations-map,
+.content-locations-map .content-outer-wrap,
+.content-locations-map .content-outer-wrap .content-inner-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}

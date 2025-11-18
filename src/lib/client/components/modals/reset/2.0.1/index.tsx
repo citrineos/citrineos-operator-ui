@@ -1,0 +1,93 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+'use client';
+
+import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from '@lib/client/components/form';
+import { SelectFormField } from '@lib/client/components/form/field';
+import { EvseSelector } from '@lib/client/components/modals/shared/evse-selector/evse.selector';
+import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
+import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
+import { closeModal } from '@lib/utils/modal.slice';
+import { useForm } from '@refinedev/react-hook-form';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import z from 'zod';
+import { Controller } from 'react-hook-form';
+
+export interface OCPP2_0_1_ResetProps {
+  station: ChargingStationDto;
+}
+
+const ResetSchema = z.object({
+  type: z.enum(OCPP2_0_1.ResetEnumType, {
+    message: 'Please select a reset type',
+  }),
+  evse: z.string().optional(), // { id, evseTypeId }
+});
+
+type ResetFormData = z.infer<typeof ResetSchema>;
+
+const resetTypes = Object.keys(OCPP2_0_1.ResetEnumType);
+
+export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const form = useForm({
+    resolver: zodResolver(ResetSchema),
+    defaultValues: {
+      type: OCPP2_0_1.ResetEnumType.OnIdle,
+      evse: undefined,
+    },
+  });
+
+  const handleSubmit = (values: ResetFormData) => {
+    const parsedEvse = values.evse ? JSON.parse(values.evse) : undefined;
+
+    const data = {
+      type: values.type,
+      evseId: parsedEvse?.evseTypeId ?? undefined,
+    };
+
+    triggerMessageAndHandleResponse<MessageConfirmation[]>({
+      url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
+      data,
+      setLoading,
+    }).then(() => {
+      form.reset();
+      dispatch(closeModal());
+    });
+  };
+
+  const handleEvseSelection = (value: string) => {
+    form.setValue('evse', value);
+  };
+
+  return (
+    <Form {...form} loading={loading} submitHandler={handleSubmit} hideCancel>
+      <SelectFormField
+        control={form.control}
+        label="Reset Type"
+        name="type"
+        options={resetTypes}
+        placeholder="Select Reset Type"
+      />
+
+      <Controller
+        control={form.control}
+        name="evse"
+        render={({ field }) => (
+          <EvseSelector
+            station={station}
+            value={field.value ?? undefined}
+            onSelect={handleEvseSelection}
+            isOptional
+          />
+        )}
+      />
+    </Form>
+  );
+};

@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme inline {
+  /* Color tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: calc(var(--radius));
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  /* Font */
+  --font-sans: var(--font-roobert), system-ui, sans-serif;
+
+  /* Non-themed Colors */
+  --light-mode: #FFAE0B;
+  --light-mode-foreground: #442B00;
+  --dark-mode: #D7DCFF;
+  --dark-mode-foreground: #000D37;
+}
+
+:root {
+  --radius: 0.375rem;
+
+  /* Light mode colors */
+  --background: oklch(1 0 0);
+  --foreground: #131211;
+  --card: oklch(1 0 0);
+  --card-foreground: #131211;
+  --popover: oklch(1 0 0);
+  --popover-foreground: #131211;
+  --primary: #FFAE0B;
+  --primary-foreground: #6E4900;
+  --secondary: #A5B2FF;
+  --secondary-foreground: #000D37;
+  --muted: #E7E6E4;
+  --muted-foreground: #32302E;
+  --accent: hsl(40, 5.88%, 95%);
+  --accent-foreground: #6E87FF;
+  --destructive: #F61631;
+  --success: #3DB014;
+  --warning: #FF7300;
+  --border: #E7E6E4;
+  --input: #C3BDB9;
+  --ring: #9C9793;
+}
+
+[data-theme='dark'] {
+  /* Dark mode colors */
+  --background: #16151E;
+  --foreground: #F0F0F0;
+  --card: #23242E;
+  --card-foreground: #F0F0F0;
+  --popover: #23242E;
+  --popover-foreground: #F0F0F0;
+  --primary: hsl(40.08, 100%, 60%);
+  --primary-foreground: #6E4900;
+  --secondary: #D7DCFF;
+  --secondary-foreground: #00226E;
+  --muted: #32302E;
+  --muted-foreground: #C3BDB9;
+  --accent: hsl(234.55, 13.58%, 25%);
+  --accent-foreground: #A5B2FF;
+  --destructive: hsl(352.77, 92.56%, 60%);
+  --success: hsl(104.23, 79.59%, 40%);
+  --warning: #FFA45A;
+  --border: hsl(234.55, 13.58%, 30%);
+  --input: hsl(234.55, 13.58%, 35%);
+  --ring: hsl(234.55, 13.58%, 30%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 antialiased;
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -1,0 +1,25 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.view-charging-stations {
+  color: var(--secondary-color-3);
+  cursor: pointer;
+}
+
+.arrow {
+  transition: 250ms ease-in-out;
+  &.rotate {
+    transform: rotate(180deg);
+  }
+}
+
+.online {
+  color: var(--ui-color-success);
+}
+
+.offline {
+  color: var(--ui-color-error);
+}

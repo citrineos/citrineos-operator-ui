@@ -1,0 +1,313 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+import type { OCPPMessageDto } from '@citrineos/base';
+import {
+  MessageOrigin,
+  OCPP1_6_CallAction,
+  OCPP2_0_1_CallAction,
+  OCPPMessageProps,
+} from '@citrineos/base';
+import { Button } from '@lib/client/components/ui/button';
+import { Input } from '@lib/client/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@lib/client/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@lib/client/components/ui/tooltip';
+import { OCPPMessageClass } from '@lib/cls/ocpp.message.dto';
+import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
+import { ResourceType } from '@lib/utils/access.types';
+import { getPlainToInstanceOptions } from '@lib/utils/tables';
+import type { CrudFilter } from '@refinedev/core';
+import { useList } from '@refinedev/core';
+import { Dayjs } from 'dayjs';
+import { Link } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
+
+export interface OCPPMessagesProps {
+  stationId: string;
+}
+
+export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
+  const [highlightedCorrelationId, setHighlightedCorrelationId] = useState<
+    string | null
+  >(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [searchCid, setSearchCid] = useState<string>('');
+  const [searchContent, setSearchContent] = useState<string>('');
+  const [selectedActions, setSelectedActions] = useState<string>('all');
+  const [selectedOrigins, setSelectedOrigins] = useState<string>('all');
+  const [filters, setFilters] = useState<CrudFilter[]>([]);
+
+  const {
+    query: { data, isLoading },
+  } = useList<OCPPMessageDto>({
+    resource: ResourceType.OCPP_MESSAGES,
+    sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
+    meta: {
+      gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
+      gqlVariables: { stationId },
+    },
+    filters,
+    queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
+  });
+
+  const messages = data?.data ?? [];
+
+  const actionOptions = useMemo(
+    () => [
+      { label: 'All', value: 'all' },
+      ...Array.from(
+        new Set([
+          ...Object.values(OCPP1_6_CallAction),
+          ...Object.values(OCPP2_0_1_CallAction),
+        ]),
+      ).map((a) => ({
+        label: a,
+        value: a,
+      })),
+    ],
+    [],
+  );
+  const originOptions = useMemo(
+    () => [
+      { label: 'All', value: 'all' },
+      ...Object.values(MessageOrigin).map((o) => ({
+        label: o.toUpperCase(),
+        value: o,
+      })),
+    ],
+    [],
+  );
+
+  const updateFilters = () => {
+    const newFilters: CrudFilter[] = [];
+    if (startDate) {
+      newFilters.push({
+        field: OCPPMessageProps.timestamp,
+        operator: 'gte',
+        value: startDate.toISOString(),
+      });
+    }
+    if (endDate) {
+      newFilters.push({
+        field: OCPPMessageProps.timestamp,
+        operator: 'lte',
+        value: endDate.toISOString(),
+      });
+    }
+    if (searchCid.trim()) {
+      newFilters.push({
+        field: OCPPMessageProps.correlationId,
+        operator: 'contains',
+        value: searchCid,
+      });
+    }
+    if (selectedActions !== 'all') {
+      newFilters.push({
+        field: OCPPMessageProps.action,
+        operator: 'eq',
+        value: selectedActions,
+      });
+    }
+    if (selectedOrigins !== 'all') {
+      newFilters.push({
+        field: OCPPMessageProps.origin,
+        operator: 'eq',
+        value: selectedOrigins,
+      });
+    }
+    setFilters(
+      newFilters.length > 1
+        ? [{ operator: 'and', value: newFilters }]
+        : newFilters,
+    );
+  };
+
+  useEffect(() => {
+    updateFilters();
+  }, [startDate, endDate, searchCid, selectedActions, selectedOrigins]);
+
+  const filteredData: OCPPMessageDto[] = messages.filter((item) =>
+    searchContent.trim()
+      ? JSON.stringify(item.message)
+          .toLowerCase()
+          .includes(searchContent.toLowerCase())
+      : true,
+  );
+
+  const findRelatedMessages = useCallback(
+    (record: OCPPMessageDto) => {
+      setHighlightedCorrelationId(record.correlationId || null);
+      // Find and select the row with the same correlationId but different origin
+      const relatedMessage = messages.find(
+        (msg) =>
+          msg.correlationId === record.correlationId &&
+          msg.origin !== record.origin,
+      );
+      if (relatedMessage) {
+        setHighlightedCorrelationId(relatedMessage.correlationId || null);
+        // Scroll to the related message
+        const element = document.getElementById(
+          `ocpp-row-${relatedMessage.id}`,
+        );
+        if (element)
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    },
+    [messages],
+  );
+
+  const getRowClassName = (record: OCPPMessageDto) =>
+    record.origin === MessageOrigin.ChargingStation
+      ? 'bg-blue-50 dark:bg-blue-950'
+      : 'bg-green-50 dark:bg-green-950';
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-4">
+        <Input
+          placeholder="Search correlation ID"
+          value={searchCid}
+          onChange={(e) => setSearchCid(e.target.value)}
+          className="w-[250px]"
+        />
+        <Select value={selectedActions} onValueChange={setSelectedActions}>
+          <SelectTrigger className="min-w-[200px]">
+            <SelectValue placeholder="Filter Actions" />
+          </SelectTrigger>
+          <SelectContent>
+            {actionOptions.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={selectedOrigins} onValueChange={setSelectedOrigins}>
+          <SelectTrigger className="min-w-[200px]">
+            <SelectValue placeholder="Filter Origins" />
+          </SelectTrigger>
+          <SelectContent>
+            {originOptions.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Input
+          placeholder="Search content"
+          value={searchContent}
+          onChange={(e) => setSearchContent(e.target.value)}
+          className="w-[250px]"
+        />
+        <div className="text-sm text-muted-foreground self-center">
+          (Date pickers: start/end dates placeholder)
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setStartDate(null);
+            setEndDate(null);
+          }}
+        >
+          Live
+        </Button>
+      </div>
+
+      <div className="w-full overflow-x-auto border rounded-lg">
+        <table className="w-full border-collapse">
+          <thead className="bg-muted">
+            <tr>
+              <th className="px-4 py-2 text-left text-sm font-medium whitespace-nowrap">
+                Correlation ID
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium whitespace-nowrap">
+                Action-Origin
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium">
+                Content
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
+                  Loading...
+                </td>
+              </tr>
+            ) : filteredData.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
+                  No messages
+                </td>
+              </tr>
+            ) : (
+              filteredData.map((record) => (
+                <tr
+                  key={record.id}
+                  id={`ocpp-row-${record.id}`}
+                  className={`border-t ${getRowClassName(record)}`}
+                >
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs bg-muted px-2 py-1 rounded">
+                        {record.correlationId?.substring(0, 8) || '-'}…
+                      </code>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                findRelatedMessages(record);
+                              }}
+                            >
+                              <Link className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Find related message</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm">
+                    {record.action}-{record.origin}
+                  </td>
+                  <td className="px-4 py-2">
+                    <CollapsibleOCPPMessageViewer
+                      ocppMessage={record.message}
+                      unparsed={typeof record.message === 'string'}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};

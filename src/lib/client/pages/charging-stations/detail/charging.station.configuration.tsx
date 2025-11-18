@@ -1,0 +1,461 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+import { ChangeConfigurationModal } from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
+import { Button } from '@lib/client/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@lib/client/components/ui/dialog';
+import { Input } from '@lib/client/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@lib/client/components/ui/select';
+import { ChargingStationClass } from '@lib/cls/charging.station.dto';
+import {
+  CHANGE_CONFIGURATION_DOWNLOAD_QUERY,
+  CHANGE_CONFIGURATION_LIST_QUERY,
+} from '@lib/queries/change.configurations';
+import { CHARGING_STATION_ONLINE_STATUS_QUERY } from '@lib/queries/charging.stations';
+import {
+  VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
+  VARIABLE_ATTRIBUTE_LIST_QUERY,
+} from '@lib/queries/variable.attributes';
+import { ResourceType } from '@lib/utils/access.types';
+import { downloadCSV } from '@lib/utils/download';
+import { getPlainToInstanceOptions } from '@lib/utils/tables';
+import { useList, useOne, type CrudFilter } from '@refinedev/core';
+import { Edit, Plus } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+
+interface VariableAttribute {
+  id: string;
+  type: string;
+  value: string;
+  Variable: {
+    name: string;
+    instance: string;
+  };
+  Component: {
+    name: string;
+    instance: string;
+  };
+  evseDatabaseId: number | null;
+  Evse: {
+    id: string;
+    connectorId: string;
+  };
+}
+
+interface ChangeConfiguration {
+  stationId: string;
+  key: string;
+  value?: string | null;
+  readonly?: boolean | null;
+}
+
+interface ChargingStationConfigurationProps {
+  stationId: string;
+}
+
+const CONFIG_1_6_COLUMNS = [
+  { key: 'key', header: 'Key', accessor: 'key' },
+  { key: 'value', header: 'Value', accessor: 'value' },
+];
+
+const CONFIG_2_0_1_COLUMNS = [
+  { key: 'type', header: 'Type', accessor: 'type' },
+  { key: 'value', header: 'Value', accessor: 'value' },
+  {
+    key: 'component',
+    header: 'Component Name:Instance',
+    accessor: 'component',
+  },
+  { key: 'variable', header: 'Variable Name:Instance', accessor: 'variable' },
+  { key: 'evse', header: 'EVSE ID:Connector ID', accessor: 'evse' },
+];
+
+export const ChargingStationConfiguration: React.FC<
+  ChargingStationConfigurationProps
+> = ({ stationId }) => {
+  const [version, setVersion] = useState<'1.6' | '2.0.1'>('1.6');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dataSource, setDataSource] = useState<any[]>([]);
+  const [currentVariableAttributes, setCurrentVariableAttributes] = useState(1);
+  const [pageSizeVariableAttributes, setPageSizeVariableAttributes] =
+    useState(20);
+  const [currentChangeConfigurations, setCurrentChangeConfigurations] =
+    useState(1);
+  const [pageSizeChangeConfigurations, setPageSizeChangeConfigurations] =
+    useState(20);
+  const [isChangeConfigModalOpen, setIsChangeConfigModalOpen] = useState(false);
+  const [changeConfigMode, setChangeConfigMode] = useState<'add' | 'edit'>(
+    'add',
+  );
+  const [editKey, setEditKey] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string | null>(null);
+
+  const attributeFilters = useMemo<CrudFilter[]>(
+    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    [stationId],
+  );
+
+  const configFilters = useMemo<CrudFilter[]>(
+    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    [stationId],
+  );
+
+  const {
+    query: {
+      data: variableAttributesResult,
+      isLoading: isAttributesLoading,
+      error: attributesError,
+    },
+  } = useList<VariableAttribute>({
+    resource: 'VariableAttributes',
+    meta: { gqlQuery: VARIABLE_ATTRIBUTE_LIST_QUERY },
+    filters: attributeFilters,
+    sorters: [{ field: 'createdAt', order: 'desc' }],
+    pagination: {
+      currentPage: currentVariableAttributes,
+      pageSize: pageSizeVariableAttributes,
+    },
+  });
+
+  const {
+    query: {
+      data: changeConfigurationsResult,
+      isLoading: isConfigurationsLoading,
+      error: configurationsError,
+    },
+  } = useList<ChangeConfiguration>({
+    resource: 'ChangeConfigurations',
+    meta: { gqlQuery: CHANGE_CONFIGURATION_LIST_QUERY },
+    filters: configFilters,
+    sorters: [{ field: 'key', order: 'asc' }],
+    pagination: {
+      currentPage: currentChangeConfigurations,
+      pageSize: pageSizeChangeConfigurations,
+    },
+  });
+
+  const {
+    query: {
+      data: variableAttributesForDownload,
+      isLoading: isAttributesDownloadLoading,
+    },
+  } = useList<VariableAttribute>({
+    resource: 'VariableAttributes',
+    meta: {
+      gqlQuery: VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
+      gqlVariables: { stationId },
+    },
+    pagination: {
+      mode: 'off',
+    },
+  });
+
+  const {
+    query: {
+      data: changeConfigurationsForDownload,
+      isLoading: isDownloadChangeConfigurationsLoading,
+    },
+  } = useList<ChangeConfiguration>({
+    resource: 'ChangeConfigurations',
+    meta: {
+      gqlQuery: CHANGE_CONFIGURATION_DOWNLOAD_QUERY,
+      gqlVariables: { stationId },
+    },
+    pagination: {
+      mode: 'off',
+    },
+  });
+
+  const {
+    query: { data },
+  } = useOne<ChargingStationClass>({
+    resource: ResourceType.CHARGING_STATIONS,
+    id: stationId,
+    meta: {
+      gqlQuery: CHARGING_STATION_ONLINE_STATUS_QUERY,
+    },
+    queryOptions: getPlainToInstanceOptions(ChargingStationClass, true),
+  });
+  const station = data?.data;
+  const isConnected = !!station?.isOnline;
+
+  useEffect(() => {
+    if (version === '2.0.1' && variableAttributesResult?.data) {
+      setDataSource(
+        variableAttributesResult.data.map((attribute) => ({
+          key: attribute.id,
+          type: attribute.type,
+          value: attribute.value,
+          component: `${attribute.Component?.name ?? '-'}:${
+            attribute.Component?.instance ?? '-'
+          }`,
+          variable: `${attribute.Variable?.name ?? '-'}:${
+            attribute.Variable?.instance ?? '-'
+          }`,
+          evse: `${attribute.Evse?.id ?? '-'}:${
+            attribute.Evse?.connectorId ?? '-'
+          }`,
+        })),
+      );
+    } else if (version === '1.6' && changeConfigurationsResult?.data) {
+      setDataSource(
+        changeConfigurationsResult.data.map((config) => ({
+          key: config.key,
+          value: config.value,
+        })),
+      );
+    }
+
+    if (attributesError) {
+      toast.error('Failed to load variable attributes');
+    }
+    if (configurationsError) {
+      toast.error('Failed to load change configurations');
+    }
+  }, [
+    version,
+    variableAttributesResult,
+    changeConfigurationsResult,
+    attributesError,
+    configurationsError,
+  ]);
+
+  const filteredDataSource = useMemo(() => {
+    if (!searchTerm) return dataSource;
+    const term = searchTerm.toLowerCase();
+    return dataSource.filter((item) => {
+      const valuesToCheck =
+        version === '1.6'
+          ? [item.key, item.value]
+          : [item.type, item.value, item.component, item.variable, item.evse];
+      return valuesToCheck.some((val) =>
+        val?.toString().toLowerCase().includes(term),
+      );
+    });
+  }, [dataSource, searchTerm, version]);
+
+  const handleDownloadConfigurations = () => {
+    if (version === '1.6') {
+      if (!changeConfigurationsForDownload?.data) {
+        toast.error('No data available for download');
+        return;
+      }
+      downloadCSV(
+        `configurations_${stationId}_${version}_${new Date().toISOString()}`,
+        ['Station Id', ...CONFIG_1_6_COLUMNS.map((col) => col.header)],
+        changeConfigurationsForDownload.data,
+        (item) => [item.stationId, item.key, item.value ?? ''],
+      );
+    } else {
+      if (!variableAttributesForDownload?.data) {
+        toast.error('No data available for download');
+        return;
+      }
+      downloadCSV(
+        `configurations_${stationId}_${version}_${new Date().toISOString()}`,
+        ['Station Id', ...CONFIG_2_0_1_COLUMNS.map((col) => col.header)],
+        variableAttributesForDownload.data,
+        (item) => [
+          stationId,
+          item.type,
+          item.value,
+          `${item.Component?.name ?? '-'}:${item.Component?.instance ?? '-'}`,
+          `${item.Variable?.name ?? '-'}:${item.Variable?.instance ?? '-'}`,
+          `${item.Evse?.id ?? '-'}:${item.Evse?.connectorId ?? '-'}`,
+        ],
+      );
+    }
+  };
+
+  // Add/Edit button handlers
+  const handleAddConfig = () => {
+    setChangeConfigMode('add');
+    setEditKey(null);
+    setEditValue(null);
+    setIsChangeConfigModalOpen(true);
+  };
+  const handleEditConfig = (key: string, value: string) => {
+    setChangeConfigMode('edit');
+    setEditKey(key);
+    setEditValue(value);
+    setIsChangeConfigModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setIsChangeConfigModalOpen(false);
+  };
+
+  const renderTable = () => {
+    const columns =
+      version === '1.6' ? CONFIG_1_6_COLUMNS : CONFIG_2_0_1_COLUMNS;
+    const isLoading =
+      version === '2.0.1' ? isAttributesLoading : isConfigurationsLoading;
+
+    return (
+      <div className="border rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-muted">
+              <tr>
+                {columns.map((col) => (
+                  <th
+                    key={col.key}
+                    className="px-4 py-2 text-left text-sm font-medium"
+                  >
+                    {col.header}
+                  </th>
+                ))}
+                {version === '1.6' && (
+                  <th className="px-4 py-2 text-left text-sm font-medium">
+                    Action
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={columns.length + (version === '1.6' ? 1 : 0)}
+                    className="px-4 py-8 text-center text-muted-foreground"
+                  >
+                    Loading...
+                  </td>
+                </tr>
+              ) : filteredDataSource.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length + (version === '1.6' ? 1 : 0)}
+                    className="px-4 py-8 text-center text-muted-foreground"
+                  >
+                    No data
+                  </td>
+                </tr>
+              ) : (
+                filteredDataSource.map((row, idx) => (
+                  <tr
+                    key={row.key || idx}
+                    className="border-t hover:bg-muted/50"
+                  >
+                    {columns.map((col) => (
+                      <td
+                        key={col.key}
+                        className="px-4 py-2 text-sm wrap-break-word"
+                      >
+                        {row[col.accessor]}
+                      </td>
+                    ))}
+                    {version === '1.6' && (
+                      <td className="px-4 py-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditConfig(row.key, row.value)}
+                          disabled={!isConnected}
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </Button>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Select OCPP Version</label>
+          <div className="flex gap-2">
+            <Select
+              value={version}
+              onValueChange={(v: '1.6' | '2.0.1') => setVersion(v)}
+            >
+              <SelectTrigger className="flex-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1.6">OCPP 1.6</SelectItem>
+                <SelectItem value="2.0.1">OCPP 2.0.1</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              onClick={handleDownloadConfigurations}
+              disabled={
+                isDownloadChangeConfigurationsLoading &&
+                isAttributesDownloadLoading
+              }
+            >
+              Download CSV
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Search</label>
+          <Input
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {version === '1.6' && (
+        <div className="flex justify-end">
+          <Button onClick={handleAddConfig} disabled={!isConnected}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Configuration
+          </Button>
+        </div>
+      )}
+
+      {renderTable()}
+
+      <Dialog
+        open={isChangeConfigModalOpen}
+        onOpenChange={setIsChangeConfigModalOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {changeConfigMode === 'add'
+                ? 'Add Configuration'
+                : 'Edit Configuration'}
+            </DialogTitle>
+          </DialogHeader>
+          <ChangeConfigurationModal
+            station={station as ChargingStationClass}
+            defaultConfiguration={
+              changeConfigMode === 'edit' && editKey != null
+                ? { key: editKey, value: editValue ?? '' }
+                : undefined
+            }
+            onFinish={handleModalClose}
+          />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default ChargingStationConfiguration;

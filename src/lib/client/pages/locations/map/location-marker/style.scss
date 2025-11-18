@@ -1,0 +1,36 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.location-marker-content {
+  background-color: var(--ant-component-background);
+  border-radius: var(--ant-border-radius-base);
+  padding: var(--ant-padding-md) var(--ant-padding-lg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  width: 100%;
+  font-family: var(--ant-font-family);
+  line-height: var(--ant-line-height-base);
+  min-width: 200px;
+
+  h4.location-name {
+    margin: 0;
+    font-size: var(--ant-font-size-lg);
+    font-weight: var(--ant-font-weight-base);
+    color: var(--ant-heading-color);
+  }
+
+  p.location-address {
+    margin: var(--ant-margin-xs) 0;
+    font-size: var(--ant-font-size-base);
+    color: var(--ant-text-color-secondary);
+  }
+
+  p.location-details {
+    margin: var(--ant-margin-xs) 0 0 0;
+    font-size: var(--ant-font-size-sm);
+    color: var(--ant-text-color-secondary);
+  }
+}
