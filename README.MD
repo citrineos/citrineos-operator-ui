@@ -22,7 +22,7 @@ This is the repository for the Operator User Interface and associated tooling.
 
 ## How to Start
 
-In order to function, CitrineOS Core must be running. The UI draws its data from the Hasura GraphQL Engine.
+In order to fully function, CitrineOS Core must be running. The UI draws its data from the Hasura GraphQL Engine.
 The Core Message and Data APIs are used for charging station commands.
 
 ### Running with Docker
@@ -77,8 +77,5 @@ Operator UI is at localhost:5173 if using development server, otherwise it is at
 
 To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
 
-- **Hasura Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **Ant Design** [Docs](https://refine.dev/docs/ui-frameworks/antd/tutorial/)
-- **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
 - **Hasura v2 Graphql Engine** [Docs](https://hasura.io/docs/2.0/index/)
 - **Hasura Postgres Data connector** [Docs](https://hasura.io/docs/2.0/databases/postgres/index/)

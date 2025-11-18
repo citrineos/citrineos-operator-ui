@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "notAccessTitle": "You don't have permission to access",
+    "goToNextPage": "Go to next page",
+    "goToPreviousPage": "Go to previous page",
+    "goToLastPage": "Go to last page",
+    "clear": "Clear",
+    "save": "Save",
+    "columns": "Columns"
+  },
+  "dialogs": {
+    "areYouSure": "Are you sure?",
+    "thisActionCannotBeUndone": "This action cannot be undone.",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "form": {
+    "cancel": "Cancel"
+  },
+  "notifications": {
+    "error": "Error",
+    "editError": "Error updating item",
+    "success": "Success",
+    "createSuccess": "Item created successfully",
+    "editSuccess": "Item edited successfully"
+  },
+  "pages": {
+    "login": {
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "buttons": {
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot your password?",
+        "noAccount": "Don't have an account?"
+      },
+      "signin": "Sign In",
+      "signup": "Sign Up",
+      "title": "Sign in to your account",
+      "errors": {
+        "requiredEmail": "Email is required",
+        "validEmail": "Email is invalid",
+        "requiredPassword": "Password is required"
+      }
+    }
+  },
+  "tables": {
+    "selectAll": "Select all",
+    "selected": "selected",
+    "bulkActions": "Bulk Actions",
+    "noResultsFound": "No results found",
+    "clearFilters": "Clear filters",
+    "toggleColumns": "Toggle columns",
+    "columns": {}
+  },
+  "Locations": {
+    "Locations": "Locations"
+  },
+  "ChargingStations": {
+    "ChargingStations": "Charging Stations"
+  },
+  "Authorizations": {
+    "Authorizations": "Authorizations"
+  },
+  "TenantPartners": {
+    "TenantPartners": "Partners"
+  }
+}
