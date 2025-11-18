@@ -1,4 +1,4 @@
-FROM refinedev/node:24 AS base
+FROM refinedev/node:22 AS base
 
 FROM base AS deps
 
