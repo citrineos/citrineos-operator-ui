@@ -3,6 +3,6 @@ Upstream-Name: CitrineOS Operator UI
 Upstream-Contact: Contributors to the CitrineOS Project
 Source: https://github.com/citrineos/citrineos-operator-ui
 
-Files: .env.local package.json public/locales
+Files: .env.local Dockerfile package.json public/locales
 Copyright: Contributors to the CitrineOS Project
 License: Apache-2.0

@@ -49,4 +49,7 @@ src/lib/utils/cn.ts
 src/lib/utils/types.ts
 tsconfig.json
 .env.local
+.nvmrc
+.prettierrc
+Dockerfile
 public/locales/en/common.json
