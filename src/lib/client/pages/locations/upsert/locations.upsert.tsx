@@ -291,14 +291,13 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
         // Upload image
         if (uploadedFile && finalLocationId) {
           const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.LOCATIONS}/${finalLocationId}`;
-          handleUploadToS3(uploadedFile, renamedFileName)
-            .catch((err: any) => {
-              console.error(err);
-              open?.({
-                type: 'error',
-                message: 'Image upload failed',
-              });
+          handleUploadToS3(uploadedFile, renamedFileName).catch((err: any) => {
+            console.error(err);
+            open?.({
+              type: 'error',
+              message: 'Image upload failed',
             });
+          });
         }
 
         replace(`/${MenuSection.LOCATIONS}/${finalLocationId}`);
@@ -547,15 +546,17 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                     <Button
                       type="button"
                       variant="secondary"
-                      onClick={() => document.getElementById('uploadInput')?.click()}
+                      onClick={() =>
+                        document.getElementById('uploadInput')?.click()
+                      }
                     >
                       <UploadIcon className={buttonIconSize} />
                       Upload
                     </Button>
                     {uploadedFileName && (
                       <span className="text-sm text-gray-700">
-                          {uploadedFileName}
-                        </span>
+                        {uploadedFileName}
+                      </span>
                     )}
                   </Field>
                 </div>

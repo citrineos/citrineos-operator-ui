@@ -16,7 +16,9 @@
     "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
     "build": "refine build",
     "start": "refine start",
-    "lint": "next lint",
+    "prettier": "prettier --write .",
+    "lint": "npx eslint ./",
+    "lint-fix": "npm run prettier && npx eslint --fix ./",
     "refine": "refine"
   },
   "dependencies": {
@@ -55,6 +57,7 @@
     "class-validator": "^0.14.2",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
+    "eslint-plugin-cypress": "^5.2.0",
     "framer-motion": "^12.23.22",
     "geojson": "^0.5.0",
     "graphql": "^15.6.1",
@@ -81,6 +84,7 @@
     "shadcn": "^2.4.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
+    "typescript-eslint": "^8.47.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {

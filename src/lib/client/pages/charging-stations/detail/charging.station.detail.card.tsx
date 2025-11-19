@@ -50,6 +50,7 @@ import {
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { Badge } from '@lib/client/components/ui/badge';
+import Image from 'next/image';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -242,140 +243,140 @@ export const ChargingStationDetailCard = ({
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left: KeyValue details */}
           <div className="flex-1">
-          <div className={cardGridStyle}>
-            <KeyValueDisplay
-              keyLabel="Protocol"
-              value={station[ChargingStationProps.protocol]}
-              valueRender={(protocol: any) => (
-                <ProtocolTag protocol={protocol} />
-              )}
-            />
-            <KeyValueDisplay
-              keyLabel="Location"
-              value={station?.location?.name}
-              valueRender={(locationName: any) =>
-                locationName ? (
-                  <Link
-                    to={`/locations/${station.locationId}`}
-                    className={clickableLinkStyle}
-                    title={locationName}
-                  >
-                    {locationName}
-                  </Link>
-                ) : (
-                  <span>{NOT_APPLICABLE}</span>
-                )
-              }
-            />
-            <KeyValueDisplay
-              keyLabel="Latitude"
-              value={
-                station.location?.coordinates
-                  ? station.location.coordinates.coordinates[1].toFixed(4)
-                  : NOT_APPLICABLE
-              }
-            />
-
-            <KeyValueDisplay
-              keyLabel="Longitude"
-              value={
-                station.location?.coordinates
-                  ? station.location.coordinates.coordinates[0].toFixed(4)
-                  : NOT_APPLICABLE
-              }
-            />
-
-            <KeyValueDisplay
-              keyLabel="Status"
-              value={''}
-              valueRender={() =>
-                (station.evses?.length ?? 0) > 0 ? (
-                  <ChargingStationStatusTag station={station} />
-                ) : (
-                  <span>{NOT_APPLICABLE}</span>
-                )
-              }
-            />
-
-            <KeyValueDisplay
-              keyLabel="Last OCPP Message"
-              value={latestTimestamp}
-            />
-
-            <KeyValueDisplay
-              keyLabel="Model / Vendor"
-              value={`${station.chargePointVendor ?? UNKNOWN_TEXT} / ${station.chargePointModel ?? UNKNOWN_TEXT}`}
-            />
-
-            <KeyValueDisplay
-              keyLabel="Floor Level"
-              value={station.floorLevel}
-            />
-
-            <KeyValueDisplay
-              keyLabel="Parking Restrictions"
-              value={station.parkingRestrictions}
-              valueRender={(parkingRestrictions) => (
-                <div className={badgeListStyle}>
-                  {parkingRestrictions?.length > 0 ? (
-                    parkingRestrictions.map((pr: any) => (
-                      <Badge key={pr} variant="muted">
-                        {pr}
-                      </Badge>
-                    ))
+            <div className={cardGridStyle}>
+              <KeyValueDisplay
+                keyLabel="Protocol"
+                value={station[ChargingStationProps.protocol]}
+                valueRender={(protocol: any) => (
+                  <ProtocolTag protocol={protocol} />
+                )}
+              />
+              <KeyValueDisplay
+                keyLabel="Location"
+                value={station?.location?.name}
+                valueRender={(locationName: any) =>
+                  locationName ? (
+                    <Link
+                      to={`/locations/${station.locationId}`}
+                      className={clickableLinkStyle}
+                      title={locationName}
+                    >
+                      {locationName}
+                    </Link>
                   ) : (
                     <span>{NOT_APPLICABLE}</span>
-                  )}
-                </div>
-              )}
-            />
+                  )
+                }
+              />
+              <KeyValueDisplay
+                keyLabel="Latitude"
+                value={
+                  station.location?.coordinates
+                    ? station.location.coordinates.coordinates[1].toFixed(4)
+                    : NOT_APPLICABLE
+                }
+              />
 
-            <KeyValueDisplay
-              keyLabel="Capabilities"
-              value={station.capabilities}
-              valueRender={(capabilities) => (
-                <div className={badgeListStyle}>
-                  {capabilities?.length > 0 ? (
-                    capabilities.map((cap: any) => (
-                      <Badge key={cap} variant="muted">
-                        {cap}
-                      </Badge>
-                    ))
+              <KeyValueDisplay
+                keyLabel="Longitude"
+                value={
+                  station.location?.coordinates
+                    ? station.location.coordinates.coordinates[0].toFixed(4)
+                    : NOT_APPLICABLE
+                }
+              />
+
+              <KeyValueDisplay
+                keyLabel="Status"
+                value={''}
+                valueRender={() =>
+                  (station.evses?.length ?? 0) > 0 ? (
+                    <ChargingStationStatusTag station={station} />
                   ) : (
                     <span>{NOT_APPLICABLE}</span>
-                  )}
-                </div>
-              )}
-            />
+                  )
+                }
+              />
 
-            <KeyValueDisplay
-              keyLabel="Firmware Version"
-              value={station.firmwareVersion}
-            />
+              <KeyValueDisplay
+                keyLabel="Last OCPP Message"
+                value={latestTimestamp}
+              />
 
-            <KeyValueDisplay
-              keyLabel="Connector Types"
-              value={
-                (station.connectors?.length ?? 0) > 0
-                  ? station
-                      .connectors!.map((c) => c.type)
-                      .filter(Boolean)
-                      .join(', ')
-                  : NOT_APPLICABLE
-              }
-            />
+              <KeyValueDisplay
+                keyLabel="Model / Vendor"
+                value={`${station.chargePointVendor ?? UNKNOWN_TEXT} / ${station.chargePointModel ?? UNKNOWN_TEXT}`}
+              />
 
-            <KeyValueDisplay
-              keyLabel="Total EVSEs"
-              value={station.evses?.length ?? 0}
-            />
+              <KeyValueDisplay
+                keyLabel="Floor Level"
+                value={station.floorLevel}
+              />
+
+              <KeyValueDisplay
+                keyLabel="Parking Restrictions"
+                value={station.parkingRestrictions}
+                valueRender={(parkingRestrictions) => (
+                  <div className={badgeListStyle}>
+                    {parkingRestrictions?.length > 0 ? (
+                      parkingRestrictions.map((pr: any) => (
+                        <Badge key={pr} variant="muted">
+                          {pr}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span>{NOT_APPLICABLE}</span>
+                    )}
+                  </div>
+                )}
+              />
+
+              <KeyValueDisplay
+                keyLabel="Capabilities"
+                value={station.capabilities}
+                valueRender={(capabilities) => (
+                  <div className={badgeListStyle}>
+                    {capabilities?.length > 0 ? (
+                      capabilities.map((cap: any) => (
+                        <Badge key={cap} variant="muted">
+                          {cap}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span>{NOT_APPLICABLE}</span>
+                    )}
+                  </div>
+                )}
+              />
+
+              <KeyValueDisplay
+                keyLabel="Firmware Version"
+                value={station.firmwareVersion}
+              />
+
+              <KeyValueDisplay
+                keyLabel="Connector Types"
+                value={
+                  (station.connectors?.length ?? 0) > 0
+                    ? station
+                        .connectors!.map((c) => c.type)
+                        .filter(Boolean)
+                        .join(', ')
+                    : NOT_APPLICABLE
+                }
+              />
+
+              <KeyValueDisplay
+                keyLabel="Total EVSEs"
+                value={station.evses?.length ?? 0}
+              />
+            </div>
           </div>
-        </div>
 
           {/* Right: Image */}
           {imageUrl && (
             <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md">
-              <img
+              <Image
                 src={imageUrl}
                 alt={`${station.id} image`}
                 className="w-full h-full object-contain rounded-md bg-gray-100"
@@ -387,87 +388,87 @@ export const ChargingStationDetailCard = ({
           )}
         </div>
 
-          {/* Command Buttons */}
-          <div className="mt-6">
-            <CanAccess
-              resource={ResourceType.CHARGING_STATIONS}
-              action={ActionType.COMMAND}
-              params={{ id: station.id }}
-            >
-              <div className="flex justify-between items-center flex-1">
-                <div className="flex flex-col gap-2 flex-1">
-                  {!station.isOnline && (
-                    <div className="flex items-center text-muted-foreground">
-                      <Info className="mr-2 h-4 w-4" />
-                      <span className="text-sm">
-                        Station offline - commands unavailable
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex gap-4 flex-1">
-                    {!hasActiveTransactions && (
-                      <CanAccess
-                        resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.COMMAND}
-                        params={{
-                          id: station.id,
-                          commandType: CommandType.START_TRANSACTION,
-                        }}
-                      >
-                        <Button
-                          disabled={!station.isOnline}
-                          onClick={() => showRemoteStartModal(station)}
-                        >
-                          Start Transaction
-                        </Button>
-                      </CanAccess>
-                    )}
-                    {hasActiveTransactions && (
-                      <CanAccess
-                        resource={ResourceType.CHARGING_STATIONS}
-                        action={ActionType.COMMAND}
-                        params={{
-                          id: station.id,
-                          commandType: CommandType.STOP_TRANSACTION,
-                        }}
-                      >
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleStopTransactionClick(station)}
-                          disabled={!station.isOnline}
-                        >
-                          Stop Transaction
-                        </Button>
-                      </CanAccess>
-                    )}
+        {/* Command Buttons */}
+        <div className="mt-6">
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.COMMAND}
+            params={{ id: station.id }}
+          >
+            <div className="flex justify-between items-center flex-1">
+              <div className="flex flex-col gap-2 flex-1">
+                {!station.isOnline && (
+                  <div className="flex items-center text-muted-foreground">
+                    <Info className="mr-2 h-4 w-4" />
+                    <span className="text-sm">
+                      Station offline - commands unavailable
+                    </span>
+                  </div>
+                )}
+                <div className="flex gap-4 flex-1">
+                  {!hasActiveTransactions && (
                     <CanAccess
                       resource={ResourceType.CHARGING_STATIONS}
                       action={ActionType.COMMAND}
                       params={{
                         id: station.id,
-                        commandType: CommandType.RESET,
+                        commandType: CommandType.START_TRANSACTION,
                       }}
                     >
                       <Button
-                        variant="outline"
-                        onClick={() => showResetStartModal(station)}
                         disabled={!station.isOnline}
+                        onClick={() => showRemoteStartModal(station)}
                       >
-                        Reset
+                        Start Transaction
                       </Button>
                     </CanAccess>
+                  )}
+                  {hasActiveTransactions && (
+                    <CanAccess
+                      resource={ResourceType.CHARGING_STATIONS}
+                      action={ActionType.COMMAND}
+                      params={{
+                        id: station.id,
+                        commandType: CommandType.STOP_TRANSACTION,
+                      }}
+                    >
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleStopTransactionClick(station)}
+                        disabled={!station.isOnline}
+                      >
+                        Stop Transaction
+                      </Button>
+                    </CanAccess>
+                  )}
+                  <CanAccess
+                    resource={ResourceType.CHARGING_STATIONS}
+                    action={ActionType.COMMAND}
+                    params={{
+                      id: station.id,
+                      commandType: CommandType.RESET,
+                    }}
+                  >
                     <Button
-                      onClick={showOtherCommandsModal}
+                      variant="outline"
+                      onClick={() => showResetStartModal(station)}
                       disabled={!station.isOnline}
                     >
-                      <MoreHorizontal className="mr-2 h-4 w-4" />
-                      Other Commands
+                      Reset
                     </Button>
-                  </div>
+                  </CanAccess>
+                  <Button
+                    onClick={showOtherCommandsModal}
+                    disabled={!station.isOnline}
+                  >
+                    <MoreHorizontal className="mr-2 h-4 w-4" />
+                    Other Commands
+                  </Button>
                 </div>
               </div>
-            </CanAccess>
-          </div>
+            </div>
+          </CanAccess>
+        </div>
       </CardContent>
     </Card>
   );

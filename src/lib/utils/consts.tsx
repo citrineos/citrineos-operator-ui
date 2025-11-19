@@ -51,5 +51,3 @@ export const GET_ADDRESS_DETAILS = '/api/geocode/details';
 
 // S3 bucket folder name
 export const S3_BUCKET_FOLDER_IMAGES = 'images';
-
-

@@ -74,7 +74,11 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
           onClick={() => setExpanded(!expanded)}
           className="absolute top-0 right-0 p-1"
         >
-          {expanded ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          {expanded ? (
+            <Minus className="h-4 w-4" />
+          ) : (
+            <Plus className="h-4 w-4" />
+          )}
         </Button>
       )}
     </div>

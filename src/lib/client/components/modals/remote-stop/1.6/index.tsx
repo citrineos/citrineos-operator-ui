@@ -57,7 +57,7 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
     if (station.transactions && station.transactions.length > 0) {
       form.setValue('transactionId', station.transactions[0].transactionId);
     }
-  }, [station]);
+  }, [station, form]);
 
   // Handle the case when there are no active transactions
   const hasNoActiveTransactions =

@@ -64,7 +64,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
   });
 
-  const messages = data?.data ?? [];
+  const messages = useMemo(() => data?.data ?? [], [data?.data]);
 
   const actionOptions = useMemo(
     () => [
@@ -92,51 +92,50 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
     [],
   );
 
-  const updateFilters = () => {
-    const newFilters: CrudFilter[] = [];
-    if (startDate) {
-      newFilters.push({
-        field: OCPPMessageProps.timestamp,
-        operator: 'gte',
-        value: startDate.toISOString(),
-      });
-    }
-    if (endDate) {
-      newFilters.push({
-        field: OCPPMessageProps.timestamp,
-        operator: 'lte',
-        value: endDate.toISOString(),
-      });
-    }
-    if (searchCid.trim()) {
-      newFilters.push({
-        field: OCPPMessageProps.correlationId,
-        operator: 'contains',
-        value: searchCid,
-      });
-    }
-    if (selectedActions !== 'all') {
-      newFilters.push({
-        field: OCPPMessageProps.action,
-        operator: 'eq',
-        value: selectedActions,
-      });
-    }
-    if (selectedOrigins !== 'all') {
-      newFilters.push({
-        field: OCPPMessageProps.origin,
-        operator: 'eq',
-        value: selectedOrigins,
-      });
-    }
-    setFilters(
-      newFilters.length > 1
-        ? [{ operator: 'and', value: newFilters }]
-        : newFilters,
-    );
-  };
-
   useEffect(() => {
+    const updateFilters = () => {
+      const newFilters: CrudFilter[] = [];
+      if (startDate) {
+        newFilters.push({
+          field: OCPPMessageProps.timestamp,
+          operator: 'gte',
+          value: startDate.toISOString(),
+        });
+      }
+      if (endDate) {
+        newFilters.push({
+          field: OCPPMessageProps.timestamp,
+          operator: 'lte',
+          value: endDate.toISOString(),
+        });
+      }
+      if (searchCid.trim()) {
+        newFilters.push({
+          field: OCPPMessageProps.correlationId,
+          operator: 'contains',
+          value: searchCid,
+        });
+      }
+      if (selectedActions !== 'all') {
+        newFilters.push({
+          field: OCPPMessageProps.action,
+          operator: 'eq',
+          value: selectedActions,
+        });
+      }
+      if (selectedOrigins !== 'all') {
+        newFilters.push({
+          field: OCPPMessageProps.origin,
+          operator: 'eq',
+          value: selectedOrigins,
+        });
+      }
+      setFilters(
+        newFilters.length > 1
+          ? [{ operator: 'and', value: newFilters }]
+          : newFilters,
+      );
+    };
     updateFilters();
   }, [startDate, endDate, searchCid, selectedActions, selectedOrigins]);
 

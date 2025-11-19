@@ -47,7 +47,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     },
   });
 
-  const allLocations = data?.data || [];
+  const allLocations = useMemo(() => data?.data || [], [data?.data]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;

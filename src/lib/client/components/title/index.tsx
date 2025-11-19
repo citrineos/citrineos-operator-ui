@@ -6,6 +6,7 @@ import config from '@lib/utils/config';
 import { motion } from 'framer-motion';
 import React from 'react';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 
 export interface LogoProps {
   collapsed?: boolean;
@@ -35,8 +36,9 @@ export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
         }}
       />
       {!collapsed && (
-        <img
+        <Image
           src={theme === 'light' ? '/logo-black.svg' : '/logo-white.svg'}
+          alt={`${config.appName} Logo`}
           style={{
             width: '80%',
             position: 'absolute',

@@ -82,3 +82,5 @@ export const Loader = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
     );
   },
 );
+
+Loader.displayName = 'Loader';

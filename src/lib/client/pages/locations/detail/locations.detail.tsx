@@ -40,7 +40,7 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
   useEffect(() => {
     if (location?.id) {
       fetchUrlFromS3(
-        `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.LOCATIONS}/${location.id}`
+        `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.LOCATIONS}/${location.id}`,
       ).then(setImageUrl);
     }
   }, [location?.id]);

@@ -65,7 +65,7 @@ export const OCPP2_0_1_RemoteStop = ({
     if (station.transactions && station.transactions.length > 0) {
       form.setValue('transactionId', station.transactions[0].transactionId);
     }
-  }, [station]);
+  }, [station, form]);
 
   // Filter out inactive transactions
   const activeTransactions = station.transactions

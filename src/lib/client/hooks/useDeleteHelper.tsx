@@ -92,7 +92,7 @@ export const useDeleteHelper = (
   };
 
   return {
-    can: !Boolean(accessControlEnabled && hideIfUnauthorized && !data?.can),
+    can: !(accessControlEnabled && hideIfUnauthorized && !data?.can),
     reason: reason(),
     mutate: onDeleteMutate,
     isLoading: isPending,

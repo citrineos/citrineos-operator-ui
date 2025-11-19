@@ -25,7 +25,7 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
   useEffect(() => {
     if (id) {
       fetchUrlFromS3(
-        `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.CHARGING_STATIONS}/${id}`
+        `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.CHARGING_STATIONS}/${id}`,
       ).then(setImageUrl);
     }
   }, [id]);

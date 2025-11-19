@@ -28,7 +28,7 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 export const PartnersList = () => {
   const { push } = useRouter();
 
-  const columns = useMemo(() => getPartnersColumns(push), []);
+  const columns = useMemo(() => getPartnersColumns(push), [push]);
 
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>

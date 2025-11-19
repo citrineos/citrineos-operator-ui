@@ -15,6 +15,7 @@ import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { Badge } from '@lib/client/components/ui/badge';
+import Image from 'next/image';
 
 export const PartnerDetailCard = ({
   tenantPartner,
@@ -42,7 +43,7 @@ export const PartnerDetailCard = ({
           />
           <h2 className={heading2Style}>Partner {businessDetails?.name}</h2>
           {businessDetails?.logo?.url && (
-            <img
+            <Image
               width={40}
               src={businessDetails.logo.url}
               alt={`${businessDetails.name} logo`}

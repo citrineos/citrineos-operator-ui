@@ -18,13 +18,17 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { Badge } from '@lib/client/components/ui/badge';
+import Image from 'next/image';
 
 export interface LocationDetailCardProps {
   location: LocationDto;
   imageUrl?: string | null;
 }
 
-export const LocationDetailCard = ({ location, imageUrl }: LocationDetailCardProps) => {
+export const LocationDetailCard = ({
+  location,
+  imageUrl,
+}: LocationDetailCardProps) => {
   const { back, push } = useRouter();
 
   return (
@@ -67,7 +71,9 @@ export const LocationDetailCard = ({ location, imageUrl }: LocationDetailCardPro
             <div className={cardGridStyle}>
               <KeyValueDisplay
                 keyLabel="Address"
-                value={location.address ? getFullAddress(location) : 'No Address'}
+                value={
+                  location.address ? getFullAddress(location) : 'No Address'
+                }
               />
               <KeyValueDisplay
                 keyLabel="Latitude"
@@ -115,7 +121,7 @@ export const LocationDetailCard = ({ location, imageUrl }: LocationDetailCardPro
           {/* Right: Image */}
           {imageUrl && (
             <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md">
-              <img
+              <Image
                 src={imageUrl}
                 alt={`${location.name} image`}
                 className="w-full h-full object-contain rounded-md bg-gray-100"

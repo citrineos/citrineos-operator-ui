@@ -28,6 +28,7 @@ export const getMeterValueColumns = () => {
     />,
     <Table.Column
       id={MeterValueProps.sampledValue}
+      key={MeterValueProps.sampledValue}
       header=""
       cell={({ row }) => (
         <div

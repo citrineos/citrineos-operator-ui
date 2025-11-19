@@ -61,7 +61,7 @@ export const useGetEditUrl = (
       : '';
 
   return {
-    can: !Boolean(accessControlEnabled && hideIfUnauthorized && !data?.can),
+    can: !(accessControlEnabled && hideIfUnauthorized && !data?.can),
     reason: reason(),
     url: editUrl,
   };

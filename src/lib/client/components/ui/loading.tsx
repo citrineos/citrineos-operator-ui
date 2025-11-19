@@ -13,3 +13,5 @@ export const LoadingIcon = React.forwardRef<SVGSVGElement, LucideProps>(
     );
   },
 );
+
+LoadingIcon.displayName = 'LoadingIcon';

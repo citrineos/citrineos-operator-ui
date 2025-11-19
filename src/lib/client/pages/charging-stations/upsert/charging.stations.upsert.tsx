@@ -20,7 +20,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
   ComboboxFormField,
-  FormField, formLabelStyle,
+  FormField,
+  formLabelStyle,
   MultiSelectFormField,
 } from '@lib/client/components/form/field';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
@@ -201,14 +202,13 @@ export const ChargingStationUpsert = ({
         // Upload image to S3
         if (uploadedFile && finalStationId) {
           const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.CHARGING_STATIONS}/${finalStationId}`;
-          handleUploadToS3(uploadedFile, renamedFileName)
-            .catch((err: any) => {
-              console.error(err);
-              open?.({
-                type: 'error',
-                message: 'Image upload failed',
-              });
+          handleUploadToS3(uploadedFile, renamedFileName).catch((err: any) => {
+            console.error(err);
+            open?.({
+              type: 'error',
+              message: 'Image upload failed',
             });
+          });
         }
         replace(`/${MenuSection.CHARGING_STATIONS}/${finalStationId}`);
       } else if (stationId) {
@@ -264,9 +264,9 @@ export const ChargingStationUpsert = ({
               </FormField>
 
               <MultiSelectFormField<
-                  ChargingStationParkingRestrictionEnumType,
-                  ChargingStationCreateDto
-                >
+                ChargingStationParkingRestrictionEnumType,
+                ChargingStationCreateDto
+              >
                 control={form.control}
                 name={ChargingStationProps.parkingRestrictions}
                 label="Parking Restrictions"
@@ -276,9 +276,9 @@ export const ChargingStationUpsert = ({
               />
 
               <MultiSelectFormField<
-                  ChargingStationCapabilityEnumType,
-                  ChargingStationCreateDto
-                >
+                ChargingStationCapabilityEnumType,
+                ChargingStationCreateDto
+              >
                 control={form.control}
                 name={ChargingStationProps.capabilities}
                 label="Capabilities"
@@ -307,7 +307,9 @@ export const ChargingStationUpsert = ({
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => document.getElementById('uploadInput')?.click()}
+                  onClick={() =>
+                    document.getElementById('uploadInput')?.click()
+                  }
                 >
                   <UploadIcon className={buttonIconSize} />
                   Upload

@@ -6,6 +6,6 @@
 export const AccessDeniedFallback = () => (
   <div className="access-denied-container">
     <h2>Access Denied</h2>
-    <p>You don't have permission to access this resource.</p>
+    <p>You don&apos;t have permission to access this resource.</p>
   </div>
 );

@@ -238,7 +238,7 @@ const MapWithClustering: React.FC<{
         }
       }
     }
-  }, [selectedMarkerId]);
+  }, [selectedMarkerId, map, markers, zoom]);
 
   // Render the map and markers/clusters
   return (

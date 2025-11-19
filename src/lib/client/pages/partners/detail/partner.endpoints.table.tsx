@@ -96,9 +96,7 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
 
     const newData = [...data];
     if (editingKey) {
-      const index = newData.findIndex(
-        (item) => item.identifier === editingKey,
-      );
+      const index = newData.findIndex((item) => item.identifier === editingKey);
       if (index > -1) {
         newData[index] = formData;
       }
@@ -178,7 +176,10 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={3} className="h-24 text-center text-muted-foreground">
+                <td
+                  colSpan={3}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   No endpoints found
                 </td>
               </tr>
@@ -270,12 +271,16 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={() => setDeleteTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Endpoint</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this endpoint? This action cannot be undone.
+              Are you sure you want to delete this endpoint? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -62,7 +62,7 @@ export function DeleteActionModal(props: DeleteContextType) {
     }
 
     return undefined;
-  }, [can, props]);
+  }, [can, props, mutate, back]);
 
   return (
     <ConfirmDialog

@@ -2,13 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
 import pluginCypress from 'eslint-plugin-cypress/flat';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import eslintPluginReact from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 const compat = new FlatCompat();
@@ -26,7 +24,6 @@ export default tseslint.config(
   {
     plugins: {
       react: eslintPluginReact,
-      'react-hooks': fixupPluginRules(reactHooks),
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
@@ -38,6 +35,6 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['**/dist/**', '**/node_modules/**', '**/.next/**'],
+    ignores: ['**/dist/**', '**/node_modules/**', '**/.next/**', '**/*.d.ts'],
   },
 );
