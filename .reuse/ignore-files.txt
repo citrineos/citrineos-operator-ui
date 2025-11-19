@@ -5,6 +5,7 @@ package-lock.json
 public/Citrine_Favicon_256_clear3.png
 public/gradient-dark.svg
 public/gradient.svg
+public/locales/en/common.json
 public/logo-black.svg
 public/logo-collapsed.svg
 public/logo-white.svg
@@ -52,4 +53,3 @@ tsconfig.json
 .nvmrc
 .prettierrc
 Dockerfile
-public/locales/en/common.json
