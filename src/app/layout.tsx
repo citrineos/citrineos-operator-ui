@@ -15,7 +15,7 @@ import './globals.css';
 const roobertFont = localFont({
   src: [
     {
-      path: './_fonts/Roobert-light.woff2',
+      path: './_fonts/Roobert-Light.woff2',
       weight: '300',
       style: 'normal',
     },
