@@ -79,3 +79,13 @@ export enum DisallowedEvseIdPrefixes {
   EVSE2 = 'EVSE 2',
   EVSE3 = 'EVSE 3',
 }
+
+export enum ChargerStatusEnum {
+  CHARGING = 'Charging',
+  CHARGING_SUSPENDED = 'Charging Suspended',
+  AVAILABLE = 'Available',
+  UNAVAILABLE = 'Unavailable',
+  FAULTED = 'Faulted',
+  OFFLINE = 'Offline',
+  ONLINE = 'Online',
+}

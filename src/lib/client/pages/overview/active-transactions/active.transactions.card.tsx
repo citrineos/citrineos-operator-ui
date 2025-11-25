@@ -15,10 +15,13 @@ import { CanAccess, useList } from '@refinedev/core';
 import { ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
+import { clickableLinkStyle, heading2Style } from '@lib/client/styles/page';
+import { overviewClickableStyle } from '@lib/client/styles/card';
+import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
   const [searchFilters, setSearchFilters] = useState<any[]>([]);
 
   const {
@@ -62,7 +65,6 @@ export const ActiveTransactionsCard = () => {
   });
 
   const handleSearch = (value: string) => {
-    setSearchQuery(value);
     if (!value) {
       setSearchFilters([]);
       return;
@@ -95,50 +97,57 @@ export const ActiveTransactionsCard = () => {
 
   return (
     <CanAccess resource={ResourceType.TRANSACTIONS} action={ActionType.LIST}>
-      <div className="flex flex-col">
-        <div className="flex justify-between">
-          <h4 className="text-lg font-semibold">
-            Active Transactions ({total})
-          </h4>
-          <div
-            className="link flex items-center cursor-pointer"
-            onClick={() => push(`/${MenuSection.TRANSACTIONS}`)}
-          >
-            View all <ChevronRightIcon />
-          </div>
-        </div>
-        <div className="py-6">
-          <div className="w-full pr-8">
-            <Combobox<number>
-              options={searchResults.map((tx) => ({
-                label: tx.transactionId,
-                value: tx.id!,
-              }))}
-              onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
-              onSearch={handleSearch}
-              placeholder="Search Transaction"
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          {transactions.map((transaction) => (
-            <div className="flex flex-col mb-4" key={transaction.id}>
-              <div
-                className="flex justify-between cursor-pointer"
-                onClick={() =>
-                  push(`/${MenuSection.TRANSACTIONS}/${transaction.id}`)
-                }
-              >
-                <span className="link">{transaction.transactionId}</span>
-              </div>
-              <div>Station ID: {transaction.stationId}</div>
-              <div>Total kWh: {transaction.totalKwh}</div>
-              <div>Total Time: {transaction.timeSpentCharging}</div>
-              <div>Status: {transaction.chargingState}</div>
+      <Card className="h-full overflow-scroll">
+        <CardHeader>
+          <div className="flex justify-between">
+            <h2 className={heading2Style}>Active Transactions ({total})</h2>
+            <div
+              className={overviewClickableStyle}
+              onClick={() => push(`/${MenuSection.TRANSACTIONS}`)}
+            >
+              View all transactions <ChevronRightIcon />
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="max-w-md">
+              <Combobox<number>
+                options={searchResults.map((tx) => ({
+                  label: tx.transactionId,
+                  value: tx.id!,
+                }))}
+                onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
+                onSearch={handleSearch}
+                placeholder="Search Transaction"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              {transactions.length > 0 ? (
+                transactions.map((transaction) => (
+                  <div className="flex flex-col mb-4" key={transaction.id}>
+                    <div
+                      className={clickableLinkStyle}
+                      onClick={() =>
+                        push(`/${MenuSection.TRANSACTIONS}/${transaction.id}`)
+                      }
+                    >
+                      <span className="link">{transaction.transactionId}</span>
+                    </div>
+                    <div>Station ID: {transaction.stationId}</div>
+                    <div>Total kWh: {transaction.totalKwh}</div>
+                    <div>Total Time: {transaction.timeSpentCharging}</div>
+                    <div>Status: {transaction.chargingState}</div>
+                  </div>
+                ))
+              ) : (
+                <span>No active transactions.</span>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </CanAccess>
   );
 };

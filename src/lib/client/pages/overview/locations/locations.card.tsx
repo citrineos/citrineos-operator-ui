@@ -7,24 +7,30 @@ import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { LocationsMap } from '@lib/client/pages/locations/map/locations.map';
 import { ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Card, CardHeader } from '@lib/client/components/ui/card';
+import { CardContent } from '@ferdiunal/refine-shadcn/ui';
+import { heading2Style } from '@lib/client/styles/page';
+import { overviewClickableStyle } from '@lib/client/styles/card';
 
 export const LocationsCard = () => {
   const { push } = useRouter();
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex justify-between p-6">
-        <h4 className="text-lg font-semibold">Locations</h4>
-        <div
-          className="link flex items-center cursor-pointer"
-          onClick={() => push(`/${MenuSection.LOCATIONS}`)}
-        >
-          View all <ChevronRightIcon />
+    <Card className="h-full">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <h2 className={heading2Style}>Locations</h2>
+          <div
+            className={overviewClickableStyle}
+            onClick={() => push(`/${MenuSection.LOCATIONS}`)}
+          >
+            View all locations <ChevronRightIcon />
+          </div>
         </div>
-      </div>
-      <div className="h-full rounded-b-lg overflow-hidden">
+      </CardHeader>
+      <CardContent>
         <LocationsMap />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

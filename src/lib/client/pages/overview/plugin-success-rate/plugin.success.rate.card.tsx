@@ -8,6 +8,8 @@ import { TRANSACTION_SUCCESS_RATE_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { CanAccess, useCustom } from '@refinedev/core';
+import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
+import { heading2Style } from '@lib/client/styles/page';
 
 export const PluginSuccessRateCard = () => {
   const {
@@ -20,7 +22,7 @@ export const PluginSuccessRateCard = () => {
 
   const successCount = data?.data?.success?.aggregate?.count || 0;
   const totalCount = data?.data?.total?.aggregate?.count || 0;
-  const percentage = (successCount / totalCount) * 100;
+  const percentage = totalCount === 0 ? 0 : (successCount / totalCount) * 100;
   const roundedPercentage = Math.round(percentage * 10) / 10;
 
   if (isLoading) return <Loader />;
@@ -32,18 +34,22 @@ export const PluginSuccessRateCard = () => {
       action={ActionType.LIST}
       fallback={<AccessDeniedFallback />}
     >
-      <div className="flex flex-col gap-8 plugin-success-rate">
-        <h4 className="text-lg font-semibold">Plug-in Success Rate</h4>
-        <div className="w-[200px] h-5 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all duration-300"
-            style={{ width: `${roundedPercentage}%` }}
-          />
-        </div>
-        <div className="plugin-success-rate-percentage">
-          {roundedPercentage}%
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <h2 className={heading2Style}>Plug-In Success Rate</h2>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-300"
+                style={{ width: `${roundedPercentage}%` }}
+              />
+            </div>
+            <div className="text-3xl">{roundedPercentage}%</div>
+          </div>
+        </CardContent>
+      </Card>
     </CanAccess>
   );
 };

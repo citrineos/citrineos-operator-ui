@@ -4,8 +4,8 @@
 'use client';
 
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
+import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { Loader } from '@lib/client/components/ui/loader';
-import { ChargerStatusEnum } from '@lib/client/pages/overview/charger-activity/charger.activity.card';
 import { Circle } from '@lib/client/pages/overview/circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
@@ -13,6 +13,13 @@ import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { CanAccess, useCustom } from '@refinedev/core';
 import { ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { heading2Style } from '@lib/client/styles/page';
+import { overviewClickableStyle } from '@lib/client/styles/card';
+import { ChargerStatusEnum } from '@lib/utils/enums';
+
+const statusFlex = 'flex flex-col gap-2';
+const statusLabelStyle = 'text-5xl';
+const statusIndicatorFlex = 'flex items-center gap-2';
 
 export const OnlineStatusCard = () => {
   const { push } = useRouter();
@@ -37,31 +44,37 @@ export const OnlineStatusCard = () => {
       action={ActionType.LIST}
       fallback={<AccessDeniedFallback />}
     >
-      <div className="flex flex-col gap-8">
-        <h4 className="text-lg font-semibold">Charger Online Status</h4>
-        <div className="flex gap-8">
-          <div className="flex flex-col">
-            <div className="online-status-number">{onlineCount}</div>
-            <div className="flex items-center gap-2">
-              <Circle status={ChargerStatusEnum.ONLINE} />
-              Online
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <h2 className={heading2Style}>Charger Online Status</h2>
+            <div
+              onClick={() => push(`/${MenuSection.CHARGING_STATIONS}`)}
+              className={overviewClickableStyle}
+            >
+              View all chargers <ChevronRightIcon />
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className="online-status-number">{offlineCount}</div>
-            <div className="flex items-center gap-2">
-              <Circle status={ChargerStatusEnum.OFFLINE} />
-              Offline
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-12">
+            <div className={statusFlex}>
+              <span className={statusLabelStyle}>{onlineCount}</span>
+              <div className={statusIndicatorFlex}>
+                <Circle status={ChargerStatusEnum.ONLINE} />
+                Online
+              </div>
+            </div>
+            <div className={statusFlex}>
+              <span className={statusLabelStyle}>{offlineCount}</span>
+              <div className={statusIndicatorFlex}>
+                <Circle status={ChargerStatusEnum.OFFLINE} />
+                Offline
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          onClick={() => push(`/${MenuSection.CHARGING_STATIONS}`)}
-          className="link flex items-center cursor-pointer"
-        >
-          View all chargers <ChevronRightIcon />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </CanAccess>
   );
 };
