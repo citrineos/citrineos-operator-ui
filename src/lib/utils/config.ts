@@ -33,7 +33,7 @@ const getConfig: () => {
     googleMapsApiKey:
       process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY',
     googleMapsAddressApiKey:
-      process.env.NEXT_PUBLIC_GOOGLE_MAPS_ADDRESS_API_KEY ||
+      process.env.GOOGLE_MAPS_ADDRESS_API_KEY ||
       'YOUR_GOOGLE_MAPS_ADDRESS_API_KEY',
     googleMapsLocationPickerMapId:
       process.env.NEXT_PUBLIC_GOOGLE_MAPS_LOCATION_PICKER_MAP_ID,
@@ -54,18 +54,15 @@ const getConfig: () => {
     adminPassword: process.env.NEXT_PUBLIC_ADMIN_PASSWORD,
     keycloakUrl: process.env.NEXT_PUBLIC_KEYCLOAK_URL,
     keycloakRealm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM,
-    awsRegion: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-    awsAccessKeyId:
-      process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || 'YOUR_AWS_ACCESS_KEY_ID',
+    awsRegion: process.env.AWS_REGION || 'us-east-1',
+    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || 'YOUR_AWS_ACCESS_KEY_ID',
     awsSecretAccessKey:
-      process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ||
-      'YOUR_AWS_SECRET_ACCESS_KEY',
-    awsSessionToken: process.env.NEXT_PUBLIC_AWS_SESSION_TOKEN,
+      process.env.AWS_SECRET_ACCESS_KEY || 'YOUR_AWS_SECRET_ACCESS_KEY',
+    awsSessionToken: process.env.AWS_SESSION_TOKEN,
     awsS3BucketName:
-      process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || 'YOUR_AWS_S3_BUCKET_NAME',
+      process.env.AWS_S3_BUCKET_NAME || 'YOUR_AWS_S3_BUCKET_NAME',
     awsS3CoreBucketName:
-      process.env.NEXT_PUBLIC_AWS_S3_CORE_BUCKET_NAME ||
-      'YOUR_AWS_S3_CORE_BUCKET_NAME',
+      process.env.AWS_S3_CORE_BUCKET_NAME || 'YOUR_AWS_S3_CORE_BUCKET_NAME',
   };
 };
 
