@@ -9,8 +9,8 @@ import { CanAccess } from '@refinedev/core';
 import { ChargingStationDetailCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.card';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { ChargingStationDetailTabsCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.tabs.card';
-import { fetchUrlFromS3 } from '@lib/utils/file';
-import { S3_BUCKET_FOLDER_IMAGES } from '@lib/utils/consts';
+import { S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS } from '@lib/utils/consts';
+import { getPresignedUrlForGet } from '@lib/server/actions/file/getPresingedUrlForGet';
 
 type ChargingStationDetailProps = {
   params: { id: string };
@@ -24,8 +24,8 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
 
   useEffect(() => {
     if (id) {
-      fetchUrlFromS3(
-        `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.CHARGING_STATIONS}/${id}`,
+      getPresignedUrlForGet(
+        `${S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS}/${id}`,
       ).then(setImageUrl);
     }
   }, [id]);

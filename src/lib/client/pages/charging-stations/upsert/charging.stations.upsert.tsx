@@ -47,11 +47,11 @@ import z from 'zod';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
-import { handleUploadToS3 } from '@lib/utils/file';
-import { S3_BUCKET_FOLDER_IMAGES } from '@lib/utils/consts';
+import { S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS } from '@lib/utils/consts';
 import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { Button } from '@lib/client/components/ui/button';
 import { buttonIconSize } from '@lib/client/styles/icon';
+import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
@@ -201,14 +201,16 @@ export const ChargingStationUpsert = ({
 
         // Upload image to S3
         if (uploadedFile && finalStationId) {
-          const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.CHARGING_STATIONS}/${finalStationId}`;
-          handleUploadToS3(uploadedFile, renamedFileName).catch((err: any) => {
-            console.error(err);
-            open?.({
-              type: 'error',
-              message: 'Image upload failed',
-            });
-          });
+          const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS}/${finalStationId}`;
+          uploadFileViaPresignedUrl(uploadedFile, renamedFileName).catch(
+            (err: any) => {
+              console.error(err);
+              open?.({
+                type: 'error',
+                message: 'Image upload failed',
+              });
+            },
+          );
         }
         replace(`/${MenuSection.CHARGING_STATIONS}/${finalStationId}`);
       } else if (stationId) {

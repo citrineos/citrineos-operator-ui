@@ -26,6 +26,7 @@ const getConfig: () => {
   awsSecretAccessKey?: string;
   awsSessionToken?: string; // Optional. Needed for temporary credentials
   awsS3BucketName?: string;
+  awsS3CoreBucketName?: string;
 } = () => {
   return {
     appName: process.env.NEXT_PUBLIC_APP_NAME || 'CitrineOS',
@@ -62,6 +63,9 @@ const getConfig: () => {
     awsSessionToken: process.env.NEXT_PUBLIC_AWS_SESSION_TOKEN,
     awsS3BucketName:
       process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || 'YOUR_AWS_S3_BUCKET_NAME',
+    awsS3CoreBucketName:
+      process.env.NEXT_PUBLIC_AWS_S3_CORE_BUCKET_NAME ||
+      'YOUR_AWS_S3_CORE_BUCKET_NAME',
   };
 };
 
