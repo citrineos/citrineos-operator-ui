@@ -25,7 +25,7 @@ This is the repository for the Operator User Interface and associated tooling.
 In order to fully function, CitrineOS Core must be running. The UI draws its data from the Hasura GraphQL Engine.
 The Core Message and Data APIs are used for charging station commands.
 
-## Building with Local CitrineOS-Core Version
+### Building with Local CitrineOS-Core Version
 
 In order to build with a local version of citrineos-core, say a release candidate branch, you will need to use `npm link`
 
