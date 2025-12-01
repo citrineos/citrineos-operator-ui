@@ -21,6 +21,8 @@ const getConfig: () => {
   adminPassword?: string;
   keycloakUrl?: string;
   keycloakRealm?: string;
+  keycloakClientId?: string;
+  keycloakClientSecret?: string;
   awsRegion?: string;
   awsAccessKeyId?: string;
   awsSecretAccessKey?: string;
@@ -54,6 +56,8 @@ const getConfig: () => {
     adminPassword: process.env.NEXT_PUBLIC_ADMIN_PASSWORD,
     keycloakUrl: process.env.NEXT_PUBLIC_KEYCLOAK_URL,
     keycloakRealm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM,
+    keycloakClientId: process.env.KEYCLOAK_CLIENT_ID,
+    keycloakClientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
     awsRegion: process.env.AWS_REGION || 'us-east-1',
     awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || 'YOUR_AWS_ACCESS_KEY_ID',
     awsSecretAccessKey:

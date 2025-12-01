@@ -62,7 +62,7 @@
     "graphql-request": "^5.2.0",
     "graphql-tag": "^2.12.6",
     "js-cookie": "^3.0.5",
-    "keycloak-js": "^26.2.0",
+    "next-auth": "^4.24.13",
     "lodash.debounce": "^4.0.8",
     "lodash.isequal": "^4.5.0",
     "lucide-react": "^0.545.0",

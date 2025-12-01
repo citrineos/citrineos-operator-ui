@@ -70,8 +70,8 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
 
   // Get tenant id from keycloak
   const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  // TODO: remove default tenant id 1 after keycloak is ready
-  const tenantId = Number(identity?.tenantId) || 1;
+  const tenantId = Number(identity?.tenantId);
+  console.log(`The tenant id for current user is ${tenantId}`);
 
   // Get web server config from core
   useEffect(() => {

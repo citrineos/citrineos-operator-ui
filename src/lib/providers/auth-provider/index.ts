@@ -18,8 +18,5 @@ if (KEYCLOAK_URL && KEYCLOAK_REALM) {
 }
 export const authProvider =
   KEYCLOAK_URL && KEYCLOAK_REALM
-    ? createKeycloakAuthProvider({
-        keycloakUrl: KEYCLOAK_URL,
-        keycloakRealm: KEYCLOAK_REALM,
-      })
+    ? createKeycloakAuthProvider()
     : createGenericAuthProvider();
