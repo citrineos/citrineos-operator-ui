@@ -92,7 +92,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
   const host = operatorConfig?.centralSystem?.host;
   // Get tenant id, if not found, use default tenant id from operator config
   const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  let tenantId: number | undefined = Number(identity?.tenantId) || operatorConfig?.defaultTenantId;
+  const tenantId = Number(identity?.tenantId) || operatorConfig?.defaultTenantId;
 
   const copyToClipboard = (id: string, text: string) => {
     navigator.clipboard
