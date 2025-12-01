@@ -9,15 +9,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@lib/client/components/ui/tooltip';
-import {
-  ChargerStatusEnum,
-  getStatusColor,
-} from '@lib/client/pages/overview/charger-activity/charger.activity.card';
+import { ChargerStatusEnum } from '@lib/utils/enums';
 
 export interface CircleProps {
   status?: ChargerStatusEnum;
   color?: string;
 }
+
+const circleStatusColorMap: Partial<Record<ChargerStatusEnum, string>> = {
+  [ChargerStatusEnum.OFFLINE]: '#F61631',
+  [ChargerStatusEnum.ONLINE]: '#00C999',
+};
 
 export const Circle = ({
   status = ChargerStatusEnum.OFFLINE,
@@ -32,7 +34,7 @@ export const Circle = ({
             style={
               color
                 ? { backgroundColor: color }
-                : { backgroundColor: getStatusColor(status) }
+                : { backgroundColor: circleStatusColorMap[status] }
             }
           ></div>
         </TooltipTrigger>

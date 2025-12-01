@@ -8,3 +8,6 @@ export const cardGridStyle =
 export const cardHeaderFlex = 'flex items-center gap-4';
 
 export const cardTabsStyle = 'mt-4';
+
+export const overviewClickableStyle =
+  'flex items-center gap-1 cursor-pointer hover:text-secondary';

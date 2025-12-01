@@ -5,17 +5,19 @@
 
 import type { EvseDto } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
-import { ChargerStatusEnum } from '@lib/client/pages/overview/charger-activity/charger.activity.card';
 import { Circle } from '@lib/client/pages/overview/circle/circle';
 import type { ChargingStationDetailsDto } from '@lib/cls/charging.station.dto';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { Separator } from '@radix-ui/react-menu';
+import type { ChargerStatusEnum } from '@lib/utils/enums';
 
 export interface ChargerRowProps {
   chargingStation: ChargingStationDetailsDto;
   evse?: EvseDto;
   lastStatus?: ChargerStatusEnum;
   circleColor?: string;
+  showSeparator?: boolean;
 }
 
 export const ChargerRow: React.FC<ChargerRowProps> = ({
@@ -23,6 +25,7 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
   evse,
   lastStatus,
   circleColor,
+  showSeparator,
 }) => {
   const { push } = useRouter();
   const label = evse
@@ -30,33 +33,35 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
     : chargingStation.id;
 
   return (
-    <div className="flex">
-      <div className="flex flex-col flex-1">
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-col w-full">
         <div
-          className="flex justify-between cursor-pointer"
+          className="flex justify-between cursor-pointer hover:text-secondary"
           onClick={() =>
             push(`/${MenuSection.CHARGING_STATIONS}/${chargingStation.id}`)
           }
         >
           <div className="flex items-center gap-2">
-            <strong>
-              Station: <span className="link">{label}</span>
-            </strong>
+            <span className="font-bold text-lg">
+              Station <span>{label}</span>
+            </span>
             <Circle color={circleColor} status={lastStatus} />
           </div>
         </div>
         <div
-          className="flex justify-between cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer hover:text-primary"
           onClick={() =>
             push(`/${MenuSection.LOCATIONS}/${chargingStation.location?.id}`)
           }
         >
-          <div>
-            Location:{' '}
-            <span className="link">{chargingStation.location?.name}</span>
-          </div>
+          Location:
+          <span>{chargingStation.location?.name}</span>
         </div>
       </div>
+
+      {showSeparator && (
+        <Separator className="h-0.5 w-full bg-muted rounded-full" />
+      )}
     </div>
   );
 };

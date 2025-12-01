@@ -102,16 +102,14 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col gap-4">
       {!mapOnly && (
-        <div className="header-row flex justify-between p-4">
-          <Input
-            placeholder="Search for a location"
-            value={searchQuery}
-            onChange={handleSearch}
-            className="max-w-md"
-          />
-        </div>
+        <Input
+          placeholder="Search for a location"
+          value={searchQuery}
+          onChange={handleSearch}
+          className="max-w-md"
+        />
       )}
       <div className="flex-1">
         <div className="w-full h-full">

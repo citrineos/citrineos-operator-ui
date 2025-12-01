@@ -10,8 +10,6 @@ import {
   ConnectorStatusEnum,
 } from '@citrineos/base';
 import { Loader } from '@lib/client/components/ui/loader';
-import { Gauge } from '@lib/client/pages/overview/charger-activity/gauge';
-import { ChargerRow } from '@lib/client/pages/overview/charger.row';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { LatestStatusNotificationClass } from '@lib/cls/latest.status.notification.dto';
 import { GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS } from '@lib/queries/charging.stations';
@@ -19,19 +17,12 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { useGqlCustom } from '@lib/utils/use-gql-custom';
 import { CanAccess } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
-import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
 import React, { useState } from 'react';
-
-export enum ChargerStatusEnum {
-  CHARGING = 'Charging',
-  CHARGING_SUSPENDED = 'Charging Suspended',
-  AVAILABLE = 'Available',
-  UNAVAILABLE = 'Unavailable',
-  FAULTED = 'Faulted',
-  OFFLINE = 'Offline',
-  ONLINE = 'Online',
-}
+import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
+import { ChargerActivityStationsSheet } from '@lib/client/pages/overview/charger-activity/charger.activity.stations.sheet';
+import { heading2Style } from '@lib/client/styles/page';
+import { PercentageCircle } from '@lib/client/pages/overview/percentage-circle/percentage.circle';
+import { ChargerStatusEnum } from '@lib/utils/enums';
 
 interface ChargerItem {
   station: ChargingStationDto;
@@ -196,6 +187,7 @@ export const ChargerActivityCard: React.FC = () => {
   const [selectedStatus, setSelectedStatus] =
     useState<ChargerStatusEnum | null>(null);
   const [selectedItems, setSelectedItems] = useState<Array<ChargerItem>>([]);
+  const [stationsSheetOpen, setStationsSheetOpen] = useState(false);
 
   const {
     query: { data, isLoading, error },
@@ -235,11 +227,14 @@ export const ChargerActivityCard: React.FC = () => {
       },
     );
     setSelectedItems(sortedItemArray);
+
+    setStationsSheetOpen(true);
   };
 
   const handleClose = () => {
     setSelectedStatus(null);
     setSelectedItems([]);
+    setStationsSheetOpen(false);
   };
 
   return (
@@ -247,93 +242,54 @@ export const ChargerActivityCard: React.FC = () => {
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.LIST}
     >
-      <div className="flex flex-col gap-8 h-full">
-        <h4 className="text-lg font-semibold">Charger Activity</h4>
-        <div className="flex gap-2 flex-1">
-          {[
-            ChargerStatusEnum.CHARGING,
-            ChargerStatusEnum.AVAILABLE,
-            ChargerStatusEnum.UNAVAILABLE,
-            ChargerStatusEnum.FAULTED,
-            ChargerStatusEnum.OFFLINE,
-          ].map((status) => (
-            <div
-              key={status}
-              className="flex flex-col items-center flex-1 cursor-pointer"
-              onClick={() => handleGaugeClick(status)}
-            >
-              <Gauge
-                percentage={Math.round(
-                  (finalCounts[status].count / total) * 100,
-                )}
-                color={getStatusColor(status)}
-              />
-              <span className={selectedStatus === status ? 'link' : ''}>
-                {status}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <AnimatePresence mode="wait">
-          {selectedStatus && (
-            <motion.div
-              key={selectedStatus}
-              initial={{ opacity: 0, maxHeight: 0 }}
-              animate={{ opacity: 1, maxHeight: 200 }}
-              exit={{ opacity: 0, maxHeight: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              style={{ overflowY: 'auto', minHeight: 25 }}
-            >
-              <div className="flex flex-col gap-4">
-                <div
-                  className="flex justify-between items-center border-b"
-                  style={{ borderColor: 'var(--grayscale-color-0)' }}
-                >
-                  <h4 className="text-lg font-semibold">
-                    {selectedStatus} chargers
-                  </h4>
-                  <X
-                    onClick={handleClose}
-                    size={20}
-                    className="cursor-pointer"
-                  />
-                </div>
-
-                {Array.from(selectedItems).length > 0 ? (
-                  Array.from(selectedItems).map((item) => (
-                    <ChargerRow
-                      key={`${item.station.id}-${item.evse.connectors?.[0]?.id}`}
-                      chargingStation={item.station}
-                      evse={item.evse}
-                      lastStatus={item.lastStatus}
-                    />
-                  ))
-                ) : (
-                  <div className="flex items-center justify-center py-4">
-                    <span>
-                      No chargers currently have {selectedStatus} status
-                    </span>
-                  </div>
-                )}
+      <Card>
+        <CardHeader>
+          <h2 className={heading2Style}>Charger Activity</h2>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            {[
+              ChargerStatusEnum.CHARGING,
+              ChargerStatusEnum.AVAILABLE,
+              ChargerStatusEnum.UNAVAILABLE,
+              ChargerStatusEnum.FAULTED,
+              ChargerStatusEnum.OFFLINE,
+            ].map((status) => (
+              <div
+                key={status}
+                className="flex flex-col items-center cursor-pointer"
+                onClick={() => handleGaugeClick(status)}
+              >
+                <PercentageCircle
+                  percentage={Math.round(
+                    (finalCounts[status].count / total) * 100,
+                  )}
+                  color={getStatusColor[status]}
+                />
+                <span>{status}</span>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+      {selectedStatus && (
+        <ChargerActivityStationsSheet
+          open={stationsSheetOpen}
+          onOpenAction={handleClose}
+          status={selectedStatus}
+          chargers={selectedItems}
+        />
+      )}
     </CanAccess>
   );
 };
 
-export const getStatusColor = (status: ChargerStatusEnum): string => {
-  const colors: Record<ChargerStatusEnum, string> = {
-    [ChargerStatusEnum.AVAILABLE]: '#00C999',
-    [ChargerStatusEnum.UNAVAILABLE]: '#F6962E',
-    [ChargerStatusEnum.CHARGING]: '#008CC0',
-    [ChargerStatusEnum.CHARGING_SUSPENDED]: '#FFC107',
-    [ChargerStatusEnum.FAULTED]: '#000000',
-    [ChargerStatusEnum.OFFLINE]: '#F61631',
-    [ChargerStatusEnum.ONLINE]: '#00C999',
-  };
-  return colors[status];
+export const getStatusColor: any = {
+  [ChargerStatusEnum.AVAILABLE]: 'text-success',
+  [ChargerStatusEnum.UNAVAILABLE]: 'text-warning',
+  [ChargerStatusEnum.CHARGING]: 'text-secondary',
+  [ChargerStatusEnum.CHARGING_SUSPENDED]: 'text-warning',
+  [ChargerStatusEnum.FAULTED]: 'text-muted-foreground',
+  [ChargerStatusEnum.ONLINE]: 'text-success',
+  [ChargerStatusEnum.OFFLINE]: 'text-destructive',
 };
