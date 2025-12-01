@@ -10,7 +10,7 @@ export async function getPlaceDetails(placeId: string) {
 
   const params = new URLSearchParams({
     place_id: placeId,
-    key: config.googleMapsApiKey!,
+    key: config.googleMapsAddressApiKey!,
   });
 
   const url = `https://maps.googleapis.com/maps/api/place/details/json?${params.toString()}`;

@@ -89,3 +89,7 @@ export enum ChargerStatusEnum {
   OFFLINE = 'Offline',
   ONLINE = 'Online',
 }
+
+export enum BucketType {
+  CORE = 'core',
+}

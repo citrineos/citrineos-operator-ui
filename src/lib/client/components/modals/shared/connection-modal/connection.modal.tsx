@@ -21,12 +21,13 @@ import { useGetIdentity } from '@refinedev/core';
 import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 import type { SystemConfig, WebsocketServerConfig } from '@citrineos/base';
 import { fetchFileFromS3 } from '@lib/server/actions/file/fetchFileFromS3';
-import config from '@lib/utils/config';
+import { BucketType } from '@lib/utils/enums';
 
 export interface OperatorConfig {
   centralSystem: {
     host: string;
   };
+  defaultTenantId: number;
 }
 
 export const SecurityProfiles: Record<
@@ -68,19 +69,11 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Get tenant id from keycloak
-  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  const tenantId = Number(identity?.tenantId);
-  console.log(`The tenant id for current user is ${tenantId}`);
-
   // Get web server config from core
   useEffect(() => {
     if (open && !coreConfig) {
       setLoading(true);
-      fetchFileFromS3(
-        `${S3_BUCKET_FILE_CORE_CONFIG}`,
-        config.awsS3CoreBucketName,
-      )
+      fetchFileFromS3(`${S3_BUCKET_FILE_CORE_CONFIG}`, BucketType.CORE)
         .then((data) => setCoreConfig(data))
         .catch(console.error);
     }
@@ -97,6 +90,9 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
     }
   }, [open, operatorConfig]);
   const host = operatorConfig?.centralSystem?.host;
+  // Get tenant id, if not found, use default tenant id from operator config
+  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
+  let tenantId: number | undefined = Number(identity?.tenantId) || operatorConfig?.defaultTenantId;
 
   const copyToClipboard = (id: string, text: string) => {
     navigator.clipboard
