@@ -36,17 +36,23 @@ export const Logo: React.FC<LogoProps> = (props: LogoProps) => {
         }}
       />
       {!collapsed && (
-        <Image
-          src={theme === 'light' ? '/logo-black.svg' : '/logo-white.svg'}
-          alt={`${config.appName} Logo`}
+        <div
           style={{
+            position: 'relative',
             width: '80%',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translateY(-50%) translateX(-50%)',
+            height: '60%',
+            margin: '0 auto',
           }}
-        />
+        >
+          <Image
+            src={theme === 'light' ? '/logo-black.svg' : '/logo-white.svg'}
+            alt={`${config.appName} Logo`}
+            fill
+            style={{
+              objectFit: 'contain',
+            }}
+          />
+        </div>
       )}
     </div>
   );
