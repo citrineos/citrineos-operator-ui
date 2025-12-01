@@ -359,7 +359,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                           {formRequiredAsterisk}
                         </FieldLabel>
                         <AddressAutocomplete
-                          value={field.value}
+                          value={field.value!}
                           onChangeAction={field.onChange}
                           country={chosenCountry as Country}
                           onSelectPlaceAction={(_placeId, details) => {

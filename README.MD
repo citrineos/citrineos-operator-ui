@@ -25,6 +25,15 @@ This is the repository for the Operator User Interface and associated tooling.
 In order to fully function, CitrineOS Core must be running. The UI draws its data from the Hasura GraphQL Engine.
 The Core Message and Data APIs are used for charging station commands.
 
+## Building with Local CitrineOS-Core Version
+
+In order to build with a local version of citrineos-core, say a release candidate branch, you will need to use `npm link`
+
+1. In the citrineos-core root, after a successful build of your local code, `cd 00_Base && npm link`
+1. In the citrineos-operator-ui root, `npm link @citrineos/base/@X.X.X` where X.X.X is the local version you successfully built
+
+Note: `npm run fresh` or `npm run fi` deletes this link.
+
 ### Running with Docker
 
 If you are running [Citrine Core](https://github.com/citrineos/citrineos-core) in Docker, Operator UI can be started by simply running:

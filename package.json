@@ -16,7 +16,9 @@
     "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
     "build": "refine build",
     "start": "refine start",
-    "lint": "next lint",
+    "prettier": "prettier --write .",
+    "lint": "npx eslint ./",
+    "lint-fix": "npm run prettier && npx eslint --fix ./",
     "refine": "refine"
   },
   "dependencies": {
@@ -76,10 +78,12 @@
     "react-redux": "^9.2.0",
     "react-syntax-highlighter": "^15.6.6",
     "recharts": "^3.2.1",
+    "reflect-metadata": "^0.2.2",
     "sass": "^1.93.2",
     "shadcn": "^2.4.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
+    "typescript-eslint": "^8.47.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
