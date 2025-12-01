@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { CrudFilter } from '@refinedev/core';
+import { ResourceType } from '@lib/utils/access.types';
 
 export const I18N_COOKIE_NAME = 'NEXT_LOCALE';
 export const DEFAULT_LOCALE = 'en';
@@ -43,11 +44,8 @@ export const DEFAULT_EXPANDED_DATA_FILTER = (
 
 export const NOT_APPLICABLE = 'N/A';
 
-// API routes
-export const GENERATE_PRESIGNED_PUT_URL = '/api/file/presigned/upload';
-export const GENERATE_PRESIGNED_GET_URL = '/api/file/presigned/get';
-export const AUTO_COMPLETE_ADDRESS = '/api/geocode/autocomplete';
-export const GET_ADDRESS_DETAILS = '/api/geocode/details';
-
 // S3 bucket folder name
-export const S3_BUCKET_FOLDER_IMAGES = 'images';
+export const S3_BUCKET_FOLDER_IMAGES_LOCATIONS = `images/${ResourceType.LOCATIONS}`;
+export const S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS = `images/${ResourceType.CHARGING_STATIONS}`;
+export const S3_BUCKET_FILE_CORE_CONFIG = 'config.json';
+export const S3_BUCKET_FILE_CONFIG = 'operator.config.json';

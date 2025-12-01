@@ -59,9 +59,9 @@ import { Controller } from 'react-hook-form';
 import { AddressAutocomplete } from '@lib/client/components/form/address-autocomplete';
 import { SelectedChargingStations } from '@lib/client/pages/locations/upsert/selected.charging.stations';
 import { toast } from 'sonner';
-import { handleUploadToS3 } from '@lib/utils/file';
 import { useNotification } from '@refinedev/core';
-import { S3_BUCKET_FOLDER_IMAGES } from '@lib/utils/consts';
+import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
+import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -290,14 +290,16 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
 
         // Upload image
         if (uploadedFile && finalLocationId) {
-          const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.LOCATIONS}/${finalLocationId}`;
-          handleUploadToS3(uploadedFile, renamedFileName).catch((err: any) => {
-            console.error(err);
-            open?.({
-              type: 'error',
-              message: 'Image upload failed',
-            });
-          });
+          const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES_LOCATIONS}/${finalLocationId}`;
+          uploadFileViaPresignedUrl(uploadedFile, renamedFileName).catch(
+            (err: any) => {
+              console.error(err);
+              open?.({
+                type: 'error',
+                message: 'Image upload failed',
+              });
+            },
+          );
         }
 
         replace(`/${MenuSection.LOCATIONS}/${finalLocationId}`);

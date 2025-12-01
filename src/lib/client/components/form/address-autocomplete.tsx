@@ -7,7 +7,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '../ui/input';
 import debounce from 'lodash.debounce';
 import { Country } from '@lib/utils/country.state.data';
-import { AUTO_COMPLETE_ADDRESS, GET_ADDRESS_DETAILS } from '@lib/utils/consts';
+import { autocompleteAddress } from '@lib/server/actions/map/autocompleteAddress';
+import { getPlaceDetails } from '@lib/server/actions/map/getPlaceDetails';
 
 type Prediction = {
   description: string;
@@ -54,11 +55,10 @@ export const AddressAutocomplete: React.FC<Props> = ({
     }
     setLoading(true);
     try {
-      const res = await fetch(
-        `${AUTO_COMPLETE_ADDRESS}?input=${encodeURIComponent(input)}&country=${countryCodes[country]}`,
-      );
-      const data = await res.json();
-      setPredictions(data);
+      autocompleteAddress(input, countryCodes[country])
+        .then((data) => setPredictions(data))
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
     } catch (err) {
       console.error(err);
       setPredictions([]);
@@ -69,7 +69,7 @@ export const AddressAutocomplete: React.FC<Props> = ({
 
   useEffect(() => {
     fetchPredictions(value);
-  }, [value, fetchPredictions]);
+  }, [value]);
 
   // Handle clicks outside to close dropdown
   useEffect(() => {
@@ -85,45 +85,42 @@ export const AddressAutocomplete: React.FC<Props> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = async (prediction: Prediction) => {
+  const handleSelect = (prediction: Prediction) => {
     setShowDropdown(false);
     onChangeAction(prediction.description);
 
-    try {
-      // Fetch place details
-      const res = await fetch(
-        `${GET_ADDRESS_DETAILS}?placeId=${prediction.place_id}`,
-      );
-      const details = await res.json();
+    // Fetch place details
+    getPlaceDetails(prediction.place_id)
+      .then((details) => {
+        const location = details.geometry?.location;
+        const components = details.address_components;
+        const getComponent = (type: string) =>
+          components?.find((c: any) => c.types.includes(type))?.long_name;
 
-      const location = details.geometry.location;
-      const components = details.address_components;
-      const getComponent = (type: string) =>
-        components.find((c: any) => c.types.includes(type))?.long_name;
+        // Extract street number + route
+        const streetNumber = getComponent('street_number') || '';
+        const route = getComponent('route') || '';
+        const streetAddress = `${streetNumber} ${route}`.trim();
 
-      // Extract street number + route
-      const streetNumber = getComponent('street_number') || '';
-      const route = getComponent('route') || '';
-      const streetAddress = `${streetNumber} ${route}`.trim();
+        const fullDetails = {
+          address: streetAddress,
+          city: getComponent('locality') || getComponent('sublocality') || '',
+          state: getComponent('administrative_area_level_1') || '',
+          postalCode: getComponent('postal_code'),
+          country: getComponent('country'),
+          coordinates: {
+            lat: location?.lat || 0,
+            lng: location?.lng || 0,
+          },
+        };
 
-      const fullDetails = {
-        address: streetAddress,
-        city: getComponent('locality') || getComponent('sublocality') || '',
-        state: getComponent('administrative_area_level_1') || '',
-        postalCode: getComponent('postal_code'),
-        country: getComponent('country'),
-        coordinates: {
-          lat: location.lat,
-          lng: location.lng,
-        },
-      };
-
-      // Update input and form
-      onChangeAction(fullDetails.address);
-      onSelectPlaceAction(prediction.place_id, fullDetails);
-    } catch (err) {
-      console.error('Failed to fetch place details', err);
-    }
+        // Update input and form
+        onChangeAction(fullDetails.address);
+        onSelectPlaceAction(prediction.place_id, fullDetails);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch place details', err);
+      });
   };
 
   return (

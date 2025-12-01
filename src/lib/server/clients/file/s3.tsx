@@ -56,3 +56,17 @@ export const generatePresignedGetUrlIfExists = async (fileKey: string) => {
     throw err;
   }
 };
+
+/*
+ * Fetches a file from S3 directly
+ * @param fileKey - The key of the file to fetch
+ * @returns The file
+ */
+export const fetchFile = async (fileKey: string, bucket?: string) => {
+  const command = new GetObjectCommand({
+    Bucket: bucket || bucketName!,
+    Key: fileKey,
+  });
+  const data = await s3.send(command);
+  return await new Response(data.Body as ReadableStream).json();
+};

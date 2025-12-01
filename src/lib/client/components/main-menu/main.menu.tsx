@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { Button } from '@lib/client/components/ui/button';
 import { sidebarIconSize } from '@lib/client/styles/icon';
 import { ThemeToggle } from '@lib/client/components/theme-toggle';
+import { ConnectionModal } from '@lib/client/components/modals/shared/connection-modal/connection.modal';
 
 export enum MenuSection {
   OVERVIEW = 'overview',
@@ -43,6 +44,7 @@ interface MenuItem {
 
 export const MainMenu = ({ activeSection }: MainMenuProps) => {
   const [collapsed, setCollapsed] = useState(true);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const mainMenuItems: MenuItem[] = [
     {
@@ -78,77 +80,75 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
   ];
 
   return (
-    <aside
-      className={cn(
-        'fixed left-0 top-0 h-screen bg-card transition-all duration-300 z-40 flex flex-col shadow-md',
-        collapsed ? 'w-20' : 'w-[272px]',
-      )}
-    >
-      {/* Logo Section */}
-      <div className="min-h-[130px] flex items-center justify-center px-4">
-        <Logo collapsed={collapsed} />
-      </div>
-
-      {/* Main Navigation */}
-      <nav className="flex-1 overflow-y-auto py-2">
-        <ul className="space-y-1 px-3">
-          {mainMenuItems.map((item) => {
-            const isActive = `/${activeSection}` === item.key;
-            return (
-              <li key={item.key}>
-                <Link
-                  href={item.key}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-3 rounded-md transition-colors text-sm',
-                    'hover:bg-accent hover:text-accent-foreground',
-                    isActive
-                      ? 'bg-accent text-accent-foreground font-medium'
-                      : 'text-muted-foreground',
-                    collapsed && 'justify-center px-2',
-                  )}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <span className="shrink-0">{item.icon}</span>
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      {/* Bottom Menu - Help Link */}
-      <div className="border-t border-border p-3 flex flex-col gap-2 items-center">
-        <ThemeToggle expanded={!collapsed} />
-        <a
-          href="https://citrineos.github.io"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            'flex items-center gap-3 px-3 py-3 rounded-md transition-colors text-sm text-muted-foreground',
-            'hover:bg-accent hover:text-accent-foreground',
-            collapsed && 'justify-center px-2',
-          )}
-          title={collapsed ? 'Help' : undefined}
-        >
-          <HelpCircle className={sidebarIconSize} />
-          {!collapsed && <span>Help</span>}
-        </a>
-      </div>
-
-      {/* Collapse Toggle */}
-      <Button
-        variant="link"
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute top-0 right-0 transform translate-x-1/2 translate-y-[110px] size-8 bg-card text-accent-foreground border-transparent rounded-full shadow-md"
-        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-      >
-        {collapsed ? (
-          <ChevronRight className={sidebarIconSize} />
-        ) : (
-          <ChevronLeft className={sidebarIconSize} />
+    <>
+      <aside
+        className={cn(
+          'fixed left-0 top-0 h-screen bg-card transition-all duration-300 z-40 flex flex-col shadow-md',
+          collapsed ? 'w-20' : 'w-[272px]',
         )}
-      </Button>
-    </aside>
+      >
+        {/* Logo Section */}
+        <div className="min-h-[130px] flex items-center justify-center px-4">
+          <Logo collapsed={collapsed} />
+        </div>
+
+        {/* Main Navigation */}
+        <nav className="flex-1 overflow-y-auto py-2">
+          <ul className="space-y-1 px-3">
+            {mainMenuItems.map((item) => {
+              const isActive = `/${activeSection}` === item.key;
+              return (
+                <li key={item.key}>
+                  <Link
+                    href={item.key}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-3 rounded-md transition-colors text-sm',
+                      'hover:bg-accent hover:text-accent-foreground',
+                      isActive
+                        ? 'bg-accent text-accent-foreground font-medium'
+                        : 'text-muted-foreground',
+                      collapsed && 'justify-center px-2',
+                    )}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <span className="shrink-0">{item.icon}</span>
+                    {!collapsed && <span>{item.label}</span>}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Bottom Menu - Help Link */}
+        <div className="border-t border-border p-3 flex flex-col gap-2 items-center">
+          <ThemeToggle expanded={!collapsed} />
+          <Button
+            variant="ghost"
+            onClick={() => setIsHelpOpen(true)}
+            className="flex items-center gap-2"
+            title="Help"
+          >
+            <HelpCircle className={sidebarIconSize} />
+            {!collapsed && <span>Help</span>}
+          </Button>
+        </div>
+
+        {/* Collapse Toggle */}
+        <Button
+          variant="link"
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute top-0 right-0 transform translate-x-1/2 translate-y-[110px] size-8 bg-card text-accent-foreground border-transparent rounded-full shadow-md"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? (
+            <ChevronRight className={sidebarIconSize} />
+          ) : (
+            <ChevronLeft className={sidebarIconSize} />
+          )}
+        </Button>
+      </aside>
+      <ConnectionModal open={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+    </>
   );
 };

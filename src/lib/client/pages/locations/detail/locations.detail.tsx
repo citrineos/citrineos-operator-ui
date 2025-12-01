@@ -14,8 +14,8 @@ import { CanAccess, useOne } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { LocationDetailCard } from '@lib/client/pages/locations/detail/location.detail.card';
 import { useState, useEffect } from 'react';
-import { fetchUrlFromS3 } from '@lib/utils/file';
-import { S3_BUCKET_FOLDER_IMAGES } from '@lib/utils/consts';
+import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
+import { getPresignedUrlForGet } from '@lib/server/actions/file/getPresingedUrlForGet';
 
 type LocationDetailProps = {
   params: { id: string };
@@ -39,8 +39,8 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
 
   useEffect(() => {
     if (location?.id) {
-      fetchUrlFromS3(
-        `${S3_BUCKET_FOLDER_IMAGES}/${ResourceType.LOCATIONS}/${location.id}`,
+      getPresignedUrlForGet(
+        `${S3_BUCKET_FOLDER_IMAGES_LOCATIONS}/${location.id}`,
       ).then(setImageUrl);
     }
   }, [location?.id]);
