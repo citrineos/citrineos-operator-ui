@@ -38,9 +38,10 @@ const getConfig: () => {
       process.env.GOOGLE_MAPS_ADDRESS_API_KEY ||
       'YOUR_GOOGLE_MAPS_ADDRESS_API_KEY',
     googleMapsLocationPickerMapId:
-      process.env.NEXT_PUBLIC_GOOGLE_MAPS_LOCATION_PICKER_MAP_ID,
+      process.env.NEXT_PUBLIC_GOOGLE_MAPS_LOCATION_PICKER_MAP_ID ||
+      'location-picker-map-id',
     googleMapsOverviewMapId:
-      process.env.NEXT_PUBLIC_GOOGLE_MAPS_OVERVIEW_MAP_ID,
+      process.env.NEXT_PUBLIC_GOOGLE_MAPS_OVERVIEW_MAP_ID || 'overview-map-id',
     hasuraAdminSecret: process.env.HASURA_ADMIN_SECRET,
     hasuraClaim:
       process.env.NEXT_PUBLIC_HASURA_CLAIM || 'https://hasura.io/jwt/claims',

@@ -4,7 +4,6 @@
 
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
-import pluginCypress from 'eslint-plugin-cypress/flat';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import eslintPluginReact from 'eslint-plugin-react';
 import tseslint from 'typescript-eslint';
@@ -20,7 +19,6 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...nextConfigs,
   eslintPluginPrettierRecommended,
-  pluginCypress.configs.recommended,
   {
     plugins: {
       react: eslintPluginReact,
