@@ -220,6 +220,9 @@ export const createGenericAuthProvider = (
       saveToken(mockToken);
       saveUser(adminUser);
 
+      // Redirect to overview page immediately
+      // Due to initial auth check fails before Token is set
+      window.location.href = '/overview';
       return {
         success: true,
         redirectTo: '/overview',
