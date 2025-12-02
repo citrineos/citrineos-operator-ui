@@ -21,7 +21,10 @@ const authOptions: AuthOptions = {
       // If the url is the callback from Keycloak or the signin page, redirect to overview
       if (url.startsWith(baseUrl)) {
         // Check if it's a callback or sign-in, redirect to overview
-        if (url.includes('/api/auth/callback') || url.includes('/api/auth/signin')) {
+        if (
+          url.includes('/api/auth/callback') ||
+          url.includes('/api/auth/signin')
+        ) {
           return `${baseUrl}/overview`;
         }
         return url;
@@ -44,7 +47,9 @@ const authOptions: AuthOptions = {
         if (account.access_token) {
           const accessTokenParsed = parseJwt(account.access_token as string);
           // Extract client roles from resource_access
-          token.roles = accessTokenParsed.resource_access?.[config.keycloakClientId!]?.roles || [];
+          token.roles =
+            accessTokenParsed.resource_access?.[config.keycloakClientId!]
+              ?.roles || [];
           // Extract tenant_id
           token.tenantId = accessTokenParsed.tenant_id;
         }

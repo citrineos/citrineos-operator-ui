@@ -4,11 +4,22 @@
 'use server';
 
 import { fetchFile } from '@lib/server/clients/file/s3';
+import config from '@lib/utils/config';
+import { BucketType } from '@lib/utils/enums';
 
-export async function fetchFileFromS3(fileKey: string, bucket?: string) {
+
+export async function fetchFileFromS3(
+  fileKey: string,
+  bucketType?: BucketType,
+) {
   if (!fileKey) {
     throw new Error('Missing file key');
   }
+
+  const bucket =
+    bucketType === BucketType.CORE
+      ? config.awsS3CoreBucketName
+      : config.awsS3BucketName;
 
   try {
     return await fetchFile(fileKey, bucket);
