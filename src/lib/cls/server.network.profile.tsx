@@ -4,8 +4,6 @@
 
 import type { ServerNetworkProfileDto } from '@citrineos/base';
 
-export class ServerNetworkProfileClass
-  implements Partial<ServerNetworkProfileDto>
-{
+export class ServerNetworkProfileClass implements Partial<ServerNetworkProfileDto> {
   id?: string;
 }

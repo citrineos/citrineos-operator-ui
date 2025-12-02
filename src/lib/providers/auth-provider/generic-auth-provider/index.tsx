@@ -220,6 +220,8 @@ export const createGenericAuthProvider = (
       saveToken(mockToken);
       saveUser(adminUser);
 
+      // Refresh the page to ensure all auth-dependent components re-render
+      window.location.href = '/overview';
       return {
         success: true,
         redirectTo: '/overview',

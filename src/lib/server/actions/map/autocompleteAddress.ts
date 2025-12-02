@@ -13,7 +13,7 @@ export async function autocompleteAddress(
 
   const params = new URLSearchParams({
     input,
-    key: config.googleMapsApiKey!,
+    key: config.googleMapsAddressApiKey!,
     types: 'address',
     components: `country:${country.toLowerCase()}`,
   });

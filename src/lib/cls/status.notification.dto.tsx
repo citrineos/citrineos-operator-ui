@@ -4,5 +4,4 @@
 
 import type { StatusNotificationDto } from '@citrineos/base';
 
-export class StatusNotificationClass
-  implements Partial<StatusNotificationDto> {}
+export class StatusNotificationClass implements Partial<StatusNotificationDto> {}

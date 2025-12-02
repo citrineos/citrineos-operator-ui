@@ -8,15 +8,11 @@ import {
   type User,
 } from '@/lib/utils/access.types';
 import config from '@/lib/utils/config';
-import {
-  HasuraClaimType,
-  HasuraHeader,
-  HasuraRole,
-} from '@lib/utils/hasura.types';
+import { getSession, signIn, signOut } from 'next-auth/react';
 import type { AuthProvider } from '@refinedev/core';
-import Keycloak from 'keycloak-js';
-import { useRouter } from 'next/navigation';
+import { HasuraHeader, HasuraRole } from '@lib/utils/hasura.types';
 import React, { useEffect } from 'react';
+import { parseJwt, getTokenClaim } from '@lib/utils/jwt';
 
 export enum KeycloakRole {
   ADMIN = 'admin',
@@ -32,339 +28,150 @@ export interface KeycloakUserIdentity extends User {
 }
 
 export interface KeycloakPermissions {
-  roles: KeycloakRole[];
+  roles: string[];
   tenants?: string[];
   resources?: Record<string, string[]>;
 }
 
-/**
- * Configuration for the auth provider
- */
-export interface KeycloakAuthProviderConfig {
-  keycloakUrl: string;
-  keycloakRealm: string;
-}
-
-const HASURA_CLAIM = config.hasuraClaim;
+const HASURA_CLAIM = config.hasuraClaim!;
 
 /**
- * Creates a keycloak auth provider for use with Refine
+ * Keycloak Login Page Component
+ * Automatically redirects to Keycloak login
  */
-export const createKeycloakAuthProvider = (
-  authProviderConfig: KeycloakAuthProviderConfig,
-): AuthProvider & AuthenticationContextProvider => {
-  const { keycloakUrl, keycloakRealm } = authProviderConfig;
+const KeycloakLoginPage: React.FC = () => {
+  useEffect(() => {
+    signIn('keycloak', { callbackUrl: '/overview' });
+  }, []);
 
-  const keycloakConfig = {
-    url: keycloakUrl,
-    realm: keycloakRealm,
-    clientId: 'operator-ui',
-  };
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <h2 className="text-xl font-semibold mb-2">
+          Redirecting to Keycloak...
+        </h2>
+        <p className="text-gray-600">Redirecting to Keycloak login...</p>
+      </div>
+    </div>
+  );
+};
 
-  const keycloak = new Keycloak(keycloakConfig);
-  const initialized = keycloak.init({
-    onLoad: 'check-sso', // Check if the user is already logged in -- fails silently and doesn't redirect
-    checkLoginIframe: false,
-    pkceMethod: 'S256',
-  });
-
-  const getInitialized = (): Promise<boolean> => {
-    return initialized;
-  };
-
-  const LoginPage: React.FC = () => {
-    const router = useRouter();
-
-    useEffect(() => {
-      const doLogin = async () => {
-        try {
-          const loginResponse = await login();
-
-          if (loginResponse.success && loginResponse.redirectTo) {
-            router.replace(loginResponse.redirectTo);
-          }
-        } catch (error) {
-          console.error('Login failed:', error);
-        }
-      };
-
-      doLogin();
-    }, [router]);
-
-    return <div>Redirecting to Keycloak login...</div>;
-  };
-
-  const login = async () => {
-    await initialized;
-
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const { to } = Object.fromEntries(urlSearchParams.entries());
-    const redirectPath = to ? `${to}` : `/overview`;
-
-    if (keycloak.authenticated) {
-      return {
-        success: true,
-        redirectTo: redirectPath,
-      };
+export const createKeycloakAuthProvider = (): AuthProvider &
+  AuthenticationContextProvider => {
+  const getPermissions = async (): Promise<KeycloakPermissions> => {
+    const session = await getSession();
+    if (!session?.user) {
+      return { roles: [], tenants: [], resources: {} };
     }
-    try {
-      await keycloak.login({
-        redirectUri: `${window.location.origin}${redirectPath}`,
-      });
 
-      // This line normally won't execute as Keycloak redirects the page
-      return {
-        success: true,
-      };
-    } catch (error) {
-      console.error('Login error:', error);
-      return {
-        success: false,
-        error: new Error('Login failed'),
-      };
-    }
+    const roles = (session.user as any).roles || [];
+    return {
+      roles,
+      tenants: [],
+      resources: {},
+    };
   };
 
-  /**
-   * Get token from storage
-   */
-  const getToken = async (): Promise<string | undefined> => {
-    // Try to refresh the token if it's about to expire
-    try {
-      // Refresh token if it has less than 30 seconds remaining
-      await keycloak.updateToken(30);
-      return keycloak.token;
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-    }
-    return;
-  };
+  const getUserRole = async (): Promise<string | undefined> => {
+    const permissions = await getPermissions();
+    const roles = permissions.roles;
 
-  /**
-   * Check if user has a specific role
-   */
-  const hasRole = (permissions: KeycloakPermissions, role: string): boolean => {
-    if (!permissions.resources?.['operator-ui']) {
-      return false;
-    }
-    return permissions.resources['operator-ui'].includes(role);
-  };
-
-  /**
-   * Get the highest priority role for the user
-   */
-  const getUserRole = async (
-    permissions?: KeycloakPermissions,
-  ): Promise<'admin' | 'user' | undefined> => {
-    if (permissions) {
-      if (hasRole(permissions, 'admin')) {
-        return 'admin';
+    if (roles && roles.length > 0) {
+      if (roles.includes(KeycloakRole.ADMIN)) {
+        return KeycloakRole.ADMIN;
       }
-      if (hasRole(permissions, 'user')) {
-        return 'user';
+      if (roles.includes(KeycloakRole.USER)) {
+        return KeycloakRole.USER;
       }
     }
+    return undefined;
   };
 
-  /**
-   * Get the Hasura role from the identity
-   */
   const getHasuraHeaders = async (): Promise<Map<HasuraHeader, string>> => {
     const hasuraHeaders = new Map<HasuraHeader, string>();
-    const tokenParsed = keycloak.tokenParsed;
-    if (!tokenParsed) {
+    const session = await getSession();
+    if (!session) {
       return hasuraHeaders;
     }
-    const hasuraClaims = HASURA_CLAIM && tokenParsed[HASURA_CLAIM];
-    if (!hasuraClaims) {
+    const token = (session as any).accessToken;
+    if (!token) {
       return hasuraHeaders;
+    }
+    const tokenParsed = parseJwt(token);
+
+    // Set Hasura role
+    const hasuraClaims = getTokenClaim(tokenParsed, HASURA_CLAIM);
+    if (!hasuraClaims) {
+      const permissions = await getPermissions();
+      const roles = permissions.roles;
+
+      if (roles && roles.length > 0 && roles.includes(KeycloakRole.ADMIN)) {
+        hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.ADMIN);
+      } else {
+        hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.USER);
+      }
     }
 
-    const roles = hasuraClaims[HasuraClaimType.X_HASURA_ALLOWED_ROLES];
-    if (roles && roles.length > 0 && roles.includes(KeycloakRole.ADMIN)) {
-      hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.ADMIN);
-    } else {
-      hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.USER);
+    // Set Hasura tenant ID
+    const tenantId = tokenParsed.tenantId;
+    if (tenantId) {
+      hasuraHeaders.set(HasuraHeader.X_HASURA_TENANT_ID, tenantId);
     }
 
     return hasuraHeaders;
   };
 
-  // Return the auth provider implementation
+  const getToken = async (): Promise<string | undefined> => {
+    const session = await getSession();
+    return (session as any)?.accessToken;
+  };
+
   return {
-    login,
-
-    logout: async () => {
-      try {
-        await keycloak.logout({
-          redirectUri: `${window.location.origin}/login`,
-        });
-
-        return {
-          success: true,
-          redirectTo: '/login',
-        };
-      } catch (error) {
-        return {
-          success: false,
-          error: new Error('Logout failed'),
-        };
-      }
+    login: async ({ redirectTo }) => {
+      await signIn('keycloak', { callbackUrl: redirectTo || '/overview' });
+      return { success: true };
     },
+    logout: async ({ redirectTo }) => {
+      await signOut({ callbackUrl: redirectTo || '/login' });
+      return { success: true, redirectTo: redirectTo || '/login' };
+    },
+    check: async () => {
+      const session = await getSession();
+      if (!session) {
+        return { authenticated: false, logout: true, redirectTo: '/login' };
+      }
+      return { authenticated: true };
+    },
+    getIdentity: async () => {
+      const session = await getSession();
+      if (!session?.user) return null;
 
+      return {
+        id: (session.user as any).sub || '1',
+        name: session.user.name,
+        email: session.user.email,
+        avatar: session.user.image,
+        roles: (session.user as any).roles || [],
+        tenantId: (session.user as any).tenantId,
+      } as User;
+    },
+    getPermissions,
     onError: async (error) => {
-      // Check for 401 Unauthorized errors
+      console.error('Auth error:', error);
+
+      // Only logout for auth errors
       if (error.statusCode === 401) {
-        try {
-          // Try to refresh the token
-          const refreshed = await keycloak.updateToken(30);
-
-          if (refreshed) {
-            // If token was refreshed successfully, retry the request
-            return {
-              error: new Error('Token refreshed, please retry the request'),
-            };
-          }
-
-          // If token couldn't be refreshed, log out
-          return {
-            logout: true,
-          };
-        } catch (refreshError) {
-          // If refresh fails, log out
-          return {
-            logout: true,
-          };
-        }
+        return { logout: true };
       }
 
-      // For other errors, pass through
       return { error };
     },
 
-    check: async () => {
-      try {
-        // If not authenticated, redirect to login
-        if (!keycloak.authenticated) {
-          console.warn('User not authenticated, redirecting to login');
-          return {
-            authenticated: false,
-            logout: true,
-            redirectTo: '/login',
-            error: {
-              message: 'Not authenticated',
-              name: 'Authentication Error',
-            },
-          };
-        }
-
-        // Try to refresh the token if it's about to expire
-        try {
-          // Refresh token if it has less than 5 minutes remaining
-          await keycloak.updateToken(300);
-        } catch (refreshError) {
-          // If refresh fails, redirect to login
-          return {
-            authenticated: false,
-            logout: true,
-            redirectTo: '/login',
-            error: {
-              message: 'Token refresh failed',
-              name: 'Authentication Error',
-            },
-          };
-        }
-
-        return {
-          authenticated: true,
-        };
-      } catch (error) {
-        return {
-          authenticated: false,
-          logout: true,
-          redirectTo: '/login',
-          error: {
-            message: 'Check failed',
-            name: 'Authentication Error',
-          },
-        };
-      }
-    },
-
-    getIdentity: async () => {
-      if (!keycloak?.tokenParsed) {
-        return null;
-      }
-
-      const identity: KeycloakUserIdentity = {
-        id: keycloak.tokenParsed.sub! || keycloak.tokenParsed.id,
-        name:
-          keycloak.tokenParsed.name || keycloak.tokenParsed.preferred_username,
-        email: keycloak.tokenParsed.email,
-        avatar: keycloak.tokenParsed.picture,
-        // Get tenant ID from token or use current tenant
-        tenantId: keycloak.tokenParsed.tenant_id || keycloak.realm,
-        // Include roles directly for easier access in UI
-        roles: keycloak.tokenParsed.realm_access?.roles || [],
-      };
-
-      return identity;
-    },
-
-    getPermissions: async (): Promise<KeycloakPermissions | null> => {
-      // Check if the user is authenticated and token is parsed
-      if (!keycloak.authenticated || !keycloak.tokenParsed) {
-        return null;
-      }
-
-      // Extract tenant information from token - customize based on your token structure
-      const tenants =
-        (keycloak.tokenParsed.tenants as string[]) ||
-        (keycloak.tokenParsed.tenant_id
-          ? [keycloak.tokenParsed.tenant_id]
-          : []);
-
-      // If no tenants in token but realm exists, use realm as default tenant
-      if (tenants.length === 0 && keycloak.realm) {
-        tenants.push(keycloak.realm);
-      }
-
-      // Get global roles from token
-      const roles: KeycloakRole[] =
-        keycloak.tokenParsed.realm_access?.roles.map(
-          (role) => KeycloakRole[role as keyof typeof KeycloakRole],
-        ) || [];
-
-      const permissions: KeycloakPermissions = {
-        tenants,
-        roles,
-        // Get client-specific roles (resource-specific permissions)
-        resources: {},
-      };
-
-      // Extract client-specific roles if they exist
-      if (keycloak.tokenParsed.resource_access) {
-        const resourceAccess = keycloak.tokenParsed.resource_access as Record<
-          string,
-          { roles: string[] }
-        >;
-
-        // Map each client to its roles
-        Object.keys(resourceAccess).forEach((clientId) => {
-          permissions.resources![clientId] =
-            resourceAccess[clientId].roles || [];
-        });
-      }
-
-      return permissions;
-    },
-
     // AuthenticationContextProvider methods
-
     getToken,
     getUserRole,
     getHasuraHeaders,
-    getInitialized,
-    getLoginPage: () => LoginPage,
+    getInitialized: async (): Promise<boolean> => true,
+    getLoginPage: () => KeycloakLoginPage,
   };
 };
