@@ -10,11 +10,13 @@ export const PercentageCircle = ({
   percentage: number;
   color: string;
 }) => {
+  const safePercentage = Number.isNaN(percentage)
+    ? 0
+    : Math.max(0, Math.min(100, percentage));
   const radius = 100;
   const strokeWidth = 14;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percentage / 100) * circumference;
-
+  const offset = circumference - (safePercentage / 100) * circumference;
   return (
     <div className="relative">
       <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 256 256">
