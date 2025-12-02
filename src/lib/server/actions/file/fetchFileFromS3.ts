@@ -7,7 +7,6 @@ import { fetchFile } from '@lib/server/clients/file/s3';
 import config from '@lib/utils/config';
 import { BucketType } from '@lib/utils/enums';
 
-
 export async function fetchFileFromS3(
   fileKey: string,
   bucketType?: BucketType,

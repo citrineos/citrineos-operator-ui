@@ -8,7 +8,7 @@ import {
   type User,
 } from '@/lib/utils/access.types';
 import config from '@/lib/utils/config';
-import { getSession, signIn, signOut } from "next-auth/react";
+import { getSession, signIn, signOut } from 'next-auth/react';
 import type { AuthProvider } from '@refinedev/core';
 import { HasuraHeader, HasuraRole } from '@lib/utils/hasura.types';
 import React, { useEffect } from 'react';
@@ -41,20 +41,23 @@ const HASURA_CLAIM = config.hasuraClaim!;
  */
 const KeycloakLoginPage: React.FC = () => {
   useEffect(() => {
-    signIn("keycloak", { callbackUrl: "/overview" });
+    signIn('keycloak', { callbackUrl: '/overview' });
   }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="text-center">
-        <h2 className="text-xl font-semibold mb-2">Redirecting to Keycloak...</h2>
+        <h2 className="text-xl font-semibold mb-2">
+          Redirecting to Keycloak...
+        </h2>
         <p className="text-gray-600">Redirecting to Keycloak login...</p>
       </div>
     </div>
   );
 };
 
-export const createKeycloakAuthProvider = (): AuthProvider & AuthenticationContextProvider => {
+export const createKeycloakAuthProvider = (): AuthProvider &
+  AuthenticationContextProvider => {
   const getPermissions = async (): Promise<KeycloakPermissions> => {
     const session = await getSession();
     if (!session?.user) {
@@ -90,7 +93,7 @@ export const createKeycloakAuthProvider = (): AuthProvider & AuthenticationConte
     if (!session) {
       return hasuraHeaders;
     }
-    const token =  (session as any).accessToken;
+    const token = (session as any).accessToken;
     if (!token) {
       return hasuraHeaders;
     }
@@ -125,17 +128,17 @@ export const createKeycloakAuthProvider = (): AuthProvider & AuthenticationConte
 
   return {
     login: async ({ redirectTo }) => {
-      await signIn("keycloak", { callbackUrl: redirectTo || "/overview" });
+      await signIn('keycloak', { callbackUrl: redirectTo || '/overview' });
       return { success: true };
     },
     logout: async ({ redirectTo }) => {
-      await signOut({ callbackUrl: redirectTo || "/login" });
-      return { success: true, redirectTo: redirectTo || "/login" };
+      await signOut({ callbackUrl: redirectTo || '/login' });
+      return { success: true, redirectTo: redirectTo || '/login' };
     },
     check: async () => {
       const session = await getSession();
       if (!session) {
-        return { authenticated: false, logout: true, redirectTo: "/login" };
+        return { authenticated: false, logout: true, redirectTo: '/login' };
       }
       return { authenticated: true };
     },
@@ -154,7 +157,7 @@ export const createKeycloakAuthProvider = (): AuthProvider & AuthenticationConte
     },
     getPermissions,
     onError: async (error) => {
-      console.error("Auth error:", error);
+      console.error('Auth error:', error);
 
       // Only logout for auth errors
       if (error.statusCode === 401) {
