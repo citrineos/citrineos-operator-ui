@@ -4,9 +4,18 @@ FROM base AS deps
 
 RUN apk add --no-cache libc6-compat
 
-WORKDIR /app
+WORKDIR /apps
 
-COPY package.json package-lock.json* .npmrc* ./
+# copy and pack citrineos core
+COPY ./citrineos-core ./citrineos-core
+RUN cd ./citrineos-core && npm install && npm run build && npm pack --workspace @citrineos/base
+
+COPY ./citrineos-operator-ui ./citrineos-operator-ui
+
+WORKDIR /apps/citrineos-operator-ui
+
+# install citrineos core package
+RUN npm install ../citrineos-core/*.tgz
 
 RUN \
   if [ -f package-lock.json ]; then npm ci; \
@@ -17,9 +26,9 @@ FROM base AS builder
 
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /apps/citrineos-operator-ui/node_modules ./node_modules
 
-COPY . .
+COPY ./citrineos-operator-ui ./
 
 RUN npm run build
 

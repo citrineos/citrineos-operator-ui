@@ -1,6 +1,6 @@
 {
-  "name": "citrineos-operator-ui-v2",
-  "version": "0.1.0",
+  "name": "citrineos-operator-ui",
+  "version": "1.0.0",
   "private": true,
   "engines": {
     "node": ">=20"
