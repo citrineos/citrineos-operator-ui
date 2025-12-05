@@ -44,8 +44,10 @@ export const getTimestampToMeasurandArray = (
       );
       if (overallValue) {
         const timestampEpoch = meterValue.timestamp;
-        // @ts-expect-error timestamp is moment object
-        const elapsedTime = (timestampEpoch - baseTime) / 1000;
+        // Convert ISO 8601 strings to timestamps (milliseconds)
+        const timestampEpochMs = new Date(timestampEpoch).getTime();
+        const baseTimeMs = new Date(baseTime).getTime();
+        const elapsedTime = (timestampEpochMs - baseTimeMs) / 1000;
         if (elapsedTime > TWO_HOURS) {
           // skip weird data // todo is needed?
           console.warn(
