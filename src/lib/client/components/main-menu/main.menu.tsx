@@ -17,7 +17,7 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@lib/client/components/ui/button';
 import { sidebarIconSize } from '@lib/client/styles/icon';
 import { ThemeToggle } from '@lib/client/components/theme-toggle';
@@ -45,6 +45,17 @@ interface MenuItem {
 export const MainMenu = ({ activeSection }: MainMenuProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const menuRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setCollapsed(true);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const mainMenuItems: MenuItem[] = [
     {
@@ -86,6 +97,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
           'fixed left-0 top-0 h-screen bg-card transition-all duration-300 z-40 flex flex-col shadow-md',
           collapsed ? 'w-20' : 'w-[272px]',
         )}
+        ref={menuRef}
       >
         {/* Logo Section */}
         <div className="min-h-[130px] flex items-center justify-center px-4">
