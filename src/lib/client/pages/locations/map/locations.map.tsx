@@ -102,7 +102,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
+    <div className="size-full flex flex-col gap-4">
       {!mapOnly && (
         <Input
           placeholder="Search for a location"
@@ -111,18 +111,14 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
           className="max-w-md"
         />
       )}
-      <div className="flex-1">
-        <div className="w-full h-full">
-          <LocationMap
-            locations={locationsForMap}
-            defaultCenter={{ lat: 36.7783, lng: -119.4179 }}
-            zoom={6}
-            onMarkerClick={handleMarkerClick}
-            selectedMarkerId={selectedLocationId}
-            clusterByLocation={true}
-          />
-        </div>
-      </div>
+      <LocationMap
+        locations={locationsForMap}
+        defaultCenter={{ lat: 36.7783, lng: -119.4179 }}
+        zoom={5}
+        onMarkerClick={handleMarkerClick}
+        selectedMarkerId={selectedLocationId}
+        clusterByLocation={true}
+      />
     </div>
   );
 };

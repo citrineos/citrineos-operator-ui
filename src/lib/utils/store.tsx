@@ -6,12 +6,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from './association.selection.slice';
 import selectedChargingStationSlice from './selected.charging.station.slice';
 import modalReducer from './modal.slice';
+import mapsReducer from './maps.slice';
 
 export const store = configureStore({
   reducer: {
     selectedAssociatedItems: counterReducer,
     selectedChargingStationSlice,
     modal: modalReducer,
+    maps: mapsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

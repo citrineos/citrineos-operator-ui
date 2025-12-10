@@ -10,8 +10,13 @@ import type { MapMouseEvent } from '@vis.gl/react-google-maps';
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import type { LocationPickerMapProps } from '@lib/client/components/map/types';
 import { MarkerIconCircle } from '@lib/client/components/map/marker.icons';
-
-const apiKey = config.googleMapsApiKey;
+import {
+  getGoogleMapsApiKey,
+  setGoogleMapsApiKey,
+} from '@lib/utils/maps.slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getGoogleMapsApiKeyAction } from '@lib/server/actions/map/getGoogleMapsApiKeyAction';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
 
 export const defaultLatitude = 36.7783;
 export const defaultLongitude = -119.4179;
@@ -25,6 +30,9 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
   zoom = defaultZoom,
   onLocationSelect,
 }) => {
+  const dispatch = useDispatch();
+  const apiKey = useSelector(getGoogleMapsApiKey);
+
   const [position, setPosition] = useState<
     { lat: number; lng: number } | undefined
   >(
@@ -35,6 +43,14 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
         }
       : undefined,
   );
+
+  useEffect(() => {
+    if (apiKey === undefined) {
+      getGoogleMapsApiKeyAction().then((key) =>
+        dispatch(setGoogleMapsApiKey(key)),
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (point) {
@@ -55,8 +71,10 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
     }
   };
 
-  return (
-    <div className="map-wrapper">
+  return apiKey === undefined ? (
+    <Skeleton className="size=full" />
+  ) : (
+    <div className="size-full">
       <APIProvider apiKey={apiKey}>
         <Map
           mapId={config.googleMapsLocationPickerMapId}

@@ -28,7 +28,7 @@ export const LocationsCard = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="size-full">
         <LocationsMap />
       </CardContent>
     </Card>
