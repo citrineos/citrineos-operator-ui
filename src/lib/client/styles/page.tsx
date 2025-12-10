@@ -11,6 +11,6 @@ export const heading3Style = 'text-xl font-semibold';
 export const pageFlex = 'flex flex-col gap-4';
 
 export const clickableLinkStyle =
-  'cursor-pointer font-semibold text-primary hover:underline hover:text-primary-foreground dark:hover:text-secondary';
+  'cursor-pointer font-semibold underline hover:text-primary dark:hover:text-secondary';
 
 export const badgeListStyle = 'flex flex-wrap items-center gap-2';
