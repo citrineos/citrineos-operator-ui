@@ -7,12 +7,21 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import config from '@lib/utils/config';
 import { parseJwt } from '@lib/utils/jwt';
 
+const keycloakServerUrl = config.keycloakServerUrl || config.keycloakUrl;
+
 const authOptions: AuthOptions = {
   providers: [
     KeycloakProvider({
       clientId: config.keycloakClientId!,
       clientSecret: config.keycloakClientSecret!,
-      issuer: `${config.keycloakUrl!}/realms/${config.keycloakRealm!}`,
+      wellKnown: undefined,
+      issuer: `${config.keycloakUrl}/realms/${config.keycloakRealm}`,
+      authorization: {
+        url: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/auth`,
+      },
+      token: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`,
+      userinfo: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/userinfo`,
+      jwks_endpoint: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
     }),
   ],
   callbacks: {

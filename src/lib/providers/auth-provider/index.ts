@@ -7,16 +7,13 @@ import { createGenericAuthProvider } from '@lib/providers/auth-provider/generic-
 import { createKeycloakAuthProvider } from '@lib/providers/auth-provider/keycloak-auth-provider';
 import config from '@lib/utils/config';
 
-const KEYCLOAK_URL = config.keycloakUrl;
-const KEYCLOAK_REALM = config.keycloakRealm;
-if (KEYCLOAK_URL && KEYCLOAK_REALM) {
-  console.log(
-    `Keycloak Auth Provider configured with URL: ${KEYCLOAK_URL} and Realm: ${KEYCLOAK_REALM}`,
-  );
+if (config.authProvider === 'keycloak') {
+  console.log(`Keycloak Auth Provider configured`);
 } else {
   console.log('Generic Auth Provider configured');
 }
+
 export const authProvider =
-  KEYCLOAK_URL && KEYCLOAK_REALM
+  config.authProvider === 'keycloak'
     ? createKeycloakAuthProvider()
     : createGenericAuthProvider();

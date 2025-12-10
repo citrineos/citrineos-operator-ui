@@ -12,19 +12,24 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import config from '@lib/utils/config';
 
 const region = config.awsRegion;
-const accessKeyId = config.awsAccessKeyId;
-const secretAccessKey = config.awsSecretAccessKey;
-const sessionToken = config.awsSessionToken;
 const bucketName = config.awsS3BucketName;
 
-const s3 = new S3Client({
-  region,
-  credentials: {
-    accessKeyId: accessKeyId!,
-    secretAccessKey: secretAccessKey!,
-    sessionToken: sessionToken, // Optional. Needed for temporary credentials
-  },
-});
+// AWS SDK automatically uses credentials in this order:
+// 1. Environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+// 2. IRSA (IAM Roles for Service Accounts) via web identity token
+// 3. EC2 instance metadata (IAM role)
+const s3Config: any = { region };
+
+// Only add explicit credentials if they're provided
+if (config.awsAccessKeyId && config.awsSecretAccessKey) {
+  s3Config.credentials = {
+    accessKeyId: config.awsAccessKeyId,
+    secretAccessKey: config.awsSecretAccessKey,
+    ...(config.awsSessionToken && { sessionToken: config.awsSessionToken }),
+  };
+}
+
+const s3 = new S3Client(s3Config);
 
 export const generatePresignedPutUrl = async (
   fileName: string,

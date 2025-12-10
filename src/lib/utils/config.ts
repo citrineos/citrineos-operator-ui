@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import {
+  AuthProviderTypeEnum,
+  type AuthProviderType,
+} from '../providers/auth-provider/types';
+
 const getConfig: () => {
   appName: string;
   googleMapsApiKey: string;
@@ -19,7 +24,9 @@ const getConfig: () => {
   metricsUrl?: string;
   adminEmail?: string;
   adminPassword?: string;
-  keycloakUrl?: string;
+  authProvider: AuthProviderType;
+  keycloakUrl?: string; // The publicly accessible Keycloak URL that user browsers will be redirected to for login.
+  keycloakServerUrl?: string; // If your application server needs to use a different URL to reach Keycloak (e.g., an internal service URL in Kubernetes), set this. Otherwise, the server will use KEYCLOAK_URL.
   keycloakRealm?: string;
   keycloakClientId?: string;
   keycloakClientSecret?: string;
@@ -30,6 +37,13 @@ const getConfig: () => {
   awsS3BucketName?: string;
   awsS3CoreBucketName?: string;
 } = () => {
+  const authProviderResult = AuthProviderTypeEnum.safeParse(
+    process.env.NEXT_PUBLIC_AUTH_PROVIDER,
+  );
+  const authProvider = authProviderResult.success
+    ? authProviderResult.data
+    : 'generic';
+
   return {
     appName: process.env.NEXT_PUBLIC_APP_NAME || 'CitrineOS',
     googleMapsApiKey:
@@ -55,14 +69,15 @@ const getConfig: () => {
     metricsUrl: process.env.NEXT_PUBLIC_METRICS_URL,
     adminEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL,
     adminPassword: process.env.NEXT_PUBLIC_ADMIN_PASSWORD,
+    authProvider,
     keycloakUrl: process.env.NEXT_PUBLIC_KEYCLOAK_URL,
-    keycloakRealm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM,
+    keycloakServerUrl: process.env.KEYCLOAK_SERVER_URL,
+    keycloakRealm: process.env.KEYCLOAK_REALM,
     keycloakClientId: process.env.KEYCLOAK_CLIENT_ID,
     keycloakClientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
     awsRegion: process.env.AWS_REGION || 'us-east-1',
-    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || 'YOUR_AWS_ACCESS_KEY_ID',
-    awsSecretAccessKey:
-      process.env.AWS_SECRET_ACCESS_KEY || 'YOUR_AWS_SECRET_ACCESS_KEY',
+    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     awsSessionToken: process.env.AWS_SESSION_TOKEN,
     awsS3BucketName:
       process.env.AWS_S3_BUCKET_NAME || 'YOUR_AWS_S3_BUCKET_NAME',
