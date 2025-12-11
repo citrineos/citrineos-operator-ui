@@ -22,6 +22,7 @@ import { Button } from '@lib/client/components/ui/button';
 import { sidebarIconSize } from '@lib/client/styles/icon';
 import { ThemeToggle } from '@lib/client/components/theme-toggle';
 import { ConnectionModal } from '@lib/client/components/modals/shared/connection-modal/connection.modal';
+import { LogoutButton } from '@lib/client/components/logout-button';
 
 export enum MenuSection {
   OVERVIEW = 'overview',
@@ -138,12 +139,12 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
           <Button
             variant="ghost"
             onClick={() => setIsHelpOpen(true)}
-            className="flex items-center gap-2"
             title="Help"
           >
             <HelpCircle className={sidebarIconSize} />
             {!collapsed && <span>Help</span>}
           </Button>
+          <LogoutButton expanded={!collapsed} />
         </div>
 
         {/* Collapse Toggle */}
