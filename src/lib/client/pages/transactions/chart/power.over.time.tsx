@@ -102,46 +102,5 @@ export const PowerOverTime = ({
         )}
       </CardContent>
     </Card>
-
-    // <ResponsiveContainer minHeight={chartMinHeight}>
-    //   <LineChart data={chartData} margin={{ bottom: 40 }}>
-    //     <CartesianGrid strokeDasharray="3 3" stroke={strokeColor} />
-    //     <XAxis
-    //       dataKey="elapsedTime"
-    //       type="number"
-    //       tick={{ fill: strokeColor }}
-    //       stroke={strokeColor}
-    //       ticks={generateTimeTicks(chartData)}
-    //       tickFormatter={formatTimeLabel}
-    //       label={{
-    //         value: 'Time Elapsed',
-    //         position: 'insideBottom',
-    //         offset: -20,
-    //         fill: strokeColor,
-    //       }}
-    //     />
-    //     <YAxis
-    //       tick={{ fill: strokeColor }}
-    //       stroke={strokeColor}
-    //       label={{
-    //         value: 'Power (kW)',
-    //         angle: -90,
-    //         position: 'insideLeft',
-    //         fill: strokeColor,
-    //         style: { textAnchor: 'middle' },
-    //       }}
-    //       domain={[minValue - buffer, maxValue + buffer]}
-    //     />
-    //     <Tooltip />
-    //     <Line
-    //       type="monotone"
-    //       dataKey="kw"
-    //       stroke={lineColor}
-    //       strokeWidth={5}
-    //       dot={{ r: 6, fill: lineColor }}
-    //       activeDot={{ r: 12, fill: lineColor }}
-    //     />
-    //   </LineChart>
-    // </ResponsiveContainer>
   );
 };
