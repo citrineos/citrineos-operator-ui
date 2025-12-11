@@ -63,10 +63,6 @@ export const StateOfCharge = ({
     }));
   }, [meterValues, validContexts]);
 
-  if (!chartData || chartData.length === 0) {
-    return <div>No State of Charge data available</div>;
-  }
-
   return (
     <Card>
       <CardHeader>

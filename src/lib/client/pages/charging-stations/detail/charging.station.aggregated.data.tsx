@@ -9,15 +9,7 @@ import {
   OCPP2_0_1,
 } from '@citrineos/base';
 import { RangePicker } from '@lib/client/components/range-picker';
-import { Card, CardContent } from '@lib/client/components/ui/card';
 import { LoadingIcon } from '@lib/client/components/ui/loading';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@lib/client/components/ui/select';
 import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { TransactionClass } from '@lib/cls/transaction.dto';
 import { GET_METER_VALUES_FOR_STATION } from '@lib/queries/meter.values';
@@ -38,6 +30,8 @@ import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 import { ChartsWrapper } from '@lib/client/pages/transactions/chart/charts.wrapper';
+import { MultiSelect } from '@lib/client/components/multi-select';
+import { pageFlex } from '@lib/client/styles/page';
 
 const allContexts = [
   OCPP2_0_1.ReadingContextEnumType.Transaction_Begin,
@@ -97,7 +91,7 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
   };
 
   const [dateRange, setDateRange] = useState(defaultRange);
-  const [contexts, setContexts] =
+  const [validContexts, setValidContexts] =
     useState<OCPP2_0_1.ReadingContextEnumType[]>(allContexts);
 
   if (txLoading || mvLoading)
@@ -110,37 +104,24 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
   const data = filterByDate(mvData?.data ?? [], dateRange);
 
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-4 p-6 h-50">
-        <div className="grid grid-cols-3 gap-4 w-full">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Time Range:</label>
-            <RangePicker dateRange={dateRange} setDateRange={setDateRange} />
-          </div>
-          <div className="col-span-2 flex flex-col gap-2">
-            <label className="text-sm font-medium">Contexts:</label>
-            <Select
-              value={contexts.join(',')}
-              onValueChange={(v) =>
-                setContexts(v.split(',') as OCPP2_0_1.ReadingContextEnumType[])
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {allContexts.map((ctx) => (
-                  <SelectItem key={ctx} value={ctx}>
-                    {ctx}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+    <div className={pageFlex}>
+      <div className="grid grid-cols-3 gap-4 w-full">
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold">Time Range:</label>
+          <RangePicker dateRange={dateRange} setDateRange={setDateRange} />
         </div>
+        <div className="col-span-2 flex flex-col gap-2">
+          <label className="text-sm font-semibold">Contexts:</label>
+          <MultiSelect<OCPP2_0_1.ReadingContextEnumType>
+            options={Object.values(OCPP2_0_1.ReadingContextEnumType)}
+            selectedValues={validContexts}
+            setSelectedValues={setValidContexts}
+            placeholder="Select reading contexts"
+          />
+        </div>
+      </div>
 
-        <ChartsWrapper meterValues={data} validContexts={contexts} />
-      </CardContent>
-    </Card>
+      <ChartsWrapper meterValues={data} validContexts={validContexts} />
+    </div>
   );
 };

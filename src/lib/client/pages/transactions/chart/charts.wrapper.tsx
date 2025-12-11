@@ -19,7 +19,7 @@ export const ChartsWrapper = ({
   validContexts: OCPP2_0_1.ReadingContextEnumType[];
 }) => {
   return (
-    <div className="grid grid-cols-5 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <PowerOverTime meterValues={meterValues} validContexts={validContexts} />
       <EnergyOverTime meterValues={meterValues} validContexts={validContexts} />
       <StateOfCharge meterValues={meterValues} validContexts={validContexts} />
