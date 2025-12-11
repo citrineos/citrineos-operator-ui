@@ -153,15 +153,15 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   const findRelatedMessages = useCallback(
     (record: OCPPMessageDto) => {
       // Find and select the row with the same correlationId but different origin
-      const relatedMessage = messages.find(
+      const relatedMessageIndex = messages.findIndex(
         (msg) =>
           msg.correlationId === record.correlationId &&
           msg.origin !== record.origin,
       );
-      if (relatedMessage) {
+      if (relatedMessageIndex !== -1) {
         // Scroll to the related message
         const element = document.getElementById(
-          `ocpp-row-${relatedMessage.id}`,
+          `table-row-${relatedMessageIndex}`,
         );
         if (element)
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
