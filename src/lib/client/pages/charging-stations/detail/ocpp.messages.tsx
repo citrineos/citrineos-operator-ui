@@ -35,24 +35,15 @@ import { Dayjs } from 'dayjs';
 import { Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
-import {
-  TableHead,
-  TableHeader,
-  TableRow,
-  Table as TableUi,
-  TableBody,
-  TableCell,
-} from '@lib/client/components/ui/table';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { formatDate } from '@lib/client/components/timestamp-display';
+import { Table } from '@lib/client/components/table';
+import type { CellContext } from '@tanstack/react-table';
 
 export interface OCPPMessagesProps {
   stationId: string;
 }
-
-const smallColumnWidth = 'w-1/7';
-const bigColumnWidth = 'w-4/7';
 
 export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -240,32 +231,45 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
       {isLoading && <Skeleton className="w-full h-50" />}
       {!isLoading && filteredData.length === 0 && <div>No messages.</div>}
       {!isLoading && filteredData.length > 0 && (
-        <TableUi>
-          <TableHeader className="bg-muted border rounded-lg">
-            <TableRow>
-              <TableHead className={smallColumnWidth}>Correlation ID</TableHead>
-              <TableHead className={smallColumnWidth}>Action-Origin</TableHead>
-              <TableHead className={smallColumnWidth}>Timestamp</TableHead>
-              <TableHead className={bigColumnWidth}>Content</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredData.map((record) => (
-              <TableRow
-                key={record.id}
-                id={`ocpp-row-${record.id}`}
-                className={getRowClassName(record)}
-              >
-                <TableCell className={smallColumnWidth}>
+        <Table<OCPPMessageDto>
+          refineCoreProps={{
+            resource: ResourceType.OCPP_MESSAGES,
+            sorters: {
+              initial: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
+            },
+            filters: {
+              permanent: filters,
+            },
+            meta: {
+              gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
+              gqlVariables: { stationId },
+            },
+            queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
+          }}
+          rowClassName={(record) => getRowClassName(record)}
+          showHeader
+        >
+          {[
+            <Table.Column
+              id="correlationId"
+              key="correlationId"
+              accessorKey="correlationId"
+              header="Correlation ID"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
                   <div className="flex items-center gap-2">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <code className="text-xs bg-muted px-2 py-1 rounded">
-                            {record.correlationId?.substring(0, 12) || '-'}…
+                            {row.original.correlationId?.substring(0, 12) ||
+                              '-'}
+                            …
                           </code>
                         </TooltipTrigger>
-                        <TooltipContent>{record.correlationId}</TooltipContent>
+                        <TooltipContent>
+                          {row.original.correlationId}
+                        </TooltipContent>
                       </Tooltip>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -274,7 +278,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              findRelatedMessages(record);
+                              findRelatedMessages(row.original);
                             }}
                           >
                             <Link className={buttonIconSize} />
@@ -284,25 +288,54 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                </TableCell>
-                <TableCell className={smallColumnWidth}>
+                );
+              }}
+            />,
+            <Table.Column
+              id="action"
+              key="action"
+              accessorKey="action"
+              header="Action - Origin"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
                   <span>
-                    {record.action} - {record.origin}
+                    {row.original.action} - {row.original.origin}
                   </span>
-                </TableCell>
-                <TableCell className={smallColumnWidth}>
-                  {formatDate(record.timestamp, 'YYYY-MM-DD HH:mm:ss.SSS')}
-                </TableCell>
-                <TableCell className={bigColumnWidth}>
+                );
+              }}
+            />,
+            <Table.Column
+              id="timestamp"
+              key="timestamp"
+              accessorKey="timestamp"
+              header="Timestamp"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <span>
+                    {formatDate(
+                      row.original.timestamp,
+                      'YYYY-MM-DD HH:mm:ss.SSS',
+                    )}
+                  </span>
+                );
+              }}
+            />,
+            <Table.Column
+              id="message"
+              key="message"
+              accessorKey="message"
+              header="Content"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
                   <CollapsibleOCPPMessageViewer
-                    ocppMessage={record.message}
-                    unparsed={typeof record.message === 'string'}
+                    ocppMessage={row.original.message}
+                    unparsed={typeof row.original.message === 'string'}
                   />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </TableUi>
+                );
+              }}
+            />,
+          ]}
+        </Table>
       )}
     </div>
   );
