@@ -4,16 +4,13 @@
 'use client';
 
 import type { LocationDto } from '@citrineos/base';
-import {
-  AdvancedMarker,
-  InfoWindow,
-  useAdvancedMarkerRef,
-  useMap,
-} from '@vis.gl/react-google-maps';
+import { InfoWindow, useMap } from '@vis.gl/react-google-maps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MarkerClusterer, type Marker } from '@googlemaps/markerclusterer';
-import { LocationIcon } from '@lib/client/components/map/marker.icons';
 import { MapMarkerV2 } from '@lib/client/components/map/map.clusters.marker';
+import { clickableLinkStyle } from '@lib/client/styles/page';
+import { ChargingStationStatusTag } from '@lib/client/pages/charging-stations/charging.station.status.tag';
+import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 
 /**
  * Reference: https://github.com/visgl/react-google-maps/blob/main/examples/marker-clustering/src/clustered-tree-markers.tsx
@@ -85,10 +82,50 @@ export const ClusteredLocationMarkers = ({
 
       {selectedLocationId && (
         <InfoWindow
+          headerContent={
+            <span
+              className={`${clickableLinkStyle} text-lg`}
+              onClick={() =>
+                window.open(
+                  `/${MenuSection.LOCATIONS}/${selectedLocationId}`,
+                  '_blank',
+                )
+              }
+            >
+              {selectedLocation?.name}
+            </span>
+          }
+          className="min-w-30 max-h-50"
           anchor={markers[selectedLocationId]}
           onCloseClick={handleInfoWindowClose}
         >
-          {selectedLocation?.name}
+          <div className="flex flex-col gap-2">
+            {(selectedLocation?.chargingPool ?? []).map((charger) => (
+              <div className="border rounded-sm p-2 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`${clickableLinkStyle} text-base hover:text-secondary`}
+                    onClick={() =>
+                      window.open(
+                        `/${MenuSection.CHARGING_STATIONS}/${charger.id}`,
+                        '_blank',
+                      )
+                    }
+                  >
+                    {charger.id}
+                  </span>
+                  <span
+                    className={`${charger.isOnline ? 'text-success' : 'text-destructive'} text-xs`}
+                  >
+                    {charger.isOnline ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+                {charger.evses && charger.evses.length > 0 && (
+                  <ChargingStationStatusTag station={charger} />
+                )}
+              </div>
+            ))}
+          </div>
         </InfoWindow>
       )}
     </>

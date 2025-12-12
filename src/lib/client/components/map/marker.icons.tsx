@@ -88,9 +88,9 @@ export const ChargingStationIcon: React.FC<{
 
 export const ClusterIcon: React.FC<{
   count: number;
-  type: 'station' | 'location' | 'mixed';
+  type?: 'station' | 'location' | 'mixed';
   color?: string;
-}> = ({ count, type, color = '#3388ff' }) => {
+}> = ({ count, type = 'location', color = 'var(--color-primary)' }) => {
   const size = Math.min(60, Math.max(40, 30 + Math.log10(count) * 10));
 
   return (

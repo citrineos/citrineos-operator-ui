@@ -3,9 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
+import { APIProvider, ColorScheme, Map } from '@vis.gl/react-google-maps';
 import config from '@lib/utils/config';
-import { MarkerIconCircle } from '@lib/client/components/map/marker.icons';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -16,10 +15,16 @@ import { getGoogleMapsApiKeyAction } from '@lib/server/actions/map/getGoogleMaps
 import type { LocationDto } from '@citrineos/base';
 import { ClusteredLocationMarkers } from '@lib/client/components/map/map.clusters';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { useTheme } from 'next-themes';
+
+// The visual center of the contiguous USA.
+const defaultCenterUSA = { lat: 39.833333, lng: -98.583333 };
 
 export const LocationMapV2 = ({ locations }: { locations: LocationDto[] }) => {
   const dispatch = useDispatch();
   const apiKey = useSelector(getGoogleMapsApiKey);
+
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (apiKey === undefined) {
@@ -37,11 +42,12 @@ export const LocationMapV2 = ({ locations }: { locations: LocationDto[] }) => {
         <Map
           mapId={config.googleMapsOverviewMapId}
           defaultZoom={4}
-          defaultCenter={{ lat: 44.967243, lng: -103.771556 }}
+          defaultCenter={defaultCenterUSA}
           gestureHandling="cooperative"
           disableDefaultUI={false}
           zoomControl={true}
           fullscreenControl={false}
+          colorScheme={theme === 'dark' ? ColorScheme.DARK : ColorScheme.LIGHT}
         >
           <ClusteredLocationMarkers
             locations={locations.filter((location) => location.coordinates)}

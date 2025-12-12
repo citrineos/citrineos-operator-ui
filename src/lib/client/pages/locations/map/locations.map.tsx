@@ -4,7 +4,6 @@
 'use client';
 
 import type { LocationDto } from '@citrineos/base';
-import { LocationMap } from '@lib/client/components/map/map';
 import { Input } from '@lib/client/components/ui/input';
 import { LocationClass } from '@lib/cls/location.dto';
 import { LOCATIONS_LIST_QUERY } from '@lib/queries/locations';
@@ -12,6 +11,7 @@ import { ResourceType } from '@lib/utils/access.types';
 import { useList } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
 import React, { useMemo, useState } from 'react';
+import { LocationMapV2 } from '@lib/client/components/map/map.v2';
 
 export interface LocationsMapProps {
   mapOnly?: boolean;
@@ -88,19 +88,6 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     });
   }, [allLocations, filteredLocations, searchQuery]);
 
-  // Handle marker click
-  const handleMarkerClick = (
-    id: string,
-    type: 'station' | 'location' | 'mixed',
-  ) => {
-    console.debug(`Marker ${id} clicked, type: ${type}`);
-
-    if (type === 'location') {
-      // Navigate to location detail page when a location marker is clicked
-      window.location.href = `/locations/${id}`;
-    }
-  };
-
   return (
     <div className="size-full flex flex-col gap-4">
       {!mapOnly && (
@@ -111,14 +98,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
           className="max-w-md"
         />
       )}
-      <LocationMap
-        locations={locationsForMap}
-        defaultCenter={{ lat: 36.7783, lng: -119.4179 }}
-        zoom={5}
-        onMarkerClick={handleMarkerClick}
-        selectedMarkerId={selectedLocationId}
-        clusterByLocation={true}
-      />
+      <LocationMapV2 locations={locationsForMap} />
     </div>
   );
 };

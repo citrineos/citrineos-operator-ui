@@ -1,13 +1,13 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React, { useCallback } from 'react';
 import type { LocationDto } from '@citrineos/base';
 import type { Marker } from '@googlemaps/markerclusterer';
-import React, { useCallback } from 'react';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
-import {
-  LocationIcon,
-  MarkerIconCircle,
-} from '@lib/client/components/map/marker.icons';
+import { MarkerIconCircle } from '@lib/client/components/map/marker.icons';
 
 export const MapMarkerV2 = ({
   location,
