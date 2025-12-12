@@ -397,8 +397,13 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                             );
 
                             if (details.coordinates) {
-                              setLatitude(details.coordinates.lat);
-                              setLongitude(details.coordinates.lng);
+                              form.setValue(LocationProps.coordinates, {
+                                type: 'Point',
+                                coordinates: [
+                                  details.coordinates.lng,
+                                  details.coordinates.lat,
+                                ],
+                              });
                             }
                           }}
                         />
