@@ -8,7 +8,6 @@ import { InfoWindow, useMap } from '@vis.gl/react-google-maps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MarkerClusterer, type Marker } from '@googlemaps/markerclusterer';
 import { MapMarkerV2 } from '@lib/client/components/map/map.clusters.marker';
-import { clickableLinkStyle } from '@lib/client/styles/page';
 import { ChargingStationStatusTag } from '@lib/client/pages/charging-stations/charging.station.status.tag';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 
@@ -84,7 +83,7 @@ export const ClusteredLocationMarkers = ({
         <InfoWindow
           headerContent={
             <span
-              className={`${clickableLinkStyle} text-lg`}
+              className={`cursor-pointer font-semibold underline text-black hover:text-gray-500 text-lg`}
               onClick={() =>
                 window.open(
                   `/${MenuSection.LOCATIONS}/${selectedLocationId}`,
@@ -100,31 +99,39 @@ export const ClusteredLocationMarkers = ({
           onCloseClick={handleInfoWindowClose}
         >
           <div className="flex flex-col gap-2">
-            {(selectedLocation?.chargingPool ?? []).map((charger) => (
-              <div className="border rounded-sm p-2 flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`${clickableLinkStyle} text-base hover:text-secondary`}
-                    onClick={() =>
-                      window.open(
-                        `/${MenuSection.CHARGING_STATIONS}/${charger.id}`,
-                        '_blank',
-                      )
-                    }
-                  >
-                    {charger.id}
-                  </span>
-                  <span
-                    className={`${charger.isOnline ? 'text-success' : 'text-destructive'} text-xs`}
-                  >
-                    {charger.isOnline ? 'Online' : 'Offline'}
-                  </span>
+            {selectedLocation?.chargingPool &&
+            selectedLocation?.chargingPool.length > 0 ? (
+              selectedLocation?.chargingPool.map((charger) => (
+                <div
+                  key={charger.id}
+                  className="border rounded-sm p-2 flex flex-col gap-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`cursor-pointer font-semibold underline text-base text-black hover:text-gray-500`}
+                      onClick={() =>
+                        window.open(
+                          `/${MenuSection.CHARGING_STATIONS}/${charger.id}`,
+                          '_blank',
+                        )
+                      }
+                    >
+                      {charger.id}
+                    </span>
+                    <span
+                      className={`${charger.isOnline ? 'text-success' : 'text-destructive'} text-xs`}
+                    >
+                      {charger.isOnline ? 'Online' : 'Offline'}
+                    </span>
+                  </div>
+                  {charger.evses && charger.evses.length > 0 && (
+                    <ChargingStationStatusTag station={charger} />
+                  )}
                 </div>
-                {charger.evses && charger.evses.length > 0 && (
-                  <ChargingStationStatusTag station={charger} />
-                )}
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="text-black">No chargers.</div>
+            )}
           </div>
         </InfoWindow>
       )}
