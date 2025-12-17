@@ -109,7 +109,7 @@
   "overrides": {
     "@tanstack/react-query": "^5.90.5",
     "zod": "^4.1.12",
-    "react-is": "^19.1.2"
+    "react-is": "^19.1.4"
   },
   "refine": {
     "projectId": "EoX1xN-qak0Xy-elp4R9"
