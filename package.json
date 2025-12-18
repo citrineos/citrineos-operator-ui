@@ -26,6 +26,7 @@
     "@aws-sdk/s3-request-presigner": "^3.930.0",
     "@citrineos/base": "~1.8.1",
     "@ferdiunal/refine-shadcn": "^1.6.1",
+    "@google-cloud/storage": "7.18.0",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@hookform/resolvers": "^5.2.2",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.57.0",
@@ -112,5 +113,8 @@
   },
   "refine": {
     "projectId": "EoX1xN-qak0Xy-elp4R9"
-  }
+  },
+  "workspaces": [
+    "../citrineos-core/00_Base"
+  ]
 }
