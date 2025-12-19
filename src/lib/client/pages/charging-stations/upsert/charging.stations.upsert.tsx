@@ -5,15 +5,13 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  type ChargingStationCapabilityEnumType,
-  type ChargingStationParkingRestrictionEnumType,
-  type LocationDto,
-} from '@citrineos/base';
-import {
   ChargingStationCapabilityEnum,
+  type ChargingStationCapabilityEnumType,
   ChargingStationParkingRestrictionEnum,
+  type ChargingStationParkingRestrictionEnumType,
   ChargingStationProps,
   ChargingStationSchema,
+  type LocationDto,
   LocationProps,
 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,8 +35,12 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { type CrudFilter, useNotification } from '@refinedev/core';
-import { CanAccess, useSelect } from '@refinedev/core';
+import {
+  CanAccess,
+  type CrudFilter,
+  useNotification,
+  useSelect,
+} from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import { debounce } from 'lodash';
 import { ChevronLeft, UploadIcon } from 'lucide-react';
@@ -92,7 +94,7 @@ export const ChargingStationUpsert = ({
 }: ChargingStationUpsertProps) => {
   const { id: stationId } = params || {};
   const searchParams = useSearchParams();
-  const locationId = searchParams.get('locationId');
+  const locationId = searchParams?.get('locationId');
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
