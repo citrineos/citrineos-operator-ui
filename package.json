@@ -113,8 +113,5 @@
   },
   "refine": {
     "projectId": "EoX1xN-qak0Xy-elp4R9"
-  },
-  "workspaces": [
-    "../citrineos-core/00_Base"
-  ]
+  }
 }
