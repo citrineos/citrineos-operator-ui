@@ -2,22 +2,24 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import config from '@lib/utils/config';
 import {
   fetchFileCloudStorage,
   generatePresignedGetUrlIfExistsCloudStorage,
   generatePresignedPutUrlCloudStorage,
 } from './cloudstorage';
-import { fetchFileS3, generatePresignedGetUrlIfExistsS3, generatePresignedPutUrlS3 } from './s3';
+import {
+  fetchFileS3,
+  generatePresignedGetUrlIfExistsS3,
+  generatePresignedPutUrlS3,
+} from './s3';
+import { isGcp } from '@lib/server/clients/file/isGcp';
 
-export const useGcp = config.fileStorageType?.toLowerCase() === 'gcp';
-
-export const generatePresignedPutUrl = useGcp
+export const generatePresignedPutUrl = isGcp
   ? generatePresignedPutUrlCloudStorage
   : generatePresignedPutUrlS3;
 
-export const generatePresignedGetUrlIfExists = useGcp
+export const generatePresignedGetUrlIfExists = isGcp
   ? generatePresignedGetUrlIfExistsCloudStorage
   : generatePresignedGetUrlIfExistsS3;
 
-export const fetchFile = useGcp ? fetchFileCloudStorage : fetchFileS3;
+export const fetchFile = isGcp ? fetchFileCloudStorage : fetchFileS3;
