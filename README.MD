@@ -30,7 +30,7 @@ The Core Message and Data APIs are used for charging station commands.
 In order to build with a local version of citrineos-core, say a release candidate branch, you will need to use `npm link`
 
 1. In the citrineos-core root, after a successful build of your local code, `cd 00_Base && npm link`
-1. In the citrineos-operator-ui root, `npm link @citrineos/base/@X.X.X` where X.X.X is the local version you successfully built
+1. In the citrineos-operator-ui root, `npm link @citrineos/base@X.X.X` where X.X.X is the local version you successfully built
 
 Note: `npm run fresh` or `npm run fi` deletes this link.
 
