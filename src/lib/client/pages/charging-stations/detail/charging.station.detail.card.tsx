@@ -11,46 +11,29 @@ import ProtocolTag from '@lib/client/components/protocol-tag';
 import { formatDate } from '@lib/client/components/timestamp-display';
 import { Button } from '@lib/client/components/ui/button';
 import { ChargingStationStatusTag } from '@lib/client/pages/charging-stations/charging.station.status.tag';
-import {
-  ChargingStationClass,
-  type ChargingStationDetailsDto,
-} from '@lib/cls/charging.station.dto';
+import { ChargingStationClass, type ChargingStationDetailsDto } from '@lib/cls/charging.station.dto';
 import { OCPPMessageClass } from '@lib/cls/ocpp.message.dto';
 import type { TransactionClass } from '@lib/cls/transaction.dto';
-import {
-  CHARGING_STATIONS_DELETE_MUTATION,
-  CHARGING_STATIONS_GET_QUERY,
-} from '@lib/queries/charging.stations';
+import { CHARGING_STATIONS_DELETE_MUTATION, CHARGING_STATIONS_GET_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { openModal } from '@lib/utils/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, Link, useDelete, useList, useOne } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
-import {
-  ChevronLeft,
-  ChevronLeftIcon,
-  Edit,
-  Info,
-  MoreHorizontal,
-  Trash2,
-} from 'lucide-react';
+import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
-import {
-  badgeListStyle,
-  clickableLinkStyle,
-  heading2Style,
-  pageFlex,
-} from '@lib/client/styles/page';
+import { badgeListStyle, clickableLinkStyle, heading2Style } from '@lib/client/styles/page';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { Badge } from '@lib/client/components/ui/badge';
 import Image from 'next/image';
+import { useGcp } from '@lib/server/clients/file/fileAccess';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -378,6 +361,7 @@ export const ChargingStationDetailCard = ({
             <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md">
               <Image
                 src={imageUrl}
+                unoptimized={useGcp}
                 alt={`${station.id} image`}
                 className="w-full h-full object-contain rounded-md bg-gray-100"
                 onError={(e) => {

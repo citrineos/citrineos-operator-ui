@@ -10,7 +10,7 @@ import {
 } from './cloudstorage';
 import { fetchFileS3, generatePresignedGetUrlIfExistsS3, generatePresignedPutUrlS3 } from './s3';
 
-const useGcp = config.fileStorageType?.toLowerCase() === 'gcp';
+export const useGcp = config.fileStorageType?.toLowerCase() === 'gcp';
 
 export const generatePresignedPutUrl = useGcp
   ? generatePresignedPutUrlCloudStorage
