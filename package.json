@@ -7,7 +7,7 @@
   },
   "scripts": {
     "clean-tsbuildinfo": "find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -exec rm -f {} +",
-    "clean-dist": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} +",
+    "clean-dist": "find . -type d -name .next -not -path '*/node_modules/*' -exec rm -rf {} +",
     "clean-cache": "npm cache clean --force",
     "clean": "npm run clean-dist && npm run clean-tsbuildinfo && npm run clean-cache",
     "remove-dependencies": "rm -rf package-lock.json **/package-lock.json **/**/package-lock.json node_modules **/node_modules **/**/node_modules",
