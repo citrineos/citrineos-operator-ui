@@ -368,10 +368,11 @@ export const ChargingStationDetailCard = ({
 
           {/* Right: Image */}
           {imageUrl && (
-            <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md">
+            <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md relative">
               <Image
                 src={imageUrl}
                 unoptimized={isGcp}
+                fill={isGcp}
                 alt={`${station.id} image`}
                 className="w-full h-full object-contain rounded-md bg-gray-100"
                 onError={(e) => {
