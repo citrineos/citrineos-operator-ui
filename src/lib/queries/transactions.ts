@@ -27,6 +27,8 @@ export const TRANSACTION_LIST_QUERY = gql`
       evseId
       remoteStartId
       totalKwh
+      startTime
+      endTime
       createdAt
       updatedAt
       location: Location {
@@ -122,16 +124,18 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       evseId
       remoteStartId
       totalKwh
+      startTime
+      endTime
       createdAt
       updatedAt
-      ChargingStation {
+      chargingStation: ChargingStation {
         id
         isOnline
         protocol
         locationId
         createdAt
         updatedAt
-        Location {
+        location: Location {
           id
           name
           address
@@ -187,6 +191,8 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       evseId
       remoteStartId
       totalKwh
+      startTime
+      endTime
       createdAt
       updatedAt
       TransactionEvents(where: { eventType: { _eq: "Started" } }) {
@@ -257,6 +263,8 @@ export const TRANSACTION_GET_QUERY = gql`
       remoteStartId
       authorizationId
       totalKwh
+      startTime
+      endTime
       createdAt
       updatedAt
       location: Location {
