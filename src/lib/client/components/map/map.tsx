@@ -24,10 +24,16 @@ import {
   useMap,
 } from '@vis.gl/react-google-maps';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getGoogleMapsApiKey,
+  setGoogleMapsApiKey,
+} from '@lib/utils/maps.slice';
+import { getGoogleMapsApiKeyAction } from '@lib/server/actions/map/getGoogleMapsApiKeyAction';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
 
-const apiKey = config.googleMapsApiKey;
-
-const singleElementZoom = 12;
+// https://visgl.github.io/react-google-maps/docs/api-reference/components/map#camera-control
+const zoomMax = 5;
 
 /**
  * Main map component that supports marker clustering
@@ -40,28 +46,41 @@ export const LocationMap: React.FC<MapProps> = ({
   selectedMarkerId,
   clusterByLocation = true,
 }) => {
+  const dispatch = useDispatch();
+  const apiKey = useSelector(getGoogleMapsApiKey);
+
+  useEffect(() => {
+    if (apiKey === undefined) {
+      getGoogleMapsApiKeyAction().then((key) =>
+        dispatch(setGoogleMapsApiKey(key)),
+      );
+    }
+  }, []);
+
   // Create station markers from location data
   const stationMarkers: MapMarkerData[] = useMemo(() => {
-    return locations.flatMap((location) => {
-      return (location.chargingPool || []).map((station) => {
-        const coordinates = station.coordinates || location.coordinates;
-        const position = {
-          lat: coordinates?.coordinates[1] || 0,
-          lng: coordinates?.coordinates[0] || 0,
-        };
+    return locations
+      .filter((location) => location.coordinates)
+      .flatMap((location) => {
+        return (location.chargingPool || []).map((station) => {
+          const coordinates = station.coordinates || location.coordinates;
+          const position = {
+            lat: coordinates?.coordinates[1] || 0,
+            lng: coordinates?.coordinates[0] || 0,
+          };
 
-        return {
-          position,
-          identifier: station.id,
-          type: 'station' as const,
-          locationId: location.id!.toString(),
-          status: station.isOnline ? 'online' : ('offline' as const),
-          color: station.isOnline
-            ? 'var(--primary-color-1)'
-            : 'var(--secondary-color-2)',
-        } as MapMarkerData;
+          return {
+            position,
+            identifier: station.id,
+            type: 'station' as const,
+            locationId: location.id!.toString(),
+            status: station.isOnline ? 'online' : ('offline' as const),
+            color: station.isOnline
+              ? 'var(--primary-color-1)'
+              : 'var(--secondary-color-2)',
+          } as MapMarkerData;
+        });
       });
-    });
   }, [locations]);
 
   // Create location markers
@@ -102,21 +121,21 @@ export const LocationMap: React.FC<MapProps> = ({
     return [...stationMarkers, ...locationMarkers];
   }, [stationMarkers, locationMarkers, defaultCenter]);
 
-  return (
+  return apiKey === undefined ? (
+    <Skeleton className="size-full" />
+  ) : (
     <CanAccess resource={ResourceType.LOCATIONS} action={ActionType.LIST}>
-      <div className="map-wrapper">
-        <APIProvider apiKey={apiKey}>
-          <MapWithClustering
-            locations={locations}
-            markers={allMarkers}
-            defaultCenter={defaultCenter}
-            zoom={zoom}
-            onMarkerClick={onMarkerClick}
-            selectedMarkerId={selectedMarkerId}
-            clusterByLocation={clusterByLocation}
-          />
-        </APIProvider>
-      </div>
+      <APIProvider apiKey={apiKey}>
+        <MapWithClustering
+          locations={locations}
+          markers={allMarkers}
+          defaultCenter={defaultCenter}
+          zoom={zoom}
+          onMarkerClick={onMarkerClick}
+          selectedMarkerId={selectedMarkerId}
+          clusterByLocation={clusterByLocation}
+        />
+      </APIProvider>
     </CanAccess>
   );
 };
@@ -134,7 +153,7 @@ const MapWithClustering: React.FC<{
   markers,
   locations = [],
   defaultCenter,
-  zoom: initialZoom,
+  zoom: initialZoom = zoomMax,
   onMarkerClick,
   selectedMarkerId,
   clusterByLocation = true,
@@ -145,7 +164,7 @@ const MapWithClustering: React.FC<{
   const [visibleElements, setVisibleElements] = useState<
     (ClusterInfo | MapMarkerData)[]
   >([]);
-  const [zoom, setZoom] = useState(initialZoom || singleElementZoom);
+  const [zoom, setZoom] = useState(initialZoom);
   const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
   const map = useMap();
 
@@ -168,7 +187,7 @@ const MapWithClustering: React.FC<{
     );
 
     // Set up clustering based on zoom level and location grouping preference
-    if (zoom <= singleElementZoom && clusterByLocation) {
+    if (zoom <= zoomMax && clusterByLocation) {
       // High-level clustering - create clusters of locations
       const clusters = createLocationClusters(
         visibleMarkers,
@@ -233,8 +252,8 @@ const MapWithClustering: React.FC<{
         map.panTo(selectedMarker.position);
 
         // Zoom in a bit if we're zoomed out too far
-        if (zoom < singleElementZoom) {
-          map.setZoom(singleElementZoom);
+        if (zoom < zoomMax) {
+          map.setZoom(zoomMax);
         }
       }
     }

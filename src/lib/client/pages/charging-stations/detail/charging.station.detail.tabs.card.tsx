@@ -117,7 +117,7 @@ export const ChargingStationDetailTabsCard = ({
               <Table
                 refineCoreProps={{
                   resource: ResourceType.TRANSACTIONS,
-                  sorters: { permanent: DEFAULT_SORTERS },
+                  sorters: DEFAULT_SORTERS,
                   meta: {
                     gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
                     gqlVariables: { stationId },

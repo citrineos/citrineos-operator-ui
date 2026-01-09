@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
 //
 // SPDX-License-Identifier: Apache-2.0
+'use client';
 
 import type { OCPPMessageDto } from '@citrineos/base';
 import {
@@ -34,15 +35,17 @@ import { Dayjs } from 'dayjs';
 import { Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { buttonIconSize } from '@lib/client/styles/icon';
+import { formatDate } from '@lib/client/components/timestamp-display';
+import { Table } from '@lib/client/components/table';
+import type { CellContext } from '@tanstack/react-table';
 
 export interface OCPPMessagesProps {
   stationId: string;
 }
 
 export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
-  const [highlightedCorrelationId, setHighlightedCorrelationId] = useState<
-    string | null
-  >(null);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [searchCid, setSearchCid] = useState<string>('');
@@ -149,18 +152,16 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   const findRelatedMessages = useCallback(
     (record: OCPPMessageDto) => {
-      setHighlightedCorrelationId(record.correlationId || null);
       // Find and select the row with the same correlationId but different origin
-      const relatedMessage = messages.find(
+      const relatedMessageIndex = messages.findIndex(
         (msg) =>
           msg.correlationId === record.correlationId &&
           msg.origin !== record.origin,
       );
-      if (relatedMessage) {
-        setHighlightedCorrelationId(relatedMessage.correlationId || null);
+      if (relatedMessageIndex !== -1) {
         // Scroll to the related message
         const element = document.getElementById(
-          `ocpp-row-${relatedMessage.id}`,
+          `table-row-${relatedMessageIndex}`,
         );
         if (element)
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -227,86 +228,115 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         </Button>
       </div>
 
-      <div className="w-full overflow-x-auto border rounded-lg">
-        <table className="w-full border-collapse">
-          <thead className="bg-muted">
-            <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium whitespace-nowrap">
-                Correlation ID
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium whitespace-nowrap">
-                Action-Origin
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium">
-                Content
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="px-4 py-8 text-center text-muted-foreground"
-                >
-                  Loading...
-                </td>
-              </tr>
-            ) : filteredData.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="px-4 py-8 text-center text-muted-foreground"
-                >
-                  No messages
-                </td>
-              </tr>
-            ) : (
-              filteredData.map((record) => (
-                <tr
-                  key={record.id}
-                  id={`ocpp-row-${record.id}`}
-                  className={`border-t ${getRowClassName(record)}`}
-                >
-                  <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <code className="text-xs bg-muted px-2 py-1 rounded">
-                        {record.correlationId?.substring(0, 8) || '-'}…
-                      </code>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                findRelatedMessages(record);
-                              }}
-                            >
-                              <Link className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Find related message</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-sm">
-                    {record.action}-{record.origin}
-                  </td>
-                  <td className="px-4 py-2">
-                    <CollapsibleOCPPMessageViewer
-                      ocppMessage={record.message}
-                      unparsed={typeof record.message === 'string'}
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {isLoading && <Skeleton className="w-full h-50" />}
+      {!isLoading && filteredData.length === 0 && <div>No messages.</div>}
+      {!isLoading && filteredData.length > 0 && (
+        <Table<OCPPMessageDto>
+          refineCoreProps={{
+            resource: ResourceType.OCPP_MESSAGES,
+            sorters: {
+              initial: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
+            },
+            filters: {
+              permanent: filters,
+            },
+            meta: {
+              gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
+              gqlVariables: { stationId },
+            },
+            queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
+          }}
+          rowClassName={(record) => getRowClassName(record)}
+          showHeader
+        >
+          {[
+            <Table.Column
+              id="correlationId"
+              key="correlationId"
+              accessorKey="correlationId"
+              header="Correlation ID"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <div className="flex items-center gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <code className="text-xs bg-muted px-2 py-1 rounded">
+                            {row.original.correlationId?.substring(0, 12) ||
+                              '-'}
+                            …
+                          </code>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {row.original.correlationId}
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              findRelatedMessages(row.original);
+                            }}
+                          >
+                            <Link className={buttonIconSize} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Find related message</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                );
+              }}
+            />,
+            <Table.Column
+              id="action"
+              key="action"
+              accessorKey="action"
+              header="Action - Origin"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <span>
+                    {row.original.action} - {row.original.origin}
+                  </span>
+                );
+              }}
+            />,
+            <Table.Column
+              id="timestamp"
+              key="timestamp"
+              accessorKey="timestamp"
+              header="Timestamp"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <span>
+                    {formatDate(
+                      row.original.timestamp,
+                      'YYYY-MM-DD HH:mm:ss.SSS',
+                    )}
+                  </span>
+                );
+              }}
+            />,
+            <Table.Column
+              id="message"
+              key="message"
+              accessorKey="message"
+              header="Content"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <CollapsibleOCPPMessageViewer
+                    ocppMessage={row.original.message}
+                    unparsed={typeof row.original.message === 'string'}
+                  />
+                );
+              }}
+            />,
+          ]}
+        </Table>
+      )}
     </div>
   );
 };

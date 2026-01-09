@@ -69,7 +69,7 @@ export const AddressAutocomplete: React.FC<Props> = ({
 
   useEffect(() => {
     fetchPredictions(value);
-  }, [value, fetchPredictions]);
+  }, [value]);
 
   // Handle clicks outside to close dropdown
   useEffect(() => {

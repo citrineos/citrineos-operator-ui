@@ -303,6 +303,7 @@ export function Table<
                   <TableRow
                     data-state={row.getIsSelected() && 'selected'}
                     className={getRowClassNames(row.original, index)}
+                    id={`table-row-${index}`}
                   >
                     {row.getVisibleCells().map((cell: any) => (
                       <TableCell key={cell.id} className="text-nowrap">

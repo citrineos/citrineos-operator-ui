@@ -8,6 +8,7 @@ import { Button } from '@lib/client/components/ui/button';
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { buttonIconSize } from '@lib/client/styles/icon';
 
 export const CollapsibleOCPPMessageViewer: React.FC<{
   ocppMessage: any;
@@ -69,15 +70,14 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
 
       {isExpandable && (
         <Button
-          variant="ghost"
           size="sm"
           onClick={() => setExpanded(!expanded)}
-          className="absolute top-0 right-0 p-1"
+          className="absolute top-1 right-1 p-1"
         >
           {expanded ? (
-            <Minus className="h-4 w-4" />
+            <Minus className={buttonIconSize} />
           ) : (
-            <Plus className="h-4 w-4" />
+            <Plus className={buttonIconSize} />
           )}
         </Button>
       )}
