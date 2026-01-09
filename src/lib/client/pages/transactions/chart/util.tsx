@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import { type ImplicitLabelType } from 'recharts/types/component/Label';
+
 export type ChartData = {
   elapsedTime: number;
   [unit: string]: number | string;
@@ -50,3 +52,19 @@ export const formatTimeLabel = (seconds: number) => {
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   }
 };
+
+export const chartSize = 'min-w-[50px] min-h-[100px]';
+export const chartMargin = { bottom: 25 };
+export const elapsedTimeAxisLabel = 'Time Elapsed';
+
+export const xAxisLabelConfig: ImplicitLabelType = {
+  value: elapsedTimeAxisLabel,
+  position: 'insideBottom',
+  offset: -20,
+};
+export const getYAxisLabelConfig = (label: string): ImplicitLabelType => ({
+  value: label,
+  angle: -90,
+  position: 'insideLeft',
+  style: { textAnchor: 'middle' },
+});

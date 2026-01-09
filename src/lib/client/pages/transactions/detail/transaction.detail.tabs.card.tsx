@@ -121,12 +121,16 @@ export const TransactionDetailTabsCard = ({
               }}
             >
               <div className={pageFlex}>
-                <MultiSelect<OCPP2_0_1.ReadingContextEnumType>
-                  options={Object.values(OCPP2_0_1.ReadingContextEnumType)}
-                  selectedValues={validContexts}
-                  setSelectedValues={setValidContexts}
-                  placeholder="Select reading contexts"
-                />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold">Contexts:</label>
+                  <MultiSelect<OCPP2_0_1.ReadingContextEnumType>
+                    options={Object.values(OCPP2_0_1.ReadingContextEnumType)}
+                    selectedValues={validContexts}
+                    setSelectedValues={setValidContexts}
+                    placeholder="Select reading contexts"
+                    searchPlaceholder="Search reading contexts"
+                  />
+                </div>
 
                 <ChartsWrapper
                   meterValues={meterValues}
