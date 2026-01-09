@@ -27,7 +27,7 @@ export const getTimestampToMeasurandArray = (
 ): [number, string][] => {
   if (sortedMeterValues.length === 0) return [];
 
-  const baseTime = sortedMeterValues[0].timestamp;
+  const baseTime = new Date(sortedMeterValues[0].timestamp).getTime();
   const result: [number, string][] = [];
 
   for (const meterValue of sortedMeterValues) {
@@ -44,8 +44,7 @@ export const getTimestampToMeasurandArray = (
         measurand,
       );
       if (overallValue) {
-        const timestampEpoch = meterValue.timestamp;
-        // @ts-expect-error timestamp is moment object
+        const timestampEpoch = new Date(meterValue.timestamp).getTime();
         const elapsedTime = (timestampEpoch - baseTime) / 1000;
         if (elapsedTime > TWO_HOURS) {
           // skip weird data // todo is needed?
