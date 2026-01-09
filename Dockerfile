@@ -1,4 +1,4 @@
-FROM node:24-alpine AS base
+FROM node:24.4.1-alpine AS base
 
 FROM base AS deps
 
@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package.json package-lock.json* .npmrc* ./
 
 RUN \
-  if [ -f package-lock.json ]; then npm ci; \
+  if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
