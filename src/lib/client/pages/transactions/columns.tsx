@@ -20,6 +20,10 @@ import { clickableLinkStyle } from '@lib/client/styles/page';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import type { CrudFilters } from '@refinedev/core';
 
+export const transactionStationIdField = 'stationId';
+export const transactionChargingStationLocationNameField =
+  'ChargingStation.Location.name';
+
 /**
  * Get column definitions for transactions table
  * @returns React.ReactNode with Table.Column definitions
@@ -64,9 +68,9 @@ export const getTransactionColumns = (push: RouterPush) => {
       }
     />,
     <Table.Column
-      id="chargingStation"
-      key="chargingStation"
-      accessorKey="chargingStation.id"
+      id={transactionStationIdField}
+      key={transactionStationIdField}
+      accessorKey={transactionStationIdField}
       header="Station ID"
       enableSorting
       cell={({ row }) => {
@@ -88,9 +92,9 @@ export const getTransactionColumns = (push: RouterPush) => {
       }}
     />,
     <Table.Column
-      id="location"
-      key="location"
-      accessorKey="location.name"
+      id={transactionChargingStationLocationNameField}
+      key={transactionChargingStationLocationNameField}
+      accessorKey={transactionChargingStationLocationNameField}
       header="Location"
       enableSorting
       cell={({ row }) => {
@@ -98,7 +102,7 @@ export const getTransactionColumns = (push: RouterPush) => {
           <div
             className={clickableLinkStyle}
             onClick={(event: React.MouseEvent) => {
-              const path = `/${MenuSection.LOCATIONS}/${row.original.location?.id}`;
+              const path = `/${MenuSection.LOCATIONS}/${row.original.chargingStation?.location?.id}`;
               if (event.ctrlKey || event.metaKey) {
                 window.open(path, '_blank');
               } else {
@@ -106,7 +110,7 @@ export const getTransactionColumns = (push: RouterPush) => {
               }
             }}
           >
-            {row.original.location?.name}
+            {row.original.chargingStation?.location?.name}
           </div>
         );
       }}

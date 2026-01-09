@@ -28,7 +28,11 @@ import { AggregatedMeterValuesData } from '@lib/client/pages/charging-stations/d
 import React, { useMemo } from 'react';
 import ChargingStationConfiguration from '@lib/client/pages/charging-stations/detail/charging.station.configuration';
 import { useRouter } from 'next/navigation';
-import { getTransactionColumns } from '@lib/client/pages/transactions/columns';
+import {
+  getTransactionColumns,
+  transactionChargingStationLocationNameField,
+  transactionStationIdField,
+} from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
 
 export const ChargingStationDetailTabsCard = ({
@@ -38,7 +42,15 @@ export const ChargingStationDetailTabsCard = ({
 }) => {
   const { push } = useRouter();
 
-  const transactionColumns = useMemo(() => getTransactionColumns(push), [push]);
+  const transactionColumns = useMemo(
+    () =>
+      getTransactionColumns(push).filter(
+        (tc) =>
+          tc.key !== transactionStationIdField &&
+          tc.key !== transactionChargingStationLocationNameField,
+      ),
+    [push],
+  );
 
   return (
     <Card>

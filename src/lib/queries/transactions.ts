@@ -197,13 +197,13 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       StartTransaction {
         idTokenDatabaseId
       }
-      ChargingStation {
+      chargingStation: ChargingStation {
         id
         isOnline
         locationId
         createdAt
         updatedAt
-        Location {
+        location: Location {
           id
           name
           address
