@@ -20,16 +20,15 @@ export async function autocompleteAddress(
 
   const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?${params.toString()}`;
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch autocomplete suggestions');
-    }
-
-    const data = await response.json();
-    return data.predictions;
-  } catch (err: any) {
-    console.error('Google Maps Autocomplete error:', err);
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.error(
+      'Failed to fetch autocomplete suggestions due to error:',
+      JSON.stringify(response.body),
+    );
     throw new Error('Failed to fetch autocomplete suggestions');
   }
+
+  const data = await response.json();
+  return data.predictions;
 }

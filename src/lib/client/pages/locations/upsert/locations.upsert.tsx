@@ -11,7 +11,6 @@ import {
   type LocationParkingEnumType,
   LocationProps,
   LocationSchema,
-  PointSchema,
 } from '@citrineos/base';
 import { LocationFacilityEnum, LocationParkingEnum } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
@@ -75,11 +74,11 @@ const LocationCreateSchema = LocationSchema.pick({
   [LocationProps.state]: true,
   [LocationProps.country]: true,
   [LocationProps.timeZone]: true,
+  [LocationProps.coordinates]: true,
   [LocationProps.parkingType]: true,
   [LocationProps.facilities]: true,
   [LocationProps.chargingPool]: true,
 }).extend({
-  [LocationProps.coordinates]: PointSchema.optional(),
   [LocationProps.chargingPool]: z
     .array(
       ChargingStationSchema.pick({
@@ -99,7 +98,10 @@ const defaultLocation = {
   [LocationProps.postalCode]: '',
   [LocationProps.state]: '',
   [LocationProps.country]: Country.USA,
-  [LocationProps.coordinates]: undefined,
+  [LocationProps.coordinates]: {
+    type: 'Point' as const,
+    coordinates: [defaultLongitude, defaultLatitude],
+  },
   [LocationProps.timeZone]: 'UTC',
   [LocationProps.parkingType]: undefined,
   [LocationProps.facilities]: [] as LocationFacilityEnumType[],
@@ -127,10 +129,6 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   const { open } = useNotification();
 
   const originalStationIdsRef = useRef<string[] | undefined>(undefined);
-  const [latitude, setLatitude] = useState<number | undefined>(defaultLatitude);
-  const [longitude, setLongitude] = useState<number | undefined>(
-    defaultLongitude,
-  );
   const [geoPoint, setGeoPoint] = useState<GeoPoint | undefined>(
     new GeoPoint(defaultLatitude, defaultLongitude),
   );
@@ -181,20 +179,12 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   }, [currentChargingPool]);
 
   useEffect(() => {
-    if (latitude && longitude) {
-      setGeoPoint(new GeoPoint(latitude, longitude));
-    } else {
-      setGeoPoint(undefined);
-    }
-  }, [latitude, longitude]);
-
-  useEffect(() => {
     if (coordinates && coordinates.coordinates) {
-      setLatitude(coordinates.coordinates[1]);
-      setLongitude(coordinates.coordinates[0]);
+      setGeoPoint(
+        new GeoPoint(coordinates.coordinates[1], coordinates.coordinates[0]),
+      );
     } else {
-      setLatitude(defaultLatitude);
-      setLongitude(defaultLongitude);
+      setGeoPoint(new GeoPoint(defaultLatitude, defaultLongitude));
     }
   }, [coordinates]);
 
@@ -272,13 +262,6 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
 
     newItem.updatedAt = now;
 
-    if (latitude && longitude) {
-      newItem.coordinates = {
-        type: 'Point',
-        coordinates: [longitude, latitude],
-      };
-    }
-
     // Remove chargingPool before sending to Hasura
     // Will be handled after successful response
     const { chargingPool, ...finalLocation } = newItem;
@@ -311,8 +294,10 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   };
 
   const handleMapClick = (point: GeoPoint) => {
-    setLatitude(point.latitude);
-    setLongitude(point.longitude);
+    form.setValue(LocationProps.coordinates, {
+      type: 'Point',
+      coordinates: [point.longitude, point.latitude],
+    });
   };
 
   return (
@@ -397,8 +382,13 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                             );
 
                             if (details.coordinates) {
-                              setLatitude(details.coordinates.lat);
-                              setLongitude(details.coordinates.lng);
+                              form.setValue(LocationProps.coordinates, {
+                                type: 'Point',
+                                coordinates: [
+                                  details.coordinates.lng,
+                                  details.coordinates.lat,
+                                ],
+                              });
                             }
                           }}
                         />
@@ -457,7 +447,6 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                     placeholder="Select Country"
                     required
                   />
-                  {/* Latitude is not a form field, but is required to create Coordinates, so it's not in a Controller. */}
                   <Field>
                     <FieldLabel
                       htmlFor="latitude"
@@ -468,17 +457,21 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                     </FieldLabel>
                     <Input
                       id="latitude"
-                      value={latitude}
-                      onChange={(e) =>
-                        setLatitude(
-                          e.target.value ? Number(e.target.value) : undefined,
-                        )
-                      }
+                      value={coordinates?.coordinates[1] || ''}
+                      onChange={(e) => {
+                        const lat = parseFloat(e.target.value);
+                        const lng = coordinates?.coordinates[0] ?? 0;
+
+                        if (!isNaN(lat) && !isNaN(lng))
+                          form.setValue(LocationProps.coordinates, {
+                            type: 'Point',
+                            coordinates: [lng, lat],
+                          });
+                      }}
                       type="number"
                       placeholder="Click map or enter manually"
                     />
                   </Field>
-                  {/* Longitude is not a form field, but is required to create Coordinates, so it's not in a Controller. */}
                   <Field>
                     <FieldLabel
                       htmlFor="longitude"
@@ -489,12 +482,17 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                     </FieldLabel>
                     <Input
                       id="longitude"
-                      value={longitude}
-                      onChange={(e) =>
-                        setLongitude(
-                          e.target.value ? Number(e.target.value) : undefined,
-                        )
-                      }
+                      value={coordinates?.coordinates[0] || ''}
+                      onChange={(e) => {
+                        const lat = coordinates?.coordinates[1] ?? 0;
+                        const lng = parseFloat(e.target.value);
+
+                        if (!isNaN(lat) && !isNaN(lng))
+                          form.setValue(LocationProps.coordinates, {
+                            type: 'Point',
+                            coordinates: [lng, lat],
+                          });
+                      }}
                       type="number"
                       placeholder="Click map or enter manually"
                     />

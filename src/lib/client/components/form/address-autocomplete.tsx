@@ -48,23 +48,19 @@ export const AddressAutocomplete: React.FC<Props> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Autocomplete address and fetch details
-  const fetchPredictions = debounce(async (input: string) => {
+  const fetchPredictions = debounce((input: string) => {
     if (!input) {
       setPredictions([]);
       return;
     }
     setLoading(true);
-    try {
-      autocompleteAddress(input, countryCodes[country])
-        .then((data) => setPredictions(data))
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
-    } catch (err) {
-      console.error(err);
-      setPredictions([]);
-    } finally {
-      setLoading(false);
-    }
+    autocompleteAddress(input, countryCodes[country])
+      .then((data) => setPredictions(data))
+      .catch((err) => {
+        console.log(err);
+        setPredictions([]);
+      })
+      .finally(() => setLoading(false));
   }, 300);
 
   useEffect(() => {
