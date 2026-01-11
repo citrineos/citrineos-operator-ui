@@ -1,19 +1,17 @@
-FROM node:24.4.1-slim AS base
+FROM node:24.4.1-alpine AS base
 
 FROM base AS deps
 
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
 COPY package.json package-lock.json* .npmrc* ./
 
+RUN npm install @parcel/watcher
+
 RUN \
-  if [ -f package-lock.json ]; then npm ci; \
+  if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
