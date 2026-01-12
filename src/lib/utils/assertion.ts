@@ -6,6 +6,10 @@ export function isNullOrUndefined(object: any): object is null | undefined {
   return object === undefined || object === null;
 }
 
+export function isEmpty(object: any[]): boolean {
+  return isNullOrUndefined(object) || object.length === 0;
+}
+
 export function isDefined<T>(object: T | undefined | null): object is T {
   return object !== undefined && object !== null;
 }

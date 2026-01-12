@@ -170,6 +170,9 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
         .map((s: string) => s.trim())
         .filter(Boolean);
     }
+    if (newItem.additionalInfo === '') {
+      newItem.additionalInfo = null;
+    }
 
     if (!id) {
       newItem.tenantId = config.tenantId;

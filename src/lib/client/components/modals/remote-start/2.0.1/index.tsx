@@ -35,6 +35,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Controller } from 'react-hook-form';
+import { isEmpty } from '@lib/utils/assertion';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: ChargingStationDto;
@@ -139,6 +140,9 @@ export const OCPP2_0_1_RemoteStart = ({
   const onFinish = (values: RemoteStartFormData) => {
     const parsedAuthorization = JSON.parse(values.authorization);
     const parsedEvse = values.evse ? JSON.parse(values.evse) : undefined;
+    const parsedAdditionalInfo = isEmpty(parsedAuthorization.additionalInfo)
+      ? undefined
+      : parsedAuthorization.additionalInfo;
 
     const data = {
       remoteStartId: values.remoteStartId,
@@ -146,7 +150,7 @@ export const OCPP2_0_1_RemoteStart = ({
       idToken: {
         idToken: parsedAuthorization.idToken,
         type: parsedAuthorization.idTokenType!,
-        additionalInfo: parsedAuthorization.additionalInfo ?? [],
+        additionalInfo: parsedAdditionalInfo,
       },
     };
 
