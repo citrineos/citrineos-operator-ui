@@ -4,6 +4,8 @@
 
 import type { InstalledCertificateDto } from '@citrineos/base';
 
-export class InstalledCertificateClass implements Partial<InstalledCertificateDto> {
+export class InstalledCertificateClass
+  implements Partial<InstalledCertificateDto>
+{
   id?: number;
 }
