@@ -322,7 +322,7 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 label="Additional Info (JSON)"
                 name={AuthorizationProps.additionalInfo}
               >
-                <Textarea placeholder='{ "key": "value" }' />
+                <Textarea placeholder='[{ "key1": "value1" }, { "key2": "value2" }]' />
               </FormField>
 
               <FormField
