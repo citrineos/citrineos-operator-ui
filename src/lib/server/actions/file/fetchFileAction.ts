@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 'use server';
 
-import { fetchFile } from '@lib/server/clients/file/s3';
+import { fetchFile } from '@lib/server/clients/file/fileAccess';
 import config from '@lib/utils/config';
 import { BucketType } from '@lib/utils/enums';
 
-export async function fetchFileFromS3(
+export async function fetchFileAction(
   fileKey: string,
   bucketType?: BucketType,
 ) {
@@ -17,8 +17,12 @@ export async function fetchFileFromS3(
 
   const bucket =
     bucketType === BucketType.CORE
-      ? config.awsS3CoreBucketName
-      : config.awsS3BucketName;
+      ? config.fileStorageType === 'gcp'
+        ? config.gcpCloudStorageCoreBucketName
+        : config.awsS3BucketName
+      : config.fileStorageType === 'gcp'
+        ? config.gcpCloudStorageBucketName
+        : config.awsS3CoreBucketName;
 
   try {
     return await fetchFile(fileKey, bucket);

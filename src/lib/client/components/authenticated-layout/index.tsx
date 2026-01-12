@@ -36,10 +36,10 @@ export default function AuthenticatedLayout({
   }, [isLoading, data, router]);
 
   // Determine active section from pathname
-  const activeSection = pathname.split('/')[1] || 'overview';
+  const activeSection = pathname?.split('/')[1] || 'overview';
 
   // Determine route class name
-  const routeClassName = pathname.replace(/\//g, '-').substring(1) || 'root';
+  const routeClassName = pathname?.replace(/\//g, '-').substring(1) || 'root';
 
   // Show loading state
   if (isLoading) {

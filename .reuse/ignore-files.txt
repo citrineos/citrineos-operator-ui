@@ -26,6 +26,7 @@ src/lib/client/components/ui/badge.tsx
 src/lib/client/components/ui/button.tsx
 src/lib/client/components/ui/calendar.tsx
 src/lib/client/components/ui/card.tsx
+src/lib/client/components/ui/chart.tsx
 src/lib/client/components/ui/checkbox.tsx
 src/lib/client/components/ui/command.tsx
 src/lib/client/components/ui/confirm.tsx
@@ -40,6 +41,7 @@ src/lib/client/components/ui/loading.tsx
 src/lib/client/components/ui/popover.tsx
 src/lib/client/components/ui/select.tsx
 src/lib/client/components/ui/separator.tsx
+src/lib/client/components/ui/skeleton.tsx
 src/lib/client/components/ui/sonner.tsx
 src/lib/client/components/ui/table.tsx
 src/lib/client/components/ui/tabs.tsx
@@ -53,3 +55,4 @@ tsconfig.json
 .nvmrc
 .prettierrc
 Dockerfile
+local.Dockerfile

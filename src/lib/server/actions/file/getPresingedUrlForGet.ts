@@ -8,7 +8,7 @@
  * @param fileKey - The key of the file to fetch
  * @returns The URL of the file
  */
-import { generatePresignedGetUrlIfExists } from '@lib/server/clients/file/s3';
+import { generatePresignedGetUrlIfExists } from '@lib/server/clients/file/fileAccess';
 
 export const getPresignedUrlForGet = async (
   fileKey: string,
@@ -20,7 +20,7 @@ export const getPresignedUrlForGet = async (
   try {
     return await generatePresignedGetUrlIfExists(fileKey);
   } catch (err) {
-    console.error('Failed to fetch S3 Presigned URL', err);
+    console.error('Failed to fetch Presigned URL', err);
     return null;
   }
 };

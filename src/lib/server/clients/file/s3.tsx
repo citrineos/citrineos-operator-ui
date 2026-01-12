@@ -31,12 +31,24 @@ if (config.awsAccessKeyId && config.awsSecretAccessKey) {
 
 const s3 = new S3Client(s3Config);
 
-export const generatePresignedPutUrl = async (
+const ensureBucket = (bucket?: string) => {
+  if (!bucket) {
+    throw new Error('AWS S3 bucket name is not configured');
+  }
+  return bucket;
+};
+
+export const generatePresignedPutUrlS3 = async (
   fileName: string,
   contentType: string,
 ) => {
+  console.log(
+    'Generating presigned from S3 PUT URL for filename and content type',
+    fileName,
+    contentType,
+  );
   const command = new PutObjectCommand({
-    Bucket: bucketName!,
+    Bucket: ensureBucket(bucketName),
     Key: fileName,
     ContentType: contentType,
   });
@@ -45,12 +57,17 @@ export const generatePresignedPutUrl = async (
   return { url, key: fileName };
 };
 
-export const generatePresignedGetUrlIfExists = async (fileKey: string) => {
+export const generatePresignedGetUrlIfExistsS3 = async (fileKey: string) => {
+  console.log('Generating presigned from S3 GET URL for file key', fileKey);
   try {
-    // Check if object exists
-    await s3.send(new HeadObjectCommand({ Bucket: bucketName!, Key: fileKey }));
+    await s3.send(
+      new HeadObjectCommand({ Bucket: ensureBucket(bucketName), Key: fileKey }),
+    );
 
-    const command = new GetObjectCommand({ Bucket: bucketName!, Key: fileKey });
+    const command = new GetObjectCommand({
+      Bucket: ensureBucket(bucketName),
+      Key: fileKey,
+    });
     return await getSignedUrl(s3, command, { expiresIn: 600 }); // 10 min
   } catch (err: any) {
     // If object does not exist, return null
@@ -67,9 +84,10 @@ export const generatePresignedGetUrlIfExists = async (fileKey: string) => {
  * @param fileKey - The key of the file to fetch
  * @returns The file
  */
-export const fetchFile = async (fileKey: string, bucket?: string) => {
+export const fetchFileS3 = async (fileKey: string, bucket?: string) => {
+  console.log('Fetching file from S3 with key', fileKey);
   const command = new GetObjectCommand({
-    Bucket: bucket || bucketName!,
+    Bucket: bucket ? bucket : ensureBucket(bucketName),
     Key: fileKey,
   });
   const data = await s3.send(command);

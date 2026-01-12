@@ -8,7 +8,9 @@ import type {
 } from '@citrineos/base';
 import { Expose } from 'class-transformer';
 
-export class LatestStatusNotificationClass implements Partial<LatestStatusNotificationDto> {
+export class LatestStatusNotificationClass
+  implements Partial<LatestStatusNotificationDto>
+{
   @Expose({ name: 'StatusNotification' })
   statusNotification?: StatusNotificationDto;
 }

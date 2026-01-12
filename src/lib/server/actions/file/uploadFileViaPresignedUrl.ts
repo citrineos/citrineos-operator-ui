@@ -9,7 +9,8 @@
  * @param fileName - The name of the file. If it is undefined, the original file name will be used
  * @returns The key of the uploaded file
  */
-import { generatePresignedPutUrl } from '@lib/server/clients/file/s3';
+
+import { generatePresignedPutUrl } from '@lib/server/clients/file/fileAccess';
 
 export async function uploadFileViaPresignedUrl(
   file: File,

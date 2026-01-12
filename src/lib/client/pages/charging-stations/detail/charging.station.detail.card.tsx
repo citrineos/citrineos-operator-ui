@@ -27,14 +27,7 @@ import { openModal } from '@lib/utils/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, Link, useDelete, useList, useOne } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
-import {
-  ChevronLeft,
-  ChevronLeftIcon,
-  Edit,
-  Info,
-  MoreHorizontal,
-  Trash2,
-} from 'lucide-react';
+import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -45,12 +38,12 @@ import {
   badgeListStyle,
   clickableLinkStyle,
   heading2Style,
-  pageFlex,
 } from '@lib/client/styles/page';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { Badge } from '@lib/client/components/ui/badge';
 import Image from 'next/image';
+import { isGcp } from '@lib/server/clients/file/isGcp';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -375,9 +368,11 @@ export const ChargingStationDetailCard = ({
 
           {/* Right: Image */}
           {imageUrl && (
-            <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md">
+            <div className="flex-shrink-0 w-64 md:w-48 sm:w-32 h-64 md:h-48 sm:h-32 flex items-center justify-center bg-gray-100 rounded-md relative">
               <Image
                 src={imageUrl}
+                unoptimized={isGcp}
+                fill={isGcp}
                 alt={`${station.id} image`}
                 className="w-full h-full object-contain rounded-md bg-gray-100"
                 onError={(e) => {

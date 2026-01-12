@@ -20,7 +20,7 @@ import {
 import { useGetIdentity } from '@refinedev/core';
 import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 import type { SystemConfig, WebsocketServerConfig } from '@citrineos/base';
-import { fetchFileFromS3 } from '@lib/server/actions/file/fetchFileFromS3';
+import { fetchFileAction } from '@lib/server/actions/file/fetchFileAction';
 import { BucketType } from '@lib/utils/enums';
 
 export interface OperatorConfig {
@@ -73,8 +73,9 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
   useEffect(() => {
     if (open && !coreConfig) {
       setLoading(true);
-      fetchFileFromS3(`${S3_BUCKET_FILE_CORE_CONFIG}`, BucketType.CORE)
+      fetchFileAction(`${S3_BUCKET_FILE_CORE_CONFIG}`, BucketType.CORE)
         .then((data) => setCoreConfig(data))
+
         .catch(console.error);
     }
   }, [open, coreConfig]);
@@ -83,7 +84,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
   useEffect(() => {
     if (open && !operatorConfig) {
       setLoading(true);
-      fetchFileFromS3(`${S3_BUCKET_FILE_CONFIG}`)
+      fetchFileAction(`${S3_BUCKET_FILE_CONFIG}`)
         .then((data) => setOperatorConfig(data))
         .catch(console.error)
         .finally(() => setLoading(false));

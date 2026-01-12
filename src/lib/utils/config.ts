@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  AuthProviderTypeEnum,
   type AuthProviderType,
+  AuthProviderTypeEnum,
 } from '../providers/auth-provider/types';
 
 const getConfig: () => {
@@ -36,6 +36,9 @@ const getConfig: () => {
   awsSessionToken?: string; // Optional. Needed for temporary credentials
   awsS3BucketName?: string;
   awsS3CoreBucketName?: string;
+  fileStorageType?: string;
+  gcpCloudStorageBucketName?: string;
+  gcpCloudStorageCoreBucketName?: string;
 } = () => {
   const authProviderResult = AuthProviderTypeEnum.safeParse(
     process.env.NEXT_PUBLIC_AUTH_PROVIDER,
@@ -79,6 +82,10 @@ const getConfig: () => {
     awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
     awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     awsSessionToken: process.env.AWS_SESSION_TOKEN,
+    fileStorageType: process.env.FILE_STORAGE_TYPE || 's3',
+    gcpCloudStorageBucketName: process.env.GCP_CLOUD_STORAGE_BUCKET_NAME,
+    gcpCloudStorageCoreBucketName:
+      process.env.GCP_CLOUD_STORAGE_CORE_BUCKET_NAME,
     awsS3BucketName:
       process.env.AWS_S3_BUCKET_NAME || 'YOUR_AWS_S3_BUCKET_NAME',
     awsS3CoreBucketName:
