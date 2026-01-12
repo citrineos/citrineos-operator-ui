@@ -6,8 +6,10 @@
 import { getUserLocale } from '@lib/server/hooks/getUserLocale';
 import { getRequestConfig } from 'next-intl/server';
 
+const fallbackLang = 'en';
+
 export default getRequestConfig(async () => {
-  const locale = await getUserLocale();
+  const locale = (await getUserLocale()) ?? fallbackLang;
 
   return {
     locale,
