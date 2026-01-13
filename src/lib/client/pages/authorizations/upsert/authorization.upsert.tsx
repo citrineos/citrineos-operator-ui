@@ -170,6 +170,9 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
         .map((s: string) => s.trim())
         .filter(Boolean);
     }
+    if (newItem.additionalInfo === '') {
+      newItem.additionalInfo = null;
+    }
 
     if (!id) {
       newItem.tenantId = config.tenantId;
@@ -319,7 +322,7 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 label="Additional Info (JSON)"
                 name={AuthorizationProps.additionalInfo}
               >
-                <Textarea placeholder='{ "key": "value" }' />
+                <Textarea placeholder='[{ "key1": "value1" }, { "key2": "value2" }]' />
               </FormField>
 
               <FormField
