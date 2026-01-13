@@ -140,6 +140,10 @@ export const createKeycloakAuthProvider = (): AuthProvider &
       if (!session) {
         return { authenticated: false, logout: true, redirectTo: '/login' };
       }
+      // Check if token refresh failed
+      if ((session as any).error === 'RefreshAccessTokenError') {
+        return { authenticated: false, logout: true, redirectTo: '/login' };
+      }
       return { authenticated: true };
     },
     getIdentity: async () => {
