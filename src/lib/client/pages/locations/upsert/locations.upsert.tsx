@@ -478,14 +478,14 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                       name={LocationProps.state}
                       label={countryConfig.administrativeAreaLabel}
                       value={chosenState}
-                      options={administrativeAreas.map((area) => ({
+                      options={administrativeAreas?.map((area) => ({
                         label: area.name,
                         value: area.name,
                       }))}
                       placeholder={`Select ${countryConfig.administrativeAreaLabel}`}
                       searchPlaceholder={`Search ${countryConfig.administrativeAreaLabel}s`}
                       isLoading={loadingAdminAreas}
-                      required
+                      required={countryConfig.usesAdministrativeAreas}
                     />
                   )}
 
