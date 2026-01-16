@@ -103,7 +103,7 @@ const defaultLocation = {
   [LocationProps.city]: '',
   [LocationProps.postalCode]: '',
   [LocationProps.state]: '',
-  [LocationProps.country]: 'US', // Default to US
+  [LocationProps.country]: getCountryList()[0]?.code || '', // Default to first country
   [LocationProps.coordinates]: {
     type: 'Point' as const,
     coordinates: [defaultLongitude, defaultLatitude],
@@ -478,10 +478,12 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                       name={LocationProps.state}
                       label={countryConfig.administrativeAreaLabel}
                       value={chosenState}
-                      options={administrativeAreas?.map((area) => ({
-                        label: area.name,
-                        value: area.name,
-                      }))}
+                      options={
+                        administrativeAreas?.map((area) => ({
+                          label: area.name,
+                          value: area.name,
+                        })) ?? []
+                      }
                       placeholder={`Select ${countryConfig.administrativeAreaLabel}`}
                       searchPlaceholder={`Search ${countryConfig.administrativeAreaLabel}s`}
                       isLoading={loadingAdminAreas}
