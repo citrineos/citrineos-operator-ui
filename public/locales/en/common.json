@@ -1,64 +1,159 @@
 {
-  "buttons": {
-    "notAccessTitle": "You don't have permission to access",
-    "goToNextPage": "Go to next page",
-    "goToPreviousPage": "Go to previous page",
-    "goToLastPage": "Go to last page",
-    "clear": "Clear",
-    "save": "Save",
-    "columns": "Columns"
-  },
-  "dialogs": {
-    "areYouSure": "Are you sure?",
-    "thisActionCannotBeUndone": "This action cannot be undone.",
-    "delete": "Delete",
-    "cancel": "Cancel"
-  },
-  "form": {
-    "cancel": "Cancel"
-  },
-  "notifications": {
-    "error": "Error",
-    "editError": "Error updating item",
-    "success": "Success",
-    "createSuccess": "Item created successfully",
-    "editSuccess": "Item edited successfully"
-  },
   "pages": {
     "login": {
+      "title": "Sign in to your account",
+      "signin": "Sign in",
+      "signup": "Sign up",
+      "divider": "or",
       "fields": {
         "email": "Email",
         "password": "Password"
       },
-      "buttons": {
-        "rememberMe": "Remember me",
-        "forgotPassword": "Forgot your password?",
-        "noAccount": "Don't have an account?"
-      },
-      "signin": "Sign In",
-      "signup": "Sign Up",
-      "title": "Sign in to your account",
       "errors": {
+        "validEmail": "Invalid email address",
         "requiredEmail": "Email is required",
-        "validEmail": "Email is invalid",
         "requiredPassword": "Password is required"
+      },
+      "buttons": {
+        "submit": "Login",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don’t have an account?",
+        "rememberMe": "Remember me"
       }
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "fields": {
+        "email": "Email"
+      },
+      "errors": {
+        "validEmail": "Invalid email address",
+        "requiredEmail": "Email is required"
+      },
+      "buttons": {
+        "submit": "Send reset instructions"
+      }
+    },
+    "register": {
+      "title": "Sign up for your account",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Invalid email address",
+        "requiredEmail": "Email is required",
+        "requiredPassword": "Password is required"
+      },
+      "buttons": {
+        "submit": "Register",
+        "haveAccount": "Have an account?"
+      }
+    },
+    "updatePassword": {
+      "title": "Update password",
+      "fields": {
+        "password": "New Password",
+        "confirmPassword": "Confirm new password"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Passwords do not match",
+        "requiredPassword": "Password required",
+        "requiredConfirmPassword": "Confirm password is required"
+      },
+      "buttons": {
+        "submit": "Update"
+      }
+    },
+    "error": {
+      "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+      "404": "Sorry, the page you visited does not exist.",
+      "resource404": "Are you sure you have created the {{resource}} resource.",
+      "backHome": "Back Home"
     }
   },
-  "tables": {
+  "actions": {
+    "list": "List",
+    "create": "Create",
+    "edit": "Edit",
+    "show": "Show"
+  },
+  "buttons": {
+    "clear": "Clear",
+    "clone": "Clone",
+    "columns": "Columns",
+    "create": "Create",
+    "import": "Import",
+    "save": "Save",
+    "logout": "Logout",
+    "delete": "Delete",
+    "download": "Download",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirm": "Are you sure?",
+    "filter": "Filter",
+    "goToNextPage": "Go to next page",
+    "goToPreviousPage": "Go to previous page",
+    "goToLastPage": "Go to last page",
+    "notAccessTitle": "You don't have permission to access",
+    "refresh": "Refresh",
+    "show": "Show",
+    "undo": "Undo",
+    "upload": "Upload"
+  },
+  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
+  "notifications": {
+    "success": "Successful",
+    "error": "Error (status code: {{statusCode}})",
+    "undoable": "You have {{seconds}} seconds to undo",
+    "createSuccess": "Successfully created {{resource}}",
+    "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+    "deleteSuccess": "Successfully deleted {{resource}}",
+    "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+    "editSuccess": "Successfully edited {{resource}}",
+    "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+    "importProgress": "Importing: {{processed}}/{{total}}"
+  },
+  "loading": "Loading",
+  "tags": {
+    "clone": "Clone"
+  },
+  "table": {
+    "actions": "Actions",
+    "bulkActions": "Bulk Actions",
+    "clearFilters": "Clear filters",
+    "noResultsFound": "No results found",
     "selectAll": "Select all",
     "selected": "selected",
-    "bulkActions": "Bulk Actions",
-    "noResultsFound": "No results found",
-    "clearFilters": "Clear filters",
     "toggleColumns": "Toggle columns",
     "columns": {}
+  },
+  "dialogs": {
+    "areYouSure": "Are you sure?",
+    "thisActionCannotBeUndone": "This action cannot be undone."
+  },
+  "placeholders": {
+    "search": "Search {{item}}",
+    "select": "Select {{item}}"
   },
   "Locations": {
     "Locations": "Locations"
   },
   "ChargingStations": {
-    "ChargingStations": "Charging Stations"
+    "ChargingStations": "Charging Stations",
+    "chargingStation": "Charging Station",
+    "createSuccess": "Charging Station {{stationId}} created successfully.",
+    "updateSuccess": "Charging Station {{stationId}} updated successfully.",
+    "createUpdateError": "Error {{action}} Charging Station {{stationId}}: {{error}}",
+    "imageUploadFailed": "Image upload failed.",
+    "form": {
+      "id": "Charging Station ID",
+      "location": "Location",
+      "floorLevel": "Floor Level",
+      "parkingRestrictions": "Parking Restrictions",
+      "capabilities": "Capabilities",
+      "image": "Image"
+    }
   },
   "Authorizations": {
     "Authorizations": "Authorizations"

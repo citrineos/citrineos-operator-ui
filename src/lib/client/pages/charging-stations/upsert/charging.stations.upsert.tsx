@@ -40,6 +40,7 @@ import {
   type CrudFilter,
   useNotification,
   useSelect,
+  useTranslation,
 } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import { debounce } from 'lodash';
@@ -101,6 +102,7 @@ export const ChargingStationUpsert = ({
   const { open } = useNotification();
 
   const { replace, back } = useRouter();
+  const { translate } = useTranslation();
 
   const form = useForm({
     refineCoreProps: {
@@ -110,13 +112,22 @@ export const ChargingStationUpsert = ({
       action: stationId ? 'edit' : 'create',
       successNotification: () => {
         return {
-          message: `Charging Station ${stationId ? 'updated' : 'created'} successfully`,
+          message: translate(
+            stationId
+              ? 'ChargingStations.updateSuccess'
+              : 'ChargingStations.createSuccess',
+            { stationId },
+          ),
           type: 'success',
         };
       },
       errorNotification: (error) => {
         return {
-          message: `Error ${stationId ? 'updating' : 'creating'} charging station: ${error?.message}`,
+          message: translate('ChargingStations.createUpdateError', {
+            action: stationId ? 'updating' : 'creating',
+            stationId,
+            error: error?.message,
+          }),
           type: 'error',
         };
       },
@@ -209,7 +220,7 @@ export const ChargingStationUpsert = ({
               console.error(err);
               open?.({
                 type: 'error',
-                message: 'Image upload failed',
+                message: translate('ChargingStations.imageUploadFailed'),
               });
             },
           );
@@ -233,7 +244,8 @@ export const ChargingStationUpsert = ({
           <div className={cardHeaderFlex}>
             <ChevronLeft onClick={() => back()} className="cursor-pointer" />
             <h2 className={heading2Style}>
-              {stationId ? 'Edit' : 'Create'} Charging Station
+              {translate(`actions.${stationId ? 'edit' : 'create'}`)}{' '}
+              {translate('ChargingStations.chargingStation')}
             </h2>
           </div>
         </CardHeader>
@@ -242,7 +254,7 @@ export const ChargingStationUpsert = ({
             <div className={cardGridStyle}>
               <FormField
                 control={form.control}
-                label="Charging Station ID"
+                label={translate('ChargingStations.form.id')}
                 name={ChargingStationProps.id}
                 required
               >
@@ -251,7 +263,7 @@ export const ChargingStationUpsert = ({
               <ComboboxFormField<number, ChargingStationCreateDto>
                 control={form.control}
                 name={ChargingStationProps.locationId}
-                label="Location"
+                label={translate('ChargingStations.form.location')}
                 options={locationOptions}
                 onSearch={onSearch}
                 placeholder="Select Location"
@@ -261,7 +273,7 @@ export const ChargingStationUpsert = ({
               />
               <FormField
                 control={form.control}
-                label="Floor Level"
+                label={translate('ChargingStations.form.floorLevel')}
                 name={ChargingStationProps.floorLevel}
               >
                 <Input />
@@ -273,10 +285,14 @@ export const ChargingStationUpsert = ({
               >
                 control={form.control}
                 name={ChargingStationProps.parkingRestrictions}
-                label="Parking Restrictions"
+                label={translate('ChargingStations.form.parkingRestrictions')}
                 options={parkingRestrictions}
-                placeholder="Select Parking Restrictions"
-                searchPlaceholder="Search Parking Restrictions"
+                placeholder={translate('placeholders.select', {
+                  item: translate('ChargingStations.form.parkingRestrictions'),
+                })}
+                searchPlaceholder={translate('placeholders.search', {
+                  item: translate('ChargingStations.form.parkingRestrictions'),
+                })}
               />
 
               <MultiSelectFormField<
@@ -285,15 +301,21 @@ export const ChargingStationUpsert = ({
               >
                 control={form.control}
                 name={ChargingStationProps.capabilities}
-                label="Capabilities"
+                label={translate('ChargingStations.form.capabilities')}
                 options={capabilities}
-                placeholder="Select Capabilities"
-                searchPlaceholder="Search Capabilities"
+                placeholder={translate('placeholders.select', {
+                  item: translate('ChargingStations.form.capabilities'),
+                })}
+                searchPlaceholder={translate('placeholders.search', {
+                  item: translate('ChargingStations.form.capabilities'),
+                })}
               />
 
               <Field>
                 <FieldLabel>
-                  <span className={formLabelStyle}>Image</span>
+                  <span className={formLabelStyle}>
+                    {translate('ChargingStations.form.image')}
+                  </span>
                 </FieldLabel>
                 <Input
                   type="file"
@@ -316,7 +338,7 @@ export const ChargingStationUpsert = ({
                   }
                 >
                   <UploadIcon className={buttonIconSize} />
-                  Upload
+                  {translate('buttons.upload')}
                 </Button>
                 {uploadedFileName && (
                   <span className="text-sm text-gray-700">
