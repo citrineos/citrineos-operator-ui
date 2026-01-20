@@ -55,6 +55,8 @@ export const metadata: Metadata = {
   },
 };
 
+const fallbackLocale = 'en';
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -66,6 +68,7 @@ export default async function RootLayout({
 
   const locale = await getLocale();
   const messages = await getMessages();
+  const fallbackMessages = await getMessages({ locale: fallbackLocale });
 
   return (
     <html
@@ -74,7 +77,10 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider
+          locale={locale}
+          messages={{ ...fallbackMessages, messages }}
+        >
           <Providers defaultMode={mode}>{children}</Providers>
         </NextIntlClientProvider>
       </body>

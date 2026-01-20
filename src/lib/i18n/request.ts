@@ -6,14 +6,19 @@
 import { getUserLocale } from '@lib/server/hooks/getUserLocale';
 import { getRequestConfig } from 'next-intl/server';
 
-const fallbackLang = 'en';
+const fallbackLocale = 'en';
 
 export default getRequestConfig(async () => {
-  const locale = (await getUserLocale()) ?? fallbackLang;
+  const locale = (await getUserLocale()) ?? fallbackLocale;
+  const messages = (
+    await import(`../../../public/locales/${locale}/common.json`)
+  ).default;
+  const fallbackMessages = (
+    await import(`../../../public/locales/${fallbackLocale}/common.json`)
+  ).default;
 
   return {
     locale,
-    messages: (await import(`../../../public/locales/${locale}/common.json`))
-      .default,
+    messages: { ...fallbackMessages, messages },
   };
 });
