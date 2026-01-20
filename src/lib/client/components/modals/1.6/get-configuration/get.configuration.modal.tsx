@@ -72,12 +72,16 @@ export const GetConfigurationModal = ({
       return;
     }
 
-    const data = {
-      key:
-        values.configurationKeys && values.configurationKeys.length > 0
-          ? [...new Set(values.configurationKeys.map((ck) => ck.configKey))]
-          : null,
-    };
+    const keys =
+      values.configurationKeys && values.configurationKeys.length > 0
+        ? [...new Set(values.configurationKeys.map((ck) => ck.configKey))]
+        : null;
+
+    let data: any = {};
+
+    if (keys) {
+      data.key = keys;
+    }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/configuration/getConfiguration?identifier=${parsedStation.id}&tenantId=1`,
