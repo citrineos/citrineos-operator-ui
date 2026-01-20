@@ -77,7 +77,7 @@ export const GetConfigurationModal = ({
         ? [...new Set(values.configurationKeys.map((ck) => ck.configKey))]
         : null;
 
-    let data: any = {};
+    const data: any = {};
 
     if (keys) {
       data.key = keys;
