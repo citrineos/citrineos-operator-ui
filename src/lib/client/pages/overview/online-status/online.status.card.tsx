@@ -10,7 +10,7 @@ import { Circle } from '@lib/client/pages/overview/circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { CanAccess, useCustom } from '@refinedev/core';
+import { CanAccess, useCustom, useTranslate } from '@refinedev/core';
 import { ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { heading2Style } from '@lib/client/styles/page';
@@ -23,6 +23,7 @@ const statusIndicatorFlex = 'flex items-center gap-2';
 
 export const OnlineStatusCard = () => {
   const { push } = useRouter();
+  const translate = useTranslate();
 
   const {
     query: { data, isLoading, error },
@@ -47,12 +48,23 @@ export const OnlineStatusCard = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <h2 className={heading2Style}>Charger Online Status</h2>
+            <h2 className={heading2Style}>
+              {translate(
+                'pages.overview.onlineStatus.title',
+                undefined,
+                'Charging Station Online Status',
+              )}
+            </h2>
             <div
               onClick={() => push(`/${MenuSection.CHARGING_STATIONS}`)}
               className={overviewClickableStyle}
             >
-              View all chargers <ChevronRightIcon />
+              {translate(
+                'pages.overview.onlineStatus.viewAll',
+                undefined,
+                'View all charging stations',
+              )}{' '}
+              <ChevronRightIcon />
             </div>
           </div>
         </CardHeader>

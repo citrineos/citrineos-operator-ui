@@ -43,6 +43,15 @@
         "validEmail": "Email is invalid",
         "requiredPassword": "Password is required"
       }
+    },
+    "overview": {
+      "chargerActivity": {
+        "title": "EVSE Status Breakdown"
+      },
+      "onlineStatus": {
+        "title": "Charging Station Online Status",
+        "viewAll": "View all charging stations"
+      }
     }
   },
   "tables": {
