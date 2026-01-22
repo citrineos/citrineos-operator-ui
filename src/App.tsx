@@ -81,11 +81,13 @@ import config from '@util/config';
 
 const KEYCLOAK_URL = config.keycloakUrl;
 const KEYCLOAK_REALM = config.keycloakRealm;
+const KEYCLOAK_CLIENT_ID = config.keycloakClientId;
 export const authProvider =
   KEYCLOAK_URL && KEYCLOAK_REALM
     ? createKeycloakAuthProvider({
         keycloakUrl: KEYCLOAK_URL,
         keycloakRealm: KEYCLOAK_REALM,
+        keycloakClientId: KEYCLOAK_CLIENT_ID,
       })
     : createGenericAuthProvider();
 
@@ -95,22 +97,37 @@ const accessControlProvider = createAccessProvider({
 });
 
 const requestMiddleware = async (request: any) => {
-  const requestHeaders = {
-    ...request.headers,
-  };
+  const requestHeaders: Record<string, string> = {};
+  
+  // Remove any admin secret that might be present
+  if (request.headers) {
+    Object.keys(request.headers).forEach((key) => {
+      const lowerKey = key.toLowerCase();
+      // Explicitly exclude admin secret headers
+      if (lowerKey !== 'x-hasura-admin-secret') {
+        requestHeaders[key] = request.headers[key];
+      }
+    });
+  }
+  
+  // Always use Keycloak token for authentication
   if (authProvider) {
     const token = await authProvider.getToken();
     if (token) {
       requestHeaders['Authorization'] = 'Bearer ' + token;
-    }
-    const hasuraHeaders = await authProvider.getHasuraHeaders();
-    if (hasuraHeaders) {
-      const hasuraRole = hasuraHeaders.get(HasuraHeader.X_HASURA_ROLE);
-      if (hasuraRole) {
-        requestHeaders[HasuraHeader.X_HASURA_ROLE] = hasuraRole;
+      
+      const hasuraHeaders = await authProvider.getHasuraHeaders();
+      if (hasuraHeaders) {
+        const hasuraRole = hasuraHeaders.get(HasuraHeader.X_HASURA_ROLE);
+        if (hasuraRole) {
+          requestHeaders[HasuraHeader.X_HASURA_ROLE] = hasuraRole;
+        }
       }
+    } else {
+      console.warn('No Keycloak token available for Hasura request');
     }
   }
+  
   return {
     ...request,
     headers: requestHeaders,

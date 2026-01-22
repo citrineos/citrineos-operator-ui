@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 export interface KeycloakAuthProviderConfig {
   keycloakUrl: string;
   keycloakRealm: string;
+  keycloakClientId?: string;
 }
 
 const HASURA_CLAIM = config.hasuraClaim;
@@ -31,12 +32,12 @@ const HASURA_CLAIM = config.hasuraClaim;
 export const createKeycloakAuthProvider = (
   authProviderConfig: KeycloakAuthProviderConfig,
 ): AuthProvider & AuthenticationContextProvider => {
-  const { keycloakUrl, keycloakRealm } = authProviderConfig;
+  const { keycloakUrl, keycloakRealm, keycloakClientId = 'operator-ui' } = authProviderConfig;
 
   const keycloakConfig = {
     url: keycloakUrl,
     realm: keycloakRealm,
-    clientId: 'operator-ui',
+    clientId: keycloakClientId,
   };
 
   const keycloak = new Keycloak(keycloakConfig);
@@ -122,10 +123,11 @@ export const createKeycloakAuthProvider = (
    * Check if user has a specific role
    */
   const hasRole = (permissions: KeycloakPermissions, role: string): boolean => {
-    if (!permissions.resources?.['operator-ui']) {
+    const clientId = keycloakClientId;
+    if (!permissions.resources?.[clientId]) {
       return false;
     }
-    return permissions.resources['operator-ui'].includes(role);
+    return permissions.resources[clientId].includes(role);
   };
 
   /**

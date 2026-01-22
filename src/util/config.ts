@@ -9,7 +9,6 @@ declare global {
       VITE_GOOGLE_MAPS_API_KEY?: string;
       VITE_GOOGLE_MAPS_LOCATION_PICKER_MAP_ID?: string;
       VITE_GOOGLE_MAPS_OVERVIEW_MAP_ID?: string;
-      VITE_HASURA_ADMIN_SECRET?: string;
       VITE_HASURA_CLAIM?: string;
       VITE_TENANT_ID?: string;
       VITE_API_URL?: string;
@@ -22,6 +21,7 @@ declare global {
       VITE_ADMIN_PASSWORD?: string;
       VITE_KEYCLOAK_URL?: string;
       VITE_KEYCLOAK_REALM?: string;
+      VITE_KEYCLOAK_CLIENT_ID?: string;
     };
   }
 }
@@ -31,7 +31,6 @@ const getConfig: () => {
   googleMapsApiKey: string;
   googleMapsLocationPickerMapId?: string;
   googleMapsOverviewMapId?: string;
-  hasuraAdminSecret?: string;
   hasuraClaim?: string;
   tenantId?: string;
   apiUrl: string;
@@ -44,6 +43,7 @@ const getConfig: () => {
   adminPassword?: string;
   keycloakUrl?: string;
   keycloakRealm?: string;
+  keycloakClientId?: string;
 } = () => {
   return {
     appName:
@@ -60,9 +60,6 @@ const getConfig: () => {
     googleMapsOverviewMapId:
       window.APP_CONFIG?.VITE_GOOGLE_MAPS_OVERVIEW_MAP_ID ||
       import.meta.env.VITE_GOOGLE_MAPS_OVERVIEW_MAP_ID,
-    hasuraAdminSecret:
-      window.APP_CONFIG?.VITE_HASURA_ADMIN_SECRET ||
-      import.meta.env.VITE_HASURA_ADMIN_SECRET,
     hasuraClaim:
       window.APP_CONFIG?.VITE_HASURA_CLAIM ||
       import.meta.env.VITE_HASURA_CLAIM ||
@@ -96,6 +93,10 @@ const getConfig: () => {
     keycloakRealm:
       window.APP_CONFIG?.VITE_KEYCLOAK_REALM ||
       import.meta.env.VITE_KEYCLOAK_REALM,
+    keycloakClientId:
+      window.APP_CONFIG?.VITE_KEYCLOAK_CLIENT_ID ||
+      import.meta.env.VITE_KEYCLOAK_CLIENT_ID ||
+      'operator-ui',
   };
 };
 
