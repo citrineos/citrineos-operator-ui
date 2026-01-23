@@ -40,7 +40,7 @@ import {
   type CrudFilter,
   useNotification,
   useSelect,
-  useTranslation,
+  useTranslate,
 } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import { debounce } from 'lodash';
@@ -102,7 +102,7 @@ export const ChargingStationUpsert = ({
   const { open } = useNotification();
 
   const { replace, back } = useRouter();
-  const { translate } = useTranslation();
+  const translate = useTranslate();
 
   const form = useForm({
     refineCoreProps: {
@@ -110,27 +110,6 @@ export const ChargingStationUpsert = ({
       redirect: false,
       mutationMode: 'pessimistic',
       action: stationId ? 'edit' : 'create',
-      successNotification: () => {
-        return {
-          message: translate(
-            stationId
-              ? 'ChargingStations.updateSuccess'
-              : 'ChargingStations.createSuccess',
-            { stationId },
-          ),
-          type: 'success',
-        };
-      },
-      errorNotification: (error) => {
-        return {
-          message: translate('ChargingStations.createUpdateError', {
-            action: stationId ? 'updating' : 'creating',
-            stationId,
-            error: error?.message,
-          }),
-          type: 'error',
-        };
-      },
       meta: {
         gqlQuery: CHARGING_STATIONS_GET_QUERY,
         gqlMutation: stationId
@@ -254,7 +233,7 @@ export const ChargingStationUpsert = ({
             <div className={cardGridStyle}>
               <FormField
                 control={form.control}
-                label={translate('ChargingStations.form.id')}
+                label="ID"
                 name={ChargingStationProps.id}
                 required
               >
@@ -263,7 +242,7 @@ export const ChargingStationUpsert = ({
               <ComboboxFormField<number, ChargingStationCreateDto>
                 control={form.control}
                 name={ChargingStationProps.locationId}
-                label={translate('ChargingStations.form.location')}
+                label="Location"
                 options={locationOptions}
                 onSearch={onSearch}
                 placeholder="Select Location"
@@ -273,7 +252,7 @@ export const ChargingStationUpsert = ({
               />
               <FormField
                 control={form.control}
-                label={translate('ChargingStations.form.floorLevel')}
+                label="Floor Level"
                 name={ChargingStationProps.floorLevel}
               >
                 <Input />
@@ -285,14 +264,10 @@ export const ChargingStationUpsert = ({
               >
                 control={form.control}
                 name={ChargingStationProps.parkingRestrictions}
-                label={translate('ChargingStations.form.parkingRestrictions')}
+                label="Parking Restrictions"
                 options={parkingRestrictions}
-                placeholder={translate('placeholders.select', {
-                  item: translate('ChargingStations.form.parkingRestrictions'),
-                })}
-                searchPlaceholder={translate('placeholders.search', {
-                  item: translate('ChargingStations.form.parkingRestrictions'),
-                })}
+                placeholder="Select Parking Restrictions"
+                searchPlaceholder="Search Parking Restrictions"
               />
 
               <MultiSelectFormField<
@@ -301,21 +276,15 @@ export const ChargingStationUpsert = ({
               >
                 control={form.control}
                 name={ChargingStationProps.capabilities}
-                label={translate('ChargingStations.form.capabilities')}
+                label="Capabilities"
                 options={capabilities}
-                placeholder={translate('placeholders.select', {
-                  item: translate('ChargingStations.form.capabilities'),
-                })}
-                searchPlaceholder={translate('placeholders.search', {
-                  item: translate('ChargingStations.form.capabilities'),
-                })}
+                placeholder="Select Capabilities"
+                searchPlaceholder="Search Capabilities"
               />
 
               <Field>
                 <FieldLabel>
-                  <span className={formLabelStyle}>
-                    {translate('ChargingStations.form.image')}
-                  </span>
+                  <span className={formLabelStyle}>Image</span>
                 </FieldLabel>
                 <Input
                   type="file"

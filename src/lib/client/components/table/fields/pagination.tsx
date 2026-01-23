@@ -80,11 +80,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">
-              {translate(
-                'buttons.goToPreviousPage',
-                undefined,
-                'Go to previous page',
-              )}
+              {translate('buttons.goToPreviousPage')}
             </span>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
@@ -94,9 +90,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">
-              {translate('buttons.goToNextPage', undefined, 'Go to next page')}
-            </span>
+            <span className="sr-only">{translate('buttons.goToNextPage')}</span>
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
           <Button
@@ -105,9 +99,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">
-              {translate('buttons.goToLastPage', undefined, 'Go to last page')}
-            </span>
+            <span className="sr-only">{translate('buttons.goToLastPage')}</span>
             <ChevronsRightIcon className="h-4 w-4" />
           </Button>
         </div>

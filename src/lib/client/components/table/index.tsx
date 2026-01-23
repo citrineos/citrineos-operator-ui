@@ -332,7 +332,7 @@ export function Table<
                   className="h-24 text-center"
                 >
                   {translate(
-                    'tables.noResultsFound',
+                    'table.noResultsFound',
                     undefined,
                     'No results found',
                   )}

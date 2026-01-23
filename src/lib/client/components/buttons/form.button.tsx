@@ -46,7 +46,7 @@ export const FormButton: FC<FormButtonProps> = ({
   const { translate } = useTranslation();
   const { label } = useSaveButton();
 
-  const translatedLabel = translate('buttons.save', 'Save');
+  const translatedLabel = translate('buttons.save');
 
   if (accessControl?.hideIfUnauthorized && accessControl.enabled) {
     return null;

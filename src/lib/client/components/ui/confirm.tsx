@@ -82,7 +82,7 @@ export const ConfirmDialog: FC<ConfirmDialogProps> = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {title ?? translate('confirmDialog.title', 'Are you sure?')}
+            {title ?? translate('confirmDialog.title')}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {description ??
@@ -95,12 +95,12 @@ export const ConfirmDialog: FC<ConfirmDialogProps> = ({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>
             {cancelIconSide === 'left' && CancelIcon}
-            {cancelText ?? translate('confirmDialog.cancel', 'Cancel')}
+            {cancelText ?? translate('buttons.cancel')}
             {cancelIconSide === 'right' && CancelIcon}
           </AlertDialogCancel>
           <AlertDialogAction disabled={loading} onClick={onConfirm}>
             {okIconSide === 'left' && OkIcon}
-            {okText ?? translate('confirmDialog.ok', 'OK')}
+            {okText ?? translate('buttons.ok')}
             {okIconSide === 'right' && OkIcon}
           </AlertDialogAction>
         </AlertDialogFooter>

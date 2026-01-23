@@ -8,17 +8,41 @@ import { getRequestConfig } from 'next-intl/server';
 
 const fallbackLocale = 'en';
 
+const messageFilenames = ['common', 'chargingStations'];
+
 export default getRequestConfig(async () => {
   const locale = (await getUserLocale()) ?? fallbackLocale;
-  const messages = (
-    await import(`../../../public/locales/${locale}/common.json`)
-  ).default;
-  const fallbackMessages = (
-    await import(`../../../public/locales/${fallbackLocale}/common.json`)
-  ).default;
+
+  const messages = await messageFilenames.reduce(
+    async (allMessagesPromise, currentFile) => {
+      const currentMessages = (
+        await import(`../../../public/locales/${locale}/${currentFile}.json`)
+      ).default;
+
+      const allMessages = await allMessagesPromise;
+
+      return { ...allMessages, ...currentMessages };
+    },
+    {} as any,
+  );
+
+  const fallbackMessages = await messageFilenames.reduce(
+    async (allFallbacksPromise, currentFile) => {
+      const currentFallbacks = (
+        await import(
+          `../../../public/locales/${fallbackLocale}/${currentFile}.json`
+        )
+      ).default;
+
+      const allFallbacks = await allFallbacksPromise;
+
+      return { ...allFallbacks, ...currentFallbacks };
+    },
+    {} as any,
+  );
 
   return {
     locale,
-    messages: { ...fallbackMessages, messages },
+    messages: { ...fallbackMessages, ...messages },
   };
 });

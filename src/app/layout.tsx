@@ -79,7 +79,7 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider
           locale={locale}
-          messages={{ ...fallbackMessages, messages }}
+          messages={{ ...fallbackMessages, ...messages }}
         >
           <Providers defaultMode={mode}>{children}</Providers>
         </NextIntlClientProvider>

@@ -132,7 +132,7 @@ export const Form = <
                 disabled={props.refineCore.formLoading || loading}
                 variant="outline"
               >
-                {translate('form.cancel', 'Cancel')}
+                {translate('buttons.cancel')}
               </Button>
             )}
 
