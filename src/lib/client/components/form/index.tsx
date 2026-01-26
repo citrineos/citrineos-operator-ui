@@ -14,6 +14,7 @@ import {
   useTranslation,
   type BaseRecord,
   type HttpError,
+  useTranslate,
 } from '@refinedev/core';
 import type { UseFormReturnType } from '@refinedev/react-hook-form';
 import {
@@ -86,7 +87,7 @@ export const Form = <
   TResponseError
 >) => {
   const formId = useId();
-  const { translate } = useTranslation();
+  const translate = useTranslate();
   const { action } = useParsed();
   const back = useBack();
 

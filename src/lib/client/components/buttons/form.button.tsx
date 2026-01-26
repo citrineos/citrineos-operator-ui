@@ -4,7 +4,7 @@
 'use client';
 
 import { Button, type ButtonProps } from '@lib/client/components/ui/button';
-import { CanAccess, useSaveButton, useTranslation } from '@refinedev/core';
+import { CanAccess, useSaveButton, useTranslate } from '@refinedev/core';
 import type {
   RefineButtonResourceProps,
   RefineButtonSingleProps,
@@ -42,11 +42,8 @@ export const FormButton: FC<FormButtonProps> = ({
   recordItemId,
   ...props
 }) => {
-  // TODO in a separate PR, improve translation capabilities
-  const { translate } = useTranslation();
+  const translate = useTranslate();
   const { label } = useSaveButton();
-
-  const translatedLabel = translate('buttons.save');
 
   if (accessControl?.hideIfUnauthorized && accessControl.enabled) {
     return null;
@@ -59,28 +56,28 @@ export const FormButton: FC<FormButtonProps> = ({
       return (
         <Button {...buttonProps} variant="success">
           <Check className={buttonIconSize} />
-          {!hideText && (submitButtonLabel ?? 'Confirm')}
+          {!hideText && (submitButtonLabel ?? translate('buttons.confirmText'))}
         </Button>
       );
     case FormButtonVariants.delete:
       return (
         <Button {...buttonProps} variant="destructive">
           <Trash className={buttonIconSize} />
-          {!hideText && (submitButtonLabel ?? 'Delete')}
+          {!hideText && (submitButtonLabel ?? translate('buttons.delete'))}
         </Button>
       );
     case FormButtonVariants.submit:
       return (
         <Button {...buttonProps} variant="secondary">
           <Send className={buttonIconSize} />
-          {!hideText && (submitButtonLabel ?? 'Submit')}
+          {!hideText && (submitButtonLabel ?? translate('buttons.submit'))}
         </Button>
       );
     default:
       return (
         <Button {...buttonProps}>
           <Save className={buttonIconSize} />
-          {!hideText && (children ?? label ?? translatedLabel)}
+          {!hideText && (children ?? label ?? translate('buttons.save'))}
         </Button>
       );
   }

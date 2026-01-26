@@ -86,6 +86,7 @@
     "clone": "Clone",
     "columns": "Columns",
     "confirm": "Are you sure?",
+    "confirmText": "Confirm",
     "create": "Create",
     "delete": "Delete",
     "download": "Download",
@@ -98,6 +99,7 @@
     "save": "Save",
     "saving": "Saving...",
     "show": "Show",
+    "submit": "Submit",
     "undo": "Undo",
     "upload": "Upload"
   },
@@ -146,5 +148,6 @@
       "goToLastPage": "Go to last page"
     },
     "rowsPerPage": "Rows per page"
-  }
+  },
+  "overview": "Overview"
 }
