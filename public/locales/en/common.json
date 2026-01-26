@@ -73,9 +73,10 @@
     }
   },
   "actions": {
-    "list": "List",
     "create": "Create",
+    "delete": "Delete",
     "edit": "Edit",
+    "list": "List",
     "show": "Show"
   },
   "buttons": {
@@ -95,6 +96,7 @@
     "notAccessTitle": "You don't have permission to access this resource.",
     "refresh": "Refresh",
     "save": "Save",
+    "saving": "Saving...",
     "show": "Show",
     "undo": "Undo",
     "upload": "Upload"
@@ -144,8 +146,5 @@
       "goToLastPage": "Go to last page"
     },
     "rowsPerPage": "Rows per page"
-  },
-  "TenantPartners": {
-    "TenantPartners": "Partners"
   }
 }

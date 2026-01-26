@@ -13,6 +13,7 @@ const messageFilenames = [
   'locations',
   'authorizations',
   'transactions',
+  'tenantPartners',
 ];
 
 export default getRequestConfig(async () => {
