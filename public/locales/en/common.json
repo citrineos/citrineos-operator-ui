@@ -164,8 +164,11 @@
     "activeTransactions": "Active Transactions",
     "chargerActivity": "Charger Activity",
     "chargerOnlineStatus": "Charger Online Status",
+    "chargers": "Chargers",
+    "errorLoadingData": "Error loading data",
     "plugInSuccessRate": "Plug-In Success Rate",
     "noActiveTransactions": "No active transactions.",
+    "noChargersStatus": "No chargers currently have {status} status.",
     "viewAllChargers": "View all chargers",
     "viewAllLocations": "View all locations",
     "viewAllTransactions": "View all transactions"

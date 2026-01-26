@@ -11,7 +11,7 @@ import { TransactionClass } from '@lib/cls/transaction.dto';
 import { TRANSACTION_LIST_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess, useList } from '@refinedev/core';
+import { CanAccess, useList, useTranslate } from '@refinedev/core';
 import { ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -22,6 +22,7 @@ import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useRouter();
+  const translate = useTranslate();
   const [searchFilters, setSearchFilters] = useState<any[]>([]);
 
   const {
@@ -88,11 +89,9 @@ export const ActiveTransactionsCard = () => {
   const total = data?.total ?? 0;
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Something went wrong!</div>;
+    return <div>{translate('loading')}</div>;
+  } else if (isError) {
+    return <div>{translate('overview.errorLoadingData')}</div>;
   }
 
   return (
@@ -100,12 +99,14 @@ export const ActiveTransactionsCard = () => {
       <Card className="h-full overflow-scroll">
         <CardHeader>
           <div className="flex justify-between">
-            <h2 className={heading2Style}>Active Transactions ({total})</h2>
+            <h2 className={heading2Style}>
+              {translate('overview.activeTransactions')} ({total})
+            </h2>
             <div
               className={overviewClickableStyle}
               onClick={() => push(`/${MenuSection.TRANSACTIONS}`)}
             >
-              View all transactions <ChevronRightIcon />
+              {translate('overview.viewAllTransactions')} <ChevronRightIcon />
             </div>
           </div>
         </CardHeader>
@@ -119,7 +120,7 @@ export const ActiveTransactionsCard = () => {
                 }))}
                 onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
                 onSearch={handleSearch}
-                placeholder="Search Transaction"
+                placeholder={translate('placeholders.search')}
               />
             </div>
 
@@ -142,7 +143,7 @@ export const ActiveTransactionsCard = () => {
                   </div>
                 ))
               ) : (
-                <span>No active transactions.</span>
+                <span>{translate('overview.noActiveTransactions')}</span>
               )}
             </div>
           </div>
