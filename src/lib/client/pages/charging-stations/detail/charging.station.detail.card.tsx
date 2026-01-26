@@ -36,7 +36,7 @@ import {
 import { instanceToPlain } from 'class-transformer';
 import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
@@ -50,6 +50,10 @@ import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { Badge } from '@lib/client/components/ui/badge';
 import Image from 'next/image';
 import { isGcp } from '@lib/server/clients/file/isGcp';
+import { StartTransactionButton } from '@lib/client/pages/charging-stations/start.transaction.button';
+import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
+import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
+import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -396,71 +400,32 @@ export const ChargingStationDetailCard = ({
           >
             <div className="flex justify-between items-center flex-1">
               <div className="flex flex-col gap-2 flex-1">
-                {!station.isOnline && (
-                  <div className="flex items-center text-muted-foreground">
-                    <Info className="mr-2 h-4 w-4" />
-                    <span className="text-sm">
-                      {translate('ChargingStations.commandsUnavailable')}
-                    </span>
-                  </div>
-                )}
+                {!station.isOnline && <CommandsUnavailableText />}
                 <div className="flex gap-4 flex-1">
                   {!hasActiveTransactions && (
-                    <CanAccess
-                      resource={ResourceType.CHARGING_STATIONS}
-                      action={ActionType.COMMAND}
-                      params={{
-                        id: station.id,
-                        commandType: CommandType.START_TRANSACTION,
-                      }}
-                    >
-                      <Button
-                        disabled={!station.isOnline}
-                        onClick={() => showRemoteStartModal(station)}
-                      >
-                        {translate('ChargingStations.startTransaction')}
-                      </Button>
-                    </CanAccess>
+                    <StartTransactionButton
+                      stationId={station.id}
+                      onClickAction={() => showRemoteStartModal(station)}
+                      disabled={!station.isOnline}
+                    />
                   )}
                   {hasActiveTransactions && (
-                    <CanAccess
-                      resource={ResourceType.CHARGING_STATIONS}
-                      action={ActionType.COMMAND}
-                      params={{
-                        id: station.id,
-                        commandType: CommandType.STOP_TRANSACTION,
-                      }}
-                    >
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleStopTransactionClick(station)}
-                        disabled={!station.isOnline}
-                      >
-                        {translate('ChargingStations.stopTransaction')}
-                      </Button>
-                    </CanAccess>
-                  )}
-                  <CanAccess
-                    resource={ResourceType.CHARGING_STATIONS}
-                    action={ActionType.COMMAND}
-                    params={{
-                      id: station.id,
-                      commandType: CommandType.RESET,
-                    }}
-                  >
-                    <Button
-                      variant="outline"
-                      onClick={() => showResetStartModal(station)}
+                    <StopTransactionButton
+                      stationId={station.id}
+                      onClickAction={() => handleStopTransactionClick(station)}
                       disabled={!station.isOnline}
-                    >
-                      {translate('ChargingStations.reset')}
-                    </Button>
-                  </CanAccess>
+                    />
+                  )}
+                  <ResetButton
+                    stationId={station.id}
+                    onClickAction={() => showResetStartModal(station)}
+                    disabled={!station.isOnline}
+                  />
                   <Button
                     onClick={showOtherCommandsModal}
                     disabled={!station.isOnline}
                   >
-                    <MoreHorizontal className="mr-2 h-4 w-4" />
+                    <MoreHorizontal className={buttonIconSize} />
                     {translate('ChargingStations.otherCommands')}
                   </Button>
                 </div>

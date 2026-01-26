@@ -19,6 +19,11 @@ import { CanAccess, type CrudFilter } from '@refinedev/core';
 import type { CellContext } from '@tanstack/react-table';
 import { Info } from 'lucide-react';
 import { clickableLinkStyle } from '@lib/client/styles/page';
+import { StartTransactionButton } from '@lib/client/pages/charging-stations/start.transaction.button';
+import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
+import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
+import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
+import React from 'react';
 
 export const getChargingStationColumns = (
   push: RouterPush,
@@ -139,60 +144,25 @@ export const getChargingStationColumns = (
           >
             <div className="flex gap-4 flex-1">
               {!hasActiveTransactions && (
-                <CanAccess
-                  resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.COMMAND}
-                  params={{
-                    id: row.original.id,
-                    commandType: CommandType.START_TRANSACTION,
-                  }}
-                >
-                  <Button onClick={() => showRemoteStartModal(row.original)}>
-                    Start Transaction
-                  </Button>
-                </CanAccess>
+                <StartTransactionButton
+                  stationId={row.original.id}
+                  onClickAction={() => showRemoteStartModal(row.original)}
+                />
               )}
               {hasActiveTransactions && (
-                <CanAccess
-                  resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.COMMAND}
-                  params={{
-                    id: row.original.id,
-                    commandType: CommandType.STOP_TRANSACTION,
-                  }}
-                >
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleStopTransactionClick(row.original)}
-                  >
-                    Stop Transaction
-                  </Button>
-                </CanAccess>
+                <StopTransactionButton
+                  stationId={row.original.id}
+                  onClickAction={() => handleStopTransactionClick(row.original)}
+                />
               )}
-              <CanAccess
-                resource={ResourceType.CHARGING_STATIONS}
-                action={ActionType.COMMAND}
-                params={{
-                  id: row.original.id,
-                  commandType: CommandType.RESET,
-                }}
-              >
-                <Button
-                  variant="outline"
-                  onClick={() => showResetStartModal(row.original)}
-                >
-                  Reset
-                </Button>
-              </CanAccess>
+              <ResetButton
+                stationId={row.original.id}
+                onClickAction={() => showResetStartModal(row.original)}
+              />
             </div>
           </CanAccess>
         ) : (
-          <div className="flex gap-4 flex-1 items-center text-muted-foreground">
-            <Info className="h-4 w-4" />
-            <span className="text-sm">
-              Station offline - commands unavailable
-            </span>
-          </div>
+          <CommandsUnavailableText />
         );
       }}
     />,
