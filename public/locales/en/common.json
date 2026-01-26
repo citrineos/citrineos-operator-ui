@@ -79,6 +79,7 @@
     "show": "Show"
   },
   "buttons": {
+    "add": "Add",
     "cancel": "Cancel",
     "clear": "Clear",
     "clone": "Clone",
@@ -89,9 +90,6 @@
     "download": "Download",
     "edit": "Edit",
     "filter": "Filter",
-    "goToNextPage": "Go to next page",
-    "goToPreviousPage": "Go to previous page",
-    "goToLastPage": "Go to last page",
     "import": "Import",
     "logout": "Logout",
     "notAccessTitle": "You don't have permission to access",
@@ -133,10 +131,18 @@
     "areYouSure": "Are you sure?",
     "thisActionCannotBeUndone": "This action cannot be undone."
   },
-  "Locations": {
-    "Locations": "Locations"
+  "placeholders": {
+    "search": "Search",
+    "select": "Select"
   },
-
+  "pagination": {
+    "buttons": {
+      "goToNextPage": "Go to next page",
+      "goToPreviousPage": "Go to previous page",
+      "goToLastPage": "Go to last page"
+    },
+    "rowsPerPage": "Rows per page"
+  },
   "Authorizations": {
     "Authorizations": "Authorizations"
   },

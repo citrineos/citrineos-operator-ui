@@ -19,7 +19,7 @@ import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { openModal } from '@lib/utils/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -37,6 +37,7 @@ import { DebounceSearch } from '@lib/client/components/debounce-search';
 export const ChargingStationsList = () => {
   const { push } = useRouter();
   const dispatch = useDispatch();
+  const translate = useTranslate();
 
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
 
@@ -44,7 +45,7 @@ export const ChargingStationsList = () => {
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Start',
+          title: translate('ChargingStations.remoteStart'),
           modalComponentType: ModalComponentType.remoteStart,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -57,7 +58,7 @@ export const ChargingStationsList = () => {
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Stop',
+          title: translate('ChargingStations.remoteStop'),
           modalComponentType: ModalComponentType.remoteStop,
           modalComponentProps: {
             station: instanceToPlain(station),
@@ -72,7 +73,7 @@ export const ChargingStationsList = () => {
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Reset',
+          title: translate('ChargingStations.reset'),
           modalComponentType: ModalComponentType.reset,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -104,7 +105,9 @@ export const ChargingStationsList = () => {
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
       <div className={tableHeaderWrapperFlex}>
-        <h2 className={heading2Style}>Charging Stations</h2>
+        <h2 className={heading2Style}>
+          {translate('ChargingStations.ChargingStations')}
+        </h2>
         <div className={tableSearchFlex}>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
@@ -115,12 +118,13 @@ export const ChargingStationsList = () => {
               onClick={() => push(`/${MenuSection.CHARGING_STATIONS}/new`)}
             >
               <Plus className={buttonIconSize} />
-              Add Charging Station
+              {translate('buttons.add')}{' '}
+              {translate('ChargingStations.chargingStation')}
             </Button>
           </CanAccess>
           <DebounceSearch
             onSearch={onSearch}
-            placeholder="Search Charging Stations"
+            placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
           />
         </div>
       </div>
