@@ -16,7 +16,7 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -33,6 +33,7 @@ import { DebounceSearch } from '@lib/client/components/debounce-search';
 export const AuthorizationsList = () => {
   const { push } = useRouter();
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
+  const translate = useTranslate();
 
   const columns = useMemo(() => getAuthorizationColumns(push), [push]);
 
@@ -43,7 +44,9 @@ export const AuthorizationsList = () => {
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
       <div className={tableHeaderWrapperFlex}>
-        <h2 className={heading2Style}>Authorizations</h2>
+        <h2 className={heading2Style}>
+          {translate('Authorizations.Authorizations')}
+        </h2>
         <div className={tableSearchFlex}>
           <CanAccess
             resource={ResourceType.AUTHORIZATIONS}
@@ -54,12 +57,13 @@ export const AuthorizationsList = () => {
               onClick={() => push(`/${MenuSection.AUTHORIZATIONS}/new`)}
             >
               <Plus className={buttonIconSize} />
-              Add Authorization
+              {translate('buttons.add')}{' '}
+              {translate('Authorizations.authorization')}
             </Button>
           </CanAccess>
           <DebounceSearch
             onSearch={onSearch}
-            placeholder="Search Authorizations"
+            placeholder={`${translate('placeholders.search')} ${translate('Authorizations.authorization')}`}
           />
         </div>
       </div>
