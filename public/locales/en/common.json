@@ -154,9 +154,20 @@
     "overview": "Overview",
     "help": "Help",
     "themes": {
+      "changeTo": "Change to",
       "dark": "Dark",
       "light": "Light",
       "mode": "Mode"
     }
+  },
+  "overview": {
+    "activeTransactions": "Active Transactions",
+    "chargerActivity": "Charger Activity",
+    "chargerOnlineStatus": "Charger Online Status",
+    "plugInSuccessRate": "Plug-In Success Rate",
+    "noActiveTransactions": "No active transactions.",
+    "viewAllChargers": "View all chargers",
+    "viewAllLocations": "View all locations",
+    "viewAllTransactions": "View all transactions"
   }
 }

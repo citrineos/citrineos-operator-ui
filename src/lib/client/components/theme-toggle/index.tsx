@@ -61,7 +61,7 @@ export const ThemeToggle = ({ expanded }: { expanded: boolean }) => {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right">
-          Change to{' '}
+          {translate('menu.themes.changeTo')}{' '}
           {translate(`menu.themes.${theme === 'light' ? 'dark' : 'light'}`)}{' '}
           {translate('menu.themes.mode')}
         </TooltipContent>

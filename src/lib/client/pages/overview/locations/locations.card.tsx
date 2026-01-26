@@ -11,20 +11,22 @@ import { Card, CardHeader } from '@lib/client/components/ui/card';
 import { CardContent } from '@ferdiunal/refine-shadcn/ui';
 import { heading2Style } from '@lib/client/styles/page';
 import { overviewClickableStyle } from '@lib/client/styles/card';
+import { useTranslate } from '@refinedev/core';
 
 export const LocationsCard = () => {
   const { push } = useRouter();
+  const translate = useTranslate();
 
   return (
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <h2 className={heading2Style}>Locations</h2>
+          <h2 className={heading2Style}>{translate('Locations.Locations')}</h2>
           <div
             className={overviewClickableStyle}
             onClick={() => push(`/${MenuSection.LOCATIONS}`)}
           >
-            View all locations <ChevronRightIcon />
+            {translate('overview.viewAllLocations')} <ChevronRightIcon />
           </div>
         </div>
       </CardHeader>

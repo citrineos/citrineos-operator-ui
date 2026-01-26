@@ -44,9 +44,8 @@ export const LocationMapV2 = ({ locations }: { locations: LocationDto[] }) => {
           defaultZoom={4}
           defaultCenter={defaultCenterUSA}
           gestureHandling="cooperative"
-          disableDefaultUI={false}
-          zoomControl={true}
-          fullscreenControl={false}
+          disableDefaultUI
+          zoomControl
           colorScheme={theme === 'dark' ? ColorScheme.DARK : ColorScheme.LIGHT}
         >
           <ClusteredLocationMarkers

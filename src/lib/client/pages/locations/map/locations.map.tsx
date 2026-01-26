@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React, { useMemo, useState } from 'react';
 import type { LocationDto } from '@citrineos/base';
 import { Input } from '@lib/client/components/ui/input';
 import { LocationClass } from '@lib/cls/location.dto';
 import { LOCATIONS_LIST_QUERY } from '@lib/queries/locations';
 import { ResourceType } from '@lib/utils/access.types';
-import { useList } from '@refinedev/core';
+import { useList, useTranslate } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
-import React, { useMemo, useState } from 'react';
 import { LocationMapV2 } from '@lib/client/components/map/map.v2';
 
 export interface LocationsMapProps {
@@ -22,9 +22,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
 }: LocationsMapProps) => {
   const [filteredLocations, setFilteredLocations] = useState<LocationDto[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocationId, setSelectedLocationId] = useState<
-    string | undefined
-  >();
+  const translate = useTranslate();
 
   const {
     query: { data },
@@ -92,7 +90,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     <div className="size-full flex flex-col gap-4">
       {!mapOnly && (
         <Input
-          placeholder="Search for a location"
+          placeholder={translate('placeholders.search')}
           value={searchQuery}
           onChange={handleSearch}
           className="max-w-md"
