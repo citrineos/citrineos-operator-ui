@@ -12,6 +12,7 @@ const messageFilenames = [
   'chargingStations',
   'locations',
   'authorizations',
+  'transactions',
 ];
 
 export default getRequestConfig(async () => {
