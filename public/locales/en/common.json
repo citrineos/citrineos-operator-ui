@@ -79,24 +79,24 @@
     "show": "Show"
   },
   "buttons": {
+    "cancel": "Cancel",
     "clear": "Clear",
     "clone": "Clone",
     "columns": "Columns",
+    "confirm": "Are you sure?",
     "create": "Create",
-    "import": "Import",
-    "save": "Save",
-    "logout": "Logout",
     "delete": "Delete",
     "download": "Download",
     "edit": "Edit",
-    "cancel": "Cancel",
-    "confirm": "Are you sure?",
     "filter": "Filter",
     "goToNextPage": "Go to next page",
     "goToPreviousPage": "Go to previous page",
     "goToLastPage": "Go to last page",
+    "import": "Import",
+    "logout": "Logout",
     "notAccessTitle": "You don't have permission to access",
     "refresh": "Refresh",
+    "save": "Save",
     "show": "Show",
     "undo": "Undo",
     "upload": "Upload"
@@ -115,6 +115,7 @@
     "importProgress": "Importing: {processed}/{total}"
   },
   "loading": "Loading",
+  "noDataFound": "No Data Found",
   "tags": {
     "clone": "Clone"
   },

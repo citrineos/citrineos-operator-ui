@@ -2,6 +2,13 @@
   "ChargingStations": {
     "ChargingStations": "Charging Stations",
     "chargingStation": "Charging Station",
-    "imageUploadFailed": "Image upload failed."
+    "commandsUnavailable": "Station offline - commands unavailable",
+    "imageUploadFailed": "Image upload failed.",
+    "otherCommands": "Other Commands",
+    "remoteStart": "Remote Start",
+    "remoteStop": "Remote Stop",
+    "reset": "Reset",
+    "startTransaction": "Start Transaction",
+    "stopTransaction": "Stop Transaction"
   }
 }

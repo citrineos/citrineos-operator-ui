@@ -25,13 +25,19 @@ import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { openModal } from '@lib/utils/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess, Link, useDelete, useList, useOne } from '@refinedev/core';
+import {
+  CanAccess,
+  Link,
+  useDelete,
+  useList,
+  useOne,
+  useTranslate,
+} from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
 import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import {
@@ -60,6 +66,7 @@ export const ChargingStationDetailCard = ({
   const { mutate } = useDelete();
   const { back, push } = useRouter();
   const dispatch = useDispatch();
+  const translate = useTranslate();
 
   const {
     query: { data, isLoading },
@@ -113,9 +120,6 @@ export const ChargingStationDetailCard = ({
         onSuccess: () => {
           push(`/${MenuSection.CHARGING_STATIONS}`);
         },
-        onError: () => {
-          toast.error('Failed to delete charging station');
-        },
       },
     );
   }, [station, mutate, push]);
@@ -124,7 +128,7 @@ export const ChargingStationDetailCard = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Start',
+          title: translate('ChargingStations.remoteStart'),
           modalComponentType: ModalComponentType.remoteStart,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -137,7 +141,7 @@ export const ChargingStationDetailCard = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Stop',
+          title: translate('ChargingStations.remoteStop'),
           modalComponentType: ModalComponentType.remoteStop,
           modalComponentProps: {
             station: instanceToPlain(station),
@@ -152,7 +156,7 @@ export const ChargingStationDetailCard = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Reset',
+          title: translate('ChargingStations.reset'),
           modalComponentType: ModalComponentType.reset,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -166,15 +170,15 @@ export const ChargingStationDetailCard = ({
 
     dispatch(
       openModal({
-        title: 'Other Commands',
+        title: translate('ChargingStations.otherCommands'),
         modalComponentType: ModalComponentType.otherCommands,
         modalComponentProps: { station: instanceToPlain(station) },
       }),
     );
   }, [dispatch, station]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!station) return <p>No Data Found</p>;
+  if (isLoading) return <p>{translate('loading')}</p>;
+  if (!station) return <p>{translate('noDataFound')}</p>;
 
   const hasActiveTransactions =
     station.transactions && station.transactions.length > 0;
@@ -217,7 +221,7 @@ export const ChargingStationDetailCard = ({
               }
             >
               <Edit className={buttonIconSize} />
-              Edit
+              {translate('buttons.edit')}
             </Button>
           </CanAccess>
           <CanAccess
@@ -227,7 +231,7 @@ export const ChargingStationDetailCard = ({
           >
             <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
               <Trash2 className={buttonIconSize} />
-              Delete
+              {translate('buttons.delete')}
             </Button>
           </CanAccess>
         </div>
@@ -396,7 +400,7 @@ export const ChargingStationDetailCard = ({
                   <div className="flex items-center text-muted-foreground">
                     <Info className="mr-2 h-4 w-4" />
                     <span className="text-sm">
-                      Station offline - commands unavailable
+                      {translate('ChargingStations.commandsUnavailable')}
                     </span>
                   </div>
                 )}
@@ -414,7 +418,7 @@ export const ChargingStationDetailCard = ({
                         disabled={!station.isOnline}
                         onClick={() => showRemoteStartModal(station)}
                       >
-                        Start Transaction
+                        {translate('ChargingStations.startTransaction')}
                       </Button>
                     </CanAccess>
                   )}
@@ -432,7 +436,7 @@ export const ChargingStationDetailCard = ({
                         onClick={() => handleStopTransactionClick(station)}
                         disabled={!station.isOnline}
                       >
-                        Stop Transaction
+                        {translate('ChargingStations.stopTransaction')}
                       </Button>
                     </CanAccess>
                   )}
@@ -449,7 +453,7 @@ export const ChargingStationDetailCard = ({
                       onClick={() => showResetStartModal(station)}
                       disabled={!station.isOnline}
                     >
-                      Reset
+                      {translate('ChargingStations.reset')}
                     </Button>
                   </CanAccess>
                   <Button
@@ -457,7 +461,7 @@ export const ChargingStationDetailCard = ({
                     disabled={!station.isOnline}
                   >
                     <MoreHorizontal className="mr-2 h-4 w-4" />
-                    Other Commands
+                    {translate('ChargingStations.otherCommands')}
                   </Button>
                 </div>
               </div>
