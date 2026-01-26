@@ -11,7 +11,7 @@ import {
   TabsTrigger,
 } from '@lib/client/components/ui/tabs';
 import { cardTabsStyle } from '@lib/client/styles/card';
-import { CanAccess, useList } from '@refinedev/core';
+import { CanAccess, useList, useTranslate } from '@refinedev/core';
 import {
   ActionType,
   ResourceType,
@@ -44,6 +44,7 @@ export const TransactionDetailTabsCard = ({
   transaction: TransactionDto;
 }) => {
   const { push } = useRouter();
+  const translate = useTranslate();
 
   const [validContexts, setValidContexts] = useState<
     OCPP2_0_1.ReadingContextEnumType[]
@@ -78,7 +79,9 @@ export const TransactionDetailTabsCard = ({
       <CardContent>
         <Tabs defaultValue="authorizations">
           <TabsList>
-            <TabsTrigger value="authorizations">Authorizations</TabsTrigger>
+            <TabsTrigger value="authorizations">
+              {translate('Authorizations.Authorizations')}
+            </TabsTrigger>
             <TabsTrigger value="meter-values">Meter Value Data</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
           </TabsList>

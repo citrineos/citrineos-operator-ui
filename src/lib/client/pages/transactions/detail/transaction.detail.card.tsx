@@ -52,7 +52,7 @@ export const TransactionDetailCard = ({
       <CardContent>
         <div className={cardGridStyle}>
           <KeyValueDisplay
-            keyLabel="Authorization"
+            keyLabel={translate('Authorizations.authorization')}
             value={''}
             valueRender={() =>
               transaction.authorization?.idToken ? (
