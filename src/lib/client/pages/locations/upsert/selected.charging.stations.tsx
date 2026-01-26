@@ -80,13 +80,16 @@ export const SelectedChargingStations = ({
       <Card>
         <CardHeader>
           <div className={cardHeaderFlex}>
-            <h3 className={heading3Style}>Charging Stations</h3>
+            <h3 className={heading3Style}>
+              {translate('ChargingStations.ChargingStations')}
+            </h3>
             <CanAccess
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.CREATE}
               fallback={<AccessDeniedFallback />}
             >
               <Button
+                type="button"
                 variant="success"
                 size="sm"
                 onClick={handleAddNewChargingStation}
