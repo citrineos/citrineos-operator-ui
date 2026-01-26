@@ -199,7 +199,7 @@ export const ChargingStationUpsert = ({
               console.error(err);
               open?.({
                 type: 'error',
-                message: translate('ChargingStations.imageUploadFailed'),
+                message: translate('imageUploadFailed'),
               });
             },
           );

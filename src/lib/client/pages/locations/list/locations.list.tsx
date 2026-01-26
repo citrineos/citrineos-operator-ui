@@ -19,7 +19,7 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import type { ExpandedState } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -36,6 +36,7 @@ export const LocationsList = () => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [searchValue, setSearchValue] = useState<string>('');
   const { push } = useRouter();
+  const translate = useTranslate();
 
   const columns = useMemo(() => getLocationsColumns(push), [push]);
 
@@ -50,7 +51,7 @@ export const LocationsList = () => {
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
       <div className={tableHeaderWrapperFlex}>
-        <h2 className={heading2Style}>Locations</h2>
+        <h2 className={heading2Style}>{translate('Locations.Locations')}</h2>
         <div className={tableSearchFlex}>
           <CanAccess
             resource={ResourceType.LOCATIONS}
@@ -61,10 +62,13 @@ export const LocationsList = () => {
               onClick={() => push(`/${MenuSection.LOCATIONS}/new`)}
             >
               <Plus className={buttonIconSize} />
-              Add Location
+              {translate('buttons.add')} {translate('Locations.location')}
             </Button>
           </CanAccess>
-          <DebounceSearch onSearch={onSearch} placeholder="Search Locations" />
+          <DebounceSearch
+            onSearch={onSearch}
+            placeholder={`${translate('placeholders.search')} ${translate('Locations.Locations')}`}
+          />
         </div>
       </div>
       <CanAccess

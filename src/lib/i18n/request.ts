@@ -7,8 +7,7 @@ import { getUserLocale } from '@lib/server/hooks/getUserLocale';
 import { getRequestConfig } from 'next-intl/server';
 
 const fallbackLocale = 'en';
-
-const messageFilenames = ['common', 'chargingStations'];
+const messageFilenames = ['common', 'chargingStations', 'locations'];
 
 export default getRequestConfig(async () => {
   const locale = (await getUserLocale()) ?? fallbackLocale;

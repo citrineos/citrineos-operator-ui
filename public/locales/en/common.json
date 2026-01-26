@@ -112,6 +112,7 @@
     "editError": "Error when editing {resource} (status code: {statusCode})",
     "importProgress": "Importing: {processed}/{total}"
   },
+  "imageUploadFailed": "Image upload failed.",
   "loading": "Loading",
   "noDataFound": "No Data Found",
   "tags": {

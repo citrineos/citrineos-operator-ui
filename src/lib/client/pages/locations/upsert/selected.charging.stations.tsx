@@ -10,7 +10,7 @@ import { Button } from '@lib/client/components/ui/button';
 import { CHARGING_STATIONS_LIST_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { useSelect } from '@refinedev/core';
+import { useSelect, useTranslate } from '@refinedev/core';
 import { CanAccess } from '@refinedev/core';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -34,6 +34,7 @@ export const SelectedChargingStations = ({
   params,
 }: SelectedChargingStationsProps) => {
   const { push } = useRouter();
+  const translate = useTranslate();
   const locationId = params?.id ? params.id : undefined;
 
   const {
@@ -85,9 +86,13 @@ export const SelectedChargingStations = ({
               action={ActionType.CREATE}
               fallback={<AccessDeniedFallback />}
             >
-              <Button variant="success" onClick={handleAddNewChargingStation}>
+              <Button
+                variant="success"
+                size="sm"
+                onClick={handleAddNewChargingStation}
+              >
                 <Plus className={buttonIconSize} />
-                Create
+                {translate('buttons.add')}
               </Button>
             </CanAccess>
           </div>
