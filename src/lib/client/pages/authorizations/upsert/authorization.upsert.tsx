@@ -31,7 +31,7 @@ import {
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { CanAccess, type GetOneResponse } from '@refinedev/core';
+import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import z from 'zod';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
@@ -103,8 +103,8 @@ const authorizationWhitelistOptions = Object.keys(AuthorizationWhitelistEnum);
 
 export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
   const { id } = params;
-
   const { back } = useRouter();
+  const translate = useTranslate();
 
   const form = useForm({
     refineCoreProps: {
@@ -126,20 +126,6 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
       },
       mutationMode: 'pessimistic',
       action: id ? 'edit' : 'create',
-      successNotification: () => {
-        return {
-          message: `Authorization ${id ? 'updated' : 'created'} successfully`,
-          type: 'success',
-        };
-      },
-      errorNotification: (error) => {
-        return {
-          message: `Error ${id ? 'updating' : 'creating'} authorization: ${
-            error?.message
-          }`,
-          type: 'error',
-        };
-      },
       liveMode: 'auto',
       meta: {
         gqlQuery: AUTHORIZATIONS_SHOW_QUERY,
@@ -195,7 +181,8 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
           <div className={cardHeaderFlex}>
             <ChevronLeft onClick={() => back()} className="cursor-pointer" />
             <h2 className={heading2Style}>
-              {id ? 'Edit' : 'Create'} Authorization
+              {translate(`actions.${id ? 'edit' : 'create'}`)}{' '}
+              {translate('Authorizations.authorization')}
             </h2>
           </div>
         </CardHeader>
