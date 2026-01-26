@@ -120,6 +120,7 @@
   "imageUploadFailed": "Image upload failed.",
   "loading": "Loading",
   "noDataFound": "No Data Found",
+  "loggedOut": "Logged out! Redirecting to login...",
   "tags": {
     "clone": "Clone"
   },
@@ -149,5 +150,13 @@
     },
     "rowsPerPage": "Rows per page"
   },
-  "overview": "Overview"
+  "menu": {
+    "overview": "Overview",
+    "help": "Help",
+    "themes": {
+      "dark": "Dark",
+      "light": "Light",
+      "mode": "Mode"
+    }
+  }
 }

@@ -23,6 +23,7 @@ import { sidebarIconSize } from '@lib/client/styles/icon';
 import { ThemeToggle } from '@lib/client/components/theme-toggle';
 import { ConnectionModal } from '@lib/client/components/modals/shared/connection-modal/connection.modal';
 import { LogoutButton } from '@lib/client/components/logout-button';
+import { useTranslate } from '@refinedev/core';
 
 export enum MenuSection {
   OVERVIEW = 'overview',
@@ -47,6 +48,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const menuRef = useRef<HTMLElement>(null);
+  const translate = useTranslate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,32 +63,32 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
   const mainMenuItems: MenuItem[] = [
     {
       key: `/${MenuSection.OVERVIEW}`,
-      label: 'Overview',
+      label: translate('menu.overview'),
       icon: <Home className={sidebarIconSize} />,
     },
     {
       key: `/${MenuSection.LOCATIONS}`,
-      label: 'Locations',
+      label: translate('Locations.Locations'),
       icon: <MapPin className={sidebarIconSize} />,
     },
     {
       key: `/${MenuSection.CHARGING_STATIONS}`,
-      label: 'Charging Stations',
+      label: translate('ChargingStations.ChargingStations'),
       icon: <EvCharger className={sidebarIconSize} />,
     },
     {
       key: `/${MenuSection.AUTHORIZATIONS}`,
-      label: 'Authorizations',
+      label: translate('Authorizations.Authorizations'),
       icon: <Clipboard className={sidebarIconSize} />,
     },
     {
       key: `/${MenuSection.TRANSACTIONS}`,
-      label: 'Transactions',
+      label: translate('Transactions.Transactions'),
       icon: <ArrowLeftRight className={sidebarIconSize} />,
     },
     {
       key: `/${MenuSection.PARTNERS}`,
-      label: 'Partners',
+      label: translate('TenantPartners.TenantPartners'),
       icon: <Users className={sidebarIconSize} />,
     },
   ];
@@ -142,7 +144,7 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
             title="Help"
           >
             <HelpCircle className={sidebarIconSize} />
-            {!collapsed && <span>Help</span>}
+            {!collapsed && <span>{translate('menu.help')}</span>}
           </Button>
           <LogoutButton expanded={!collapsed} />
         </div>
