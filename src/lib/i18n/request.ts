@@ -21,9 +21,14 @@ export default getRequestConfig(async () => {
 
   const messages = await messageFilenames.reduce(
     async (allMessagesPromise, currentFile) => {
-      const currentMessages = (
-        await import(`../../../public/locales/${locale}/${currentFile}.json`)
-      ).default;
+      let currentMessages = [];
+      try {
+        currentMessages = (
+          await import(`../../../public/locales/${locale}/${currentFile}.json`)
+        ).default;
+      } catch (e) {
+        console.debug(`No messages found for ${currentFile}, skipping...`);
+      }
 
       const allMessages = await allMessagesPromise;
 
@@ -34,11 +39,18 @@ export default getRequestConfig(async () => {
 
   const fallbackMessages = await messageFilenames.reduce(
     async (allFallbacksPromise, currentFile) => {
-      const currentFallbacks = (
-        await import(
-          `../../../public/locales/${fallbackLocale}/${currentFile}.json`
-        )
-      ).default;
+      let currentFallbacks = [];
+      try {
+        currentFallbacks = (
+          await import(
+            `../../../public/locales/${fallbackLocale}/${currentFile}.json`
+          )
+        ).default;
+      } catch (e) {
+        console.debug(
+          `No fallback messages found for ${currentFile}, skipping...`,
+        );
+      }
 
       const allFallbacks = await allFallbacksPromise;
 
