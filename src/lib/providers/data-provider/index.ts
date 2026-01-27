@@ -21,8 +21,10 @@ const requestMiddleware = async (request: any) => {
   const hasuraAdminSecret = config.hasuraAdminSecret;
 
   if (hasuraAdminSecret) {
+    console.debug('Authorizing to Hasura via Hasura Admin Secret');
     requestHeaders[HasuraHeader.X_HASURA_ADMIN_SECRET] = hasuraAdminSecret;
   } else if (authProvider) {
+    console.debug('Authorizing to Hasura via configured Auth Provider');
     const token = await authProvider.getToken();
     if (token) {
       requestHeaders['Authorization'] = 'Bearer ' + token;

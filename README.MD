@@ -49,9 +49,11 @@ docker compose up -d
 For development convenience, Operator UI is configured with a workspace in `package.json`:
 
 ```json
-"workspaces": [
-  "../citrineos-core/00_Base"
-]
+{
+   "workspaces": [
+      "../citrineos-core/00_Base"
+   ]
+}
 ```
 
 and this will attempt to get `@citrineos/base` dependency from the `citrineos-core` folder if it is in same parent directory.
@@ -81,6 +83,16 @@ to start Operator UI via npm.
 ## Usage
 
 Operator UI is at localhost:5173 if using development server, otherwise it is at localhost:3000.
+
+## Hasura Authentication
+
+There are two ways to authenticate to Hasura:
+
+1. If you have **uncommented** the Docker environment variable `HASURA_GRAPHQL_ADMIN_SECRET` in `citrineos-core`:
+   2. Ensure your `.env.local` has the `NEXT_PUBLIC_HASURA_ADMIN_SECRET` **uncommented** out
+   3. **Please note that it is not recommended to use a Hasura Admin Secret in production.**
+4. If you have **commented** the Docker environment variable `HASURA_GRAPHQL_ADMIN_SECRET` in `citrineos-core`:
+   5. Ensure your `.env.local` has the `NEXT_PUBLIC_HASURA_ADMIN_SECRET` **commented** out, as the auth will be handled by your auth provider automatically.
 
 ## Learn More
 
