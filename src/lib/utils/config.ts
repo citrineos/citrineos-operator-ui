@@ -13,7 +13,7 @@ const getConfig: () => {
   googleMapsAddressApiKey: string;
   googleMapsLocationPickerMapId?: string;
   googleMapsOverviewMapId?: string;
-  hasuraAdminSecret?: string;
+  hasuraAdminSecret?: string; // Not recommended for use in production; use your authProvider instead.
   hasuraClaim?: string;
   tenantId: string;
   apiUrl: string;
@@ -59,7 +59,7 @@ const getConfig: () => {
       'location-picker-map-id',
     googleMapsOverviewMapId:
       process.env.NEXT_PUBLIC_GOOGLE_MAPS_OVERVIEW_MAP_ID || 'overview-map-id',
-    hasuraAdminSecret: process.env.HASURA_ADMIN_SECRET,
+    hasuraAdminSecret: process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET,
     hasuraClaim:
       process.env.NEXT_PUBLIC_HASURA_CLAIM || 'https://hasura.io/jwt/claims',
     tenantId: process.env.NEXT_PUBLIC_TENANT_ID || '1',

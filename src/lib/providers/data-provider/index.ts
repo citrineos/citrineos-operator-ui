@@ -17,7 +17,12 @@ const requestMiddleware = async (request: any) => {
     ...request.headers,
   };
   requestHeaders[HasuraHeader.X_HASURA_TENANT_ID] = config.tenantId;
-  if (authProvider) {
+
+  const hasuraAdminSecret = config.hasuraAdminSecret;
+
+  if (hasuraAdminSecret) {
+    requestHeaders[HasuraHeader.X_HASURA_ADMIN_SECRET] = hasuraAdminSecret;
+  } else if (authProvider) {
     const token = await authProvider.getToken();
     if (token) {
       requestHeaders['Authorization'] = 'Bearer ' + token;
