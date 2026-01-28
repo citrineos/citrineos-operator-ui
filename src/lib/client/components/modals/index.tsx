@@ -41,10 +41,14 @@ import { UnlockConnectorModal } from '@lib/client/components/modals/2.0.1/unlock
 import { UpdateAuthPasswordModal } from '@lib/client/components/modals/2.0.1/update-auth-password/update.auth.password.modal';
 import { UpdateFirmwareModal as UpdateFirmwareModal201 } from '@lib/client/components/modals/2.0.1/update-firmware/update.firmware.modal';
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
+import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
 
 const MODAL_COMPONENTS: Partial<{
   [key in ModalComponentType]: React.FC<any>;
 }> = {
+  // Admin Commands
+  [ModalComponentType.forceDisconnect]: ForceDisconnectModal,
+  // Shared Commands
   [ModalComponentType.remoteStart]: RemoteStartTransactionModal,
   [ModalComponentType.remoteStop]: RemoteStopTransactionModal,
   [ModalComponentType.reset]: ResetModal,

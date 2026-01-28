@@ -54,6 +54,7 @@ import { StartTransactionButton } from '@lib/client/pages/charging-stations/star
 import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
+import { ForceDisconnectButton } from '../force.disconnect.button';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -127,6 +128,19 @@ export const ChargingStationDetailCard = ({
       },
     );
   }, [station, mutate, push]);
+
+  const showForceDisconnectModal = useCallback(
+    (station: ChargingStationDto) => {
+      dispatch(
+        openModal({
+          title: translate('ChargingStations.forceDisconnect'),
+          modalComponentType: ModalComponentType.forceDisconnect,
+          modalComponentProps: { station: instanceToPlain(station) },
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const showRemoteStartModal = useCallback(
     (station: ChargingStationDto) => {
@@ -398,37 +412,39 @@ export const ChargingStationDetailCard = ({
             action={ActionType.COMMAND}
             params={{ id: station.id }}
           >
-            <div className="flex justify-between items-center flex-1">
-              <div className="flex flex-col gap-2 flex-1">
-                {!station.isOnline && <CommandsUnavailableText />}
-                <div className="flex gap-4 flex-1">
-                  {!hasActiveTransactions && (
-                    <StartTransactionButton
-                      stationId={station.id}
-                      onClickAction={() => showRemoteStartModal(station)}
-                      disabled={!station.isOnline}
-                    />
-                  )}
-                  {hasActiveTransactions && (
-                    <StopTransactionButton
-                      stationId={station.id}
-                      onClickAction={() => handleStopTransactionClick(station)}
-                      disabled={!station.isOnline}
-                    />
-                  )}
-                  <ResetButton
+            <div className="flex flex-col gap-2">
+              {!station.isOnline && <CommandsUnavailableText />}
+              <div className="flex gap-4 flex-wrap">
+                <ForceDisconnectButton
+                  stationId={station.id}
+                  onClickAction={() => showForceDisconnectModal(station)}
+                />
+                {!hasActiveTransactions && (
+                  <StartTransactionButton
                     stationId={station.id}
-                    onClickAction={() => showResetStartModal(station)}
+                    onClickAction={() => showRemoteStartModal(station)}
                     disabled={!station.isOnline}
                   />
-                  <Button
-                    onClick={showOtherCommandsModal}
+                )}
+                {hasActiveTransactions && (
+                  <StopTransactionButton
+                    stationId={station.id}
+                    onClickAction={() => handleStopTransactionClick(station)}
                     disabled={!station.isOnline}
-                  >
-                    <MoreHorizontal className={buttonIconSize} />
-                    {translate('ChargingStations.otherCommands')}
-                  </Button>
-                </div>
+                  />
+                )}
+                <ResetButton
+                  stationId={station.id}
+                  onClickAction={() => showResetStartModal(station)}
+                  disabled={!station.isOnline}
+                />
+                <Button
+                  onClick={showOtherCommandsModal}
+                  disabled={!station.isOnline}
+                >
+                  <MoreHorizontal className={buttonIconSize} />
+                  {translate('ChargingStations.otherCommands')}
+                </Button>
               </div>
             </div>
           </CanAccess>

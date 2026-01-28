@@ -3,6 +3,7 @@
     "ChargingStations": "Charging Stations",
     "chargingStation": "Charging Station",
     "commandsUnavailable": "Station offline - commands unavailable",
+    "forceDisconnect": "Force Disconnect",
     "otherCommands": "Other Commands",
     "remoteStart": "Remote Start",
     "remoteStop": "Remote Stop",
