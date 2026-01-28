@@ -311,3 +311,13 @@ export const TRANSACTION_GET_QUERY = gql`
     }
   }
 `;
+
+export const TRANSACTION_EDIT_MUTATION = gql`
+  mutation TransactionEdit($id: Int!, $object: Transactions_set_input!) {
+    update_Transactions_by_pk(pk_columns: { id: $id }, _set: $object) {
+      id
+      isActive
+      updatedAt
+    }
+  }
+`;
