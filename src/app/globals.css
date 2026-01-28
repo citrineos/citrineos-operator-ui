@@ -1,0 +1,108 @@
+/* 
+ SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+
+ SPDX-License-Identifier: Apache-2.0
+ */
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme inline {
+  /* Color tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: calc(var(--radius));
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  /* Font */
+  --font-sans: var(--font-roobert), system-ui, sans-serif;
+
+  /* Non-themed Colors */
+  --light-mode: #ffae0b;
+  --light-mode-foreground: #442b00;
+  --dark-mode: #d7dcff;
+  --dark-mode-foreground: #000d37;
+}
+
+:root {
+  --radius: 0.375rem;
+
+  /* Light mode colors */
+  --background: oklch(1 0 0);
+  --foreground: #131211;
+  --card: oklch(1 0 0);
+  --card-foreground: #131211;
+  --popover: oklch(1 0 0);
+  --popover-foreground: #131211;
+  --primary: #ffae0b;
+  --primary-foreground: #6e4900;
+  --secondary: #a5b2ff;
+  --secondary-foreground: #000d37;
+  --muted: #e7e6e4;
+  --muted-foreground: #32302e;
+  --accent: hsl(40, 5.88%, 95%);
+  --accent-foreground: #6e87ff;
+  --destructive: #f61631;
+  --success: #3db014;
+  --warning: #ff7300;
+  --border: #e7e6e4;
+  --input: #c3bdb9;
+  --ring: #9c9793;
+}
+
+[data-theme='dark'] {
+  /* Dark mode colors */
+  --background: #16151e;
+  --foreground: #f0f0f0;
+  --card: #23242e;
+  --card-foreground: #f0f0f0;
+  --popover: #23242e;
+  --popover-foreground: #f0f0f0;
+  --primary: hsl(40.08, 100%, 60%);
+  --primary-foreground: #6e4900;
+  --secondary: #d7dcff;
+  --secondary-foreground: #00226e;
+  --muted: #32302e;
+  --muted-foreground: #c3bdb9;
+  --accent: hsl(234.55, 13.58%, 25%);
+  --accent-foreground: #a5b2ff;
+  --destructive: hsl(352.77, 92.56%, 60%);
+  --success: hsl(104.23, 79.59%, 40%);
+  --warning: #ffa45a;
+  --border: hsl(234.55, 13.58%, 30%);
+  --input: hsl(234.55, 13.58%, 35%);
+  --ring: hsl(234.55, 13.58%, 30%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 antialiased;
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

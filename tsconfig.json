@@ -1,35 +1,33 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "esnext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "noEmit": true,
+    "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": ".",
+    "verbatimModuleSyntax": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@OCPP1_6": ["src/util/ocpp1_6_dependencies"],
-      "@OCPP2_0_1": ["src/util/ocpp2_0_1_dependencies"],
-      "@util/*": ["src/util/*"],
-      "@enums": ["src/model/enums"],
-      "@interfaces": ["src/model/interfaces"]
-    }
+      "@*": ["./src/*"]
+    },
+    "incremental": true
   },
-  "include": ["src"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

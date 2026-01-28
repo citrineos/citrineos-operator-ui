@@ -1,0 +1,13 @@
+{
+  "ChargingStations": {
+    "ChargingStations": "Charging Stations",
+    "chargingStation": "Charging Station",
+    "commandsUnavailable": "Station offline - commands unavailable",
+    "otherCommands": "Other Commands",
+    "remoteStart": "Remote Start",
+    "remoteStop": "Remote Stop",
+    "reset": "Reset",
+    "startTransaction": "Start Transaction",
+    "stopTransaction": "Stop Transaction"
+  }
+}

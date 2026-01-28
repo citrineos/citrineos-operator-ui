@@ -22,8 +22,17 @@ This is the repository for the Operator User Interface and associated tooling.
 
 ## How to Start
 
-In order to function, CitrineOS Core must be running. The UI draws its data from the Hasura GraphQL Engine.
+In order to fully function, CitrineOS Core must be running. The UI draws its data from the Hasura GraphQL Engine.
 The Core Message and Data APIs are used for charging station commands.
+
+### Building with Local CitrineOS-Core Version
+
+In order to build with a local version of citrineos-core, say a release candidate branch, you will need to use `npm link`
+
+1. In the citrineos-core root, after a successful build of your local code, `cd 00_Base && npm link`
+1. In the citrineos-operator-ui root, `npm link @citrineos/base@X.X.X` where X.X.X is the local version you successfully built
+
+Note: `npm run fresh` or `npm run fi` deletes this link.
 
 ### Running with Docker
 
@@ -40,9 +49,11 @@ docker compose up -d
 For development convenience, Operator UI is configured with a workspace in `package.json`:
 
 ```json
-"workspaces": [
-  "../citrineos-core/00_Base"
-]
+{
+   "workspaces": [
+      "../citrineos-core/00_Base"
+   ]
+}
 ```
 
 and this will attempt to get `@citrineos/base` dependency from the `citrineos-core` folder if it is in same parent directory.
@@ -73,12 +84,19 @@ to start Operator UI via npm.
 
 Operator UI is at localhost:5173 if using development server, otherwise it is at localhost:3000.
 
+## Hasura Authentication
+
+There are two ways to authenticate to Hasura:
+
+1. If you have **uncommented** the Docker environment variable `HASURA_GRAPHQL_ADMIN_SECRET` in `citrineos-core`:
+   2. Ensure your `.env.local` has the `HASURA_ADMIN_SECRET` **uncommented** out
+   3. **Please note that it is not recommended to use a Hasura Admin Secret in production.**
+4. If you have **commented** the Docker environment variable `HASURA_GRAPHQL_ADMIN_SECRET` in `citrineos-core`:
+   5. Ensure your `.env.local` has the `HASURA_ADMIN_SECRET` **commented** out, as the auth will be handled by your auth provider automatically.
+
 ## Learn More
 
 To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
 
-- **Hasura Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **Ant Design** [Docs](https://refine.dev/docs/ui-frameworks/antd/tutorial/)
-- **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
 - **Hasura v2 Graphql Engine** [Docs](https://hasura.io/docs/2.0/index/)
 - **Hasura Postgres Data connector** [Docs](https://hasura.io/docs/2.0/databases/postgres/index/)

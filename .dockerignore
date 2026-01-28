@@ -1,4 +1,8 @@
-**/node_modules
+**/node_modules/
 **/dist
-.gitignore
-**/package-lock.json
+.git
+npm-debug.log
+.coverage
+.coverage.*
+.env
+.next
