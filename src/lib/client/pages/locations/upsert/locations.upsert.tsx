@@ -30,7 +30,6 @@ import {
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
-import { Country, countryStateData } from '@lib/utils/country.state.data';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { CanAccess, useUpdateMany } from '@refinedev/core';
 import { ChevronLeft, Upload as UploadIcon } from 'lucide-react';
@@ -61,6 +60,13 @@ import { toast } from 'sonner';
 import { useNotification } from '@refinedev/core';
 import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
+import {
+  getCountryList,
+  getCountryConfig,
+  type CountryCode,
+  type AdministrativeArea,
+  getAdministrativeAreas,
+} from '@lib/utils/country.config';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -97,7 +103,7 @@ const defaultLocation = {
   [LocationProps.city]: '',
   [LocationProps.postalCode]: '',
   [LocationProps.state]: '',
-  [LocationProps.country]: Country.USA,
+  [LocationProps.country]: getCountryList()[0]?.code || '', // Default to first country
   [LocationProps.coordinates]: {
     type: 'Point' as const,
     coordinates: [defaultLongitude, defaultLatitude],
@@ -107,8 +113,6 @@ const defaultLocation = {
   [LocationProps.facilities]: [] as LocationFacilityEnumType[],
   [LocationProps.chargingPool]: undefined,
 };
-
-const countryOptions = Object.keys(Country);
 
 const parkingTypes: LocationParkingEnumType[] = Object.keys(
   LocationParkingEnum,
@@ -125,6 +129,10 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [administrativeAreas, setAdministrativeAreas] = useState<
+    AdministrativeArea[]
+  >([]);
+  const [loadingAdminAreas, setLoadingAdminAreas] = useState(false);
 
   const { open } = useNotification();
 
@@ -133,7 +141,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
     new GeoPoint(defaultLatitude, defaultLongitude),
   );
 
-  const [stateLoading, setStateLoading] = useState(false);
+  const countryList = getCountryList();
 
   const form = useForm({
     refineCoreProps: {
@@ -165,10 +173,43 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
     warnWhenUnsavedChanges: true,
   });
 
+  const chosenCountryCode = form.watch(LocationProps.country) as CountryCode;
   const chosenState = form.watch(LocationProps.state);
-  const chosenCountry = form.watch(LocationProps.country);
   const coordinates = form.watch(LocationProps.coordinates);
   const currentChargingPool = form.watch(LocationProps.chargingPool);
+
+  const countryConfig = getCountryConfig(chosenCountryCode);
+
+  // Find the country name for display purposes
+  const chosenCountry = countryList.find(
+    (country) => country.code === chosenCountryCode,
+  );
+  const chosenCountryName = chosenCountry?.name || '';
+
+  // Load administrative areas when country changes
+  useEffect(() => {
+    if (chosenCountryCode && countryConfig.usesAdministrativeAreas) {
+      setLoadingAdminAreas(true);
+      getAdministrativeAreas(chosenCountryCode)
+        .then((areas) => {
+          setAdministrativeAreas(areas);
+        })
+        .catch((err) => {
+          console.error('Failed to load administrative areas:', err);
+          setAdministrativeAreas([]);
+        })
+        .finally(() => {
+          setLoadingAdminAreas(false);
+        });
+    } else {
+      setAdministrativeAreas([]);
+      // Clear state field if country doesn't use administrative areas
+      if (!countryConfig.usesAdministrativeAreas) {
+        form.setValue(LocationProps.state, '');
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chosenCountryCode, countryConfig.usesAdministrativeAreas]);
 
   useEffect(() => {
     if (!originalStationIdsRef.current && currentChargingPool !== undefined) {
@@ -334,6 +375,32 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                   >
                     <Input />
                   </FormField>
+
+                  <ComboboxFormField
+                    control={form.control}
+                    name={LocationProps.country}
+                    label="Country"
+                    value={chosenCountryName}
+                    options={countryList.map((country) => ({
+                      label: country.name,
+                      value: country.name,
+                    }))}
+                    placeholder="Select Country"
+                    searchPlaceholder="Search Countries"
+                    required
+                    onSelect={(countryName: string) => {
+                      const selectedCountry = countryList.find(
+                        (country) => country.name === countryName,
+                      );
+                      if (selectedCountry) {
+                        form.setValue(
+                          LocationProps.country,
+                          selectedCountry.code,
+                        );
+                      }
+                    }}
+                  />
+
                   <Controller
                     control={form.control}
                     name="address"
@@ -346,7 +413,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                         <AddressAutocomplete
                           value={field.value!}
                           onChangeAction={field.onChange}
-                          country={chosenCountry as Country}
+                          countryCode={chosenCountryCode}
                           onSelectPlaceAction={(_placeId, details) => {
                             form.setValue(
                               LocationProps.address,
@@ -357,24 +424,24 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                               details.city ?? '',
                             );
 
-                            const country =
-                              details.country === 'United States'
-                                ? Country.USA
-                                : Country.Canada;
-
-                            form.setValue(LocationProps.country, country);
-
-                            setStateLoading(true);
-
-                            // Since state relies on country
-                            // Wait for next tick to set state so Select options are ready
-                            setTimeout(() => {
+                            // Set country from autocomplete
+                            if (details.countryCode) {
                               form.setValue(
-                                LocationProps.state,
-                                details.state ?? '',
+                                LocationProps.country,
+                                details.countryCode,
                               );
-                              setStateLoading(false);
-                            }, 1);
+                            }
+
+                            // Set state from autocomplete
+                            if (details.state) {
+                              // Wait for administrative areas to load
+                              setTimeout(() => {
+                                form.setValue(
+                                  LocationProps.state,
+                                  details.state ?? '',
+                                );
+                              }, 100);
+                            }
 
                             form.setValue(
                               LocationProps.postalCode,
@@ -404,49 +471,37 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                   >
                     <Input />
                   </FormField>
-                  {chosenCountry && (
+
+                  {countryConfig.usesAdministrativeAreas && (
                     <ComboboxFormField
                       control={form.control}
                       name={LocationProps.state}
-                      label="State"
+                      label={countryConfig.administrativeAreaLabel}
                       value={chosenState}
-                      options={countryStateData[chosenCountry].map(
-                        (state: string) => ({
-                          label: state,
-                          value: state,
-                        }),
-                      )}
-                      placeholder="Select State"
-                      searchPlaceholder="Search States"
-                      isLoading={stateLoading}
-                      required
+                      options={
+                        administrativeAreas?.map((area) => ({
+                          label: area.name,
+                          value: area.name,
+                        })) ?? []
+                      }
+                      placeholder={`Select ${countryConfig.administrativeAreaLabel}`}
+                      searchPlaceholder={`Search ${countryConfig.administrativeAreaLabel}s`}
+                      isLoading={loadingAdminAreas}
+                      required={countryConfig.usesAdministrativeAreas}
                     />
                   )}
-                  {!chosenCountry && (
-                    <Field>
-                      <FieldLabel className={formLabelWrapperStyle}>
-                        <span className={formLabelStyle}>State</span>
-                        {formRequiredAsterisk}
-                      </FieldLabel>
-                      Choose a country to see state options.
-                    </Field>
+
+                  {countryConfig.postalCodeRequired && (
+                    <FormField
+                      control={form.control}
+                      label={countryConfig.postalCodeLabel}
+                      name={LocationProps.postalCode}
+                      required={countryConfig.postalCodeRequired}
+                    >
+                      <Input />
+                    </FormField>
                   )}
-                  <FormField
-                    control={form.control}
-                    label="Postal Code"
-                    name={LocationProps.postalCode}
-                    required
-                  >
-                    <Input />
-                  </FormField>
-                  <SelectFormField
-                    control={form.control}
-                    name={LocationProps.country}
-                    label="Country"
-                    options={countryOptions}
-                    placeholder="Select Country"
-                    required
-                  />
+
                   <Field>
                     <FieldLabel
                       htmlFor="latitude"

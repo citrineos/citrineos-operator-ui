@@ -1,0 +1,12 @@
+{
+  "US": {
+    "administrativeAreaLabel": "State",
+    "postalCodeLabel": "ZIP Code",
+    "postalCodePattern": "^\\d{5}(-\\d{4})?$"
+  },
+  "CA": {
+    "administrativeAreaLabel": "Province",
+    "postalCodeLabel": "Postal Code",
+    "postalCodePattern": "^[A-Z]\\d[A-Z]\\s?\\d[A-Z]\\d$"
+  }
+}

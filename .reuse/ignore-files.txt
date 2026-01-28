@@ -2,6 +2,9 @@
 .gitignore
 .npmrc
 package-lock.json
+config/countries/all-countries.json
+config/countries/country-areas.json
+config/countries/country-configs.json
 public/Citrine_Favicon_256_clear3.png
 public/gradient-dark.svg
 public/gradient.svg
