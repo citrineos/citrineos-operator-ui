@@ -357,6 +357,7 @@ export const CHARGING_STATION_ONLINE_STATUS_QUERY = gql`
     ChargingStations_by_pk(id: $id) {
       id
       isOnline
+      protocol
     }
   }
 `;
