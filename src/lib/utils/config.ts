@@ -15,7 +15,7 @@ const getConfig: () => {
   googleMapsOverviewMapId?: string;
   defaultMapCenterLatitude: number;
   defaultMapCenterLongitude: number;
-  hasuraAdminSecret?: string;
+  hasuraAdminSecret?: string; // Not recommended for use in production; use your authProvider instead.
   hasuraClaim?: string;
   tenantId: string;
   apiUrl: string;
