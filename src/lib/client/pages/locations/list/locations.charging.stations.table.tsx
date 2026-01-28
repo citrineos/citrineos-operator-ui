@@ -12,7 +12,7 @@ import { getChargingStationColumns } from '@lib/client/pages/charging-stations/c
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { openModal } from '@lib/utils/modal.slice';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -33,6 +33,7 @@ export const LocationsChargingStationsTable = ({
 }: LocationsChargingStationsTableProps) => {
   const { push } = useRouter();
   const dispatch = useDispatch();
+  const translate = useTranslate();
 
   // Use filteredStations if provided, otherwise use all stations from the location
   const stationsToDisplay = location.chargingPool || undefined;
@@ -41,7 +42,7 @@ export const LocationsChargingStationsTable = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Start',
+          title: translate('ChargingStations.remoteStart'),
           modalComponentType: ModalComponentType.remoteStart,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -54,7 +55,7 @@ export const LocationsChargingStationsTable = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Stop',
+          title: translate('ChargingStations.remoteStop'),
           modalComponentType: ModalComponentType.remoteStop,
           modalComponentProps: {
             station: instanceToPlain(station),
@@ -69,7 +70,7 @@ export const LocationsChargingStationsTable = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Reset',
+          title: translate('ChargingStations.reset'),
           modalComponentType: ModalComponentType.reset,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -99,7 +100,9 @@ export const LocationsChargingStationsTable = ({
     <div className={pageFlex}>
       {showHeader && (
         <div className={cardHeaderFlex}>
-          <h3 className={heading3Style}>Charging Stations</h3>
+          <h3 className={heading3Style}>
+            {translate('ChargingStations.ChargingStations')}
+          </h3>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.CREATE}
@@ -114,7 +117,7 @@ export const LocationsChargingStationsTable = ({
               }
             >
               <Plus className={buttonIconSize} />
-              Add
+              {translate('buttons.add')}
             </Button>
           </CanAccess>
         </div>

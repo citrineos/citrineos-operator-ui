@@ -10,7 +10,7 @@ import { TRANSACTION_GET_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess, useOne } from '@refinedev/core';
+import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { TransactionDetailTabsCard } from '@lib/client/pages/transactions/detail/transaction.detail.tabs.card';
 
@@ -20,6 +20,7 @@ type TransactionDetailProps = {
 
 export const TransactionDetail = ({ params }: TransactionDetailProps) => {
   const { id } = params;
+  const translate = useTranslate();
 
   const {
     query: { data: transactionData, isLoading },
@@ -31,8 +32,8 @@ export const TransactionDetail = ({ params }: TransactionDetailProps) => {
   });
   const transaction = transactionData?.data;
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!transaction) return <p>No Data Found</p>;
+  if (isLoading) return <p>{translate('loading')}</p>;
+  if (!transaction) return <p>{translate('noDataFound')}</p>;
 
   return (
     <CanAccess

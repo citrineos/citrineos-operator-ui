@@ -22,9 +22,10 @@ import {
   AlertDialogTitle,
 } from '@lib/client/components/ui/alert-dialog';
 import { PARTNER_UPDATE_MUTATION } from '@lib/queries/tenant.partners';
-import { useCustomMutation } from '@refinedev/core';
+import { useCustomMutation, useTranslate } from '@refinedev/core';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { buttonIconSize } from '@lib/client/styles/icon';
 
 interface Endpoint {
   identifier: string;
@@ -48,6 +49,7 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [formData, setFormData] = useState({ identifier: '', url: '' });
   const [errors, setErrors] = useState({ identifier: '', url: '' });
+  const translate = useTranslate();
 
   useEffect(() => {
     setData(endpoints || []);
@@ -145,6 +147,8 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
     <>
       <div className="mb-4">
         <Button
+          variant="success"
+          size="sm"
           onClick={() => {
             setEditingKey(null);
             setModalVisible(true);
@@ -153,8 +157,8 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
           }}
           disabled={!isValidPartnerId}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Endpoint
+          <Plus className={buttonIconSize} />
+          {translate('buttons.add')} Endpoint
         </Button>
       </div>
 
@@ -200,20 +204,20 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
                   <td className="p-4 align-middle">
                     <div className="flex gap-2">
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         size="icon"
                         onClick={() => edit(record)}
                         disabled={!isValidPartnerId}
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className={buttonIconSize} />
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         size="icon"
                         onClick={() => setDeleteTarget(record.identifier)}
                         disabled={!isValidPartnerId}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className={buttonIconSize} />
                       </Button>
                     </div>
                   </td>
@@ -228,7 +232,7 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingKey ? 'Edit Endpoint' : 'Add Endpoint'}
+              {translate(`actions.${editingKey ? 'edit' : 'create'}`)} Endpoint
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -262,10 +266,10 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={cancel}>
-              Cancel
+              {translate('buttons.cancel')}
             </Button>
             <Button onClick={save} disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save'}
+              {translate(`buttons.${isLoading ? 'saving' : 'save'}`)}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -277,7 +281,9 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Endpoint</AlertDialogTitle>
+            <AlertDialogTitle>
+              {translate('actions.delete')} Endpoint
+            </AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete this endpoint? This action cannot
               be undone.
@@ -285,12 +291,12 @@ export const PartnerEndpointsTable: React.FC<PartnerEndpointsTableProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDeleteTarget(null)}>
-              Cancel
+              {translate('buttons.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteTarget && handleDelete(deleteTarget)}
             >
-              Delete
+              {translate('buttons.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

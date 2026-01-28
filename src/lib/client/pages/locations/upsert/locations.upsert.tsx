@@ -31,7 +31,7 @@ import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { CanAccess, useUpdateMany } from '@refinedev/core';
+import { CanAccess, useTranslate, useUpdateMany } from '@refinedev/core';
 import { ChevronLeft, Upload as UploadIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { heading2Style, pageFlex, pageMargin } from '@lib/client/styles/page';
@@ -126,6 +126,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   const locationId = params.id ?? undefined;
   const { replace, back } = useRouter();
   const { mutate } = useUpdateMany();
+  const translate = useTranslate();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -149,18 +150,6 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
       redirect: false,
       mutationMode: 'pessimistic',
       action: locationId ? 'edit' : 'create',
-      successNotification: () => {
-        return {
-          message: `Location ${locationId ? 'updated' : 'created'} successfully`,
-          type: 'success',
-        };
-      },
-      errorNotification: (error) => {
-        return {
-          message: `Error ${locationId ? 'updating' : 'creating'} location: ${error?.message}`,
-          type: 'error',
-        };
-      },
       meta: {
         gqlQuery: LOCATIONS_GET_QUERY,
         gqlMutation: locationId
@@ -320,7 +309,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
               console.error(err);
               open?.({
                 type: 'error',
-                message: 'Image upload failed',
+                message: translate('imageUploadFailed'),
               });
             },
           );
@@ -354,7 +343,8 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
             <div className={cardHeaderFlex}>
               <ChevronLeft className="cursor-pointer" onClick={() => back()} />
               <h2 className={heading2Style}>
-                {locationId ? 'Edit' : 'Create'} Location
+                {translate(`actions.${locationId ? 'edit' : 'create'}`)}{' '}
+                {translate('Locations.location')}
               </h2>
             </div>
           </CardHeader>

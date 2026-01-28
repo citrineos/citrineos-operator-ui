@@ -10,7 +10,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@lib/client/components/ui/tabs';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import {
   ActionType,
   ChargingStationAccessType,
@@ -41,6 +41,7 @@ export const ChargingStationDetailTabsCard = ({
   stationId: string;
 }) => {
   const { push } = useRouter();
+  const translate = useTranslate();
 
   const transactionColumns = useMemo(
     () =>
@@ -60,7 +61,9 @@ export const ChargingStationDetailTabsCard = ({
             <TabsTrigger value="evses">EVSEs</TabsTrigger>
             <TabsTrigger value="ocpp-logs">OCPP Logs</TabsTrigger>
             <TabsTrigger value="configuration">Configuration</TabsTrigger>
-            <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="transactions">
+              {translate('Transactions.Transactions')}
+            </TabsTrigger>
             <TabsTrigger value="aggregated">
               Aggregated Meter Values Data
             </TabsTrigger>

@@ -45,12 +45,12 @@ export const DataTableViewOptions = <TData,>({
           className="ml-auto hidden h-8 lg:flex"
         >
           <SlidersHorizontalIcon className="mr-2 h-4 w-4" />
-          {translate('buttons.columns', undefined, 'Columns')}
+          {translate('buttons.columns')}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
         <DropdownMenuLabel>
-          {translate('tables.toggleColumns', undefined, 'Toggle columns')}
+          {translate('table.toggleColumns')}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {columns.map((column) => {
@@ -62,7 +62,7 @@ export const DataTableViewOptions = <TData,>({
               onCheckedChange={(value) => column.toggleVisibility(value)}
             >
               {column?.columnDef?.header?.toString() ||
-                translate(`tables.columns.${column.id}`, undefined, column.id)}
+                translate(`table.columns.${column.id}`, undefined, column.id)}
             </DropdownMenuCheckboxItem>
           );
         })}

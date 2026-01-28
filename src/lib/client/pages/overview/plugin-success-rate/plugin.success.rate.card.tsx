@@ -7,11 +7,13 @@ import { Loader } from '@lib/client/components/ui/loader';
 import { TRANSACTION_SUCCESS_RATE_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { CanAccess, useCustom } from '@refinedev/core';
+import { CanAccess, useCustom, useTranslate } from '@refinedev/core';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { heading2Style } from '@lib/client/styles/page';
 
 export const PluginSuccessRateCard = () => {
+  const translate = useTranslate();
+
   const {
     query: { data, isLoading, error },
   } = useCustom({
@@ -26,7 +28,7 @@ export const PluginSuccessRateCard = () => {
   const roundedPercentage = Math.round(percentage * 10) / 10;
 
   if (isLoading) return <Loader />;
-  if (error) return <p>Error loading success rate</p>;
+  if (error) return <p>{translate('overview.errorLoadingData')}</p>;
 
   return (
     <CanAccess
@@ -36,7 +38,9 @@ export const PluginSuccessRateCard = () => {
     >
       <Card>
         <CardHeader>
-          <h2 className={heading2Style}>Plug-In Success Rate</h2>
+          <h2 className={heading2Style}>
+            {translate('overview.plugInSuccessRate')}
+          </h2>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">

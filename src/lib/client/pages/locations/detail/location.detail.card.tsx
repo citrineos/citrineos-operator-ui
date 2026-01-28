@@ -9,7 +9,7 @@ import { Button } from '@lib/client/components/ui/button';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { getFullAddress } from '@lib/utils/geocoding';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { ChevronLeft, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
@@ -30,6 +30,7 @@ export const LocationDetailCard = ({
   imageUrl,
 }: LocationDetailCardProps) => {
   const { back, push } = useRouter();
+  const translate = useTranslate();
 
   return (
     <Card>
@@ -59,7 +60,7 @@ export const LocationDetailCard = ({
               }
             >
               <Edit className={buttonIconSize} />
-              Edit
+              {translate('buttons.edit')}
             </Button>
           </CanAccess>
         </div>

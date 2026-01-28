@@ -3,27 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React from 'react';
 import type { AuthorizationDto } from '@citrineos/base';
 import { AuthorizationDetailCard } from '@lib/client/pages/authorizations/detail/authorization.detail.card';
-import { getTransactionColumns } from '@lib/client/pages/transactions/columns';
-import { Table } from '@lib/client/components/table';
-import { Card, CardContent } from '@lib/client/components/ui/card';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from '@lib/client/components/ui/tabs';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
-import { TransactionClass } from '@lib/cls/transaction.dto';
 import { AUTHORIZATIONS_SHOW_QUERY } from '@lib/queries/authorizations';
-import { GET_TRANSACTIONS_FOR_AUTHORIZATION } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess, useOne } from '@refinedev/core';
-import { useRouter } from 'next/navigation';
-import React, { useMemo } from 'react';
+import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { AuthorizationDetailTabsCard } from '@lib/client/pages/authorizations/detail/authorization.detail.tabs.card';
 
@@ -35,6 +23,7 @@ export const AuthorizationDetail: React.FC<AuthorizationDetailProps> = ({
   params,
 }) => {
   const { id } = params;
+  const translate = useTranslate();
 
   const {
     query: { data: authData, isLoading: authLoading },
@@ -46,8 +35,8 @@ export const AuthorizationDetail: React.FC<AuthorizationDetailProps> = ({
   });
   const authorization = authData?.data;
 
-  if (authLoading) return <p>Loading...</p>;
-  if (!authorization) return <p>No Data Found</p>;
+  if (authLoading) return <p>{translate('loading')}</p>;
+  if (!authorization) return <p>{translate('noDataFound')}</p>;
 
   return (
     <CanAccess
@@ -58,7 +47,6 @@ export const AuthorizationDetail: React.FC<AuthorizationDetailProps> = ({
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <AuthorizationDetailCard authorization={authorization} />
-
         <AuthorizationDetailTabsCard authorization={authorization} />
       </div>
     </CanAccess>

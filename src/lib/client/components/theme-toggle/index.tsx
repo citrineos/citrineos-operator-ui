@@ -14,10 +14,12 @@ import {
   TooltipTrigger,
 } from '@lib/client/components/ui/tooltip';
 import { useEffect, useState } from 'react';
+import { useTranslate } from '@refinedev/core';
 
 export const ThemeToggle = ({ expanded }: { expanded: boolean }) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const translate = useTranslate();
 
   useEffect(() => {
     setMounted(true);
@@ -49,12 +51,19 @@ export const ThemeToggle = ({ expanded }: { expanded: boolean }) => {
               <Moon className={sidebarIconSize} />
             )}
             {expanded && (
-              <span>{theme === 'light' ? 'Light' : 'Dark'} Mode</span>
+              <span>
+                {translate(
+                  `menu.themes.${theme === 'light' ? 'light' : 'dark'}`,
+                )}{' '}
+                {translate('menu.themes.mode')}
+              </span>
             )}
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right">
-          Change to {theme === 'light' ? 'Dark' : 'Light'} Mode
+          {translate('menu.themes.changeTo')}{' '}
+          {translate(`menu.themes.${theme === 'light' ? 'dark' : 'light'}`)}{' '}
+          {translate('menu.themes.mode')}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

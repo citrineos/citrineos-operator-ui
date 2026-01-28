@@ -47,12 +47,7 @@ export const useGetEditUrl = (
   const reason = () => {
     if (data?.can) return '';
     else if (data?.reason) return data.reason;
-    else
-      return translate(
-        'buttons.notAccessTitle',
-        undefined,
-        "You don't have permission to access",
-      );
+    else return translate('buttons.notAccessTitle');
   };
 
   const editUrl =

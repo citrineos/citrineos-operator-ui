@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { ChargingStationDetailCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.card';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { ChargingStationDetailTabsCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.tabs.card';
@@ -21,6 +21,7 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
 }) => {
   const { id } = params;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const translate = useTranslate();
 
   useEffect(() => {
     if (id) {
@@ -30,7 +31,7 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
     }
   }, [id]);
 
-  if (!id) return <p>Loading...</p>;
+  if (!id) return <p>{translate('loading')}</p>;
 
   return (
     <CanAccess
@@ -39,7 +40,8 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
       params={{ id }}
       fallback={
         <p className="text-muted-foreground">
-          You don&#39;t have permission to view this charging station.
+          {translate('buttons.notAccessTitle')}{' '}
+          {translate('ChargingStations.chargingStation')}
         </p>
       }
     >

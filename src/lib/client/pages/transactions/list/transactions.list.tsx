@@ -14,7 +14,7 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
@@ -27,6 +27,7 @@ import { DebounceSearch } from '@lib/client/components/debounce-search';
 export const TransactionsList = () => {
   const { push } = useRouter();
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
+  const translate = useTranslate();
 
   const columns = useMemo(() => getTransactionColumns(push), [push]);
 
@@ -37,8 +38,13 @@ export const TransactionsList = () => {
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
       <div className={tableHeaderWrapperFlex}>
-        <h2 className={heading2Style}>Transactions</h2>
-        <DebounceSearch onSearch={onSearch} placeholder="Search Transactions" />
+        <h2 className={heading2Style}>
+          {translate('Transactions.Transactions')}
+        </h2>
+        <DebounceSearch
+          onSearch={onSearch}
+          placeholder={`${translate('placeholders.search')} ${translate('Transactions.Transactions')}`}
+        />
       </div>
       <CanAccess
         resource={ResourceType.TRANSACTIONS}

@@ -61,8 +61,7 @@ export function TableFilterDropdown({
                       variant="secondary"
                       className="rounded-sm p-1 text-xs h-3.5 font-normal"
                     >
-                      {selectedValues.size}{' '}
-                      {translate('tables.selected', undefined, 'selected')}
+                      {selectedValues.size} {translate('table.selected')}
                     </Badge>
                   ) : (
                     options
@@ -102,11 +101,7 @@ export function TableFilterDropdown({
           <CommandInput placeholder={title} />
           <CommandList>
             <CommandEmpty>
-              {translate(
-                'tables.noResultsFound',
-                undefined,
-                'No results found',
-              )}
+              {translate('table.noResultsFound', undefined, 'No results found')}
               .
             </CommandEmpty>
             <CommandGroup>
@@ -158,11 +153,7 @@ export function TableFilterDropdown({
                     onSelect={() => column?.setFilterValue(undefined)}
                     className="justify-center text-center"
                   >
-                    {translate(
-                      'tables.clearFilters',
-                      undefined,
-                      'Clear filters',
-                    )}
+                    {translate('table.clearFilters')}
                   </CommandItem>
                 </CommandGroup>
               </>

@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { clickableLinkStyle, heading2Style } from '@lib/client/styles/page';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
-import { Link } from '@refinedev/core';
+import { Link, useTranslate } from '@refinedev/core';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 
@@ -25,6 +25,7 @@ export const TransactionDetailCard = ({
   transaction,
 }: TransactionDetailCardProps) => {
   const { back, push } = useRouter();
+  const translate = useTranslate();
 
   return (
     <Card>
@@ -41,7 +42,7 @@ export const TransactionDetailCard = ({
             className="cursor-pointer"
           />
           <h2 className={heading2Style}>
-            Transaction {transaction.transactionId}
+            {translate('Transactions.transaction')} {transaction.transactionId}
           </h2>
           <Badge variant={transaction.isActive ? 'success' : 'destructive'}>
             {transaction.isActive ? 'Active' : 'Inactive'}
@@ -51,7 +52,7 @@ export const TransactionDetailCard = ({
       <CardContent>
         <div className={cardGridStyle}>
           <KeyValueDisplay
-            keyLabel="Authorization"
+            keyLabel={translate('Authorizations.authorization')}
             value={''}
             valueRender={() =>
               transaction.authorization?.idToken ? (

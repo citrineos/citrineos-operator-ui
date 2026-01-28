@@ -40,6 +40,7 @@ import {
   type CrudFilter,
   useNotification,
   useSelect,
+  useTranslate,
 } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import { debounce } from 'lodash';
@@ -101,6 +102,7 @@ export const ChargingStationUpsert = ({
   const { open } = useNotification();
 
   const { replace, back } = useRouter();
+  const translate = useTranslate();
 
   const form = useForm({
     refineCoreProps: {
@@ -108,18 +110,6 @@ export const ChargingStationUpsert = ({
       redirect: false,
       mutationMode: 'pessimistic',
       action: stationId ? 'edit' : 'create',
-      successNotification: () => {
-        return {
-          message: `Charging Station ${stationId ? 'updated' : 'created'} successfully`,
-          type: 'success',
-        };
-      },
-      errorNotification: (error) => {
-        return {
-          message: `Error ${stationId ? 'updating' : 'creating'} charging station: ${error?.message}`,
-          type: 'error',
-        };
-      },
       meta: {
         gqlQuery: CHARGING_STATIONS_GET_QUERY,
         gqlMutation: stationId
@@ -209,7 +199,7 @@ export const ChargingStationUpsert = ({
               console.error(err);
               open?.({
                 type: 'error',
-                message: 'Image upload failed',
+                message: translate('imageUploadFailed'),
               });
             },
           );
@@ -233,7 +223,8 @@ export const ChargingStationUpsert = ({
           <div className={cardHeaderFlex}>
             <ChevronLeft onClick={() => back()} className="cursor-pointer" />
             <h2 className={heading2Style}>
-              {stationId ? 'Edit' : 'Create'} Charging Station
+              {translate(`actions.${stationId ? 'edit' : 'create'}`)}{' '}
+              {translate('ChargingStations.chargingStation')}
             </h2>
           </div>
         </CardHeader>
@@ -242,7 +233,7 @@ export const ChargingStationUpsert = ({
             <div className={cardGridStyle}>
               <FormField
                 control={form.control}
-                label="Charging Station ID"
+                label="ID"
                 name={ChargingStationProps.id}
                 required
               >
@@ -316,7 +307,7 @@ export const ChargingStationUpsert = ({
                   }
                 >
                   <UploadIcon className={buttonIconSize} />
-                  Upload
+                  {translate('buttons.upload')}
                 </Button>
                 {uploadedFileName && (
                   <span className="text-sm text-gray-700">
