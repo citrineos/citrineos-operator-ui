@@ -3,10 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Input } from '../ui/input';
 import debounce from 'lodash.debounce';
-import { Country } from '@lib/utils/country.state.data';
 import { autocompleteAddress } from '@lib/server/actions/map/autocompleteAddress';
 import { getPlaceDetails } from '@lib/server/actions/map/getPlaceDetails';
 
@@ -15,12 +14,13 @@ type Prediction = {
   place_id: string;
 };
 
-type PlaceDetails = {
+export type PlaceDetails = {
   address: string;
   city?: string;
   state?: string;
   postalCode?: string;
-  country?: string;
+  countryCode?: string;
+  countryName?: string;
   coordinates: { lat: number; lng: number };
 };
 
@@ -28,33 +28,34 @@ type Props = {
   value: string;
   onChangeAction: (value: string) => void;
   onSelectPlaceAction: (placeId: string, placeDetails: PlaceDetails) => void;
-  country?: Country;
-};
-
-const countryCodes = {
-  [Country.USA]: 'US',
-  [Country.Canada]: 'CA',
+  countryCode?: string;
+  placeholder?: string;
+  sessionToken?: string;
 };
 
 export const AddressAutocomplete: React.FC<Props> = ({
   value,
   onChangeAction,
   onSelectPlaceAction,
-  country = Country.USA,
+  countryCode,
+  placeholder = 'Enter address',
+  sessionToken,
 }) => {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Autocomplete address and fetch details
   const fetchPredictions = debounce((input: string) => {
     if (!input) {
       setPredictions([]);
       return;
     }
     setLoading(true);
-    autocompleteAddress(input, countryCodes[country])
+
+    const searchCountryCode = countryCode?.toUpperCase() || 'US';
+
+    autocompleteAddress(input, searchCountryCode, sessionToken)
       .then((data) => setPredictions(data))
       .catch((err) => {
         console.log(err);
@@ -65,6 +66,7 @@ export const AddressAutocomplete: React.FC<Props> = ({
 
   useEffect(() => {
     fetchPredictions(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   // Handle clicks outside to close dropdown
@@ -85,32 +87,43 @@ export const AddressAutocomplete: React.FC<Props> = ({
     setShowDropdown(false);
     onChangeAction(prediction.description);
 
-    // Fetch place details
-    getPlaceDetails(prediction.place_id)
+    getPlaceDetails(prediction.place_id, sessionToken)
       .then((details) => {
-        const location = details.geometry?.location;
-        const components = details.address_components;
-        const getComponent = (type: string) =>
-          components?.find((c: any) => c.types.includes(type))?.long_name;
+        const location = details.location;
+        const components = details.addressComponents;
 
-        // Extract street number + route
+        const getComponent = (type: string) =>
+          components?.find((c) => c.types.includes(type))?.longText;
+
+        const getComponentShort = (type: string) =>
+          components?.find((c) => c.types.includes(type))?.shortText;
+
         const streetNumber = getComponent('street_number') || '';
         const route = getComponent('route') || '';
         const streetAddress = `${streetNumber} ${route}`.trim();
 
-        const fullDetails = {
+        const adminArea =
+          getComponent('administrative_area_level_1') ||
+          getComponent('administrative_area_level_2') ||
+          '';
+
+        const fullDetails: PlaceDetails = {
           address: streetAddress,
-          city: getComponent('locality') || getComponent('sublocality') || '',
-          state: getComponent('administrative_area_level_1') || '',
-          postalCode: getComponent('postal_code'),
-          country: getComponent('country'),
+          city:
+            getComponent('locality') ||
+            getComponent('sublocality') ||
+            getComponent('administrative_area_level_2') ||
+            '',
+          state: adminArea,
+          postalCode: getComponent('postal_code') || '',
+          countryCode: getComponentShort('country') || '',
+          countryName: getComponent('country') || '',
           coordinates: {
-            lat: location?.lat || 0,
-            lng: location?.lng || 0,
+            lat: location.latitude,
+            lng: location.longitude,
           },
         };
 
-        // Update input and form
         onChangeAction(fullDetails.address);
         onSelectPlaceAction(prediction.place_id, fullDetails);
       })
@@ -127,10 +140,18 @@ export const AddressAutocomplete: React.FC<Props> = ({
           onChangeAction(e.target.value);
           setShowDropdown(true);
         }}
-        placeholder="Enter address"
+        onFocus={() => {
+          if (predictions.length > 0) {
+            setShowDropdown(true);
+          }
+        }}
+        placeholder={placeholder}
       />
-      {showDropdown && predictions.length > 0 && (
+      {showDropdown && (predictions.length > 0 || loading) && (
         <ul className="absolute z-10 w-full bg-white border rounded shadow max-h-60 overflow-auto">
+          {loading && predictions.length === 0 && (
+            <li className="p-2 text-gray-500">Loading...</li>
+          )}
           {predictions.map((p) => (
             <li
               key={p.place_id}
@@ -140,7 +161,6 @@ export const AddressAutocomplete: React.FC<Props> = ({
               {p.description}
             </li>
           ))}
-          {loading && <li className="p-2 text-gray-500">Loading...</li>}
         </ul>
       )}
     </div>
