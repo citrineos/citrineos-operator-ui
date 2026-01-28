@@ -272,18 +272,22 @@ export const ChargingStationDetailCard = ({
               <KeyValueDisplay
                 keyLabel="Latitude"
                 value={
-                  station.location?.coordinates
-                    ? station.location.coordinates.coordinates[1].toFixed(4)
-                    : NOT_APPLICABLE
+                  station.coordinates
+                    ? station.coordinates.coordinates[1].toFixed(4)
+                    : station.location?.coordinates
+                      ? station.location.coordinates.coordinates[1].toFixed(4)
+                      : NOT_APPLICABLE
                 }
               />
 
               <KeyValueDisplay
                 keyLabel="Longitude"
                 value={
-                  station.location?.coordinates
-                    ? station.location.coordinates.coordinates[0].toFixed(4)
-                    : NOT_APPLICABLE
+                  station.coordinates
+                    ? station.coordinates.coordinates[0].toFixed(4)
+                    : station.location?.coordinates
+                      ? station.location.coordinates.coordinates[0].toFixed(4)
+                      : NOT_APPLICABLE
                 }
               />
 

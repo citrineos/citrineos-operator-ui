@@ -196,6 +196,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       floorLevel
       parkingRestrictions
       capabilities
+      coordinates
       location: Location {
         id
         name
