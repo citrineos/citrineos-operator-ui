@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import { OCPPVersion } from '@citrineos/base';
 import { ChangeConfigurationModal } from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
 import { Button } from '@lib/client/components/ui/button';
 import {
@@ -32,8 +33,15 @@ import { ResourceType } from '@lib/utils/access.types';
 import { downloadCSV } from '@lib/utils/download';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { useList, useOne, type CrudFilter } from '@refinedev/core';
-import { Edit, Plus } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Edit,
+  Plus,
+} from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 interface VariableAttribute {
@@ -102,6 +110,7 @@ export const ChargingStationConfiguration: React.FC<
   );
   const [editKey, setEditKey] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string | null>(null);
+  const versionInitialized = useRef(false);
 
   const attributeFilters = useMemo<CrudFilter[]>(
     () => [{ field: 'stationId', operator: 'eq', value: stationId }],
@@ -191,6 +200,18 @@ export const ChargingStationConfiguration: React.FC<
   });
   const station = data?.data;
   const isConnected = !!station?.isOnline;
+
+  // Set initial version based on station protocol
+  useEffect(() => {
+    if (station?.protocol && !versionInitialized.current) {
+      versionInitialized.current = true;
+      if (station.protocol === OCPPVersion.OCPP2_0_1) {
+        setVersion('2.0.1');
+      } else {
+        setVersion('1.6');
+      }
+    }
+  }, [station?.protocol]);
 
   useEffect(() => {
     if (version === '2.0.1' && variableAttributesResult?.data) {
@@ -295,6 +316,110 @@ export const ChargingStationConfiguration: React.FC<
   };
   const handleModalClose = () => {
     setIsChangeConfigModalOpen(false);
+  };
+
+  const currentPage =
+    version === '1.6' ? currentChangeConfigurations : currentVariableAttributes;
+  const pageSize =
+    version === '1.6'
+      ? pageSizeChangeConfigurations
+      : pageSizeVariableAttributes;
+  const totalRecords =
+    version === '1.6'
+      ? (changeConfigurationsResult?.total ?? 0)
+      : (variableAttributesResult?.total ?? 0);
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+
+  const setCurrentPage = (page: number) => {
+    if (version === '1.6') {
+      setCurrentChangeConfigurations(page);
+    } else {
+      setCurrentVariableAttributes(page);
+    }
+  };
+
+  const setPageSize = (size: number) => {
+    if (version === '1.6') {
+      setPageSizeChangeConfigurations(size);
+      setCurrentChangeConfigurations(1);
+    } else {
+      setPageSizeVariableAttributes(size);
+      setCurrentVariableAttributes(1);
+    }
+  };
+
+  const renderPagination = () => {
+    const canGoPrevious = currentPage > 1;
+    const canGoNext = currentPage < totalPages;
+
+    return (
+      <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-y-0 items-center justify-between pt-4">
+        <div className="text-sm text-muted-foreground">
+          {totalRecords} total records
+        </div>
+        <div className="flex flex-col-reverse gap-y-4 sm:gap-y-0 sm:flex-row items-center space-x-6">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium">Rows per page</span>
+            <Select
+              value={`${pageSize}`}
+              onValueChange={(value) => setPageSize(Number(value))}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={pageSize} />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 20, 30, 40, 50].map((size) => (
+                  <SelectItem key={size} value={`${size}`}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center justify-center text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => setCurrentPage(1)}
+              disabled={!canGoPrevious}
+            >
+              <span className="sr-only">Go to first page</span>
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={!canGoPrevious}
+            >
+              <span className="sr-only">Go to previous page</span>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={!canGoNext}
+            >
+              <span className="sr-only">Go to next page</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={!canGoNext}
+            >
+              <span className="sr-only">Go to last page</span>
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const renderTable = () => {
@@ -430,6 +555,8 @@ export const ChargingStationConfiguration: React.FC<
       )}
 
       {renderTable()}
+
+      {renderPagination()}
 
       <Dialog
         open={isChangeConfigModalOpen}
