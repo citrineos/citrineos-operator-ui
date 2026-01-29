@@ -3,11 +3,14 @@
     "ChargingStations": "Charging Stations",
     "chargingStation": "Charging Station",
     "commandsUnavailable": "Station offline - commands unavailable",
+    "forceDisconnect": "Force Disconnect",
     "otherCommands": "Other Commands",
     "remoteStart": "Remote Start",
     "remoteStop": "Remote Stop",
     "reset": "Reset",
     "startTransaction": "Start Transaction",
-    "stopTransaction": "Stop Transaction"
+    "stopTransaction": "Stop Transaction",
+    "forceDisconnectMessage": "Are you sure you want to force disconnect this charging station",
+    "forceDisconnectCaution": "This will immediately close the connection to the station."
   }
 }
