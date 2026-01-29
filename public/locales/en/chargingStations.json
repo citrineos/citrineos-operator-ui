@@ -2,6 +2,9 @@
   "ChargingStations": {
     "ChargingStations": "Charging Stations",
     "chargingStation": "Charging Station",
+    "toggleOnlineStatus": "Toggle Online Status",
+    "toggleOnlineWarning": "You are about to mark this charging station as ",
+    "toggleOnlineCaution": "Warning: This action may cause the UI to be out of sync with the actual station status. Only proceed if you are certain.",
     "commandsUnavailable": "Station offline - commands unavailable",
     "forceDisconnect": "Force Disconnect",
     "otherCommands": "Other Commands",

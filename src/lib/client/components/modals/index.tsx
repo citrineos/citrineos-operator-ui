@@ -40,6 +40,8 @@ import { TriggerMessageModal as TriggerMessageModal201 } from '@lib/client/compo
 import { UnlockConnectorModal } from '@lib/client/components/modals/2.0.1/unlock-connector/unlock.connector.modal';
 import { UpdateAuthPasswordModal } from '@lib/client/components/modals/2.0.1/update-auth-password/update.auth.password.modal';
 import { UpdateFirmwareModal as UpdateFirmwareModal201 } from '@lib/client/components/modals/2.0.1/update-firmware/update.firmware.modal';
+import { ToggleStationOnlineModal } from '@lib/client/components/modals/toggle-status/toggle.station.online.modal';
+import { ToggleTransactionActiveModal } from '@lib/client/components/modals/toggle-status/toggle.transaction.active.modal';
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
 
@@ -80,6 +82,10 @@ const MODAL_COMPONENTS: Partial<{
   [ModalComponentType.unlockConnector]: UnlockConnectorModal,
   [ModalComponentType.updateAuthPassword]: UpdateAuthPasswordModal,
   [ModalComponentType.updateFirmware201]: UpdateFirmwareModal201,
+  // Status Toggle Confirmations
+  [ModalComponentType.toggleStationOnlineStatus]: ToggleStationOnlineModal,
+  [ModalComponentType.toggleTransactionActiveStatus]:
+    ToggleTransactionActiveModal,
 };
 
 const largeModals = [

@@ -34,7 +34,13 @@ import {
   useTranslate,
 } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
-import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+  ChevronLeft,
+  Edit,
+  MoreHorizontal,
+  RefreshCw,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -195,6 +201,21 @@ export const ChargingStationDetailCard = ({
     );
   }, [dispatch, station]);
 
+  const showToggleOnlineModal = useCallback(() => {
+    if (!station) return;
+
+    dispatch(
+      openModal({
+        title: translate('ChargingStations.toggleOnlineStatus'),
+        modalComponentType: ModalComponentType.toggleStationOnlineStatus,
+        modalComponentProps: {
+          stationId: station.id,
+          currentStatus: station.isOnline,
+        },
+      }),
+    );
+  }, [dispatch, station, translate]);
+
   if (isLoading) return <p>{translate('loading')}</p>;
   if (!station) return <p>{translate('noDataFound')}</p>;
 
@@ -226,6 +247,23 @@ export const ChargingStationDetailCard = ({
           >
             {station.isOnline ? 'Online' : 'Offline'}
           </span>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.EDIT}
+            params={{ id: station.id }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={showToggleOnlineModal}
+              title={translate(
+                'ChargingStations.toggleOnlineStatus',
+                'Toggle Online Status',
+              )}
+            >
+              <RefreshCw className={buttonIconSize} />
+            </Button>
+          </CanAccess>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.EDIT}

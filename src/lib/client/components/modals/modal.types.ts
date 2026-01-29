@@ -39,4 +39,7 @@ export enum ModalComponentType {
   unlockConnector,
   updateAuthPassword,
   updateFirmware201,
+  // Status Toggle Confirmations
+  toggleStationOnlineStatus,
+  toggleTransactionActiveStatus,
 }
