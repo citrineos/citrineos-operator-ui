@@ -185,6 +185,7 @@ export const CHARGING_STATIONS_STATUS_COUNT_QUERY = gql`
 export const CHARGING_STATIONS_GET_QUERY = gql`
   query GetChargingStationById($id: String!) {
     ChargingStations_by_pk(id: $id) {
+      tenantId
       id
       isOnline
       protocol
@@ -196,6 +197,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       floorLevel
       parkingRestrictions
       capabilities
+      coordinates
       location: Location {
         id
         name

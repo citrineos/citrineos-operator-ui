@@ -29,11 +29,11 @@ export class BaseRestClient {
 
   constructor(ocppVersion: OCPPVersion | null = OCPPVersion.OCPP2_0_1) {
     if (ocppVersion === null) {
-      this._baseUrl = `${CITRINE_CORE_URL}/data/`;
+      this._baseUrl = `${CITRINE_CORE_URL}/data`;
     } else if (ocppVersion === OCPPVersion.OCPP1_6) {
       this._baseUrl = `${CITRINE_CORE_URL}/ocpp/1.6`;
     } else {
-      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/2.0.1/`;
+      this._baseUrl = `${CITRINE_CORE_URL}/ocpp/2.0.1`;
     }
     this.axiosInstance = this.createAxiosInstance();
   }
