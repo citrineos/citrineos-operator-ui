@@ -34,7 +34,13 @@ import {
   useTranslate,
 } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
-import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+  ChevronLeft,
+  Edit,
+  MoreHorizontal,
+  RefreshCw,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -54,6 +60,7 @@ import { StartTransactionButton } from '@lib/client/pages/charging-stations/star
 import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
+import { ForceDisconnectButton } from '../force.disconnect.button';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -128,6 +135,19 @@ export const ChargingStationDetailCard = ({
     );
   }, [station, mutate, push]);
 
+  const showForceDisconnectModal = useCallback(
+    (station: ChargingStationDto) => {
+      dispatch(
+        openModal({
+          title: translate('ChargingStations.forceDisconnect'),
+          modalComponentType: ModalComponentType.forceDisconnect,
+          modalComponentProps: { station: instanceToPlain(station) },
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   const showRemoteStartModal = useCallback(
     (station: ChargingStationDto) => {
       dispatch(
@@ -181,6 +201,21 @@ export const ChargingStationDetailCard = ({
     );
   }, [dispatch, station]);
 
+  const showToggleOnlineModal = useCallback(() => {
+    if (!station) return;
+
+    dispatch(
+      openModal({
+        title: translate('ChargingStations.toggleOnlineStatus'),
+        modalComponentType: ModalComponentType.toggleStationOnlineStatus,
+        modalComponentProps: {
+          stationId: station.id,
+          currentStatus: station.isOnline,
+        },
+      }),
+    );
+  }, [dispatch, station, translate]);
+
   if (isLoading) return <p>{translate('loading')}</p>;
   if (!station) return <p>{translate('noDataFound')}</p>;
 
@@ -212,6 +247,23 @@ export const ChargingStationDetailCard = ({
           >
             {station.isOnline ? 'Online' : 'Offline'}
           </span>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.EDIT}
+            params={{ id: station.id }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={showToggleOnlineModal}
+              title={translate(
+                'ChargingStations.toggleOnlineStatus',
+                'Toggle Online Status',
+              )}
+            >
+              <RefreshCw className={buttonIconSize} />
+            </Button>
+          </CanAccess>
           <CanAccess
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.EDIT}
@@ -272,18 +324,22 @@ export const ChargingStationDetailCard = ({
               <KeyValueDisplay
                 keyLabel="Latitude"
                 value={
-                  station.location?.coordinates
-                    ? station.location.coordinates.coordinates[1].toFixed(4)
-                    : NOT_APPLICABLE
+                  station.coordinates
+                    ? station.coordinates.coordinates[1].toFixed(4)
+                    : station.location?.coordinates
+                      ? station.location.coordinates.coordinates[1].toFixed(4)
+                      : NOT_APPLICABLE
                 }
               />
 
               <KeyValueDisplay
                 keyLabel="Longitude"
                 value={
-                  station.location?.coordinates
-                    ? station.location.coordinates.coordinates[0].toFixed(4)
-                    : NOT_APPLICABLE
+                  station.coordinates
+                    ? station.coordinates.coordinates[0].toFixed(4)
+                    : station.location?.coordinates
+                      ? station.location.coordinates.coordinates[0].toFixed(4)
+                      : NOT_APPLICABLE
                 }
               />
 
@@ -398,37 +454,39 @@ export const ChargingStationDetailCard = ({
             action={ActionType.COMMAND}
             params={{ id: station.id }}
           >
-            <div className="flex justify-between items-center flex-1">
-              <div className="flex flex-col gap-2 flex-1">
-                {!station.isOnline && <CommandsUnavailableText />}
-                <div className="flex gap-4 flex-1">
-                  {!hasActiveTransactions && (
-                    <StartTransactionButton
-                      stationId={station.id}
-                      onClickAction={() => showRemoteStartModal(station)}
-                      disabled={!station.isOnline}
-                    />
-                  )}
-                  {hasActiveTransactions && (
-                    <StopTransactionButton
-                      stationId={station.id}
-                      onClickAction={() => handleStopTransactionClick(station)}
-                      disabled={!station.isOnline}
-                    />
-                  )}
-                  <ResetButton
+            <div className="flex flex-col gap-2">
+              {!station.isOnline && <CommandsUnavailableText />}
+              <div className="flex gap-4 flex-wrap">
+                <ForceDisconnectButton
+                  stationId={station.id}
+                  onClickAction={() => showForceDisconnectModal(station)}
+                />
+                {!hasActiveTransactions && (
+                  <StartTransactionButton
                     stationId={station.id}
-                    onClickAction={() => showResetStartModal(station)}
+                    onClickAction={() => showRemoteStartModal(station)}
                     disabled={!station.isOnline}
                   />
-                  <Button
-                    onClick={showOtherCommandsModal}
+                )}
+                {hasActiveTransactions && (
+                  <StopTransactionButton
+                    stationId={station.id}
+                    onClickAction={() => handleStopTransactionClick(station)}
                     disabled={!station.isOnline}
-                  >
-                    <MoreHorizontal className={buttonIconSize} />
-                    {translate('ChargingStations.otherCommands')}
-                  </Button>
-                </div>
+                  />
+                )}
+                <ResetButton
+                  stationId={station.id}
+                  onClickAction={() => showResetStartModal(station)}
+                  disabled={!station.isOnline}
+                />
+                <Button
+                  onClick={showOtherCommandsModal}
+                  disabled={!station.isOnline}
+                >
+                  <MoreHorizontal className={buttonIconSize} />
+                  {translate('ChargingStations.otherCommands')}
+                </Button>
               </div>
             </div>
           </CanAccess>

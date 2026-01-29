@@ -5,7 +5,14 @@
 
 import type { LocationDto } from '@citrineos/base';
 import { Card, CardContent } from '@lib/client/components/ui/card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@lib/client/components/ui/tabs';
 import { LocationsChargingStationsTable } from '@lib/client/pages/locations/list/locations.charging.stations.table';
+import { OpeningHoursDisplay } from '@lib/client/components/opening-hours';
 import { LocationClass } from '@lib/cls/location.dto';
 import { LOCATIONS_GET_QUERY } from '@lib/queries/locations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
@@ -60,7 +67,23 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
 
         <Card>
           <CardContent>
-            <LocationsChargingStationsTable location={location} showHeader />
+            <Tabs defaultValue="charging-stations">
+              <TabsList>
+                <TabsTrigger value="charging-stations">
+                  Charging Stations
+                </TabsTrigger>
+                <TabsTrigger value="opening-hours">Opening Hours</TabsTrigger>
+              </TabsList>
+              <TabsContent value="charging-stations">
+                <LocationsChargingStationsTable
+                  location={location}
+                  showHeader
+                />
+              </TabsContent>
+              <TabsContent value="opening-hours">
+                <OpeningHoursDisplay openingHours={location.openingHours} />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>

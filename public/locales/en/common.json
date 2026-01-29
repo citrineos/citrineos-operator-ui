@@ -95,6 +95,7 @@
     "import": "Import",
     "logout": "Logout",
     "notAccessTitle": "You don't have permission to access this resource.",
+    "ok": "OK",
     "refresh": "Refresh",
     "save": "Save",
     "saving": "Saving...",

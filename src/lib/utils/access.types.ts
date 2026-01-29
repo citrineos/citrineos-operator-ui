@@ -78,6 +78,7 @@ export enum ChargingStationAccessType {
 }
 
 export enum CommandType {
+  FORCE_DISCONNECT = 'forceDisconnect',
   START_TRANSACTION = 'startTransaction',
   STOP_TRANSACTION = 'stopTransaction',
   RESET = 'reset',

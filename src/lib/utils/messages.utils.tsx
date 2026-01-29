@@ -29,6 +29,7 @@ export interface TriggerMessageAndHandleResponseProps<T> {
   ocppVersion?: OCPPVersion | null;
   method?: HttpMethod;
   setLoading?: (loading: boolean) => void;
+  responseSuccessCheck?: (response: T) => boolean;
 }
 
 type MessageConfirmationOrArray = MessageConfirmation | MessageConfirmation[];
@@ -41,6 +42,7 @@ export const triggerMessageAndHandleResponse = async <
   ocppVersion = OCPPVersion.OCPP2_0_1,
   method = HttpMethod.Post,
   setLoading,
+  responseSuccessCheck,
 }: TriggerMessageAndHandleResponseProps<T>) => {
   try {
     setLoading?.(true);
@@ -58,7 +60,15 @@ export const triggerMessageAndHandleResponse = async <
         throw new Error(`Unimplemented Http Method: ${method}`);
     }
 
-    if (responseSuccessCheck(response.data)) {
+    if (!response.data && response.status === 200) {
+      store.dispatch(closeModal());
+      showSuccess();
+      return;
+    }
+    if (responseSuccessCheck && responseSuccessCheck(response.data)) {
+      store.dispatch(closeModal());
+      showSuccess();
+    } else if (ocppResponseSuccessCheck(response.data)) {
       store.dispatch(closeModal());
       const payload = Array.isArray(response.data)
         ? response.data.length > 0 && response.data[0].payload
@@ -157,7 +167,9 @@ export function formatPem(pem: string): string | null {
   return `${header}\n${formattedContent}\n${footer}`;
 }
 
-export const responseSuccessCheck = (response: MessageConfirmationOrArray) => {
+export const ocppResponseSuccessCheck = (
+  response: MessageConfirmationOrArray,
+) => {
   if (Array.isArray(response)) {
     return response.every((r) => r && r.success);
   }

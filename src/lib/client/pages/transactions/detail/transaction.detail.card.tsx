@@ -3,18 +3,24 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import type { TransactionDto } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
+import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { Badge } from '@lib/client/components/ui/badge';
-import { ChevronLeft } from 'lucide-react';
+import { Button } from '@lib/client/components/ui/button';
+import { ChevronLeft, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
+import { buttonIconSize } from '@lib/client/styles/icon';
 import { clickableLinkStyle, heading2Style } from '@lib/client/styles/page';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
-import { Link, useTranslate } from '@refinedev/core';
+import { CanAccess, Link, useTranslate } from '@refinedev/core';
+import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
+import { openModal } from '@lib/utils/modal.slice';
 import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 
 export interface TransactionDetailCardProps {
@@ -25,7 +31,21 @@ export const TransactionDetailCard = ({
   transaction,
 }: TransactionDetailCardProps) => {
   const { back, push } = useRouter();
+  const dispatch = useDispatch();
   const translate = useTranslate();
+
+  const showToggleActiveModal = useCallback(() => {
+    dispatch(
+      openModal({
+        title: translate('Transactions.toggleActiveStatus'),
+        modalComponentType: ModalComponentType.toggleTransactionActiveStatus,
+        modalComponentProps: {
+          transactionId: transaction.id,
+          currentStatus: transaction.isActive,
+        },
+      }),
+    );
+  }, [dispatch, transaction, translate]);
 
   return (
     <Card>
@@ -47,6 +67,23 @@ export const TransactionDetailCard = ({
           <Badge variant={transaction.isActive ? 'success' : 'destructive'}>
             {transaction.isActive ? 'Active' : 'Inactive'}
           </Badge>
+          <CanAccess
+            resource={ResourceType.TRANSACTIONS}
+            action={ActionType.EDIT}
+            params={{ id: transaction.id }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={showToggleActiveModal}
+              title={translate(
+                'Transactions.toggleActiveStatus',
+                'Toggle Active Status',
+              )}
+            >
+              <RefreshCw className={buttonIconSize} />
+            </Button>
+          </CanAccess>
         </div>
       </CardHeader>
       <CardContent>

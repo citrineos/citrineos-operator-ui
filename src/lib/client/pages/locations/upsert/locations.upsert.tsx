@@ -67,6 +67,8 @@ import {
   type AdministrativeArea,
   getAdministrativeAreas,
 } from '@lib/utils/country.config';
+import { OpeningHoursForm } from '@lib/client/components/opening-hours';
+import { isValid, parseISO } from 'date-fns';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -84,6 +86,7 @@ const LocationCreateSchema = LocationSchema.pick({
   [LocationProps.parkingType]: true,
   [LocationProps.facilities]: true,
   [LocationProps.chargingPool]: true,
+  [LocationProps.openingHours]: true,
 }).extend({
   [LocationProps.chargingPool]: z
     .array(
@@ -112,6 +115,7 @@ const defaultLocation = {
   [LocationProps.parkingType]: undefined,
   [LocationProps.facilities]: [] as LocationFacilityEnumType[],
   [LocationProps.chargingPool]: undefined,
+  [LocationProps.openingHours]: undefined,
 };
 
 const parkingTypes: LocationParkingEnumType[] = Object.keys(
@@ -291,6 +295,64 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
     }
 
     newItem.updatedAt = now;
+
+    // Clean up openingHours before serialization
+    if (newItem.openingHours) {
+      const {
+        exceptionalOpenings,
+        exceptionalClosings,
+        regularHours,
+        ...rest
+      } = newItem.openingHours;
+
+      const cleanedOpeningHours: Record<string, unknown> = { ...rest };
+
+      // Filter valid date periods
+      const filterValidPeriods = (periods: unknown[]) =>
+        (periods || []).filter((p: unknown) => {
+          if (!p || typeof p !== 'object') return false;
+          const period = p as { periodBegin?: unknown; periodEnd?: unknown };
+          const begin =
+            period.periodBegin instanceof Date
+              ? period.periodBegin
+              : typeof period.periodBegin === 'string'
+                ? parseISO(period.periodBegin)
+                : null;
+          const end =
+            period.periodEnd instanceof Date
+              ? period.periodEnd
+              : typeof period.periodEnd === 'string'
+                ? parseISO(period.periodEnd)
+                : null;
+          return begin && isValid(begin) && end && isValid(end);
+        });
+
+      const validOpenings = filterValidPeriods(exceptionalOpenings);
+      if (validOpenings.length > 0) {
+        cleanedOpeningHours.exceptionalOpenings = validOpenings;
+      }
+
+      const validClosings = filterValidPeriods(exceptionalClosings);
+      if (validClosings.length > 0) {
+        cleanedOpeningHours.exceptionalClosings = validClosings;
+      }
+
+      if (regularHours && regularHours.length > 0) {
+        cleanedOpeningHours.regularHours = regularHours;
+      }
+
+      // If after cleaning, the object only contains `twentyfourSeven`, and it's false,
+      // we can consider the whole object empty.
+      if (
+        Object.keys(cleanedOpeningHours).length === 1 &&
+        'twentyfourSeven' in cleanedOpeningHours &&
+        !cleanedOpeningHours.twentyfourSeven
+      ) {
+        newItem.openingHours = null;
+      } else {
+        newItem.openingHours = cleanedOpeningHours;
+      }
+    }
 
     // Remove chargingPool before sending to Hasura
     // Will be handled after successful response
@@ -611,6 +673,20 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                     onLocationSelect={handleMapClick}
                   />
                 </div>
+              </div>
+
+              {/* Opening Hours */}
+              <div className="mt-6">
+                <Controller
+                  control={form.control}
+                  name={LocationProps.openingHours}
+                  render={({ field }) => (
+                    <OpeningHoursForm
+                      value={field.value ?? undefined}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
               </div>
 
               {/* Charging Stations Selection - Only for Edit Mode */}
