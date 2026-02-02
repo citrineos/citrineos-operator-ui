@@ -192,6 +192,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       locationId
       chargePointVendor
       chargePointModel
+      firmwareVersion
       createdAt
       updatedAt
       floorLevel

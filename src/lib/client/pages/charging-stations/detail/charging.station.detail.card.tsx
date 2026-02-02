@@ -361,7 +361,7 @@ export const ChargingStationDetailCard = ({
               />
 
               <KeyValueDisplay
-                keyLabel="Model / Vendor"
+                keyLabel="Vendor / Model"
                 value={`${station.chargePointVendor ?? UNKNOWN_TEXT} / ${station.chargePointModel ?? UNKNOWN_TEXT}`}
               />
 
