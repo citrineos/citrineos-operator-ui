@@ -176,6 +176,15 @@ export const AuthorizationDetailCard: React.FC<
             keyLabel="Real-Time Authentication URL"
             value={authorization.realTimeAuthUrl}
           />
+          <KeyValueDisplay
+            keyLabel="Real-Time Authentication Timeout"
+            value={(authorization as any).realTimeAuthTimeout}
+            valueRender={(timeout) =>
+              timeout !== undefined && timeout !== null
+                ? `${timeout} seconds`
+                : NOT_APPLICABLE
+            }
+          />
         </div>
       </CardContent>
     </Card>

@@ -75,6 +75,7 @@ const AuthorizationCreateSchema = AuthorizationSchema.pick({
     .nullable()
     .optional(),
   [AuthorizationProps.additionalInfo]: z.string().nullable().optional(),
+  realTimeAuthTimeout: z.coerce.number<number>().nullable().optional(),
 });
 
 const defaultValues = {
@@ -91,6 +92,7 @@ const defaultValues = {
   [AuthorizationProps.disallowedEvseIdPrefixes]: '',
   [AuthorizationProps.realTimeAuth]: undefined,
   [AuthorizationProps.realTimeAuthUrl]: '',
+  realTimeAuthTimeout: undefined,
   [AuthorizationProps.additionalInfo]: '',
   [AuthorizationProps.concurrentTransaction]: false,
 };
@@ -143,19 +145,49 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
     const now = new Date().toISOString();
     const newItem: any = getSerializedValues(values, AuthorizationClass);
 
-    // Convert comma-separated strings back to arrays
+    // Trim whitespace from string fields
+    const stringFields = [
+      'idToken',
+      'language1',
+      'language2',
+      'personalMessage',
+      'realTimeAuthUrl',
+    ];
+    for (const field of stringFields) {
+      if (typeof newItem[field] === 'string') {
+        newItem[field] = newItem[field].trim();
+      }
+    }
+
+    // Convert comma-separated strings back to arrays, set to undefined if empty
     if (typeof newItem.allowedConnectorTypes === 'string') {
-      newItem.allowedConnectorTypes = newItem.allowedConnectorTypes
+      const arr = newItem.allowedConnectorTypes
         .split(',')
         .map((s: string) => s.trim())
         .filter(Boolean);
+      newItem.allowedConnectorTypes = arr.length > 0 ? arr : undefined;
     }
     if (typeof newItem.disallowedEvseIdPrefixes === 'string') {
-      newItem.disallowedEvseIdPrefixes = newItem.disallowedEvseIdPrefixes
+      const arr = newItem.disallowedEvseIdPrefixes
         .split(',')
         .map((s: string) => s.trim())
         .filter(Boolean);
+      newItem.disallowedEvseIdPrefixes = arr.length > 0 ? arr : undefined;
     }
+
+    // Convert empty strings to undefined
+    const optionalStringFields = [
+      'language1',
+      'language2',
+      'personalMessage',
+      'realTimeAuthUrl',
+    ];
+    for (const field of optionalStringFields) {
+      if (newItem[field] === '') {
+        newItem[field] = undefined;
+      }
+    }
+
     if (newItem.additionalInfo === '') {
       newItem.additionalInfo = null;
     }
@@ -302,6 +334,14 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 name={AuthorizationProps.realTimeAuthUrl}
               >
                 <Input type="url" />
+              </FormField>
+
+              <FormField
+                control={form.control}
+                label="Real-Time Authentication Timeout (seconds)"
+                name="realTimeAuthTimeout"
+              >
+                <Input type="number" min="0" />
               </FormField>
 
               <FormField
