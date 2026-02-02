@@ -2,6 +2,7 @@
   "ChargingStations": {
     "ChargingStations": "Charging Stations",
     "chargingStation": "Charging Station",
+    "use16StatusNotification0": "Use OCPP 1.6 Status Notifications with Connector Id 0",
     "toggleOnlineStatus": "Toggle Online Status",
     "toggleOnlineWarning": "You are about to mark this charging station as ",
     "toggleOnlineCaution": "Warning: This action may cause the UI to be out of sync with the actual station status. Only proceed if you are certain.",

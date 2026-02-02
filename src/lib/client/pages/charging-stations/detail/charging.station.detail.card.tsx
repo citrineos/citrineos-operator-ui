@@ -412,6 +412,18 @@ export const ChargingStationDetailCard = ({
               />
 
               <KeyValueDisplay
+                keyLabel={translate(
+                  'ChargingStations.use16StatusNotification0',
+                )}
+                value={
+                  (station[ChargingStationProps.use16StatusNotification0] ??
+                  true)
+                    ? translate('yes')
+                    : translate('no')
+                }
+              />
+
+              <KeyValueDisplay
                 keyLabel="Connector Types"
                 value={
                   (station.connectors?.length ?? 0) > 0
