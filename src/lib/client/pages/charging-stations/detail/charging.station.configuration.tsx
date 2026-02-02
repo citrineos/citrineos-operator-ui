@@ -32,7 +32,12 @@ import {
 import { ResourceType } from '@lib/utils/access.types';
 import { downloadCSV } from '@lib/utils/download';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { useList, useOne, type CrudFilter } from '@refinedev/core';
+import {
+  useList,
+  useOne,
+  useTranslate,
+  type CrudFilter,
+} from '@refinedev/core';
 import {
   ChevronLeft,
   ChevronRight,
@@ -94,6 +99,7 @@ const CONFIG_2_0_1_COLUMNS = [
 export const ChargingStationConfiguration: React.FC<
   ChargingStationConfigurationProps
 > = ({ stationId }) => {
+  const translate = useTranslate();
   const [version, setVersion] = useState<'1.6' | '2.0.1'>('1.6');
   const [searchTerm, setSearchTerm] = useState('');
   const [dataSource, setDataSource] = useState<any[]>([]);
@@ -359,7 +365,9 @@ export const ChargingStationConfiguration: React.FC<
         </div>
         <div className="flex flex-col-reverse gap-y-4 sm:gap-y-0 sm:flex-row items-center space-x-6">
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium">Rows per page</span>
+            <span className="text-sm font-medium">
+              {translate('pagination.rowsPerPage')}
+            </span>
             <Select
               value={`${pageSize}`}
               onValueChange={(value) => setPageSize(Number(value))}
@@ -386,7 +394,9 @@ export const ChargingStationConfiguration: React.FC<
               onClick={() => setCurrentPage(1)}
               disabled={!canGoPrevious}
             >
-              <span className="sr-only">Go to first page</span>
+              <span className="sr-only">
+                {translate('pagination.buttons.goToFirstPage')}
+              </span>
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -395,7 +405,9 @@ export const ChargingStationConfiguration: React.FC<
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={!canGoPrevious}
             >
-              <span className="sr-only">Go to previous page</span>
+              <span className="sr-only">
+                {translate('pagination.buttons.goToPreviousPage')}
+              </span>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -404,7 +416,9 @@ export const ChargingStationConfiguration: React.FC<
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={!canGoNext}
             >
-              <span className="sr-only">Go to next page</span>
+              <span className="sr-only">
+                {translate('pagination.buttons.goToNextPage')}
+              </span>
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
@@ -413,7 +427,9 @@ export const ChargingStationConfiguration: React.FC<
               onClick={() => setCurrentPage(totalPages)}
               disabled={!canGoNext}
             >
-              <span className="sr-only">Go to last page</span>
+              <span className="sr-only">
+                {translate('pagination.buttons.goToLastPage')}
+              </span>
               <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>
