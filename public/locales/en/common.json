@@ -145,6 +145,7 @@
   },
   "pagination": {
     "buttons": {
+      "goToFirstPage": "Go to first page",
       "goToNextPage": "Go to next page",
       "goToPreviousPage": "Go to previous page",
       "goToLastPage": "Go to last page"
