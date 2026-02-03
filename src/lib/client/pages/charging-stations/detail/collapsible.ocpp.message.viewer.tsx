@@ -2,22 +2,38 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Minus, Plus } from 'lucide-react';
-import { MessageTypeId } from '@citrineos/base';
+import { Copy, Plus } from 'lucide-react';
+import { MessageTypeId, type OCPPMessageDto } from '@citrineos/base';
 import { Button } from '@lib/client/components/ui/button';
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { buttonIconSize } from '@lib/client/styles/icon';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@lib/client/components/ui/sheet';
+import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
+import { copy } from '@lib/utils/copy';
+import { formatDate } from '@lib/client/components/timestamp-display';
 
 export const CollapsibleOCPPMessageViewer: React.FC<{
-  ocppMessage: any;
-  unparsed: boolean;
-}> = ({ ocppMessage, unparsed = false }) => {
-  const [expanded, setExpanded] = useState(false);
+  ocppMessageDto: OCPPMessageDto;
+  unparsed?: boolean;
+}> = ({ ocppMessageDto, unparsed }) => {
+  const [open, setOpen] = useState(false);
   const threshold = 7;
 
-  let payload = null;
+  const ocppMessage = ocppMessageDto.message;
+  const correlationId = ocppMessageDto.correlationId;
+  const timestamp = ocppMessageDto.timestamp;
+  const action = ocppMessageDto.action;
+  const origin = ocppMessageDto.origin;
+
+  let payload;
   if (unparsed) {
     payload = JSON.stringify(ocppMessage);
   } else {
@@ -30,8 +46,8 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
         break;
       case MessageTypeId.CallError: {
         const [
-          messageTypeId,
-          messageId,
+          _messageTypeId,
+          _messageId,
           errorCode,
           errorDescription,
           errorDetails,
@@ -50,37 +66,113 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
   const isExpandable = lines.length > threshold;
 
   return (
-    <div className="relative">
-      <SyntaxHighlighter
-        language="json"
-        style={okaidia}
-        customStyle={{
-          fontSize: '0.8rem',
-          padding: '0.5rem',
-          borderRadius: '4px',
-          maxHeight: isExpandable && !expanded ? '200px' : 'none',
-          overflow: 'hidden',
-          margin: 0,
-        }}
-      >
-        {isExpandable && !expanded
-          ? lines.slice(0, threshold).join('\n')
-          : formattedJson}
-      </SyntaxHighlighter>
-
-      {isExpandable && (
-        <Button
-          size="xs"
-          onClick={() => setExpanded(!expanded)}
-          className="absolute top-1 right-1 p-1"
+    <>
+      <div className="relative">
+        <SyntaxHighlighter
+          language="json"
+          style={okaidia}
+          codeTagProps={{
+            style: {
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+            },
+          }}
+          customStyle={{
+            fontSize: '0.8rem',
+            padding: '0.5rem',
+            borderRadius: '4px',
+            maxHeight: '250px',
+            margin: 0,
+          }}
+          wrapLongLines
         >
-          {expanded ? (
-            <Minus className={buttonIconSize} />
-          ) : (
-            <Plus className={buttonIconSize} />
-          )}
+          {isExpandable ? lines.slice(0, threshold).join('\n') : formattedJson}
+        </SyntaxHighlighter>
+
+        <Button
+          variant="secondary"
+          size="xs"
+          onClick={async (e) => {
+            e.stopPropagation();
+            await copy(JSON.stringify(ocppMessage, null, 2), false);
+          }}
+          className={`absolute top-1 ${isExpandable ? 'right-8' : 'right-1'} p-1`}
+        >
+          <Copy className={buttonIconSize} />
         </Button>
-      )}
-    </div>
+
+        {isExpandable && (
+          <Button
+            size="xs"
+            onClick={() => setOpen(!open)}
+            className="absolute top-1 right-1 p-1"
+          >
+            <Plus className={buttonIconSize} />
+          </Button>
+        )}
+      </div>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent className="min-w-1/3" showCloseButton={false}>
+          {correlationId && (
+            <SheetHeader>
+              <SheetTitle className="text-lg font-bold">
+                <div className="flex items-center gap-1">
+                  {correlationId}{' '}
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await copy(correlationId);
+                    }}
+                  >
+                    <Copy className={buttonIconSize} />
+                  </Button>
+                </div>
+              </SheetTitle>
+              <SheetDescription className="text-base">
+                <span className="font-semibold">
+                  {action} - {origin}
+                </span>{' '}
+                @ {formatDate(timestamp, 'YYYY-MM-DD HH:mm:ss.SSS')}
+              </SheetDescription>
+            </SheetHeader>
+          )}
+          <ScrollArea className="p-4 size-full relative">
+            <SyntaxHighlighter
+              language="json"
+              style={okaidia}
+              codeTagProps={{
+                style: {
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                },
+              }}
+              customStyle={{
+                fontSize: '0.8rem',
+                padding: '0.5rem',
+                borderRadius: '4px',
+                maxWidth: '100%',
+                margin: 0,
+              }}
+              wrapLongLines
+            >
+              {formattedJson}
+            </SyntaxHighlighter>
+            <Button
+              variant="secondary"
+              size="xs"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await copy(JSON.stringify(ocppMessage, null, 2), false);
+              }}
+              className="absolute top-6 right-6 p-1"
+            >
+              <Copy className={buttonIconSize} />
+            </Button>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 };

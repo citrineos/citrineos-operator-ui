@@ -31,7 +31,7 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import type { CrudFilter } from '@refinedev/core';
 import { useList } from '@refinedev/core';
 import { Dayjs } from 'dayjs';
-import { Copy, Link } from 'lucide-react';
+import { Copy, Link, Upload } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { buttonIconSize } from '@lib/client/styles/icon';
@@ -118,7 +118,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         value: selectedActions,
       });
     }
-    if (selectedOrigin !== allOption) {
+    if (selectedOrigin && selectedOrigin !== allOption) {
       newFilters.push({
         field: OCPPMessageProps.origin,
         operator: 'eq',
@@ -188,15 +188,6 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         <div className="text-sm text-muted-foreground self-center">
           (Date pickers: start/end dates placeholder)
         </div>
-        <Button
-          variant="outline"
-          onClick={() => {
-            setStartDate(null);
-            setEndDate(null);
-          }}
-        >
-          Live
-        </Button>
       </div>
 
       <Table<OCPPMessageDto>
@@ -227,19 +218,10 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
               return (
                 <TooltipProvider>
-                  <div className="flex items-center gap-1">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <code className="text-xs bg-muted px-2 py-1 rounded max-w-50">
-                          <div className="truncate">
-                            {row.original.correlationId ?? '-'}
-                          </div>
-                        </code>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {row.original.correlationId}
-                      </TooltipContent>
-                    </Tooltip>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs bg-muted px-2 py-1 rounded">
+                      {row.original.correlationId ?? '-'}
+                    </code>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -269,7 +251,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
                             <Copy className={buttonIconSize} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Copy correlation ID</TooltipContent>
+                        <TooltipContent>Copy Correlation ID</TooltipContent>
                       </Tooltip>
                     )}
                   </div>
@@ -314,7 +296,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
               return (
                 <CollapsibleOCPPMessageViewer
-                  ocppMessage={row.original.message}
+                  ocppMessageDto={row.original}
                   unparsed={typeof row.original.message === 'string'}
                 />
               );
