@@ -37,12 +37,13 @@ import { instanceToPlain } from 'class-transformer';
 import {
   ChevronLeft,
   Edit,
+  Info,
   MoreHorizontal,
   RefreshCw,
   Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
@@ -78,6 +79,7 @@ export const ChargingStationDetailCard = ({
   const { back, push } = useRouter();
   const dispatch = useDispatch();
   const translate = useTranslate();
+  const [showInfoText, setShowInfoText] = useState(false);
 
   const {
     query: { data, isLoading },
@@ -412,14 +414,28 @@ export const ChargingStationDetailCard = ({
               />
 
               <KeyValueDisplay
-                keyLabel={translate(
-                  'ChargingStations.use16StatusNotification0',
-                )}
+                keyLabel={
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
+                      <span>OCPP 1.6 StatusNotification Handling</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 p-0 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowInfoText(!showInfoText)}
+                      >
+                        <Info className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    {showInfoText && (
+                      <div className="text-xs text-muted-foreground">
+                        {translate('ChargingStations.use16StatusNotification0')}
+                      </div>
+                    )}
+                  </div>
+                }
                 value={
-                  (station[ChargingStationProps.use16StatusNotification0] ??
-                  true)
-                    ? translate('yes')
-                    : translate('no')
+                  station.use16StatusNotification0 ? 'Enabled' : 'Disabled'
                 }
               />
 
