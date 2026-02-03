@@ -26,6 +26,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => [
       return (
         <div
           className={clickableLinkStyle}
+          style={{ minHeight: '20px', minWidth: '60px' }}
           onClick={(event: React.MouseEvent) => {
             const path = `/${MenuSection.AUTHORIZATIONS}/${row.original.id}`;
 
@@ -38,7 +39,7 @@ export const getAuthorizationColumns = (push: (path: string) => void) => [
             }
           }}
         >
-          {row.original.idToken ?? 'No ID'}
+          {row.original.idToken?.trim() || 'No ID'}
         </div>
       );
     }}
