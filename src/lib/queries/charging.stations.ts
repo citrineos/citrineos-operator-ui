@@ -199,6 +199,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
       parkingRestrictions
       capabilities
       coordinates
+      use16StatusNotification0
       location: Location {
         id
         name
