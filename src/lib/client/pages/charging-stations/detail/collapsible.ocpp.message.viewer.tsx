@@ -70,7 +70,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
 
       {isExpandable && (
         <Button
-          size="sm"
+          size="xs"
           onClick={() => setExpanded(!expanded)}
           className="absolute top-1 right-1 p-1"
         >
