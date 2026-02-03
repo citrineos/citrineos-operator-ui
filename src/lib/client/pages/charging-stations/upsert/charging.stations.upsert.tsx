@@ -68,6 +68,7 @@ const ChargingStationCreateSchema = ChargingStationSchema.pick({
   [ChargingStationProps.floorLevel]: true,
   [ChargingStationProps.parkingRestrictions]: true,
   [ChargingStationProps.capabilities]: true,
+  [ChargingStationProps.use16StatusNotification0]: true,
 });
 
 const defaultChargingStation = {
@@ -77,6 +78,7 @@ const defaultChargingStation = {
   [ChargingStationProps.floorLevel]: '',
   [ChargingStationProps.parkingRestrictions]: [],
   [ChargingStationProps.capabilities]: [],
+  [ChargingStationProps.use16StatusNotification0]: true,
 };
 
 const parkingRestrictions: ChargingStationParkingRestrictionEnumType[] =
@@ -327,6 +329,28 @@ export const ChargingStationUpsert = ({
                 placeholder="Select Capabilities"
                 searchPlaceholder="Search Capabilities"
               />
+
+              <Field>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="use16StatusNotification0"
+                    checked={
+                      form.watch(
+                        ChargingStationProps.use16StatusNotification0,
+                      ) ?? true
+                    }
+                    onCheckedChange={(checked) => {
+                      form.setValue(
+                        ChargingStationProps.use16StatusNotification0,
+                        checked === true,
+                      );
+                    }}
+                  />
+                  <Label htmlFor="use16StatusNotification0">
+                    {translate('ChargingStations.use16StatusNotification0')}
+                  </Label>
+                </div>
+              </Field>
 
               {/* Coordinates Section */}
               <Field>
