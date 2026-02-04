@@ -91,6 +91,7 @@
     "delete": "Delete",
     "download": "Download",
     "edit": "Edit",
+    "exportToCsv": "Export to CSV",
     "filter": "Filter",
     "import": "Import",
     "logout": "Logout",

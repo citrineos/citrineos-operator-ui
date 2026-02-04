@@ -92,6 +92,13 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   useEffect(() => {
     const newFilters: CrudFilter[] = [];
+    if (searchCid.trim()) {
+      newFilters.push({
+        field: OCPPMessageProps.correlationId,
+        operator: 'contains',
+        value: searchCid,
+      });
+    }
     if (startDate) {
       newFilters.push({
         field: OCPPMessageProps.timestamp,
@@ -104,13 +111,6 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         field: OCPPMessageProps.timestamp,
         operator: 'lte',
         value: endDate.toISOString(),
-      });
-    }
-    if (searchCid.trim()) {
-      newFilters.push({
-        field: OCPPMessageProps.correlationId,
-        operator: 'contains',
-        value: searchCid,
       });
     }
     if (selectedActions.length > 0) {
@@ -322,11 +322,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         open={exportDialogOpen}
         onOpenChangeAction={setExportDialogOpen}
         stationId={stationId}
-        correlationIdFilter={searchCid}
-        actionsFilter={selectedActions}
-        originFilter={selectedOrigin === allOption ? undefined : selectedOrigin}
-        startDateFilter={startDate ?? undefined}
-        endDateFilter={endDate ?? undefined}
+        filters={filters}
       />
     </>
   );

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,11 +11,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@lib/client/components/ui/dialog';
-import { Dayjs } from 'dayjs';
 import { Button } from '@lib/client/components/ui/button';
+import {
+  type CrudFilter,
+  type LogicalFilter,
+  useExport,
+  useTranslate,
+} from '@refinedev/core';
+import { type OCPPMessageDto, OCPPMessageProps } from '@citrineos/base';
+import { ResourceType } from '@lib/utils/access.types';
+import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 const createFilterListItem = (label: string, value: string) => (
-  <li>
+  <li key={label}>
     <span className="font-semibold">{label}:</span> {value}
   </li>
 );
@@ -26,62 +36,92 @@ export const OCPPMessagesExportDialog = ({
   open,
   onOpenChangeAction,
   stationId,
-  correlationIdFilter,
-  actionsFilter,
-  originFilter,
-  startDateFilter,
-  endDateFilter,
+  filters,
 }: {
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
   stationId: string;
-  correlationIdFilter?: string;
-  actionsFilter?: string[];
-  originFilter?: string;
-  startDateFilter?: Dayjs;
-  endDateFilter?: Dayjs;
+  filters: CrudFilter[];
 }) => {
-  const [loading, setLoading] = useState(false);
+  const translate = useTranslate();
 
-  // TODO add lazy query here
+  const { triggerExport, isLoading } = useExport<OCPPMessageDto>({
+    resource: ResourceType.OCPP_MESSAGES,
+    sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
+    meta: {
+      gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
+      gqlVariables: { stationId },
+    },
+    filters,
+    download: true,
+    filename: `ocpp-messages-${stationId}-${Date.now()}`,
+    pageSize: 100,
+    mapData: (ocppMessage) => {
+      return {
+        stationId: ocppMessage.stationId,
+        correlationId: ocppMessage.correlationId,
+        timestamp: ocppMessage.timestamp,
+        origin: ocppMessage.origin,
+        protocol: ocppMessage.protocol,
+        action: ocppMessage.action,
+        message: JSON.stringify(ocppMessage.message),
+      };
+    },
+  });
 
   const getMessageBasedOnFilters = () => {
-    if (
-      !(
-        correlationIdFilter ||
-        (actionsFilter ?? []).length > 0 ||
-        originFilter ||
-        startDateFilter ||
-        endDateFilter
-      )
-    ) {
+    if (filters.length === 0) {
       return `You will download all OCPP messages for charger ${stationId}.`;
     }
 
     const messagePrefix = `You will download OCPP messages for charger ${stationId} with the following filters: `;
     const messageItems = [];
 
+    const filterList: LogicalFilter[] = filters[0].value;
+
+    const correlationIdFilter = filterList.find(
+      (f) => f.field === OCPPMessageProps.correlationId,
+    );
+    const actionsFilter = filterList.find(
+      (f) => f.field === OCPPMessageProps.action,
+    );
+    const originFilter = filterList.find(
+      (f) => f.field === OCPPMessageProps.origin,
+    );
+    const startDateFilter = filterList.find(
+      (f) => f.field === OCPPMessageProps.timestamp && f.operator === 'gte',
+    );
+    const endDateFilter = filterList.find(
+      (f) => f.field === OCPPMessageProps.timestamp && f.operator === 'lte',
+    );
+
     if (correlationIdFilter) {
       messageItems.push(
-        createFilterListItem('Correlation ID', correlationIdFilter),
+        createFilterListItem('Correlation ID', correlationIdFilter.value),
       );
     }
-    if (actionsFilter && actionsFilter.length > 0) {
+    if (actionsFilter && actionsFilter.value.length > 0) {
       messageItems.push(
-        createFilterListItem('Actions', actionsFilter.join(', ')),
+        createFilterListItem('Actions', actionsFilter.value.join(', ')),
       );
     }
     if (originFilter) {
-      messageItems.push(createFilterListItem('Origin', originFilter));
+      messageItems.push(createFilterListItem('Origin', originFilter.value));
     }
     if (startDateFilter) {
       messageItems.push(
-        createFilterListItem('Start Date', startDateFilter.format(dateFormat)),
+        createFilterListItem(
+          'Start Date',
+          startDateFilter.value.format(dateFormat),
+        ),
       );
     }
     if (endDateFilter) {
       messageItems.push(
-        createFilterListItem('End Date', endDateFilter.format(dateFormat)),
+        createFilterListItem(
+          'End Date',
+          endDateFilter.value.format(dateFormat),
+        ),
       );
     }
 
@@ -93,27 +133,40 @@ export const OCPPMessagesExportDialog = ({
     );
   };
 
+  const exportToCsv = () => {
+    triggerExport()
+      .then(() => {
+        onOpenChangeAction(false);
+      })
+      .catch((err) => {
+        toast.error(`Could export to CSV due to error: ${JSON.stringify(err)}`);
+      });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChangeAction}>
       <DialogContent className="w-250" showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Export OCPP Messages to CSV</DialogTitle>
+          <div className="flex items-center gap-1">
+            <DialogTitle>Export OCPP Messages to CSV</DialogTitle>
+            {isLoading && <Loader2 className="size-6 animate-spin" />}
+          </div>
         </DialogHeader>
         {getMessageBasedOnFilters()}
         <DialogFooter>
           <Button
             variant="outline"
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => onOpenChangeAction(false)}
           >
-            Cancel
+            {translate('buttons.cancel')}
           </Button>
           <Button
             variant="secondary"
-            disabled={loading}
-            onClick={() => console.log('exporting')}
+            disabled={isLoading}
+            onClick={exportToCsv}
           >
-            Export to CSV
+            {translate('buttons.exportToCsv')}
           </Button>
         </DialogFooter>
       </DialogContent>
