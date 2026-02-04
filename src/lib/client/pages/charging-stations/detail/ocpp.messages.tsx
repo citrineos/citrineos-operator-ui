@@ -31,7 +31,7 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import type { CrudFilter } from '@refinedev/core';
 import { useList } from '@refinedev/core';
 import { Dayjs } from 'dayjs';
-import { Copy, Link, Upload } from 'lucide-react';
+import { Copy, Download, Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { buttonIconSize } from '@lib/client/styles/icon';
@@ -41,6 +41,7 @@ import type { CellContext } from '@tanstack/react-table';
 import { copy } from '@lib/utils/copy';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { MultiSelect } from '@lib/client/components/multi-select';
+import { OCPPMessagesExportDialog } from '@lib/client/pages/charging-stations/detail/ocpp.messages.export.dialog';
 
 export interface OCPPMessagesProps {
   stationId: string;
@@ -72,6 +73,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   const [selectedActions, setSelectedActions] = useState<string[]>([]);
   const [selectedOrigin, setSelectedOrigin] = useState<string>(allOption);
   const [filters, setFilters] = useState<CrudFilter[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const {
     query: { data },
@@ -159,151 +161,173 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
       : 'bg-green-50 dark:bg-green-950';
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="grid grid-cols-5 gap-2 w-full">
-        <DebounceSearch
-          onSearch={setSearchCid}
-          placeholder="Search Correlation ID"
-          className="relative w-full"
-        />
-        <MultiSelect
-          options={actionOptions}
-          selectedValues={selectedActions}
-          setSelectedValues={setSelectedActions}
-          placeholder="Select Actions"
-          searchPlaceholder="Search Actions"
-        />
-        <Select value={selectedOrigin ?? ''} onValueChange={setSelectedOrigin}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Filter Origins" />
-          </SelectTrigger>
-          <SelectContent>
-            {originOptions.map((opt) => (
-              <SelectItem key={opt.label} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="text-sm text-muted-foreground self-center">
-          (Date pickers: start/end dates placeholder)
+    <>
+      <div className="flex flex-col gap-4 w-full">
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" onClick={() => setExportDialogOpen(true)}>
+            <Download className={buttonIconSize} />
+            Export to CSV
+          </Button>
         </div>
-      </div>
+        <div className="grid grid-cols-5 gap-2 w-full">
+          <DebounceSearch
+            onSearch={setSearchCid}
+            placeholder="Search Correlation ID"
+            className="relative w-full"
+          />
+          <MultiSelect
+            options={actionOptions}
+            selectedValues={selectedActions}
+            setSelectedValues={setSelectedActions}
+            placeholder="Select Actions"
+            searchPlaceholder="Search Actions"
+          />
+          <Select
+            value={selectedOrigin ?? ''}
+            onValueChange={setSelectedOrigin}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Filter Origins" />
+            </SelectTrigger>
+            <SelectContent>
+              {originOptions.map((opt) => (
+                <SelectItem key={opt.label} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="text-sm text-muted-foreground self-center">
+            (Date pickers: start/end dates placeholder)
+          </div>
+        </div>
 
-      <Table<OCPPMessageDto>
-        refineCoreProps={{
-          resource: ResourceType.OCPP_MESSAGES,
-          sorters: {
-            initial: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
-          },
-          filters: {
-            permanent: filters,
-          },
-          meta: {
-            gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-            gqlVariables: { stationId },
-          },
-          queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
-        }}
-        rowClassName={(record) => getRowClassName(record)}
-        enableFilters
-        showHeader
-      >
-        {[
-          <Table.Column
-            id="correlationId"
-            key="correlationId"
-            accessorKey="correlationId"
-            header="Correlation ID"
-            cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
-              return (
-                <TooltipProvider>
-                  <div className="flex items-center gap-2">
-                    <code className="text-xs bg-muted px-2 py-1 rounded">
-                      {row.original.correlationId ?? '-'}
-                    </code>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            findRelatedMessages(row.original);
-                          }}
-                        >
-                          <Link className={buttonIconSize} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Find related message</TooltipContent>
-                    </Tooltip>
-                    {row.original.correlationId && (
+        <Table<OCPPMessageDto>
+          refineCoreProps={{
+            resource: ResourceType.OCPP_MESSAGES,
+            sorters: {
+              initial: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
+            },
+            filters: {
+              permanent: filters,
+            },
+            meta: {
+              gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
+              gqlVariables: { stationId },
+            },
+            queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
+          }}
+          rowClassName={(record) => getRowClassName(record)}
+          enableFilters
+          showHeader
+        >
+          {[
+            <Table.Column
+              id="correlationId"
+              key="correlationId"
+              accessorKey="correlationId"
+              header="Correlation ID"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <TooltipProvider>
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs bg-muted px-2 py-1 rounded">
+                        {row.original.correlationId ?? '-'}
+                      </code>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
                             size="xs"
-                            onClick={async (e) => {
+                            onClick={(e) => {
                               e.stopPropagation();
-                              await copy(row.original.correlationId);
+                              findRelatedMessages(row.original);
                             }}
                           >
-                            <Copy className={buttonIconSize} />
+                            <Link className={buttonIconSize} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Copy Correlation ID</TooltipContent>
+                        <TooltipContent>Find related message</TooltipContent>
                       </Tooltip>
+                      {row.original.correlationId && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="xs"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                await copy(row.original.correlationId);
+                              }}
+                            >
+                              <Copy className={buttonIconSize} />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Copy Correlation ID</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </TooltipProvider>
+                );
+              }}
+            />,
+            <Table.Column
+              id="action"
+              key="action"
+              accessorKey="action"
+              header="Action - Origin"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <span>
+                    {row.original.action} - {row.original.origin}
+                  </span>
+                );
+              }}
+            />,
+            <Table.Column
+              id="timestamp"
+              key="timestamp"
+              accessorKey="timestamp"
+              header="Timestamp"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <span>
+                    {formatDate(
+                      row.original.timestamp,
+                      'YYYY-MM-DD HH:mm:ss.SSS',
                     )}
-                  </div>
-                </TooltipProvider>
-              );
-            }}
-          />,
-          <Table.Column
-            id="action"
-            key="action"
-            accessorKey="action"
-            header="Action - Origin"
-            cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
-              return (
-                <span>
-                  {row.original.action} - {row.original.origin}
-                </span>
-              );
-            }}
-          />,
-          <Table.Column
-            id="timestamp"
-            key="timestamp"
-            accessorKey="timestamp"
-            header="Timestamp"
-            cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
-              return (
-                <span>
-                  {formatDate(
-                    row.original.timestamp,
-                    'YYYY-MM-DD HH:mm:ss.SSS',
-                  )}
-                </span>
-              );
-            }}
-          />,
-          <Table.Column
-            id="message"
-            key="message"
-            accessorKey="message"
-            header="Content"
-            cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
-              return (
-                <CollapsibleOCPPMessageViewer
-                  ocppMessageDto={row.original}
-                  unparsed={typeof row.original.message === 'string'}
-                />
-              );
-            }}
-          />,
-        ]}
-      </Table>
-    </div>
+                  </span>
+                );
+              }}
+            />,
+            <Table.Column
+              id="message"
+              key="message"
+              accessorKey="message"
+              header="Content"
+              cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
+                return (
+                  <CollapsibleOCPPMessageViewer
+                    ocppMessageDto={row.original}
+                    unparsed={typeof row.original.message === 'string'}
+                  />
+                );
+              }}
+            />,
+          ]}
+        </Table>
+      </div>
+
+      <OCPPMessagesExportDialog
+        open={exportDialogOpen}
+        onOpenChangeAction={setExportDialogOpen}
+        stationId={stationId}
+        correlationIdFilter={searchCid}
+        actionsFilter={selectedActions}
+        originFilter={selectedOrigin === allOption ? undefined : selectedOrigin}
+        startDateFilter={startDate ?? undefined}
+        endDateFilter={endDate ?? undefined}
+      />
+    </>
   );
 };
