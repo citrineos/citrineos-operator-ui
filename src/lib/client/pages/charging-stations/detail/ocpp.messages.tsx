@@ -28,9 +28,8 @@ import { OCPPMessageClass } from '@lib/cls/ocpp.message.dto';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import type { CrudFilter } from '@refinedev/core';
+import type { LogicalFilter } from '@refinedev/core';
 import { useList } from '@refinedev/core';
-import { Dayjs } from 'dayjs';
 import { Copy, Download, Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
@@ -42,6 +41,8 @@ import { copy } from '@lib/utils/copy';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { MultiSelect } from '@lib/client/components/multi-select';
 import { OCPPMessagesExportDialog } from '@lib/client/pages/charging-stations/detail/ocpp.messages.export.dialog';
+import { CalendarWithTime } from '@lib/client/components/ui/calendar';
+import { DateTimePicker } from '@lib/client/components/ui/date-time-picker';
 
 export interface OCPPMessagesProps {
   stationId: string;
@@ -67,12 +68,12 @@ const originOptions = [
 ];
 
 export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [searchCid, setSearchCid] = useState<string>('');
   const [selectedActions, setSelectedActions] = useState<string[]>([]);
   const [selectedOrigin, setSelectedOrigin] = useState<string>(allOption);
-  const [filters, setFilters] = useState<CrudFilter[]>([]);
+  const [filters, setFilters] = useState<LogicalFilter[]>([]);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const {
@@ -91,7 +92,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   const messages = useMemo(() => data?.data ?? [], [data?.data]);
 
   useEffect(() => {
-    const newFilters: CrudFilter[] = [];
+    const newFilters: LogicalFilter[] = [];
     if (searchCid.trim()) {
       newFilters.push({
         field: OCPPMessageProps.correlationId,
@@ -128,11 +129,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
       });
     }
 
-    setFilters(
-      newFilters.length > 0
-        ? [{ operator: 'and', value: newFilters }]
-        : newFilters,
-    );
+    setFilters(newFilters);
   }, [startDate, endDate, searchCid, selectedActions, selectedOrigin]);
 
   const findRelatedMessages = useCallback(
@@ -197,9 +194,16 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               ))}
             </SelectContent>
           </Select>
-          <div className="text-sm text-muted-foreground self-center">
-            (Date pickers: start/end dates placeholder)
-          </div>
+          <DateTimePicker
+            date={startDate ?? undefined}
+            onSelectDateAction={(date) => setStartDate(date ?? null)}
+            placeholder="Pick Start Date"
+          />
+          <DateTimePicker
+            date={endDate ?? undefined}
+            onSelectDateAction={(date) => setEndDate(date ?? null)}
+            placeholder="Pick End Date"
+          />
         </div>
 
         <Table<OCPPMessageDto>
@@ -289,6 +293,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               key="timestamp"
               accessorKey="timestamp"
               header="Timestamp"
+              enableSorting
               cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
                 return (
                   <span>

@@ -12,25 +12,20 @@ import {
   DialogTitle,
 } from '@lib/client/components/ui/dialog';
 import { Button } from '@lib/client/components/ui/button';
-import {
-  type CrudFilter,
-  type LogicalFilter,
-  useExport,
-  useTranslate,
-} from '@refinedev/core';
+import { type LogicalFilter, useExport, useTranslate } from '@refinedev/core';
 import { type OCPPMessageDto, OCPPMessageProps } from '@citrineos/base';
 import { ResourceType } from '@lib/utils/access.types';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { dateTimePickerDateFormat } from '@lib/client/components/ui/date-time-picker';
+import { formatDate } from '@lib/client/components/timestamp-display';
 
 const createFilterListItem = (label: string, value: string) => (
   <li key={label}>
     <span className="font-semibold">{label}:</span> {value}
   </li>
 );
-
-const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 export const OCPPMessagesExportDialog = ({
   open,
@@ -41,7 +36,7 @@ export const OCPPMessagesExportDialog = ({
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
   stationId: string;
-  filters: CrudFilter[];
+  filters: LogicalFilter[];
 }) => {
   const translate = useTranslate();
 
@@ -77,21 +72,19 @@ export const OCPPMessagesExportDialog = ({
     const messagePrefix = `You will download OCPP messages for charger ${stationId} with the following filters: `;
     const messageItems = [];
 
-    const filterList: LogicalFilter[] = filters[0].value;
-
-    const correlationIdFilter = filterList.find(
+    const correlationIdFilter = filters.find(
       (f) => f.field === OCPPMessageProps.correlationId,
     );
-    const actionsFilter = filterList.find(
+    const actionsFilter = filters.find(
       (f) => f.field === OCPPMessageProps.action,
     );
-    const originFilter = filterList.find(
+    const originFilter = filters.find(
       (f) => f.field === OCPPMessageProps.origin,
     );
-    const startDateFilter = filterList.find(
+    const startDateFilter = filters.find(
       (f) => f.field === OCPPMessageProps.timestamp && f.operator === 'gte',
     );
-    const endDateFilter = filterList.find(
+    const endDateFilter = filters.find(
       (f) => f.field === OCPPMessageProps.timestamp && f.operator === 'lte',
     );
 
@@ -112,7 +105,7 @@ export const OCPPMessagesExportDialog = ({
       messageItems.push(
         createFilterListItem(
           'Start Date',
-          startDateFilter.value.format(dateFormat),
+          formatDate(startDateFilter.value, dateTimePickerDateFormat),
         ),
       );
     }
@@ -120,7 +113,7 @@ export const OCPPMessagesExportDialog = ({
       messageItems.push(
         createFilterListItem(
           'End Date',
-          endDateFilter.value.format(dateFormat),
+          formatDate(endDateFilter.value, dateTimePickerDateFormat),
         ),
       );
     }
