@@ -66,10 +66,17 @@ export const OCPPMessagesExportDialog = ({
 
   const getMessageBasedOnFilters = () => {
     if (filters.length === 0) {
-      return `You will download all OCPP messages for charger ${stationId}.`;
+      return translate('ChargingStations.downloadAllMessagesToCsv', {
+        stationId,
+      });
     }
 
-    const messagePrefix = `You will download OCPP messages for charger ${stationId} with the following filters: `;
+    const messagePrefix = translate(
+      'ChargingStations.downloadMessagesToCsvWithFilters',
+      {
+        stationId,
+      },
+    );
     const messageItems = [];
 
     const correlationIdFilter = filters.find(
@@ -141,7 +148,9 @@ export const OCPPMessagesExportDialog = ({
       <DialogContent className="w-250" showCloseButton={false}>
         <DialogHeader>
           <div className="flex items-center gap-1">
-            <DialogTitle>Export OCPP Messages to CSV</DialogTitle>
+            <DialogTitle>
+              {translate('ChargingStations.exportMessagesToCsvHeader')}
+            </DialogTitle>
             {isLoading && <Loader2 className="size-6 animate-spin" />}
           </div>
         </DialogHeader>

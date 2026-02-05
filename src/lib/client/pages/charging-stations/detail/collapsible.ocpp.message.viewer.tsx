@@ -112,7 +112,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
         )}
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="min-w-1/3" showCloseButton={false}>
+        <SheetContent className="min-w-1/3 pb-30" showCloseButton={false}>
           {correlationId && (
             <SheetHeader>
               <SheetTitle className="text-lg font-bold">
@@ -138,7 +138,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
               </SheetDescription>
             </SheetHeader>
           )}
-          <ScrollArea className="p-4 size-full relative">
+          <ScrollArea className="px-4 size-full relative">
             <SyntaxHighlighter
               language="json"
               style={okaidia}
@@ -153,7 +153,6 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
                 padding: '0.5rem',
                 borderRadius: '4px',
                 maxWidth: '100%',
-                margin: 0,
               }}
               wrapLongLines
             >
@@ -166,7 +165,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
                 e.stopPropagation();
                 await copy(JSON.stringify(ocppMessage, null, 2), false);
               }}
-              className="absolute top-6 right-6 p-1"
+              className="absolute top-4 right-6 p-1"
             >
               <Copy className={buttonIconSize} />
             </Button>

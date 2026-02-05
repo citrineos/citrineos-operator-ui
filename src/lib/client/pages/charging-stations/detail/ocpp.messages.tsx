@@ -41,7 +41,6 @@ import { copy } from '@lib/utils/copy';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { MultiSelect } from '@lib/client/components/multi-select';
 import { OCPPMessagesExportDialog } from '@lib/client/pages/charging-stations/detail/ocpp.messages.export.dialog';
-import { CalendarWithTime } from '@lib/client/components/ui/calendar';
 import { DateTimePicker } from '@lib/client/components/ui/date-time-picker';
 
 export interface OCPPMessagesProps {
@@ -154,8 +153,8 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   const getRowClassName = (record: OCPPMessageDto) =>
     record.origin === MessageOrigin.ChargingStation
-      ? 'bg-blue-50 dark:bg-blue-950'
-      : 'bg-green-50 dark:bg-green-950';
+      ? 'bg-secondary/50'
+      : 'bg-success/50';
 
   return (
     <>
@@ -283,7 +282,8 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
                 return (
                   <span>
-                    {row.original.action} - {row.original.origin}
+                    {row.original.action ?? 'Unknown Action'} -{' '}
+                    {row.original.origin}
                   </span>
                 );
               }}
@@ -293,7 +293,6 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               key="timestamp"
               accessorKey="timestamp"
               header="Timestamp"
-              enableSorting
               cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
                 return (
                   <span>
