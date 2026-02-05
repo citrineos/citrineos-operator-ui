@@ -28,7 +28,7 @@ import { OCPPMessageClass } from '@lib/cls/ocpp.message.dto';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import type { LogicalFilter } from '@refinedev/core';
+import { type LogicalFilter, useTranslate } from '@refinedev/core';
 import { useList } from '@refinedev/core';
 import { Copy, Download, Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -74,6 +74,8 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
   const [selectedOrigin, setSelectedOrigin] = useState<string>(allOption);
   const [filters, setFilters] = useState<LogicalFilter[]>([]);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+
+  const translate = useTranslate();
 
   const {
     query: { data },
@@ -153,8 +155,8 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   const getRowClassName = (record: OCPPMessageDto) =>
     record.origin === MessageOrigin.ChargingStation
-      ? 'bg-secondary/50'
-      : 'bg-success/50';
+      ? 'bg-secondary/35'
+      : 'bg-success/35';
 
   return (
     <>
@@ -162,7 +164,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={() => setExportDialogOpen(true)}>
             <Download className={buttonIconSize} />
-            Export to CSV
+            {translate('buttons.exportToCsv')}
           </Button>
         </div>
         <div className="grid grid-cols-5 gap-2 w-full">
