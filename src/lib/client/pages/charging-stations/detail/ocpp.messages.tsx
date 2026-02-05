@@ -155,8 +155,8 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   const getRowClassName = (record: OCPPMessageDto) =>
     record.origin === MessageOrigin.ChargingStation
-      ? 'bg-secondary/35'
-      : 'bg-success/35';
+      ? 'bg-secondary/25'
+      : 'bg-success/25';
 
   return (
     <>
