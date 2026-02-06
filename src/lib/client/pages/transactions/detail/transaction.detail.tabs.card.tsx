@@ -37,6 +37,8 @@ import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { useMemo, useState } from 'react';
 import { getAuthorizationColumns } from '@lib/client/pages/authorizations/columns';
 import { useRouter } from 'next/navigation';
+import { DEFAULT_SORTERS } from '../../../../utils/consts';
+import { AuthorizationClass } from '../../../../cls/authorization.dto';
 
 export const TransactionDetailTabsCard = ({
   transaction,
@@ -95,14 +97,22 @@ export const TransactionDetailTabsCard = ({
               <Table
                 refineCoreProps={{
                   resource: ResourceType.AUTHORIZATIONS,
-                  sorters: {
-                    permanent: [{ field: BaseProps.updatedAt, order: 'desc' }],
-                  },
+                  sorters: DEFAULT_SORTERS,
                   meta: {
                     gqlQuery: GET_AUTHORIZATIONS_BY_TRANSACTION,
-                    gqlVariables: { id: authorization?.id, limit: 10000 },
+                    gqlVariables: {
+                      id: authorization?.id,
+                      offset: 0,
+                      limit: 10,
+                      order_by: [],
+                    },
                   },
-                  queryOptions: getPlainToInstanceOptions(),
+                  queryOptions: {
+                    ...getPlainToInstanceOptions(AuthorizationClass),
+                    select: (data: any) => {
+                      return data;
+                    },
+                  },
                 }}
                 enableSorting
                 enableFilters
