@@ -8,7 +8,7 @@ import React from 'react';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 
 interface KeyValueDisplayProps {
-  keyLabel: string;
+  keyLabel: string | React.ReactNode;
   value: any;
   valueRender?: (value?: any) => React.ReactNode;
 }

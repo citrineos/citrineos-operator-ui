@@ -52,7 +52,7 @@ export const GET_AUTHORIZATIONS_BY_TRANSACTION = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: { id: { _eq: $id }, _and: [$where] }
+      where: { id: { _eq: $id } }
     ) {
       id
       idToken

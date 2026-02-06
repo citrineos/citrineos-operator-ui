@@ -91,10 +91,12 @@
     "delete": "Delete",
     "download": "Download",
     "edit": "Edit",
+    "exportToCsv": "Export to CSV",
     "filter": "Filter",
     "import": "Import",
     "logout": "Logout",
     "notAccessTitle": "You don't have permission to access this resource.",
+    "ok": "OK",
     "refresh": "Refresh",
     "save": "Save",
     "saving": "Saving...",
@@ -144,6 +146,7 @@
   },
   "pagination": {
     "buttons": {
+      "goToFirstPage": "Go to first page",
       "goToNextPage": "Go to next page",
       "goToPreviousPage": "Go to previous page",
       "goToLastPage": "Go to last page"

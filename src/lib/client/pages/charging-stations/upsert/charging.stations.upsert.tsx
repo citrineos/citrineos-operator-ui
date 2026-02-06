@@ -55,6 +55,8 @@ import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { Button } from '@lib/client/components/ui/button';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
+import { Checkbox } from '@lib/client/components/ui/checkbox';
+import { Label } from '@lib/client/components/ui/label';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
@@ -66,6 +68,7 @@ const ChargingStationCreateSchema = ChargingStationSchema.pick({
   [ChargingStationProps.floorLevel]: true,
   [ChargingStationProps.parkingRestrictions]: true,
   [ChargingStationProps.capabilities]: true,
+  [ChargingStationProps.use16StatusNotification0]: true,
 });
 
 const defaultChargingStation = {
@@ -75,6 +78,7 @@ const defaultChargingStation = {
   [ChargingStationProps.floorLevel]: '',
   [ChargingStationProps.parkingRestrictions]: [],
   [ChargingStationProps.capabilities]: [],
+  [ChargingStationProps.use16StatusNotification0]: true,
 };
 
 const parkingRestrictions: ChargingStationParkingRestrictionEnumType[] =
@@ -99,6 +103,9 @@ export const ChargingStationUpsert = ({
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [useLocationCoordinates, setUseLocationCoordinates] = useState(true);
+  const [latitude, setLatitude] = useState<number | undefined>(undefined);
+  const [longitude, setLongitude] = useState<number | undefined>(undefined);
   const { open } = useNotification();
 
   const { replace, back } = useRouter();
@@ -173,6 +180,37 @@ export const ChargingStationUpsert = ({
     }
   }, [locationId, form]);
 
+  // Initialize coordinates from station data when editing
+  useEffect(() => {
+    const station = form.refineCore.query?.data?.data;
+    if (station && stationId) {
+      const coords = (station as any).coordinates;
+      if (coords) {
+        setLatitude(coords.coordinates[1]);
+        setLongitude(coords.coordinates[0]);
+        setUseLocationCoordinates(false);
+      } else {
+        setUseLocationCoordinates(true);
+      }
+    }
+  }, [form.refineCore.query?.data?.data, stationId]);
+
+  // Update coordinates when location changes and useLocationCoordinates is true
+  useEffect(() => {
+    if (useLocationCoordinates && locationOptions) {
+      const selectedLocationId = form.getValues(
+        ChargingStationProps.locationId,
+      );
+      const selectedLocation = locationQuery.data?.data?.find(
+        (loc: LocationDto) => loc.id === selectedLocationId,
+      );
+      if (selectedLocation?.coordinates) {
+        setLatitude(selectedLocation.coordinates.coordinates[1]);
+        setLongitude(selectedLocation.coordinates.coordinates[0]);
+      }
+    }
+  }, [useLocationCoordinates, locationOptions, form, locationQuery.data?.data]);
+
   const handleOnFinish = (values: ChargingStationCreateDto) => {
     const now = new Date().toISOString();
 
@@ -180,6 +218,16 @@ export const ChargingStationUpsert = ({
       { ...values },
       ChargingStationClass,
     );
+
+    // Handle coordinates
+    if (useLocationCoordinates) {
+      newItem.coordinates = null;
+    } else if (latitude !== undefined && longitude !== undefined) {
+      newItem.coordinates = {
+        type: 'Point',
+        coordinates: [longitude, latitude],
+      };
+    }
 
     if (!stationId) {
       newItem.tenantId = config.tenantId;
@@ -281,6 +329,97 @@ export const ChargingStationUpsert = ({
                 placeholder="Select Capabilities"
                 searchPlaceholder="Search Capabilities"
               />
+
+              <Field>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="use16StatusNotification0"
+                    checked={
+                      form.watch(
+                        ChargingStationProps.use16StatusNotification0,
+                      ) ?? true
+                    }
+                    onCheckedChange={(checked) => {
+                      form.setValue(
+                        ChargingStationProps.use16StatusNotification0,
+                        checked === true,
+                      );
+                    }}
+                  />
+                  <Label htmlFor="use16StatusNotification0">
+                    {translate('ChargingStations.use16StatusNotification0')}
+                  </Label>
+                </div>
+              </Field>
+
+              {/* Coordinates Section */}
+              <Field>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="useLocationCoordinates"
+                    checked={useLocationCoordinates}
+                    onCheckedChange={(checked) => {
+                      setUseLocationCoordinates(checked === true);
+                      if (checked) {
+                        // Update coordinates from selected location
+                        const selectedLocationId = form.getValues(
+                          ChargingStationProps.locationId,
+                        );
+                        const selectedLocation = locationQuery.data?.data?.find(
+                          (loc: LocationDto) => loc.id === selectedLocationId,
+                        );
+                        if (selectedLocation?.coordinates) {
+                          setLatitude(
+                            selectedLocation.coordinates.coordinates[1],
+                          );
+                          setLongitude(
+                            selectedLocation.coordinates.coordinates[0],
+                          );
+                        }
+                      }
+                    }}
+                  />
+                  <Label htmlFor="useLocationCoordinates">
+                    Use Location Coordinates
+                  </Label>
+                </div>
+              </Field>
+
+              <Field>
+                <FieldLabel>
+                  <span className={formLabelStyle}>Latitude</span>
+                </FieldLabel>
+                <Input
+                  type="number"
+                  step="any"
+                  value={latitude ?? ''}
+                  onChange={(e) =>
+                    setLatitude(
+                      e.target.value ? parseFloat(e.target.value) : undefined,
+                    )
+                  }
+                  disabled={useLocationCoordinates}
+                  placeholder="Enter latitude"
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel>
+                  <span className={formLabelStyle}>Longitude</span>
+                </FieldLabel>
+                <Input
+                  type="number"
+                  step="any"
+                  value={longitude ?? ''}
+                  onChange={(e) =>
+                    setLongitude(
+                      e.target.value ? parseFloat(e.target.value) : undefined,
+                    )
+                  }
+                  disabled={useLocationCoordinates}
+                  placeholder="Enter longitude"
+                />
+              </Field>
 
               <Field>
                 <FieldLabel>

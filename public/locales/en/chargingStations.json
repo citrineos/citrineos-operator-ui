@@ -2,12 +2,22 @@
   "ChargingStations": {
     "ChargingStations": "Charging Stations",
     "chargingStation": "Charging Station",
+    "use16StatusNotification0": "Use OCPP 1.6 Status Notifications with Connector Id 0",
+    "toggleOnlineStatus": "Toggle Online Status",
+    "toggleOnlineWarning": "You are about to mark this charging station as ",
+    "toggleOnlineCaution": "Warning: This action may cause the UI to be out of sync with the actual station status. Only proceed if you are certain.",
     "commandsUnavailable": "Station offline - commands unavailable",
+    "forceDisconnect": "Force Disconnect",
     "otherCommands": "Other Commands",
     "remoteStart": "Remote Start",
     "remoteStop": "Remote Stop",
     "reset": "Reset",
     "startTransaction": "Start Transaction",
-    "stopTransaction": "Stop Transaction"
+    "stopTransaction": "Stop Transaction",
+    "forceDisconnectMessage": "Are you sure you want to force disconnect this charging station",
+    "forceDisconnectCaution": "This will immediately close the connection to the station.",
+    "exportMessagesToCsvHeader": "Export OCPP Messages to CSV",
+    "downloadAllMessagesToCsv": "You will download all OCPP messages for charger {stationId}.",
+    "downloadMessagesToCsvWithFilters": "You will download OCPP messages for charger {stationId} with the following filters"
   }
 }

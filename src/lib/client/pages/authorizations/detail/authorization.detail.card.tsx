@@ -11,7 +11,7 @@ import { Button } from '@lib/client/components/ui/button';
 import { AUTHORIZATIONS_DELETE_MUTATION } from '@lib/queries/authorizations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { CanAccess, useDelete, useTranslate } from '@refinedev/core';
-import { ChevronLeft, Trash2 } from 'lucide-react';
+import { ChevronLeft, Edit, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
@@ -65,6 +65,22 @@ export const AuthorizationDetailCard: React.FC<
           <h2 className={heading2Style}>
             {translate('Authorizations.authorization')} {authorization.id}
           </h2>
+          <CanAccess
+            resource={ResourceType.AUTHORIZATIONS}
+            action={ActionType.EDIT}
+            params={{ id: authorization.id }}
+          >
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() =>
+                push(`/${MenuSection.AUTHORIZATIONS}/${authorization.id}/edit`)
+              }
+            >
+              <Edit className={buttonIconSize} />
+              {translate('buttons.edit')}
+            </Button>
+          </CanAccess>
           <CanAccess
             resource={ResourceType.AUTHORIZATIONS}
             action={ActionType.DELETE}
@@ -159,6 +175,15 @@ export const AuthorizationDetailCard: React.FC<
           <KeyValueDisplay
             keyLabel="Real-Time Authentication URL"
             value={authorization.realTimeAuthUrl}
+          />
+          <KeyValueDisplay
+            keyLabel="Real-Time Authentication Timeout"
+            value={(authorization as any).realTimeAuthTimeout}
+            valueRender={(timeout) =>
+              timeout !== undefined && timeout !== null
+                ? `${timeout} seconds`
+                : NOT_APPLICABLE
+            }
           />
         </div>
       </CardContent>
