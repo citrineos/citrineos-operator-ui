@@ -16,12 +16,14 @@ export interface DebounceSearchProps {
   onSearch: any;
   placeholder: string;
   debounceInMillis?: number;
+  className?: string;
 }
 
 export const DebounceSearch = ({
   onSearch,
   placeholder,
   debounceInMillis,
+  className,
 }: DebounceSearchProps) => {
   const [value, setValue] = React.useState('');
 
@@ -62,7 +64,7 @@ export const DebounceSearch = ({
   }, [onChangeDebounce]);
 
   return (
-    <div className="relative w-[300px]">
+    <div className={className ?? 'relative w-[300px]'}>
       <Input
         type="text"
         placeholder={placeholder}

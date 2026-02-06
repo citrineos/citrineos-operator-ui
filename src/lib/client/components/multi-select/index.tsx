@@ -18,8 +18,9 @@ import {
   PopoverTrigger,
 } from '@lib/client/components/ui/popover';
 import { cn } from '@lib/utils/cn';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import type { JSX } from 'react';
+import { Check, ChevronsUpDown, Search, X } from 'lucide-react';
+import React, { type JSX } from 'react';
+import { buttonIconSize } from '@lib/client/styles/icon';
 
 export type MultiSelectProps<T> = {
   options: T[];
@@ -46,12 +47,22 @@ export function MultiSelect<T extends string>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-full justify-between">
-          {selectedArray.length > 0
-            ? `${selectedArray.length} selected`
-            : placeholder || 'Select options...'}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+        <div className="relative flex gap-2 items-center h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm">
+          <span>
+            {selectedArray.length > 0
+              ? `${selectedArray.length} selected`
+              : placeholder || 'Select options...'}
+          </span>
+          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-0.5">
+            {selectedArray.length > 0 && (
+              <X
+                className={`${buttonIconSize} text-destructive hover:text-destructive/80 cursor-pointer size-4`}
+                onClick={() => setSelectedValues([])}
+              />
+            )}
+            <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
+          </div>
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0 ">
         <Command>

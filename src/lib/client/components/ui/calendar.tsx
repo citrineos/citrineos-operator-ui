@@ -6,9 +6,29 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Clock2Icon,
+  X,
 } from 'lucide-react';
 import * as React from 'react';
 import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
+import { Card, CardContent, CardFooter } from '@lib/client/components/ui/card';
+import { Field, FieldGroup, FieldLabel } from '@lib/client/components/ui/field';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/lib/client/components/ui/input-group';
+import { type ChangeEventHandler, useEffect, useState } from 'react';
+
+import { format, setHours, setMinutes, setSeconds } from 'date-fns';
+import { buttonIconSize } from '@lib/client/styles/icon';
+import { Separator } from '@lib/client/components/ui/separator';
+
+export interface CalendarWithTimeProps {
+  date: Date | undefined;
+  onSelectDateAction: (date: Date | undefined) => void;
+}
 
 function Calendar({
   className,
@@ -209,4 +229,85 @@ function CalendarDayButton({
   );
 }
 
-export { Calendar, CalendarDayButton };
+// With time-syncing from https://daypicker.dev/guides/timepicker
+function CalendarWithTime({ date, onSelectDateAction }: CalendarWithTimeProps) {
+  const [timeValue, setTimeValue] = useState<string>('00:00:00');
+
+  // Keep the time input in sync when the selected date changes elsewhere.
+  useEffect(() => {
+    if (date) {
+      setTimeValue(format(date, 'HH:mm:ss'));
+    }
+  }, [date]);
+
+  const handleTimeChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const time = e.target.value;
+    if (!date) {
+      // Defer composing a full Date until a day is picked.
+      setTimeValue(time);
+      return;
+    }
+    const [hours, minutes, seconds] = time
+      .split(':')
+      .map((str) => parseInt(str, 10));
+    // Compose a new Date using the current day plus the chosen time.
+    const newSelectedDate = setHours(
+      setMinutes(setSeconds(date, seconds), minutes),
+      hours,
+    );
+    onSelectDateAction(newSelectedDate);
+    setTimeValue(time);
+  };
+
+  const handleDaySelect = (date: Date | undefined) => {
+    if (!timeValue || !date) {
+      onSelectDateAction(date);
+      return;
+    }
+    const [hours, minutes, seconds] = timeValue
+      .split(':')
+      .map((str) => parseInt(str, 10));
+    const newDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hours,
+      minutes,
+      seconds,
+    );
+    onSelectDateAction(newDate);
+  };
+
+  return (
+    <div className="flex flex-col gap-4 items-center">
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={handleDaySelect}
+        className="p-0"
+        required={false}
+      />
+      <Separator className="h-1 " />
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="time">Time</FieldLabel>
+          <InputGroup>
+            <InputGroupInput
+              id="time"
+              type="time"
+              step="1"
+              value={timeValue}
+              onChange={handleTimeChange}
+              className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+            />
+            <InputGroupAddon>
+              <Clock2Icon className="text-muted-foreground" />
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+      </FieldGroup>
+    </div>
+  );
+}
+
+export { Calendar, CalendarDayButton, CalendarWithTime };
