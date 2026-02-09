@@ -33,6 +33,7 @@ import { Plus, Trash2, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
 import { cn } from '@lib/utils/cn';
+import { heading3Style } from '@lib/client/styles/page';
 
 interface OpeningHoursFormProps {
   value?: LocationHours;
@@ -169,8 +170,8 @@ export const OpeningHoursForm: React.FC<OpeningHoursFormProps> = ({
 
   return (
     <Card>
-      <CardHeader className="py-3">
-        <span className="font-medium">Opening Hours</span>
+      <CardHeader>
+        <h3 className={heading3Style}>Opening Hours</h3>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* 24/7 Toggle */}

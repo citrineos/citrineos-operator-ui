@@ -3,20 +3,19 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-// Fallback component for unauthorized access to routes
-import { useTranslate } from '@refinedev/core';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { heading2Style } from '@lib/client/styles/page';
+import { useTranslate } from '@refinedev/core';
 
-export const AccessDeniedFallback = () => {
+export const NoDataFoundCard = ({ message }: { message?: string }) => {
   const translate = useTranslate();
 
   return (
     <Card>
       <CardHeader>
-        <h2 className={heading2Style}>{translate('accessDenied')}</h2>
+        <h2 className={heading2Style}>{translate('noDataFound')}</h2>
       </CardHeader>
-      <CardContent>{translate('buttons.notAccessTitle')}</CardContent>
+      <CardContent>{message ?? translate('somethingWentWrong')}</CardContent>
     </Card>
   );
 };

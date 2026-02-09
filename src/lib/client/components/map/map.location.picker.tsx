@@ -75,7 +75,7 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
     <Skeleton className="size=full" />
   ) : (
     <div className="size-full">
-      <APIProvider apiKey={apiKey}>
+      <APIProvider apiKey={apiKey ?? ''}>
         <Map
           mapId={config.googleMapsLocationPickerMapId}
           center={

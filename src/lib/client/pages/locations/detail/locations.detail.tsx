@@ -23,6 +23,9 @@ import { LocationDetailCard } from '@lib/client/pages/locations/detail/location.
 import { useState, useEffect } from 'react';
 import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
 import { getPresignedUrlForGet } from '@lib/server/actions/file/getPresingedUrlForGet';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
+import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 
 type LocationDetailProps = {
   params: { id: string };
@@ -53,14 +56,27 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
     }
   }, [location?.id]);
 
-  if (isLoading) return <p>{translate('loading')}</p>;
-  if (!location) return <p>{translate('noDataFound')}</p>;
+  if (isLoading) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <Skeleton className="h-50 w-full" />
+        <Skeleton className="h-60 w-full" />
+      </div>
+    );
+  } else if (!location) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <NoDataFoundCard message={translate('Locations.noDataFound', { id })} />
+      </div>
+    );
+  }
 
   return (
     <CanAccess
       resource={ResourceType.LOCATIONS}
       action={ActionType.SHOW}
       params={{ id: location.id }}
+      fallback={<AccessDeniedFallback />}
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <LocationDetailCard location={location} imageUrl={imageUrl} />

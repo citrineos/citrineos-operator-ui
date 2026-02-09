@@ -124,6 +124,7 @@
   "imageUploadFailed": "Image upload failed.",
   "loading": "Loading",
   "noDataFound": "No Data Found",
+  "somethingWentWrong": "Something went wrong.",
   "loggedOut": "Logged out! Redirecting to login...",
   "tags": {
     "clone": "Clone"
