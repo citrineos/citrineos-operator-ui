@@ -130,7 +130,8 @@ export const getChargingStationColumns = (
       key="actions"
       header="Actions"
       cell={({ row }: CellContext<ChargingStationDetailsDto, unknown>) => {
-        const hasActiveTransactions = false; // transactions are not a direct property
+        const hasActiveTransactions =
+          (row.original.transactions?.length ?? 0) > 0;
 
         return row.original.isOnline ? (
           <CanAccess
