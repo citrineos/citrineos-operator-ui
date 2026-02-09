@@ -25,13 +25,26 @@ import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { openModal } from '@lib/utils/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess, Link, useDelete, useList, useOne } from '@refinedev/core';
+import {
+  CanAccess,
+  Link,
+  useDelete,
+  useList,
+  useOne,
+  useTranslate,
+} from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
-import { ChevronLeft, Edit, Info, MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+  ChevronLeft,
+  Edit,
+  Info,
+  MoreHorizontal,
+  RefreshCw,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import {
@@ -44,6 +57,11 @@ import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { Badge } from '@lib/client/components/ui/badge';
 import Image from 'next/image';
 import { isGcp } from '@lib/server/clients/file/isGcp';
+import { StartTransactionButton } from '@lib/client/pages/charging-stations/start.transaction.button';
+import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
+import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
+import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
+import { ForceDisconnectButton } from '../force.disconnect.button';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -60,6 +78,8 @@ export const ChargingStationDetailCard = ({
   const { mutate } = useDelete();
   const { back, push } = useRouter();
   const dispatch = useDispatch();
+  const translate = useTranslate();
+  const [showInfoText, setShowInfoText] = useState(false);
 
   const {
     query: { data, isLoading },
@@ -113,18 +133,28 @@ export const ChargingStationDetailCard = ({
         onSuccess: () => {
           push(`/${MenuSection.CHARGING_STATIONS}`);
         },
-        onError: () => {
-          toast.error('Failed to delete charging station');
-        },
       },
     );
   }, [station, mutate, push]);
+
+  const showForceDisconnectModal = useCallback(
+    (station: ChargingStationDto) => {
+      dispatch(
+        openModal({
+          title: translate('ChargingStations.forceDisconnect'),
+          modalComponentType: ModalComponentType.forceDisconnect,
+          modalComponentProps: { station: instanceToPlain(station) },
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const showRemoteStartModal = useCallback(
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Start',
+          title: translate('ChargingStations.remoteStart'),
           modalComponentType: ModalComponentType.remoteStart,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -137,7 +167,7 @@ export const ChargingStationDetailCard = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Remote Stop',
+          title: translate('ChargingStations.remoteStop'),
           modalComponentType: ModalComponentType.remoteStop,
           modalComponentProps: {
             station: instanceToPlain(station),
@@ -152,7 +182,7 @@ export const ChargingStationDetailCard = ({
     (station: ChargingStationDto) => {
       dispatch(
         openModal({
-          title: 'Reset',
+          title: translate('ChargingStations.reset'),
           modalComponentType: ModalComponentType.reset,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
@@ -166,15 +196,30 @@ export const ChargingStationDetailCard = ({
 
     dispatch(
       openModal({
-        title: 'Other Commands',
+        title: translate('ChargingStations.otherCommands'),
         modalComponentType: ModalComponentType.otherCommands,
         modalComponentProps: { station: instanceToPlain(station) },
       }),
     );
   }, [dispatch, station]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!station) return <p>No Data Found</p>;
+  const showToggleOnlineModal = useCallback(() => {
+    if (!station) return;
+
+    dispatch(
+      openModal({
+        title: translate('ChargingStations.toggleOnlineStatus'),
+        modalComponentType: ModalComponentType.toggleStationOnlineStatus,
+        modalComponentProps: {
+          stationId: station.id,
+          currentStatus: station.isOnline,
+        },
+      }),
+    );
+  }, [dispatch, station, translate]);
+
+  if (isLoading) return <p>{translate('loading')}</p>;
+  if (!station) return <p>{translate('noDataFound')}</p>;
 
   const hasActiveTransactions =
     station.transactions && station.transactions.length > 0;
@@ -210,6 +255,23 @@ export const ChargingStationDetailCard = ({
             params={{ id: station.id }}
           >
             <Button
+              variant="ghost"
+              size="icon"
+              onClick={showToggleOnlineModal}
+              title={translate(
+                'ChargingStations.toggleOnlineStatus',
+                'Toggle Online Status',
+              )}
+            >
+              <RefreshCw className={buttonIconSize} />
+            </Button>
+          </CanAccess>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.EDIT}
+            params={{ id: station.id }}
+          >
+            <Button
               variant="secondary"
               size="sm"
               onClick={() =>
@@ -217,7 +279,7 @@ export const ChargingStationDetailCard = ({
               }
             >
               <Edit className={buttonIconSize} />
-              Edit
+              {translate('buttons.edit')}
             </Button>
           </CanAccess>
           <CanAccess
@@ -227,7 +289,7 @@ export const ChargingStationDetailCard = ({
           >
             <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
               <Trash2 className={buttonIconSize} />
-              Delete
+              {translate('buttons.delete')}
             </Button>
           </CanAccess>
         </div>
@@ -264,18 +326,22 @@ export const ChargingStationDetailCard = ({
               <KeyValueDisplay
                 keyLabel="Latitude"
                 value={
-                  station.location?.coordinates
-                    ? station.location.coordinates.coordinates[1].toFixed(4)
-                    : NOT_APPLICABLE
+                  station.coordinates
+                    ? station.coordinates.coordinates[1].toFixed(4)
+                    : station.location?.coordinates
+                      ? station.location.coordinates.coordinates[1].toFixed(4)
+                      : NOT_APPLICABLE
                 }
               />
 
               <KeyValueDisplay
                 keyLabel="Longitude"
                 value={
-                  station.location?.coordinates
-                    ? station.location.coordinates.coordinates[0].toFixed(4)
-                    : NOT_APPLICABLE
+                  station.coordinates
+                    ? station.coordinates.coordinates[0].toFixed(4)
+                    : station.location?.coordinates
+                      ? station.location.coordinates.coordinates[0].toFixed(4)
+                      : NOT_APPLICABLE
                 }
               />
 
@@ -297,7 +363,7 @@ export const ChargingStationDetailCard = ({
               />
 
               <KeyValueDisplay
-                keyLabel="Model / Vendor"
+                keyLabel="Vendor / Model"
                 value={`${station.chargePointVendor ?? UNKNOWN_TEXT} / ${station.chargePointModel ?? UNKNOWN_TEXT}`}
               />
 
@@ -348,6 +414,32 @@ export const ChargingStationDetailCard = ({
               />
 
               <KeyValueDisplay
+                keyLabel={
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
+                      <span>OCPP 1.6 StatusNotification Handling</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 p-0 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowInfoText(!showInfoText)}
+                      >
+                        <Info className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    {showInfoText && (
+                      <div className="text-xs text-muted-foreground">
+                        {translate('ChargingStations.use16StatusNotification0')}
+                      </div>
+                    )}
+                  </div>
+                }
+                value={
+                  station.use16StatusNotification0 ? 'Enabled' : 'Disabled'
+                }
+              />
+
+              <KeyValueDisplay
                 keyLabel="Connector Types"
                 value={
                   (station.connectors?.length ?? 0) > 0
@@ -390,76 +482,39 @@ export const ChargingStationDetailCard = ({
             action={ActionType.COMMAND}
             params={{ id: station.id }}
           >
-            <div className="flex justify-between items-center flex-1">
-              <div className="flex flex-col gap-2 flex-1">
-                {!station.isOnline && (
-                  <div className="flex items-center text-muted-foreground">
-                    <Info className="mr-2 h-4 w-4" />
-                    <span className="text-sm">
-                      Station offline - commands unavailable
-                    </span>
-                  </div>
-                )}
-                <div className="flex gap-4 flex-1">
-                  {!hasActiveTransactions && (
-                    <CanAccess
-                      resource={ResourceType.CHARGING_STATIONS}
-                      action={ActionType.COMMAND}
-                      params={{
-                        id: station.id,
-                        commandType: CommandType.START_TRANSACTION,
-                      }}
-                    >
-                      <Button
-                        disabled={!station.isOnline}
-                        onClick={() => showRemoteStartModal(station)}
-                      >
-                        Start Transaction
-                      </Button>
-                    </CanAccess>
-                  )}
-                  {hasActiveTransactions && (
-                    <CanAccess
-                      resource={ResourceType.CHARGING_STATIONS}
-                      action={ActionType.COMMAND}
-                      params={{
-                        id: station.id,
-                        commandType: CommandType.STOP_TRANSACTION,
-                      }}
-                    >
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleStopTransactionClick(station)}
-                        disabled={!station.isOnline}
-                      >
-                        Stop Transaction
-                      </Button>
-                    </CanAccess>
-                  )}
-                  <CanAccess
-                    resource={ResourceType.CHARGING_STATIONS}
-                    action={ActionType.COMMAND}
-                    params={{
-                      id: station.id,
-                      commandType: CommandType.RESET,
-                    }}
-                  >
-                    <Button
-                      variant="outline"
-                      onClick={() => showResetStartModal(station)}
-                      disabled={!station.isOnline}
-                    >
-                      Reset
-                    </Button>
-                  </CanAccess>
-                  <Button
-                    onClick={showOtherCommandsModal}
+            <div className="flex flex-col gap-2">
+              {!station.isOnline && <CommandsUnavailableText />}
+              <div className="flex gap-4 flex-wrap">
+                <ForceDisconnectButton
+                  stationId={station.id}
+                  onClickAction={() => showForceDisconnectModal(station)}
+                />
+                {!hasActiveTransactions && (
+                  <StartTransactionButton
+                    stationId={station.id}
+                    onClickAction={() => showRemoteStartModal(station)}
                     disabled={!station.isOnline}
-                  >
-                    <MoreHorizontal className="mr-2 h-4 w-4" />
-                    Other Commands
-                  </Button>
-                </div>
+                  />
+                )}
+                {hasActiveTransactions && (
+                  <StopTransactionButton
+                    stationId={station.id}
+                    onClickAction={() => handleStopTransactionClick(station)}
+                    disabled={!station.isOnline}
+                  />
+                )}
+                <ResetButton
+                  stationId={station.id}
+                  onClickAction={() => showResetStartModal(station)}
+                  disabled={!station.isOnline}
+                />
+                <Button
+                  onClick={showOtherCommandsModal}
+                  disabled={!station.isOnline}
+                >
+                  <MoreHorizontal className={buttonIconSize} />
+                  {translate('ChargingStations.otherCommands')}
+                </Button>
               </div>
             </div>
           </CanAccess>

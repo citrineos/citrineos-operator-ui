@@ -16,6 +16,7 @@ import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { Badge } from '@lib/client/components/ui/badge';
 import Image from 'next/image';
+import { useTranslate } from '@refinedev/core';
 
 export const PartnerDetailCard = ({
   tenantPartner,
@@ -23,6 +24,7 @@ export const PartnerDetailCard = ({
   tenantPartner: TenantPartnerDto;
 }) => {
   const { back, push } = useRouter();
+  const translate = useTranslate();
 
   const businessDetails =
     tenantPartner?.partnerProfileOCPI?.roles?.[0]?.businessDetails;
@@ -41,7 +43,9 @@ export const PartnerDetailCard = ({
             }}
             className="cursor-pointer"
           />
-          <h2 className={heading2Style}>Partner {businessDetails?.name}</h2>
+          <h2 className={heading2Style}>
+            {translate('TenantPartners.tenantPartner')} {businessDetails?.name}
+          </h2>
           {businessDetails?.logo?.url && (
             <Image
               width={40}
@@ -58,7 +62,7 @@ export const PartnerDetailCard = ({
             }
           >
             <Edit className={buttonIconSize} />
-            Edit
+            {translate('buttons.edit')}
           </Button>
         </div>
       </CardHeader>

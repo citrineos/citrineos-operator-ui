@@ -5,12 +5,19 @@
 
 import type { LocationDto } from '@citrineos/base';
 import { Card, CardContent } from '@lib/client/components/ui/card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@lib/client/components/ui/tabs';
 import { LocationsChargingStationsTable } from '@lib/client/pages/locations/list/locations.charging.stations.table';
+import { OpeningHoursDisplay } from '@lib/client/components/opening-hours';
 import { LocationClass } from '@lib/cls/location.dto';
 import { LOCATIONS_GET_QUERY } from '@lib/queries/locations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess, useOne } from '@refinedev/core';
+import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { LocationDetailCard } from '@lib/client/pages/locations/detail/location.detail.card';
 import { useState, useEffect } from 'react';
@@ -36,6 +43,7 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
 
   const location = data?.data;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const translate = useTranslate();
 
   useEffect(() => {
     if (location?.id) {
@@ -45,8 +53,8 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
     }
   }, [location?.id]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!location) return <p>No Data Found</p>;
+  if (isLoading) return <p>{translate('loading')}</p>;
+  if (!location) return <p>{translate('noDataFound')}</p>;
 
   return (
     <CanAccess
@@ -59,7 +67,23 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
 
         <Card>
           <CardContent>
-            <LocationsChargingStationsTable location={location} showHeader />
+            <Tabs defaultValue="charging-stations">
+              <TabsList>
+                <TabsTrigger value="charging-stations">
+                  Charging Stations
+                </TabsTrigger>
+                <TabsTrigger value="opening-hours">Opening Hours</TabsTrigger>
+              </TabsList>
+              <TabsContent value="charging-stations">
+                <LocationsChargingStationsTable
+                  location={location}
+                  showHeader
+                />
+              </TabsContent>
+              <TabsContent value="opening-hours">
+                <OpeningHoursDisplay openingHours={location.openingHours} />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>

@@ -12,6 +12,7 @@ import {
 import { ChargerRow } from '@lib/client/pages/overview/charger.row';
 import type { ChargerStatusEnum } from '@lib/utils/enums';
 import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
+import { useTranslate } from '@refinedev/core';
 
 export const ChargerActivityStationsSheet = ({
   open,
@@ -24,11 +25,15 @@ export const ChargerActivityStationsSheet = ({
   status: ChargerStatusEnum;
   chargers: any[];
 }) => {
+  const translate = useTranslate();
+
   return (
     <Sheet open={open} onOpenChange={onOpenAction}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{status} Chargers</SheetTitle>
+          <SheetTitle>
+            {status} {translate('overview.chargers')}
+          </SheetTitle>
         </SheetHeader>
         <ScrollArea className="overflow-hidden">
           <div className="m-4 mt-0 flex flex-col gap-4">
@@ -43,7 +48,7 @@ export const ChargerActivityStationsSheet = ({
                 />
               ))
             ) : (
-              <span>No chargers currently have {status} status.</span>
+              <span>{translate('overview.noChargersStatus', { status })}</span>
             )}
           </div>
         </ScrollArea>

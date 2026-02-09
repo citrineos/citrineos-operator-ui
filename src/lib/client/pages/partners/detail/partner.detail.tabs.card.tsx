@@ -14,19 +14,24 @@ import { PartnerEndpointsTable } from '@lib/client/pages/partners/detail/partner
 import { PartnerAuthorizations } from '@lib/client/pages/partners/detail/partner.authorizations';
 import type { TenantPartnerDto } from '@citrineos/base';
 import { cardTabsStyle } from '@lib/client/styles/card';
+import { useTranslate } from '@refinedev/core';
 
 export const PartnerDetailTabsCard = ({
   tenantPartner,
 }: {
   tenantPartner: TenantPartnerDto;
 }) => {
+  const translate = useTranslate();
+
   return (
     <Card>
       <CardContent>
         <Tabs defaultValue="endpoints">
           <TabsList>
             <TabsTrigger value="endpoints">Endpoints</TabsTrigger>
-            <TabsTrigger value="authorizations">Authorizations</TabsTrigger>
+            <TabsTrigger value="authorizations">
+              {translate('Authorizations.Authorizations')}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="endpoints" className={cardTabsStyle}>

@@ -69,13 +69,9 @@ export function DeleteActionModal(props: DeleteContextType) {
       open={can && props?.data?.toogle}
       loading={isLoading}
       title={translate('dialogs.areYouSure', undefined, 'Are you sure?')}
-      description={translate(
-        'dialogs.thisActionCannotBeUndone',
-        undefined,
-        'This action cannot be undone.',
-      )}
-      okText={translate('dialogs.delete', undefined, 'Delete')}
-      cancelText={translate('dialogs.cancel', undefined, 'Cancel')}
+      description={translate('dialogs.thisActionCannotBeUndone')}
+      okText={translate('buttons.delete')}
+      cancelText={translate('buttons.cancel')}
       okButtonVariant={'destructive'}
       onOpenChange={() => {
         if (!isLoading) {

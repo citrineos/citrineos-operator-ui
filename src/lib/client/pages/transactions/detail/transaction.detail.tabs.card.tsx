@@ -11,7 +11,7 @@ import {
   TabsTrigger,
 } from '@lib/client/components/ui/tabs';
 import { cardTabsStyle } from '@lib/client/styles/card';
-import { CanAccess, useList } from '@refinedev/core';
+import { CanAccess, useList, useTranslate } from '@refinedev/core';
 import {
   ActionType,
   ResourceType,
@@ -37,6 +37,8 @@ import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { useMemo, useState } from 'react';
 import { getAuthorizationColumns } from '@lib/client/pages/authorizations/columns';
 import { useRouter } from 'next/navigation';
+import { DEFAULT_SORTERS } from '../../../../utils/consts';
+import { AuthorizationClass } from '../../../../cls/authorization.dto';
 
 export const TransactionDetailTabsCard = ({
   transaction,
@@ -44,6 +46,7 @@ export const TransactionDetailTabsCard = ({
   transaction: TransactionDto;
 }) => {
   const { push } = useRouter();
+  const translate = useTranslate();
 
   const [validContexts, setValidContexts] = useState<
     OCPP2_0_1.ReadingContextEnumType[]
@@ -78,7 +81,9 @@ export const TransactionDetailTabsCard = ({
       <CardContent>
         <Tabs defaultValue="authorizations">
           <TabsList>
-            <TabsTrigger value="authorizations">Authorizations</TabsTrigger>
+            <TabsTrigger value="authorizations">
+              {translate('Authorizations.Authorizations')}
+            </TabsTrigger>
             <TabsTrigger value="meter-values">Meter Value Data</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
           </TabsList>
@@ -92,14 +97,22 @@ export const TransactionDetailTabsCard = ({
               <Table
                 refineCoreProps={{
                   resource: ResourceType.AUTHORIZATIONS,
-                  sorters: {
-                    permanent: [{ field: BaseProps.updatedAt, order: 'desc' }],
-                  },
+                  sorters: DEFAULT_SORTERS,
                   meta: {
                     gqlQuery: GET_AUTHORIZATIONS_BY_TRANSACTION,
-                    gqlVariables: { id: authorization?.id, limit: 10000 },
+                    gqlVariables: {
+                      id: authorization?.id,
+                      offset: 0,
+                      limit: 10,
+                      order_by: [],
+                    },
                   },
-                  queryOptions: getPlainToInstanceOptions(),
+                  queryOptions: {
+                    ...getPlainToInstanceOptions(AuthorizationClass),
+                    select: (data: any) => {
+                      return data;
+                    },
+                  },
                 }}
                 enableSorting
                 enableFilters

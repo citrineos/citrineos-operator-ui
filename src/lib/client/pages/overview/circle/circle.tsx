@@ -30,7 +30,7 @@ export const Circle = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <div
-            className={`status-circle`}
+            className="size-2 rounded-full"
             style={
               color
                 ? { backgroundColor: color }

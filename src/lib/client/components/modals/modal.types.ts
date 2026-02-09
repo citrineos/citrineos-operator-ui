@@ -7,6 +7,9 @@
  * This file contains ONLY the enum to avoid circular dependencies
  */
 export enum ModalComponentType {
+  // Admin Commands
+  forceDisconnect,
+  // Common Commands
   remoteStart,
   remoteStop,
   reset,
@@ -36,4 +39,7 @@ export enum ModalComponentType {
   unlockConnector,
   updateAuthPassword,
   updateFirmware201,
+  // Status Toggle Confirmations
+  toggleStationOnlineStatus,
+  toggleTransactionActiveStatus,
 }

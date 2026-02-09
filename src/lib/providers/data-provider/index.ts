@@ -11,13 +11,21 @@ import dataProviderHasura, {
   GraphQLClient,
   type HasuraDataProviderOptions,
 } from '@refinedev/hasura';
+import { getHasuraAdminSecretAction } from '@lib/server/actions/getHasuraAdminSecretAction';
 
 const requestMiddleware = async (request: any) => {
   const requestHeaders = {
     ...request.headers,
   };
   requestHeaders[HasuraHeader.X_HASURA_TENANT_ID] = config.tenantId;
-  if (authProvider) {
+
+  const hasuraAdminSecret = await getHasuraAdminSecretAction();
+
+  if (hasuraAdminSecret) {
+    console.debug('Authorizing to Hasura via Hasura Admin Secret');
+    requestHeaders[HasuraHeader.X_HASURA_ADMIN_SECRET] = hasuraAdminSecret;
+  } else if (authProvider) {
+    console.debug('Authorizing to Hasura via configured Auth Provider');
     const token = await authProvider.getToken();
     if (token) {
       requestHeaders['Authorization'] = 'Bearer ' + token;

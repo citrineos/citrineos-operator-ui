@@ -13,7 +13,7 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
@@ -27,13 +27,16 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 
 export const PartnersList = () => {
   const { push } = useRouter();
+  const translate = useTranslate();
 
   const columns = useMemo(() => getPartnersColumns(push), [push]);
 
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
       <div className={tableHeaderWrapperFlex}>
-        <h2 className={heading2Style}>Partners</h2>
+        <h2 className={heading2Style}>
+          {translate('TenantPartners.TenantPartners')}
+        </h2>
         <div className={tableSearchFlex}>
           <CanAccess
             resource={ResourceType.PARTNERS}
@@ -44,7 +47,8 @@ export const PartnersList = () => {
               onClick={() => push(`/${MenuSection.PARTNERS}/new`)}
             >
               <Plus className={buttonIconSize} />
-              Add Partner
+              {translate('buttons.add')}{' '}
+              {translate('TenantPartners.TenantPartners')}
             </Button>
           </CanAccess>
         </div>

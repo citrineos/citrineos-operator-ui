@@ -17,8 +17,10 @@ import { ClusteredLocationMarkers } from '@lib/client/components/map/map.cluster
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { useTheme } from 'next-themes';
 
-// The visual center of the contiguous USA.
-const defaultCenterUSA = { lat: 39.833333, lng: -98.583333 };
+const defaultCenter = {
+  lat: config.defaultMapCenterLatitude!,
+  lng: config.defaultMapCenterLongitude!,
+};
 
 export const LocationMapV2 = ({ locations }: { locations: LocationDto[] }) => {
   const dispatch = useDispatch();
@@ -42,11 +44,10 @@ export const LocationMapV2 = ({ locations }: { locations: LocationDto[] }) => {
         <Map
           mapId={config.googleMapsOverviewMapId}
           defaultZoom={4}
-          defaultCenter={defaultCenterUSA}
+          defaultCenter={defaultCenter}
           gestureHandling="cooperative"
-          disableDefaultUI={false}
-          zoomControl={true}
-          fullscreenControl={false}
+          disableDefaultUI
+          zoomControl
           colorScheme={theme === 'dark' ? ColorScheme.DARK : ColorScheme.LIGHT}
         >
           <ClusteredLocationMarkers

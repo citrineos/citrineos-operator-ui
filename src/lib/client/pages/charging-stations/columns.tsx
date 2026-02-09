@@ -3,22 +3,25 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React from 'react';
 import type { ChargingStationDto } from '@citrineos/base';
 import { ChargingStationProps, LocationProps } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import ProtocolTag from '@lib/client/components/protocol-tag';
 import { Table } from '@lib/client/components/table';
-import { Button } from '@lib/client/components/ui/button';
 import {
   ChargingStationDetailsProps,
   type ChargingStationDetailsDto,
 } from '@lib/cls/charging.station.dto';
-import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
+import { ActionType, ResourceType } from '@lib/utils/access.types';
 import type { RouterPush } from '@lib/utils/types';
 import { CanAccess, type CrudFilter } from '@refinedev/core';
 import type { CellContext } from '@tanstack/react-table';
-import { Info } from 'lucide-react';
 import { clickableLinkStyle } from '@lib/client/styles/page';
+import { StartTransactionButton } from '@lib/client/pages/charging-stations/start.transaction.button';
+import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
+import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
+import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 
 export const getChargingStationColumns = (
   push: RouterPush,
@@ -139,60 +142,25 @@ export const getChargingStationColumns = (
           >
             <div className="flex gap-4 flex-1">
               {!hasActiveTransactions && (
-                <CanAccess
-                  resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.COMMAND}
-                  params={{
-                    id: row.original.id,
-                    commandType: CommandType.START_TRANSACTION,
-                  }}
-                >
-                  <Button onClick={() => showRemoteStartModal(row.original)}>
-                    Start Transaction
-                  </Button>
-                </CanAccess>
+                <StartTransactionButton
+                  stationId={row.original.id}
+                  onClickAction={() => showRemoteStartModal(row.original)}
+                />
               )}
               {hasActiveTransactions && (
-                <CanAccess
-                  resource={ResourceType.CHARGING_STATIONS}
-                  action={ActionType.COMMAND}
-                  params={{
-                    id: row.original.id,
-                    commandType: CommandType.STOP_TRANSACTION,
-                  }}
-                >
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleStopTransactionClick(row.original)}
-                  >
-                    Stop Transaction
-                  </Button>
-                </CanAccess>
+                <StopTransactionButton
+                  stationId={row.original.id}
+                  onClickAction={() => handleStopTransactionClick(row.original)}
+                />
               )}
-              <CanAccess
-                resource={ResourceType.CHARGING_STATIONS}
-                action={ActionType.COMMAND}
-                params={{
-                  id: row.original.id,
-                  commandType: CommandType.RESET,
-                }}
-              >
-                <Button
-                  variant="outline"
-                  onClick={() => showResetStartModal(row.original)}
-                >
-                  Reset
-                </Button>
-              </CanAccess>
+              <ResetButton
+                stationId={row.original.id}
+                onClickAction={() => showResetStartModal(row.original)}
+              />
             </div>
           </CanAccess>
         ) : (
-          <div className="flex gap-4 flex-1 items-center text-muted-foreground">
-            <Info className="h-4 w-4" />
-            <span className="text-sm">
-              Station offline - commands unavailable
-            </span>
-          </div>
+          <CommandsUnavailableText />
         );
       }}
     />,

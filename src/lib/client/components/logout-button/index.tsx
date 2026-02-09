@@ -10,13 +10,15 @@ import { LogOut } from 'lucide-react';
 import { authProvider } from '@lib/providers/auth-provider';
 import { sidebarIconSize } from '@lib/client/styles/icon';
 import { toast } from 'sonner';
+import { useTranslate } from '@refinedev/core';
 
 export const LogoutButton = ({ expanded }: { expanded: boolean }) => {
   const router = useRouter();
+  const translate = useTranslate();
 
   const logout = () => {
     authProvider.logout({}).then((authResponse) => {
-      toast.success('Logged out! Redirecting to login...');
+      toast.success(translate('loggedOut'));
       router.push(authResponse.redirectTo ?? '');
     });
   };
@@ -27,7 +29,7 @@ export const LogoutButton = ({ expanded }: { expanded: boolean }) => {
       onClick={logout}
     >
       <LogOut className={sidebarIconSize} />
-      {expanded && <span>Logout</span>}
+      {expanded && <span>{translate('buttons.logout')}</span>}
     </Button>
   );
 };

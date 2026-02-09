@@ -13,7 +13,9 @@ const getConfig: () => {
   googleMapsAddressApiKey: string;
   googleMapsLocationPickerMapId?: string;
   googleMapsOverviewMapId?: string;
-  hasuraAdminSecret?: string;
+  defaultMapCenterLatitude: number;
+  defaultMapCenterLongitude: number;
+  hasuraAdminSecret?: string; // Not recommended for use in production; use your authProvider instead.
   hasuraClaim?: string;
   tenantId: string;
   apiUrl: string;
@@ -59,6 +61,14 @@ const getConfig: () => {
       'location-picker-map-id',
     googleMapsOverviewMapId:
       process.env.NEXT_PUBLIC_GOOGLE_MAPS_OVERVIEW_MAP_ID || 'overview-map-id',
+    defaultMapCenterLatitude: process.env
+      .NEXT_PUBLIC_DEFAULT_MAP_CENTER_LATITUDE
+      ? parseFloat(process.env.NEXT_PUBLIC_DEFAULT_MAP_CENTER_LATITUDE)
+      : 39.833333, // Approximate center of contiguous USA
+    defaultMapCenterLongitude: process.env
+      .NEXT_PUBLIC_DEFAULT_MAP_CENTER_LONGITUDE
+      ? parseFloat(process.env.NEXT_PUBLIC_DEFAULT_MAP_CENTER_LONGITUDE)
+      : -98.583333, // Approximate center of contiguous USA
     hasuraAdminSecret: process.env.HASURA_ADMIN_SECRET,
     hasuraClaim:
       process.env.NEXT_PUBLIC_HASURA_CLAIM || 'https://hasura.io/jwt/claims',

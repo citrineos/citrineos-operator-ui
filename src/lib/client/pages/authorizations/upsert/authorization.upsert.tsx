@@ -31,7 +31,7 @@ import {
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { CanAccess, type GetOneResponse } from '@refinedev/core';
+import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import z from 'zod';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
@@ -75,6 +75,7 @@ const AuthorizationCreateSchema = AuthorizationSchema.pick({
     .nullable()
     .optional(),
   [AuthorizationProps.additionalInfo]: z.string().nullable().optional(),
+  realTimeAuthTimeout: z.coerce.number<number>().nullable().optional(),
 });
 
 const defaultValues = {
@@ -91,6 +92,7 @@ const defaultValues = {
   [AuthorizationProps.disallowedEvseIdPrefixes]: '',
   [AuthorizationProps.realTimeAuth]: undefined,
   [AuthorizationProps.realTimeAuthUrl]: '',
+  realTimeAuthTimeout: undefined,
   [AuthorizationProps.additionalInfo]: '',
   [AuthorizationProps.concurrentTransaction]: false,
 };
@@ -103,8 +105,8 @@ const authorizationWhitelistOptions = Object.keys(AuthorizationWhitelistEnum);
 
 export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
   const { id } = params;
-
   const { back } = useRouter();
+  const translate = useTranslate();
 
   const form = useForm({
     refineCoreProps: {
@@ -126,20 +128,6 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
       },
       mutationMode: 'pessimistic',
       action: id ? 'edit' : 'create',
-      successNotification: () => {
-        return {
-          message: `Authorization ${id ? 'updated' : 'created'} successfully`,
-          type: 'success',
-        };
-      },
-      errorNotification: (error) => {
-        return {
-          message: `Error ${id ? 'updating' : 'creating'} authorization: ${
-            error?.message
-          }`,
-          type: 'error',
-        };
-      },
       liveMode: 'auto',
       meta: {
         gqlQuery: AUTHORIZATIONS_SHOW_QUERY,
@@ -157,19 +145,49 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
     const now = new Date().toISOString();
     const newItem: any = getSerializedValues(values, AuthorizationClass);
 
-    // Convert comma-separated strings back to arrays
+    // Trim whitespace from string fields
+    const stringFields = [
+      'idToken',
+      'language1',
+      'language2',
+      'personalMessage',
+      'realTimeAuthUrl',
+    ];
+    for (const field of stringFields) {
+      if (typeof newItem[field] === 'string') {
+        newItem[field] = newItem[field].trim();
+      }
+    }
+
+    // Convert comma-separated strings back to arrays, set to undefined if empty
     if (typeof newItem.allowedConnectorTypes === 'string') {
-      newItem.allowedConnectorTypes = newItem.allowedConnectorTypes
+      const arr = newItem.allowedConnectorTypes
         .split(',')
         .map((s: string) => s.trim())
         .filter(Boolean);
+      newItem.allowedConnectorTypes = arr.length > 0 ? arr : undefined;
     }
     if (typeof newItem.disallowedEvseIdPrefixes === 'string') {
-      newItem.disallowedEvseIdPrefixes = newItem.disallowedEvseIdPrefixes
+      const arr = newItem.disallowedEvseIdPrefixes
         .split(',')
         .map((s: string) => s.trim())
         .filter(Boolean);
+      newItem.disallowedEvseIdPrefixes = arr.length > 0 ? arr : undefined;
     }
+
+    // Convert empty strings to undefined
+    const optionalStringFields = [
+      'language1',
+      'language2',
+      'personalMessage',
+      'realTimeAuthUrl',
+    ];
+    for (const field of optionalStringFields) {
+      if (newItem[field] === '') {
+        newItem[field] = undefined;
+      }
+    }
+
     if (newItem.additionalInfo === '') {
       newItem.additionalInfo = null;
     }
@@ -195,7 +213,8 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
           <div className={cardHeaderFlex}>
             <ChevronLeft onClick={() => back()} className="cursor-pointer" />
             <h2 className={heading2Style}>
-              {id ? 'Edit' : 'Create'} Authorization
+              {translate(`actions.${id ? 'edit' : 'create'}`)}{' '}
+              {translate('Authorizations.authorization')}
             </h2>
           </div>
         </CardHeader>
@@ -315,6 +334,14 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 name={AuthorizationProps.realTimeAuthUrl}
               >
                 <Input type="url" />
+              </FormField>
+
+              <FormField
+                control={form.control}
+                label="Real-Time Authentication Timeout (seconds)"
+                name="realTimeAuthTimeout"
+              >
+                <Input type="number" min="0" />
               </FormField>
 
               <FormField

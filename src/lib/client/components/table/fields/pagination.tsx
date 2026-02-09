@@ -40,7 +40,9 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
       )}
       <div className="flex relative flex-col-reverse gap-y-4 sm:gap-y-0 sm:flex-row items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">
+            {translate('pagination.rowsPerPage')}
+          </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -80,11 +82,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">
-              {translate(
-                'buttons.goToPreviousPage',
-                undefined,
-                'Go to previous page',
-              )}
+              {translate('pagination.buttons.goToPreviousPage')}
             </span>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
@@ -95,7 +93,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">
-              {translate('buttons.goToNextPage', undefined, 'Go to next page')}
+              {translate('pagination.buttons.goToNextPage')}
             </span>
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
@@ -106,7 +104,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">
-              {translate('buttons.goToLastPage', undefined, 'Go to last page')}
+              {translate('pagination.buttons.goToLastPage')}
             </span>
             <ChevronsRightIcon className="h-4 w-4" />
           </Button>

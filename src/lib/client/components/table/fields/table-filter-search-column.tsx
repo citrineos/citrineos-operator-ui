@@ -97,7 +97,7 @@ export function TableFilterSearchColumn({
                   }}
                 >
                   <FilterX size={16} className="mr-2" />
-                  {translate('buttons.clear', undefined, 'Clear')}
+                  {translate('buttons.clear')}
                 </Button>
               </div>
             </>

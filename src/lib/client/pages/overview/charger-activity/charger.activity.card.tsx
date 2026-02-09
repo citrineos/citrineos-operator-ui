@@ -15,7 +15,7 @@ import { LatestStatusNotificationClass } from '@lib/cls/latest.status.notificati
 import { GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { useGqlCustom } from '@lib/utils/use-gql-custom';
-import { CanAccess } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
@@ -188,6 +188,7 @@ export const ChargerActivityCard: React.FC = () => {
     useState<ChargerStatusEnum | null>(null);
   const [selectedItems, setSelectedItems] = useState<Array<ChargerItem>>([]);
   const [stationsSheetOpen, setStationsSheetOpen] = useState(false);
+  const translate = useTranslate();
 
   const {
     query: { data, isLoading, error },
@@ -199,7 +200,7 @@ export const ChargerActivityCard: React.FC = () => {
   const stations: ChargingStationDto[] = data?.data.ChargingStations || [];
 
   if (isLoading) return <Loader />;
-  if (error) return <p>Error loading counts</p>;
+  if (error) return <p>{translate('overview.errorLoadingData')}</p>;
 
   const finalCounts = getNewCounts();
   stations.forEach((station) => {
@@ -244,7 +245,9 @@ export const ChargerActivityCard: React.FC = () => {
     >
       <Card>
         <CardHeader>
-          <h2 className={heading2Style}>Charger Activity</h2>
+          <h2 className={heading2Style}>
+            {translate('overview.chargerActivity')}
+          </h2>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
