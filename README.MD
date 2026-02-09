@@ -92,7 +92,7 @@ The UI consumes:
                                              |                     |
                                              +---------------------+
 
-+-------------------+     REST / WS    +--------------------------+
++-------------------+       REST       +--------------------------+
 | Operator UI       | <--------------> | CitrineOS Core           |
 |                   |                  | (OCPP 1.6 & 2.0.1)       |
 +-------------------+                  +--------------------------+
@@ -101,7 +101,7 @@ The UI consumes:
 ## Prerequisites
 
 Before starting, ensure the following tools and services are installed and running.
-- **Node.js** (v18 or higher recommended)  
+- **Node.js** (v24 or higher recommended)  
   [Link](https://nodejs.org)
 
 - **npm**  
@@ -177,22 +177,11 @@ cd citrineos-operator-ui
 npm link @citrineos/base@X.X.X
 ```
 
-> ⚠️ **Note:**  
-> TRunning `npm run fresh` or `npm run fi` will remove this link and you will need to re-link. 
+> ⚠️ **Note:**
+> Running `npm run fresh` or `npm run fi` will remove this link and you will need to re-link. 
 
 ## Build & Development Workflow
 The Operator UI uses **npm workspaces** for local development convenience.
-
-### Workspace Configuration
-
-```bash
-"workspaces": [
-  "../citrineos-core/00_Base"
-]
-```
-
-If `citrineos-core` exists in the same parent directory, the Operator UI will automatically resolve
-`@citrineos/base` from the local filesystem.
 
 ### Typical Workflow
 
@@ -225,7 +214,7 @@ npm run dev
 ```
 
 - Runs the app with hot reload
-- Default URL: http://localhost:5173
+- Default URL: http://localhost:3000
 
 ### Production Build
 
@@ -344,7 +333,8 @@ Authorizations → Add Authorization
 3. Mark it as **Accepted**
 4. Click **Save**  
 
-> This token will be used by EVerest to start charging.
+> ⚠️ Note: This token will be used by EVerest to start charging.
+> The EVerest simulator uses the **default RFID token** `DEADBEEF` **(ISO14443)**.
 
 ---
 
