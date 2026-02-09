@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React from 'react';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
-import { Loader } from '@lib/client/components/ui/loader';
 import { Circle } from '@lib/client/pages/overview/circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
@@ -16,6 +16,8 @@ import { useRouter } from 'next/navigation';
 import { heading2Style } from '@lib/client/styles/page';
 import { overviewClickableStyle } from '@lib/client/styles/card';
 import { ChargerStatusEnum } from '@lib/utils/enums';
+import { OverviewCardSkeleton } from '@lib/client/pages/overview/overview.card.skeleton';
+import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
 
 const statusFlex = 'flex flex-col gap-2';
 const statusLabelStyle = 'text-5xl';
@@ -36,14 +38,13 @@ export const OnlineStatusCard = () => {
   const onlineCount = data?.data?.online?.aggregate?.count || 0;
   const offlineCount = data?.data?.offline?.aggregate?.count || 0;
 
-  if (isLoading) return <Loader />;
-  if (error) return <p>{translate('overview.errorLoadingData')}</p>;
+  if (isLoading) return <OverviewCardSkeleton />;
 
   return (
     <CanAccess
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
+      fallback={<OverviewCardAccessFallback />}
     >
       <Card>
         <CardHeader>
@@ -60,22 +61,26 @@ export const OnlineStatusCard = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-12">
-            <div className={statusFlex}>
-              <span className={statusLabelStyle}>{onlineCount}</span>
-              <div className={statusIndicatorFlex}>
-                <Circle status={ChargerStatusEnum.ONLINE} />
-                Online
+          {error ? (
+            <p>{translate('overview.errorLoadingData')}</p>
+          ) : (
+            <div className="flex items-center gap-12">
+              <div className={statusFlex}>
+                <span className={statusLabelStyle}>{onlineCount}</span>
+                <div className={statusIndicatorFlex}>
+                  <Circle status={ChargerStatusEnum.ONLINE} />
+                  Online
+                </div>
+              </div>
+              <div className={statusFlex}>
+                <span className={statusLabelStyle}>{offlineCount}</span>
+                <div className={statusIndicatorFlex}>
+                  <Circle status={ChargerStatusEnum.OFFLINE} />
+                  Offline
+                </div>
               </div>
             </div>
-            <div className={statusFlex}>
-              <span className={statusLabelStyle}>{offlineCount}</span>
-              <div className={statusIndicatorFlex}>
-                <Circle status={ChargerStatusEnum.OFFLINE} />
-                Offline
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </CanAccess>

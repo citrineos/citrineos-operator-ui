@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React, { useState } from 'react';
 import {
   type ChargingStationDto,
   type ConnectorStatusEnumType,
   type EvseDto,
   ConnectorStatusEnum,
 } from '@citrineos/base';
-import { Loader } from '@lib/client/components/ui/loader';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { LatestStatusNotificationClass } from '@lib/cls/latest.status.notification.dto';
 import { GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS } from '@lib/queries/charging.stations';
@@ -17,12 +17,13 @@ import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { useGqlCustom } from '@lib/utils/use-gql-custom';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
-import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { ChargerActivityStationsSheet } from '@lib/client/pages/overview/charger-activity/charger.activity.stations.sheet';
 import { heading2Style } from '@lib/client/styles/page';
 import { PercentageCircle } from '@lib/client/pages/overview/percentage-circle/percentage.circle';
 import { ChargerStatusEnum } from '@lib/utils/enums';
+import { OverviewCardSkeleton } from '@lib/client/pages/overview/overview.card.skeleton';
+import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
 
 interface ChargerItem {
   station: ChargingStationDto;
@@ -199,8 +200,7 @@ export const ChargerActivityCard: React.FC = () => {
 
   const stations: ChargingStationDto[] = data?.data.ChargingStations || [];
 
-  if (isLoading) return <Loader />;
-  if (error) return <p>{translate('overview.errorLoadingData')}</p>;
+  if (isLoading) return <OverviewCardSkeleton />;
 
   const finalCounts = getNewCounts();
   stations.forEach((station) => {
@@ -242,6 +242,7 @@ export const ChargerActivityCard: React.FC = () => {
     <CanAccess
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.LIST}
+      fallback={<OverviewCardAccessFallback />}
     >
       <Card>
         <CardHeader>
@@ -250,29 +251,33 @@ export const ChargerActivityCard: React.FC = () => {
           </h2>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
-            {[
-              ChargerStatusEnum.CHARGING,
-              ChargerStatusEnum.AVAILABLE,
-              ChargerStatusEnum.UNAVAILABLE,
-              ChargerStatusEnum.FAULTED,
-              ChargerStatusEnum.OFFLINE,
-            ].map((status) => (
-              <div
-                key={status}
-                className="flex flex-col items-center cursor-pointer"
-                onClick={() => handleGaugeClick(status)}
-              >
-                <PercentageCircle
-                  percentage={Math.round(
-                    (finalCounts[status].count / total) * 100,
-                  )}
-                  color={getStatusColor[status]}
-                />
-                <span>{status}</span>
-              </div>
-            ))}
-          </div>
+          {error ? (
+            <p>{translate('overview.errorLoadingData')}</p>
+          ) : (
+            <div className="flex gap-2">
+              {[
+                ChargerStatusEnum.CHARGING,
+                ChargerStatusEnum.AVAILABLE,
+                ChargerStatusEnum.UNAVAILABLE,
+                ChargerStatusEnum.FAULTED,
+                ChargerStatusEnum.OFFLINE,
+              ].map((status) => (
+                <div
+                  key={status}
+                  className="flex flex-col items-center cursor-pointer"
+                  onClick={() => handleGaugeClick(status)}
+                >
+                  <PercentageCircle
+                    percentage={Math.round(
+                      (finalCounts[status].count / total) * 100,
+                    )}
+                    color={getStatusColor[status]}
+                  />
+                  <span>{status}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
       {selectedStatus && (

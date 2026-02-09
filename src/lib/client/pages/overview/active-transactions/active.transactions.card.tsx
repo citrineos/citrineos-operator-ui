@@ -19,6 +19,8 @@ import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { clickableLinkStyle, heading2Style } from '@lib/client/styles/page';
 import { overviewClickableStyle } from '@lib/client/styles/card';
 import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useRouter();
@@ -89,13 +91,15 @@ export const ActiveTransactionsCard = () => {
   const total = data?.total ?? 0;
 
   if (isLoading) {
-    return <div>{translate('loading')}</div>;
-  } else if (isError) {
-    return <div>{translate('overview.errorLoadingData')}</div>;
+    return <Skeleton className="size-full" />;
   }
 
   return (
-    <CanAccess resource={ResourceType.TRANSACTIONS} action={ActionType.LIST}>
+    <CanAccess
+      resource={ResourceType.TRANSACTIONS}
+      action={ActionType.LIST}
+      fallback={<OverviewCardAccessFallback />}
+    >
       <Card className="h-full overflow-scroll">
         <CardHeader>
           <div className="flex justify-between">
@@ -111,42 +115,48 @@ export const ActiveTransactionsCard = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4">
-            <div className="max-w-md">
-              <Combobox<number>
-                options={searchResults.map((tx) => ({
-                  label: tx.transactionId,
-                  value: tx.id!,
-                }))}
-                onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
-                onSearch={handleSearch}
-                placeholder={translate('placeholders.search')}
-              />
-            </div>
+          {isError ? (
+            <p>{translate('overview.errorLoadingData')}</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div className="max-w-md">
+                <Combobox<number>
+                  options={searchResults.map((tx) => ({
+                    label: tx.transactionId,
+                    value: tx.id!,
+                  }))}
+                  onSelect={(id) => push(`/${MenuSection.TRANSACTIONS}/${id}`)}
+                  onSearch={handleSearch}
+                  placeholder={translate('placeholders.search')}
+                />
+              </div>
 
-            <div className="flex flex-col">
-              {transactions.length > 0 ? (
-                transactions.map((transaction) => (
-                  <div className="flex flex-col mb-4" key={transaction.id}>
-                    <div
-                      className={clickableLinkStyle}
-                      onClick={() =>
-                        push(`/${MenuSection.TRANSACTIONS}/${transaction.id}`)
-                      }
-                    >
-                      <span className="link">{transaction.transactionId}</span>
+              <div className="flex flex-col">
+                {transactions.length > 0 ? (
+                  transactions.map((transaction) => (
+                    <div className="flex flex-col mb-4" key={transaction.id}>
+                      <div
+                        className={clickableLinkStyle}
+                        onClick={() =>
+                          push(`/${MenuSection.TRANSACTIONS}/${transaction.id}`)
+                        }
+                      >
+                        <span className="link">
+                          {transaction.transactionId}
+                        </span>
+                      </div>
+                      <div>Station ID: {transaction.stationId}</div>
+                      <div>Total kWh: {transaction.totalKwh}</div>
+                      <div>Total Time: {transaction.timeSpentCharging}</div>
+                      <div>Status: {transaction.chargingState}</div>
                     </div>
-                    <div>Station ID: {transaction.stationId}</div>
-                    <div>Total kWh: {transaction.totalKwh}</div>
-                    <div>Total Time: {transaction.timeSpentCharging}</div>
-                    <div>Status: {transaction.chargingState}</div>
-                  </div>
-                ))
-              ) : (
-                <span>{translate('overview.noActiveTransactions')}</span>
-              )}
+                  ))
+                ) : (
+                  <span>{translate('overview.noActiveTransactions')}</span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </CanAccess>
