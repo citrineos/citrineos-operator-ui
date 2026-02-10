@@ -12,11 +12,9 @@ export const AccessDeniedFallback = () => {
   const translate = useTranslate();
 
   return (
-    <Card>
-      <CardHeader>
-        <h2 className={heading2Style}>{translate('accessDenied')}</h2>
-      </CardHeader>
-      <CardContent>{translate('buttons.notAccessTitle')}</CardContent>
-    </Card>
+    <div className="flex flex-col gap-2">
+      <h2 className={heading2Style}>{translate('accessDenied')}</h2>
+      {translate('buttons.notAccessTitle')}
+    </div>
   );
 };
