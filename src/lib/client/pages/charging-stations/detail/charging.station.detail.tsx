@@ -5,12 +5,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { CanAccess, useTranslate } from '@refinedev/core';
+import { CanAccess } from '@refinedev/core';
 import { ChargingStationDetailCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.card';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { ChargingStationDetailTabsCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.tabs.card';
 import { S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS } from '@lib/utils/consts';
 import { getPresignedUrlForGet } from '@lib/server/actions/file/getPresingedUrlForGet';
+import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
 
 type ChargingStationDetailProps = {
   params: { id: string };
@@ -21,7 +23,6 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
 }) => {
   const { id } = params;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const translate = useTranslate();
 
   useEffect(() => {
     if (id) {
@@ -31,19 +32,21 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
     }
   }, [id]);
 
-  if (!id) return <p>{translate('loading')}</p>;
+  if (!id) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <Skeleton className="h-50 w-full" />
+        <Skeleton className="h-60 w-full" />
+      </div>
+    );
+  }
 
   return (
     <CanAccess
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.SHOW}
       params={{ id }}
-      fallback={
-        <p className="text-muted-foreground">
-          {translate('buttons.notAccessTitle')}{' '}
-          {translate('ChargingStations.chargingStation')}
-        </p>
-      }
+      fallback={<AccessDeniedFallback />}
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <ChargingStationDetailCard stationId={id} imageUrl={imageUrl} />

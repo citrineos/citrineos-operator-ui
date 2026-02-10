@@ -122,10 +122,15 @@ export const ChargingStationsList = () => {
               {translate('ChargingStations.chargingStation')}
             </Button>
           </CanAccess>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
-          />
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.LIST}
+          >
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess
