@@ -13,6 +13,8 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { TransactionDetailTabsCard } from '@lib/client/pages/transactions/detail/transaction.detail.tabs.card';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
 
 type TransactionDetailProps = {
   params: { id: string };
@@ -32,8 +34,22 @@ export const TransactionDetail = ({ params }: TransactionDetailProps) => {
   });
   const transaction = transactionData?.data;
 
-  if (isLoading) return <p>{translate('loading')}</p>;
-  if (!transaction) return <p>{translate('noDataFound')}</p>;
+  if (isLoading) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <Skeleton className="h-50 w-full" />
+        <Skeleton className="h-60 w-full" />
+      </div>
+    );
+  } else if (!transaction) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <NoDataFoundCard
+          message={translate('Transactions.noDataFound', { id })}
+        />
+      </div>
+    );
+  }
 
   return (
     <CanAccess
