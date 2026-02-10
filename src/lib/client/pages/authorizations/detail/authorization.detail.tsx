@@ -14,6 +14,8 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { AuthorizationDetailTabsCard } from '@lib/client/pages/authorizations/detail/authorization.detail.tabs.card';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
 
 type AuthorizationDetailProps = {
   params: { id: string };
@@ -35,8 +37,22 @@ export const AuthorizationDetail: React.FC<AuthorizationDetailProps> = ({
   });
   const authorization = authData?.data;
 
-  if (authLoading) return <p>{translate('loading')}</p>;
-  if (!authorization) return <p>{translate('noDataFound')}</p>;
+  if (authLoading) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <Skeleton className="h-50 w-full" />
+        <Skeleton className="h-60 w-full" />
+      </div>
+    );
+  } else if (!authorization) {
+    return (
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <NoDataFoundCard
+          message={translate('Authorizations.noDataFound', { id })}
+        />
+      </div>
+    );
+  }
 
   return (
     <CanAccess
