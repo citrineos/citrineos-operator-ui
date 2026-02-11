@@ -224,7 +224,9 @@ export const ChargingStationDetailCard = ({
     return <Skeleton className="h-50 w-full" />;
   } else if (!station) {
     return (
-      <NoDataFoundCard message={translate('ChargingStations.noDataFound')} />
+      <NoDataFoundCard
+        message={translate('ChargingStations.noDataFound', { id: stationId })}
+      />
     );
   }
 
