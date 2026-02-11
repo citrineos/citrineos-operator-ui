@@ -149,7 +149,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showRemoteStartModal = useCallback(
@@ -162,7 +162,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const handleStopTransactionClick = useCallback(

@@ -268,9 +268,11 @@ export const ChargerActivityCard: React.FC = () => {
                   onClick={() => handleGaugeClick(status)}
                 >
                   <PercentageCircle
-                    percentage={Math.round(
-                      (finalCounts[status].count / total) * 100,
-                    )}
+                    percentage={
+                      total > 0
+                        ? Math.round((finalCounts[status].count / total) * 100)
+                        : 0
+                    }
                     color={getStatusColor[status]}
                   />
                   <span>{status}</span>

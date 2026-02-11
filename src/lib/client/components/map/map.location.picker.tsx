@@ -50,6 +50,7 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
         dispatch(setGoogleMapsApiKey(key)),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -51,7 +51,7 @@ export const ChargingStationsList = () => {
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const handleStopTransactionClick = useCallback(
