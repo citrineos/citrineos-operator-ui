@@ -61,10 +61,15 @@ export const AuthorizationsList = () => {
               {translate('Authorizations.authorization')}
             </Button>
           </CanAccess>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('Authorizations.authorization')}`}
-          />
+          <CanAccess
+            resource={ResourceType.AUTHORIZATIONS}
+            action={ActionType.LIST}
+          >
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('Authorizations.authorization')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess

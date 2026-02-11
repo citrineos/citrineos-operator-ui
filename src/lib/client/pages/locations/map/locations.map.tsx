@@ -12,6 +12,7 @@ import { ResourceType } from '@lib/utils/access.types';
 import { useList, useTranslate } from '@refinedev/core';
 import { plainToInstance } from 'class-transformer';
 import { LocationMapV2 } from '@lib/client/components/map/map.v2';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
 
 export interface LocationsMapProps {
   mapOnly?: boolean;
@@ -25,7 +26,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
   const translate = useTranslate();
 
   const {
-    query: { data },
+    query: { data, isLoading },
   } = useList<LocationClass>({
     resource: ResourceType.LOCATIONS,
     sorters: [
@@ -85,6 +86,10 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
       return enhancedLocation;
     });
   }, [allLocations, filteredLocations, searchQuery]);
+
+  if (isLoading) {
+    return <Skeleton className="size-full" />;
+  }
 
   return (
     <div className="size-full flex flex-col gap-4">

@@ -3,14 +3,16 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React, { useEffect } from 'react';
 import {
   MainMenu,
   MenuSection,
 } from '@lib/client/components/main-menu/main.menu';
 import AppModal from '@lib/client/components/modals';
-import { useIsAuthenticated } from '@refinedev/core';
+import { useIsAuthenticated, useTranslate } from '@refinedev/core';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { heading2Style } from '@lib/client/styles/page';
 
 type AuthenticatedLayoutProps = {
   children: React.ReactNode;
@@ -25,6 +27,7 @@ export default function AuthenticatedLayout({
 }: AuthenticatedLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const translate = useTranslate();
 
   const { data, isLoading } = useIsAuthenticated();
 
@@ -43,12 +46,30 @@ export default function AuthenticatedLayout({
 
   // Show loading state
   if (isLoading) {
-    return fallback || <div>Checking authentication...</div>;
+    return (
+      fallback || (
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="flex items-center gap-2 text-center">
+            <h2 className={heading2Style}>{translate('pages.checkingAuth')}</h2>
+            <Loader2 className="size-8 animate-spin text-primary" />
+          </div>
+        </div>
+      )
+    );
   }
 
   // Show loading while redirecting
   if (!data?.authenticated) {
-    return <div>Redirecting to login...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex items-center gap-2 text-center">
+          <h2 className={heading2Style}>
+            {translate('pages.redirectingToLogin')}
+          </h2>
+          <Loader2 className="size-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
   }
 
   return (

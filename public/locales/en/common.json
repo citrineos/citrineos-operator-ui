@@ -70,7 +70,9 @@
       "404": "Sorry, the page you visited does not exist.",
       "resource404": "Are you sure you have created the {resource} resource.",
       "backHome": "Back Home"
-    }
+    },
+    "redirectingToLogin": "Redirecting to login...",
+    "checkingAuth": "Checking authentication..."
   },
   "actions": {
     "create": "Create",
@@ -122,6 +124,7 @@
   "imageUploadFailed": "Image upload failed.",
   "loading": "Loading",
   "noDataFound": "No Data Found",
+  "somethingWentWrong": "Something went wrong.",
   "loggedOut": "Logged out! Redirecting to login...",
   "tags": {
     "clone": "Clone"

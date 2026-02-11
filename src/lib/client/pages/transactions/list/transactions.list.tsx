@@ -41,10 +41,15 @@ export const TransactionsList = () => {
         <h2 className={heading2Style}>
           {translate('Transactions.Transactions')}
         </h2>
-        <DebounceSearch
-          onSearch={onSearch}
-          placeholder={`${translate('placeholders.search')} ${translate('Transactions.Transactions')}`}
-        />
+        <CanAccess
+          resource={ResourceType.TRANSACTIONS}
+          action={ActionType.LIST}
+        >
+          <DebounceSearch
+            onSearch={onSearch}
+            placeholder={`${translate('placeholders.search')} ${translate('Transactions.Transactions')}`}
+          />
+        </CanAccess>
       </div>
       <CanAccess
         resource={ResourceType.TRANSACTIONS}

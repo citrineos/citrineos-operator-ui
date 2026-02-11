@@ -18,6 +18,7 @@
     "forceDisconnectCaution": "This will immediately close the connection to the station.",
     "exportMessagesToCsvHeader": "Export OCPP Messages to CSV",
     "downloadAllMessagesToCsv": "You will download all OCPP messages for charger {stationId}.",
-    "downloadMessagesToCsvWithFilters": "You will download OCPP messages for charger {stationId} with the following filters"
+    "downloadMessagesToCsvWithFilters": "You will download OCPP messages for charger {stationId} with the following filters",
+    "noDataFound": "No charging station found with id {id}."
   }
 }
