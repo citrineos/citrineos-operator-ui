@@ -177,7 +177,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showResetStartModal = useCallback(
@@ -190,7 +190,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showOtherCommandsModal = useCallback(() => {
@@ -203,7 +203,7 @@ export const ChargingStationDetailCard = ({
         modalComponentProps: { station: instanceToPlain(station) },
       }),
     );
-  }, [dispatch, station]);
+  }, [dispatch, station, translate]);
 
   const showToggleOnlineModal = useCallback(() => {
     if (!station) return;

@@ -66,7 +66,7 @@ export const ChargingStationsList = () => {
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showResetStartModal = useCallback(
@@ -79,7 +79,7 @@ export const ChargingStationsList = () => {
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const columns = useMemo(
