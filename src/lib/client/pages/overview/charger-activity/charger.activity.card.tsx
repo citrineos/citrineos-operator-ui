@@ -23,7 +23,7 @@ import { heading2Style } from '@lib/client/styles/page';
 import { PercentageCircle } from '@lib/client/pages/overview/percentage-circle/percentage.circle';
 import { ChargerStatusEnum } from '@lib/utils/enums';
 import { OverviewCardSkeleton } from '@lib/client/pages/overview/overview.card.skeleton';
-import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 
 interface ChargerItem {
   station: ChargingStationDto;
@@ -242,7 +242,7 @@ export const ChargerActivityCard: React.FC = () => {
     <CanAccess
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.LIST}
-      fallback={<OverviewCardAccessFallback />}
+      fallback={<AccessDeniedFallbackCard />}
     >
       <Card>
         <CardHeader>

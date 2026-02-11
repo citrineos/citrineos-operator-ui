@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { Circle } from '@lib/client/pages/overview/circle/circle';
 import { CHARGING_STATIONS_STATUS_COUNT_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 import { CanAccess, useCustom, useTranslate } from '@refinedev/core';
 import { ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -17,7 +17,6 @@ import { heading2Style } from '@lib/client/styles/page';
 import { overviewClickableStyle } from '@lib/client/styles/card';
 import { ChargerStatusEnum } from '@lib/utils/enums';
 import { OverviewCardSkeleton } from '@lib/client/pages/overview/overview.card.skeleton';
-import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
 
 const statusFlex = 'flex flex-col gap-2';
 const statusLabelStyle = 'text-5xl';
@@ -44,7 +43,7 @@ export const OnlineStatusCard = () => {
     <CanAccess
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.LIST}
-      fallback={<OverviewCardAccessFallback />}
+      fallback={<AccessDeniedFallbackCard />}
     >
       <Card>
         <CardHeader>

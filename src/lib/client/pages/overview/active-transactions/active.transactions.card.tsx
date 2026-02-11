@@ -18,9 +18,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { clickableLinkStyle, heading2Style } from '@lib/client/styles/page';
 import { overviewClickableStyle } from '@lib/client/styles/card';
-import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
-import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 
 export const ActiveTransactionsCard = () => {
   const { push } = useRouter();
@@ -98,7 +97,7 @@ export const ActiveTransactionsCard = () => {
     <CanAccess
       resource={ResourceType.TRANSACTIONS}
       action={ActionType.LIST}
-      fallback={<OverviewCardAccessFallback />}
+      fallback={<AccessDeniedFallbackCard />}
     >
       <Card className="h-full overflow-scroll">
         <CardHeader>

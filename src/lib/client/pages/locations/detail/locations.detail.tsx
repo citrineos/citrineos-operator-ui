@@ -20,12 +20,12 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { LocationDetailCard } from '@lib/client/pages/locations/detail/location.detail.card';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
 import { getPresignedUrlForGet } from '@lib/server/actions/file/getPresingedUrlForGet';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 
 type LocationDetailProps = {
   params: { id: string };
@@ -76,7 +76,11 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
       resource={ResourceType.LOCATIONS}
       action={ActionType.SHOW}
       params={{ id: location.id }}
-      fallback={<AccessDeniedFallback />}
+      fallback={
+        <div className={`${pageMargin} ${pageFlex}`}>
+          <AccessDeniedFallbackCard />
+        </div>
+      }
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <LocationDetailCard location={location} imageUrl={imageUrl} />

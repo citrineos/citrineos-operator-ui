@@ -11,7 +11,7 @@ import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { ChargingStationDetailTabsCard } from '@lib/client/pages/charging-stations/detail/charging.station.detail.tabs.card';
 import { S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS } from '@lib/utils/consts';
 import { getPresignedUrlForGet } from '@lib/server/actions/file/getPresingedUrlForGet';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 
 type ChargingStationDetailProps = {
@@ -46,7 +46,11 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.SHOW}
       params={{ id }}
-      fallback={<AccessDeniedFallback />}
+      fallback={
+        <div className={`${pageMargin} ${pageFlex}`}>
+          <AccessDeniedFallbackCard />
+        </div>
+      }
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <ChargingStationDetailCard stationId={id} imageUrl={imageUrl} />

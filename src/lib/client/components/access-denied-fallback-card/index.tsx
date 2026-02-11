@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { heading2Style } from '@lib/client/styles/page';
 import { useTranslate } from '@refinedev/core';
 
-export const OverviewCardAccessFallback = () => {
+export const AccessDeniedFallbackCard = () => {
   const translate = useTranslate();
 
   return (

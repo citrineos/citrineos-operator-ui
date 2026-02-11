@@ -6,12 +6,11 @@
 import React from 'react';
 import { TRANSACTION_SUCCESS_RATE_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 import { CanAccess, useCustom, useTranslate } from '@refinedev/core';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { heading2Style } from '@lib/client/styles/page';
 import { OverviewCardSkeleton } from '@lib/client/pages/overview/overview.card.skeleton';
-import { OverviewCardAccessFallback } from '@lib/client/pages/overview/overview.card.access.fallback';
 
 export const PluginSuccessRateCard = () => {
   const translate = useTranslate();
@@ -35,7 +34,7 @@ export const PluginSuccessRateCard = () => {
     <CanAccess
       resource={ResourceType.TRANSACTIONS}
       action={ActionType.LIST}
-      fallback={<OverviewCardAccessFallback />}
+      fallback={<AccessDeniedFallbackCard />}
     >
       <Card>
         <CardHeader>

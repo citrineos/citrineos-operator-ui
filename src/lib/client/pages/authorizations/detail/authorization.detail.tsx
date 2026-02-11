@@ -16,6 +16,7 @@ import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { AuthorizationDetailTabsCard } from '@lib/client/pages/authorizations/detail/authorization.detail.tabs.card';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 
 type AuthorizationDetailProps = {
   params: { id: string };
@@ -58,8 +59,12 @@ export const AuthorizationDetail: React.FC<AuthorizationDetailProps> = ({
     <CanAccess
       resource={ResourceType.AUTHORIZATIONS}
       action={ActionType.SHOW}
-      fallback={<AccessDeniedFallback />}
       params={{ id: authorization.id }}
+      fallback={
+        <div className={`${pageMargin} ${pageFlex}`}>
+          <AccessDeniedFallbackCard />
+        </div>
+      }
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <AuthorizationDetailCard authorization={authorization} />

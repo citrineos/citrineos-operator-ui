@@ -5,15 +5,17 @@
 
 import { TenantPartnerClass } from '@lib/cls/tenant.partner.cls';
 import { PARTNER_DETAIL_QUERY } from '@lib/queries/tenant.partners';
-import { ResourceType } from '@lib/utils/access.types';
+import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { useOne, useTranslate } from '@refinedev/core';
+import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { PartnerDetailCard } from '@lib/client/pages/partners/detail/partner.detail.card';
 import type { TenantPartnerDto } from '@citrineos/base';
 import { PartnerDetailTabsCard } from '@lib/client/pages/partners/detail/partner.detail.tabs.card';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
+import React from 'react';
 
 type PartnersDetailProps = {
   params: { id: string };
@@ -54,9 +56,20 @@ export const PartnersDetail = ({ params }: PartnersDetailProps) => {
   }
 
   return (
-    <div className={`${pageMargin} ${pageFlex}`}>
-      <PartnerDetailCard tenantPartner={tenantPartner} />
-      <PartnerDetailTabsCard tenantPartner={tenantPartner} />
-    </div>
+    <CanAccess
+      resource={ResourceType.PARTNERS}
+      action={ActionType.SHOW}
+      params={{ id }}
+      fallback={
+        <div className={`${pageMargin} ${pageFlex}`}>
+          <AccessDeniedFallbackCard />
+        </div>
+      }
+    >
+      <div className={`${pageMargin} ${pageFlex}`}>
+        <PartnerDetailCard tenantPartner={tenantPartner} />
+        <PartnerDetailTabsCard tenantPartner={tenantPartner} />
+      </div>
+    </CanAccess>
   );
 };

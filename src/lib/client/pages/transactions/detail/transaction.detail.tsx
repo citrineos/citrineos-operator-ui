@@ -15,6 +15,8 @@ import { pageFlex, pageMargin } from '@lib/client/styles/page';
 import { TransactionDetailTabsCard } from '@lib/client/pages/transactions/detail/transaction.detail.tabs.card';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
+import React from 'react';
 
 type TransactionDetailProps = {
   params: { id: string };
@@ -55,8 +57,12 @@ export const TransactionDetail = ({ params }: TransactionDetailProps) => {
     <CanAccess
       resource={ResourceType.TRANSACTIONS}
       action={ActionType.SHOW}
-      fallback={<AccessDeniedFallback />}
       params={{ id: transaction.id }}
+      fallback={
+        <div className={`${pageMargin} ${pageFlex}`}>
+          <AccessDeniedFallbackCard />
+        </div>
+      }
     >
       <div className={`${pageMargin} ${pageFlex}`}>
         <TransactionDetailCard transaction={transaction} />
