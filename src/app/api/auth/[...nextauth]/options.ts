@@ -49,6 +49,10 @@ const authProvider = config.authProvider;
  * Refreshes an expired access token using the refresh token
  */
 async function refreshAccessToken(token: any) {
+  if (authProvider === 'generic') {
+    return token;
+  }
+
   try {
     const url = `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`;
 
