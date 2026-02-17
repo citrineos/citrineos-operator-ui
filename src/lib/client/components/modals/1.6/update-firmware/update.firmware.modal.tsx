@@ -26,13 +26,12 @@ export interface UpdateFirmwareModalProps {
 
 const UpdateFirmwareSchema = z.object({
   location: z
-    .string()
     .url('Must be a valid URL')
     .min(1, 'Location is required')
     .max(512),
   retrieveDate: z.string().min(1, 'Retrieve date is required'),
-  retries: z.number().int().min(0).optional(),
-  retryInterval: z.number().int().min(0).optional(),
+  retries: z.coerce.number<number>().int().min(0).optional(),
+  retryInterval: z.coerce.number<number>().int().min(0).optional(),
 });
 
 type UpdateFirmwareFormData = z.infer<typeof UpdateFirmwareSchema>;
