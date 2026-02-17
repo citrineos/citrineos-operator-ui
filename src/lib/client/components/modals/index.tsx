@@ -15,6 +15,8 @@ import {
 } from '@lib/client/components/ui/dialog';
 import { closeModal, selectModal } from '@lib/utils/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
+// Shared Modals (same for both OCPP versions)
+import { DataTransferModal } from '@lib/client/components/modals/data-transfer/data.transfer.modal';
 // OCPP 1.6 Modals
 import { ChangeAvailabilityModal as ChangeAvailabilityModal16 } from '@lib/client/components/modals/1.6/change-availability/change.availability.modal';
 import { ChangeConfigurationModal } from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
@@ -55,6 +57,8 @@ const MODAL_COMPONENTS: Partial<{
   [ModalComponentType.remoteStop]: RemoteStopTransactionModal,
   [ModalComponentType.reset]: ResetModal,
   [ModalComponentType.otherCommands]: OtherCommandsModal,
+  // Shared
+  [ModalComponentType.dataTransfer]: DataTransferModal,
   // OCPP 1.6
   [ModalComponentType.changeAvailability16]: ChangeAvailabilityModal16,
   [ModalComponentType.changeConfiguration16]: ChangeConfigurationModal,
