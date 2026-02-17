@@ -28,6 +28,10 @@ export const OCPP1_6_COMMANDS_REGISTRY: Record<string, CommandDefinition> = {
     displayName: 'Change Availability',
     modalType: ModalComponentType.changeAvailability16,
   },
+  'Data Transfer': {
+    displayName: 'Data Transfer',
+    modalType: ModalComponentType.dataTransfer,
+  },
   'Change Configuration': {
     displayName: 'Change Configuration',
     modalType: ModalComponentType.changeConfiguration16,

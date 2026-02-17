@@ -20,6 +20,8 @@ export enum ModalComponentType {
   getConfiguration16,
   triggerMessage16,
   updateFirmware16,
+  // Shared Commands (same modal for both OCPP versions)
+  dataTransfer,
   // OCPP 2.0.1 Commands
   certificateSigned,
   changeAvailability201,
