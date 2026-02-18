@@ -501,11 +501,7 @@ export const ChargingStationDetailCard = ({
                     disabled={!station.isOnline}
                   />
                 )}
-                <ResetButton
-                  stationId={station.id}
-                  onClickAction={() => showResetStartModal(station)}
-                  disabled={!station.isOnline}
-                />
+                <ResetButton station={station} disabled={!station.isOnline} />
                 <Button
                   onClick={showOtherCommandsModal}
                   disabled={!station.isOnline}

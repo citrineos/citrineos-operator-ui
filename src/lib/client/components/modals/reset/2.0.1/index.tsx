@@ -16,6 +16,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Controller } from 'react-hook-form';
+import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
 export interface OCPP2_0_1_ResetProps {
   station: ChargingStationDto;
@@ -67,7 +68,14 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
   };
 
   return (
-    <Form {...form} loading={loading} submitHandler={handleSubmit} hideCancel>
+    <Form
+      {...form}
+      loading={loading}
+      submitHandler={handleSubmit}
+      hideCancel
+      submitButtonVariant={FormButtonVariants.submit}
+      submitButtonLabel="Reset"
+    >
       <SelectFormField
         control={form.control}
         label="Reset Type"

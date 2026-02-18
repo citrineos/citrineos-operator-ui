@@ -148,10 +148,7 @@ export const getChargingStationColumns = (
               {hasActiveTransactions && (
                 <StopTransactionButton station={row.original} />
               )}
-              <ResetButton
-                stationId={row.original.id}
-                onClickAction={() => showResetStartModal(row.original)}
-              />
+              <ResetButton station={row.original} />
             </div>
           </CanAccess>
         ) : (
