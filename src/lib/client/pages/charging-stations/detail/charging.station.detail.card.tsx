@@ -491,8 +491,7 @@ export const ChargingStationDetailCard = ({
                 />
                 {!hasActiveTransactions && (
                   <StartTransactionButton
-                    stationId={station.id}
-                    onClickAction={() => showRemoteStartModal(station)}
+                    station={station}
                     disabled={!station.isOnline}
                   />
                 )}

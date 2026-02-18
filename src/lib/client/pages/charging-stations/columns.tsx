@@ -143,10 +143,7 @@ export const getChargingStationColumns = (
           >
             <div className="flex gap-4 flex-1">
               {!hasActiveTransactions && (
-                <StartTransactionButton
-                  stationId={row.original.id}
-                  onClickAction={() => showRemoteStartModal(row.original)}
-                />
+                <StartTransactionButton station={row.original} />
               )}
               {hasActiveTransactions && (
                 <StopTransactionButton
