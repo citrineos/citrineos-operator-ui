@@ -3,9 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
+import { type ChargingStationDto, OCPPVersion } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SelectFormField } from '@lib/client/components/form/field';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
@@ -20,31 +19,24 @@ import { FormField } from '@lib/client/components/form/field';
 import { Input } from '@lib/client/components/ui/input';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
-interface GetLogsModalProps {
+interface GetDiagnosticsModalProps {
   station: any;
 }
 
-const GetLogsSchema = z.object({
-  requestId: z.coerce
-    .number<number>()
-    .int()
-    .positive('Request ID must be a positive number'),
-  remoteLocation: z
+const GetDiagnosticsSchema = z.object({
+  location: z
     .url('Must be a valid URL')
-    .min(1, 'Remote Location is required')
+    .min(1, 'Location is required')
     .max(512),
-  oldestTimestamp: z.string().min(1).optional(),
-  latestTimestamp: z.string().min(1).optional(),
-  logType: z.enum(OCPP2_0_1.LogEnumType, { message: 'Log Type is required' }),
+  startTime: z.string().min(1).optional(),
+  stopTime: z.string().min(1).optional(),
   retries: z.coerce.number<number>().int().min(0).optional(),
   retryInterval: z.coerce.number<number>().int().min(0).optional(),
 });
 
-type GetLogsFormData = z.infer<typeof GetLogsSchema>;
+type GetDiagnosticsFormData = z.infer<typeof GetDiagnosticsSchema>;
 
-const logTypes = Object.keys(OCPP2_0_1.LogEnumType);
-
-export const GetLogsModal = ({ station }: GetLogsModalProps) => {
+export const GetDiagnosticsModal = ({ station }: GetDiagnosticsModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -53,17 +45,16 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     [station],
   ) as ChargingStationDto;
 
-  const remoteLocation = 'http://localhost:4566/citrineos-s3-bucket/';
+  const location = 'http://localhost:4566/citrineos-s3-bucket/';
 
   const form = useForm({
-    resolver: zodResolver(GetLogsSchema),
+    resolver: zodResolver(GetDiagnosticsSchema),
     defaultValues: {
-      logType: OCPP2_0_1.LogEnumType.DiagnosticsLog,
-      remoteLocation,
+      location,
     },
   });
 
-  const onFinish = async (values: GetLogsFormData) => {
+  const onFinish = async (values: GetDiagnosticsFormData) => {
     if (!parsedStation?.id) {
       console.error(
         'Error: Cannot submit Get Logs request because station ID is missing.',
@@ -72,17 +63,13 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     }
 
     const data = {
-      log: {
-        remoteLocation: values.remoteLocation,
-        oldestTimestamp: values.oldestTimestamp
-          ? new Date(values.oldestTimestamp).toISOString()
-          : undefined,
-        latestTimestamp: values.latestTimestamp
-          ? new Date(values.latestTimestamp).toISOString()
-          : undefined,
-      },
-      logType: values.logType,
-      requestId: values.requestId,
+      location: values.location,
+      startTime: values.startTime
+        ? new Date(values.startTime).toISOString()
+        : undefined,
+      stopTime: values.stopTime
+        ? new Date(values.stopTime).toISOString()
+        : undefined,
       ...(values.retries !== undefined && { retries: values.retries }),
       ...(values.retryInterval !== undefined && {
         retryInterval: values.retryInterval,
@@ -90,9 +77,10 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/reporting/getDiagnostics?identifier=${parsedStation.id}&tenantId=1`,
       data,
       setLoading,
+      ocppVersion: OCPPVersion.OCPP1_6,
     }).then(() => {
       form.reset();
       dispatch(closeModal());
@@ -109,41 +97,21 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     >
       <FormField
         control={form.control}
-        label="Request ID"
-        name="requestId"
+        label="Location (URL)"
+        name="location"
         required
       >
-        <Input type="number" placeholder="Enter request ID" />
+        <Input placeholder={location} type="url" />
       </FormField>
       <FormField
         control={form.control}
-        label="Remote Location (URL)"
-        name="remoteLocation"
-        required
-      >
-        <Input placeholder={remoteLocation} type="url" />
-      </FormField>
-      <SelectFormField
-        control={form.control}
-        label="Log Type"
-        name="logType"
-        options={logTypes}
-        placeholder="Select Log Type"
-        required
-      />
-      <FormField
-        control={form.control}
-        label="Oldest Timestamp"
-        name="oldestTimestamp"
+        label="Start Timestamp"
+        name="startTime"
       >
         <Input type="datetime-local" />
       </FormField>
 
-      <FormField
-        control={form.control}
-        label="Latest Timestamp"
-        name="latestTimestamp"
-      >
+      <FormField control={form.control} label="Stop Timestamp" name="stopTime">
         <Input type="datetime-local" />
       </FormField>
 

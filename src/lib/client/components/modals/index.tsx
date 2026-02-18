@@ -46,6 +46,7 @@ import { ToggleStationOnlineModal } from '@lib/client/components/modals/toggle-s
 import { ToggleTransactionActiveModal } from '@lib/client/components/modals/toggle-status/toggle.transaction.active.modal';
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
+import { GetDiagnosticsModal } from './1.6/get-diagnostics/get.diagnostics.modal';
 
 const MODAL_COMPONENTS: Partial<{
   [key in ModalComponentType]: React.FC<any>;
@@ -63,6 +64,7 @@ const MODAL_COMPONENTS: Partial<{
   [ModalComponentType.changeAvailability16]: ChangeAvailabilityModal16,
   [ModalComponentType.changeConfiguration16]: ChangeConfigurationModal,
   [ModalComponentType.getConfiguration16]: GetConfigurationModal,
+  [ModalComponentType.getDiagnostics16]: GetDiagnosticsModal,
   [ModalComponentType.triggerMessage16]: TriggerMessageModal16,
   [ModalComponentType.updateFirmware16]: UpdateFirmwareModal16,
   // OCPP 2.0.1
