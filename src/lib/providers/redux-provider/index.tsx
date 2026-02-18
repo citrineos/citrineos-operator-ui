@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import store from '@/lib/utils/store';
 import React from 'react';
+import store from '@/lib/utils/store/store';
 import { Provider } from 'react-redux';
 
 type ReduxProviderProps = {

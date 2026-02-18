@@ -23,7 +23,7 @@ import type { ConnectorClass } from '@lib/cls/connector.dto';
 import type { EvseClass } from '@lib/cls/evse.dto';
 import { CHARGING_STATIONS_GET_QUERY } from '@lib/queries/charging.stations';
 import { ResourceType } from '@lib/utils/access.types';
-import { setSelectedChargingStation } from '@lib/utils/selected.charging.station.slice';
+import { setSelectedChargingStation } from '@lib/utils/store/selected.charging.station.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { useOne } from '@refinedev/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

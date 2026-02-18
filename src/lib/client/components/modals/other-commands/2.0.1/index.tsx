@@ -11,7 +11,7 @@ import {
 import { Button } from '@lib/client/components/ui/button';
 import type { ListCanReturnType } from '@lib/utils/access.types';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { closeModal, openModal } from '@lib/utils/modal.slice';
+import { closeModal, openModal } from '@lib/utils/store/modal.slice';
 import { useCan } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
 import { useDispatch } from 'react-redux';

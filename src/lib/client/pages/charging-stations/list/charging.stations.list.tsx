@@ -17,7 +17,7 @@ import { CHARGING_STATIONS_LIST_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/modal.slice';
+import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
@@ -33,6 +33,7 @@ import {
 } from '@lib/client/styles/table';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
+import { ColumnSelectorButton } from '@lib/client/components/column-selector-button';
 
 export const ChargingStationsList = () => {
   const { push } = useRouter();
@@ -121,6 +122,12 @@ export const ChargingStationsList = () => {
               {translate('buttons.add')}{' '}
               {translate('ChargingStations.chargingStation')}
             </Button>
+          </CanAccess>
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.LIST}
+          >
+            <ColumnSelectorButton columns={columns} />
           </CanAccess>
           <DebounceSearch
             onSearch={onSearch}

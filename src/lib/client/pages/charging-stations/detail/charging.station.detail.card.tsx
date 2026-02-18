@@ -23,7 +23,7 @@ import {
 } from '@lib/queries/charging.stations';
 import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/modal.slice';
+import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import {
   CanAccess,

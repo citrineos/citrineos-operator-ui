@@ -11,7 +11,7 @@ import { Button } from '@lib/client/components/ui/button';
 import { getChargingStationColumns } from '@lib/client/pages/charging-stations/columns';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { openModal } from '@lib/utils/modal.slice';
+import { openModal } from '@lib/utils/store/modal.slice';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
 import { Plus } from 'lucide-react';
