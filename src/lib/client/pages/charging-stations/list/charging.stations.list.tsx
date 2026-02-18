@@ -5,7 +5,6 @@
 
 import type { ChargingStationDto } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
-import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import {
@@ -19,11 +18,9 @@ import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
-import { instanceToPlain } from 'class-transformer';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import {
   tableHeaderWrapperFlex,
@@ -32,7 +29,6 @@ import {
 } from '@lib/client/styles/table';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
-import { ColumnSelectorButton } from '@lib/client/components/column-selector-button';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const ChargingStationsList = () => {
@@ -41,8 +37,9 @@ export const ChargingStationsList = () => {
 
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
 
-  const { renderedVisibleColumns } = useColumnPreferences(
+  const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
     getChargingStationColumns(),
+    ResourceType.CHARGING_STATIONS,
   );
 
   const onSearch = (value: string) => {
@@ -73,6 +70,7 @@ export const ChargingStationsList = () => {
             resource={ResourceType.CHARGING_STATIONS}
             action={ActionType.LIST}
           >
+            {columnSelector}
             <DebounceSearch
               onSearch={onSearch}
               placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}

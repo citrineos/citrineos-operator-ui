@@ -7,14 +7,26 @@ import { associationSelectionSlice } from '@lib/utils/store/association.selectio
 import { selectedChargingStationSlice } from '@lib/utils/store/selected.charging.station.slice';
 import { modalSlice } from '@lib/utils/store/modal.slice';
 import { mapsSlice } from '@lib/utils/store/maps.slice';
-import { persistReducer, persistStore } from 'redux-persist';
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistReducer,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import {
+  tablePreferencesSliceKey,
+  tablePreferencesSlice,
+} from '@lib/utils/store/table.preferences.slice';
 
 // https://github.com/rt2zz/redux-persist/blob/master/docs/api.md#type-persistconfig
 const persistConfig = {
-  key: 'root',
+  key: 'citrine',
   storage,
-  whitelist: [],
+  whitelist: [tablePreferencesSliceKey],
 };
 
 const slices = [
@@ -22,6 +34,7 @@ const slices = [
   selectedChargingStationSlice,
   modalSlice,
   mapsSlice,
+  tablePreferencesSlice,
 ];
 
 export const store = configureStore({
@@ -29,7 +42,15 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['counter/addModelsToStorage'],
+        ignoredActions: [
+          'counter/addModelsToStorage',
+          FLUSH,
+          REHYDRATE,
+          PAUSE,
+          PERSIST,
+          PURGE,
+          REGISTER,
+        ],
       },
     }),
 });
