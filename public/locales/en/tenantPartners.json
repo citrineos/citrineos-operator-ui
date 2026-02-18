@@ -1,6 +1,7 @@
 {
   "TenantPartners": {
     "TenantPartners": "Partners",
-    "tenantPartner": "Partner"
+    "tenantPartner": "Partner",
+    "noDataFound": "No partner found with id {id}."
   }
 }

@@ -51,7 +51,7 @@ export const ChargingStationsList = () => {
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const handleStopTransactionClick = useCallback(
@@ -66,7 +66,7 @@ export const ChargingStationsList = () => {
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showResetStartModal = useCallback(
@@ -79,7 +79,7 @@ export const ChargingStationsList = () => {
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const columns = useMemo(
@@ -122,10 +122,15 @@ export const ChargingStationsList = () => {
               {translate('ChargingStations.chargingStation')}
             </Button>
           </CanAccess>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
-          />
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.LIST}
+          >
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess
