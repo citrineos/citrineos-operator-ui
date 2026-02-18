@@ -21,7 +21,7 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '@lib/queries/charging.stations';
-import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
+import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
 import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
@@ -62,6 +62,8 @@ import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { ForceDisconnectButton } from '../force.disconnect.button';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -147,7 +149,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showRemoteStartModal = useCallback(
@@ -160,7 +162,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const handleStopTransactionClick = useCallback(
@@ -175,7 +177,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showResetStartModal = useCallback(
@@ -188,7 +190,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showOtherCommandsModal = useCallback(() => {
@@ -201,7 +203,7 @@ export const ChargingStationDetailCard = ({
         modalComponentProps: { station: instanceToPlain(station) },
       }),
     );
-  }, [dispatch, station]);
+  }, [dispatch, station, translate]);
 
   const showToggleOnlineModal = useCallback(() => {
     if (!station) return;
@@ -218,8 +220,15 @@ export const ChargingStationDetailCard = ({
     );
   }, [dispatch, station, translate]);
 
-  if (isLoading) return <p>{translate('loading')}</p>;
-  if (!station) return <p>{translate('noDataFound')}</p>;
+  if (isLoading) {
+    return <Skeleton className="h-50 w-full" />;
+  } else if (!station) {
+    return (
+      <NoDataFoundCard
+        message={translate('ChargingStations.noDataFound', { id: stationId })}
+      />
+    );
+  }
 
   const hasActiveTransactions =
     station.transactions && station.transactions.length > 0;

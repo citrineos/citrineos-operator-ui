@@ -8,11 +8,8 @@ import {
   AuthorizationProps,
   AuthorizationSchema,
   AuthorizationWhitelistEnum,
+  OCPP2_0_1,
 } from '@citrineos/base';
-import {
-  AuthorizationStatusEnumType,
-  IdTokenEnumType,
-} from '@citrineos/base/dist/ocpp/model/2.0.1';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
@@ -80,8 +77,8 @@ const AuthorizationCreateSchema = AuthorizationSchema.pick({
 
 const defaultValues = {
   [AuthorizationProps.idToken]: '',
-  [AuthorizationProps.idTokenType]: IdTokenEnumType.Central,
-  [AuthorizationProps.status]: AuthorizationStatusEnumType.Unknown,
+  [AuthorizationProps.idTokenType]: OCPP2_0_1.IdTokenEnumType.Central,
+  [AuthorizationProps.status]: OCPP2_0_1.AuthorizationStatusEnumType.Unknown,
   [AuthorizationProps.cacheExpiryDateTime]: undefined,
   [AuthorizationProps.chargingPriority]: undefined,
   [AuthorizationProps.language1]: '',
@@ -99,8 +96,10 @@ const defaultValues = {
 
 export type AuthorizationCreateDto = z.infer<typeof AuthorizationCreateSchema>;
 
-const idTokenTypes = Object.keys(IdTokenEnumType);
-const authorizationStatuses = Object.keys(AuthorizationStatusEnumType);
+const idTokenTypes = Object.keys(OCPP2_0_1.IdTokenEnumType);
+const authorizationStatuses = Object.keys(
+  OCPP2_0_1.AuthorizationStatusEnumType,
+);
 const authorizationWhitelistOptions = Object.keys(AuthorizationWhitelistEnum);
 
 export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {

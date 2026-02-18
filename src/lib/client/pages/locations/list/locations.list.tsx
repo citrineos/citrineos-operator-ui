@@ -65,10 +65,12 @@ export const LocationsList = () => {
               {translate('buttons.add')} {translate('Locations.location')}
             </Button>
           </CanAccess>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('Locations.Locations')}`}
-          />
+          <CanAccess resource={ResourceType.LOCATIONS} action={ActionType.LIST}>
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('Locations.Locations')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess

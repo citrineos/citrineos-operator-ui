@@ -17,7 +17,6 @@ import { CHARGING_STATIONS_LIST_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { instanceToPlain } from 'class-transformer';
@@ -70,16 +69,15 @@ export const ChargingStationsList = () => {
               {translate('ChargingStations.chargingStation')}
             </Button>
           </CanAccess>
-          {/*<CanAccess*/}
-          {/*  resource={ResourceType.CHARGING_STATIONS}*/}
-          {/*  action={ActionType.LIST}*/}
-          {/*>*/}
-          {/*  <ColumnSelectorButton columns={columns} />*/}
-          {/*</CanAccess>*/}
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
-          />
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.LIST}
+          >
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess

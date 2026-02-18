@@ -50,6 +50,7 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
         dispatch(setGoogleMapsApiKey(key)),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -75,7 +76,7 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
     <Skeleton className="size=full" />
   ) : (
     <div className="size-full">
-      <APIProvider apiKey={apiKey}>
+      <APIProvider apiKey={apiKey ?? ''}>
         <Map
           mapId={config.googleMapsLocationPickerMapId}
           center={
