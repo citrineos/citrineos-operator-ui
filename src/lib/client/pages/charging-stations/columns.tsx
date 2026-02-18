@@ -146,10 +146,7 @@ export const getChargingStationColumns = (
                 <StartTransactionButton station={row.original} />
               )}
               {hasActiveTransactions && (
-                <StopTransactionButton
-                  stationId={row.original.id}
-                  onClickAction={() => handleStopTransactionClick(row.original)}
-                />
+                <StopTransactionButton station={row.original} />
               )}
               <ResetButton
                 stationId={row.original.id}

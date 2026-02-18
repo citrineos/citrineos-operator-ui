@@ -497,8 +497,7 @@ export const ChargingStationDetailCard = ({
                 )}
                 {hasActiveTransactions && (
                   <StopTransactionButton
-                    stationId={station.id}
-                    onClickAction={() => handleStopTransactionClick(station)}
+                    station={station}
                     disabled={!station.isOnline}
                   />
                 )}

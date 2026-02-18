@@ -16,6 +16,7 @@ import { useForm } from '@refinedev/react-hook-form';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
+import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
 export interface OCPP1_6_RemoteStopProps {
   station: ChargingStationWithTransactionsDto;
@@ -66,7 +67,14 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
   return hasNoActiveTransactions ? (
     <div>No active transactions found for this charging station.</div>
   ) : (
-    <Form {...form} loading={loading} submitHandler={onFinish} hideCancel>
+    <Form
+      {...form}
+      loading={loading}
+      submitHandler={onFinish}
+      hideCancel
+      submitButtonVariant={FormButtonVariants.delete}
+      submitButtonLabel="Stop"
+    >
       <ComboboxFormField
         control={form.control}
         label="Active Transactions"
