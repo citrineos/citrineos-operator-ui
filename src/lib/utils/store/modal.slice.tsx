@@ -54,6 +54,6 @@ export const selectIsModalOpen = createSelector(
   (modal) => modal.isOpen,
 );
 
-export const selectModal = (state: RootState) => state.modal;
+export const selectModal = (state: RootState): ModalState => state.modal;
 
 export const { openModal, closeModal } = modalSlice.actions;

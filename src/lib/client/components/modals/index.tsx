@@ -103,10 +103,9 @@ const AppModal = () => {
   const { isOpen, title, modalComponentType, modalComponentProps } =
     useSelector(selectModal);
 
-  const ModalComponent =
-    modalComponentType != undefined
-      ? MODAL_COMPONENTS[modalComponentType]
-      : null;
+  const ModalComponent = modalComponentType
+    ? MODAL_COMPONENTS[modalComponentType]
+    : null;
 
   return (
     <Dialog
