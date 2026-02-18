@@ -36,6 +36,7 @@ import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Controller } from 'react-hook-form';
 import { isEmpty } from '@lib/utils/assertion';
+import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: ChargingStationDto;
@@ -172,6 +173,8 @@ export const OCPP2_0_1_RemoteStart = ({
       }
       submitHandler={onFinish}
       hideCancel
+      submitButtonVariant={FormButtonVariants.confirm}
+      submitButtonLabel="Start"
     >
       <FormField
         control={form.control}
