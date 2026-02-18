@@ -4,132 +4,91 @@
 'use client';
 
 import React from 'react';
-import type { ChargingStationDto } from '@citrineos/base';
 import { ChargingStationProps, LocationProps } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import ProtocolTag from '@lib/client/components/protocol-tag';
-import { Table } from '@lib/client/components/table';
 import {
   ChargingStationDetailsProps,
   type ChargingStationDetailsDto,
 } from '@lib/cls/charging.station.dto';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import type { RouterPush } from '@lib/utils/types';
 import { CanAccess, type CrudFilter } from '@refinedev/core';
 import type { CellContext } from '@tanstack/react-table';
-import { clickableLinkStyle } from '@lib/client/styles/page';
 import { StartTransactionButton } from '@lib/client/pages/charging-stations/start.transaction.button';
 import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
+import { TableCellLink } from '@lib/client/components/table-cell-link';
+import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 
 export const getChargingStationColumns = (
-  push: RouterPush,
-  showRemoteStartModal: (station: ChargingStationDto) => void,
-  handleStopTransactionClick: (station: ChargingStationDto) => void,
-  showResetStartModal: (station: ChargingStationDto) => void,
-  options?: {
-    includeLocationColumn?: boolean;
-  },
-) => {
-  // Default to showing the location column unless explicitly set to false
-  const includeLocationColumn = options?.includeLocationColumn !== false;
-
-  const columns = [
-    <Table.Column
-      id={ChargingStationProps.id}
-      key={ChargingStationProps.id}
-      accessorKey={ChargingStationProps.id}
-      header="ID"
-      enableSorting
-      cell={({ row }: CellContext<ChargingStationDetailsDto, unknown>) => {
-        return (
-          <div
-            className={clickableLinkStyle}
-            onClick={(event: React.MouseEvent) => {
-              const path = `/${MenuSection.CHARGING_STATIONS}/${row.original.id}`;
-
-              // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-              if (event.ctrlKey || event.metaKey) {
-                window.open(path, '_blank');
-              } else {
-                // Default behavior - navigate in current window
-                push(path);
-              }
-            }}
-          >
-            {row.original.id}
-          </div>
-        );
-      }}
-    />,
-  ];
-
-  // Conditionally add the location column
-  if (includeLocationColumn) {
-    columns.push(
-      <Table.Column
-        id={ChargingStationDetailsProps.location}
-        key={ChargingStationDetailsProps.location}
-        accessorKey="location.name"
-        header="Location"
-        cell={({ row }: CellContext<ChargingStationDetailsDto, unknown>) => {
-          return (
-            <div
-              className={clickableLinkStyle}
-              onClick={(event: React.MouseEvent) => {
-                const path = `/${MenuSection.LOCATIONS}/${row.original.location?.id}`;
-
-                // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-                if (event.ctrlKey || event.metaKey) {
-                  window.open(path, '_blank');
-                } else {
-                  // Default behavior - navigate in current window
-                  push(path);
-                }
-              }}
-            >
-              {row.original.location?.name}
-            </div>
-          );
-        }}
-      />,
-    );
-  }
-
-  // Add the remaining columns
-  columns.push(
-    <Table.Column
-      id={ChargingStationDetailsProps.statusNotifications}
-      key={ChargingStationDetailsProps.statusNotifications}
-      accessorKey="isOnline"
-      header="Status"
-      cell={({ row }: CellContext<ChargingStationDetailsDto, unknown>) => {
-        return (
-          <span
-            className={
-              row.original.isOnline ? 'text-success' : 'text-destructive'
-            }
-          >
-            {row.original.isOnline ? 'Online' : 'Offline'}
-          </span>
-        );
-      }}
-    />,
-    <Table.Column
-      id={ChargingStationProps.protocol}
-      key={ChargingStationProps.protocol}
-      accessorKey={ChargingStationProps.protocol}
-      header="Protocol"
-      cell={({ row }: CellContext<ChargingStationDetailsDto, unknown>) => (
+  includeLocation = true,
+): ColumnConfiguration[] => {
+  return [
+    {
+      key: ChargingStationProps.id,
+      header: 'ID',
+      visible: true,
+      sortable: true,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => (
+        <TableCellLink
+          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.id}`}
+          value={row.original.id}
+        />
+      ),
+    },
+    ...(includeLocation
+      ? [
+          {
+            key: ChargingStationDetailsProps.location,
+            header: 'Location',
+            visible: true,
+            cellRender: ({
+              row,
+            }: CellContext<ChargingStationDetailsDto, unknown>) => (
+              <TableCellLink
+                path={`/${MenuSection.LOCATIONS}/${row.original.location?.id}`}
+                value={row.original.location?.name}
+              />
+            ),
+          },
+        ]
+      : []),
+    {
+      key: ChargingStationDetailsProps.statusNotifications,
+      header: 'Status',
+      visible: true,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => (
+        <span
+          className={
+            row.original.isOnline ? 'text-success' : 'text-destructive'
+          }
+        >
+          {row.original.isOnline ? 'Online' : 'Offline'}
+        </span>
+      ),
+    },
+    {
+      key: ChargingStationDetailsProps.protocol,
+      header: 'Protocol',
+      visible: true,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => (
         <ProtocolTag protocol={row.original[ChargingStationProps.protocol]} />
-      )}
-    />,
-    <Table.Column
-      id="actions"
-      key="actions"
-      header="Actions"
-      cell={({ row }: CellContext<ChargingStationDetailsDto, unknown>) => {
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      visible: true,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => {
         const hasActiveTransactions =
           (row.original.transactions?.length ?? 0) > 0;
 
@@ -154,11 +113,9 @@ export const getChargingStationColumns = (
         ) : (
           <CommandsUnavailableText />
         );
-      }}
-    />,
-  );
-
-  return columns;
+      },
+    },
+  ];
 };
 
 export const getChargingStationsFilters = (value: string): CrudFilter[] => {

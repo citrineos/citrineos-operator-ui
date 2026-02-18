@@ -35,6 +35,12 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         createdAt
         updatedAt
       }
+      evses: Evses {
+        id
+        evseTypeId
+        evseId
+        physicalReference
+      }
       LatestStatusNotifications {
         id
         stationId

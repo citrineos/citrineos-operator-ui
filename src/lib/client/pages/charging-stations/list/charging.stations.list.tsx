@@ -34,69 +34,16 @@ import {
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { ColumnSelectorButton } from '@lib/client/components/column-selector-button';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const ChargingStationsList = () => {
   const { push } = useRouter();
-  const dispatch = useDispatch();
   const translate = useTranslate();
 
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
 
-  const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStart'),
-          modalComponentType: ModalComponentType.remoteStart,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStop'),
-          modalComponentType: ModalComponentType.remoteStop,
-          modalComponentProps: {
-            station: instanceToPlain(station),
-          },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.reset'),
-          modalComponentType: ModalComponentType.reset,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const columns = useMemo(
-    () =>
-      getChargingStationColumns(
-        push,
-        showRemoteStartModal,
-        handleStopTransactionClick,
-        showResetStartModal,
-      ),
-    [
-      push,
-      showRemoteStartModal,
-      handleStopTransactionClick,
-      showResetStartModal,
-    ],
+  const { renderedVisibleColumns } = useColumnPreferences(
+    getChargingStationColumns(),
   );
 
   const onSearch = (value: string) => {
@@ -123,12 +70,12 @@ export const ChargingStationsList = () => {
               {translate('ChargingStations.chargingStation')}
             </Button>
           </CanAccess>
-          <CanAccess
-            resource={ResourceType.CHARGING_STATIONS}
-            action={ActionType.LIST}
-          >
-            <ColumnSelectorButton columns={columns} />
-          </CanAccess>
+          {/*<CanAccess*/}
+          {/*  resource={ResourceType.CHARGING_STATIONS}*/}
+          {/*  action={ActionType.LIST}*/}
+          {/*>*/}
+          {/*  <ColumnSelectorButton columns={columns} />*/}
+          {/*</CanAccess>*/}
           <DebounceSearch
             onSearch={onSearch}
             placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
@@ -161,7 +108,7 @@ export const ChargingStationsList = () => {
           enableFilters
           showHeader
         >
-          {columns}
+          {renderedVisibleColumns}
         </Table>
       </CanAccess>
     </div>
