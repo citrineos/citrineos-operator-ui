@@ -40,6 +40,10 @@ export const OCPP1_6_COMMANDS_REGISTRY: Record<string, CommandDefinition> = {
     displayName: 'Get Configuration',
     modalType: ModalComponentType.getConfiguration16,
   },
+  'Get Diagnostics': {
+    displayName: 'Get Diagnostics',
+    modalType: ModalComponentType.getDiagnostics16,
+  },
   'Trigger Message': {
     displayName: 'Trigger Message',
     modalType: ModalComponentType.triggerMessage16,
