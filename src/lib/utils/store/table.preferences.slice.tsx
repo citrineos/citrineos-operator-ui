@@ -13,14 +13,12 @@ import {
  * is not represented in this state, assumes default values.
  */
 interface TablePreferencesState {
-  pageSize: number;
   visibleColumns: Partial<Record<ResourceType, string[]>>;
 }
 
 export const tablePreferencesSliceKey = 'tablePreferences';
 
 const initialState: TablePreferencesState = {
-  pageSize: 10,
   visibleColumns: {},
 };
 
