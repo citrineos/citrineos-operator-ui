@@ -20,6 +20,7 @@ import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
 import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 import { TransactionClass } from '@lib/cls/transaction.dto';
+import { EMPTY_VALUE } from '@lib/utils/consts';
 
 export const transactionStationIdField = 'stationId';
 export const transactionChargingStationLocationNameField =
@@ -58,7 +59,7 @@ export const transactionsColumns: ColumnConfiguration[] = [
     cellRender: ({ row }: CellContext<TransactionClass, unknown>) => (
       <TableCellLink
         path={`/${MenuSection.CHARGING_STATIONS}/${row.original.chargingStation?.id}`}
-        value={row.original.chargingStation?.id ?? '-'}
+        value={row.original.chargingStation?.id ?? EMPTY_VALUE}
       />
     ),
   },
@@ -70,7 +71,7 @@ export const transactionsColumns: ColumnConfiguration[] = [
     cellRender: ({ row }: CellContext<BaseRecord, unknown>) => (
       <TableCellLink
         path={`/${MenuSection.LOCATIONS}/${row.original.chargingStation?.location?.id}`}
-        value={row.original.chargingStation?.location?.name ?? '-'}
+        value={row.original.chargingStation?.location?.name ?? EMPTY_VALUE}
       />
     ),
   },
@@ -86,7 +87,7 @@ export const transactionsColumns: ColumnConfiguration[] = [
           value={idToken}
         />
       ) : (
-        <span>—</span>
+        <span>{EMPTY_VALUE}</span>
       );
     },
   },
@@ -112,7 +113,7 @@ export const transactionsColumns: ColumnConfiguration[] = [
           enumType={OCPP2_0_1.ChargingStateEnumType}
         />
       ) : (
-        <span>-</span>
+        <span>{EMPTY_VALUE}</span>
       ),
   },
   {
@@ -124,7 +125,7 @@ export const transactionsColumns: ColumnConfiguration[] = [
       row.original.startTime ? (
         <TimestampDisplay isoTimestamp={row.original.startTime} />
       ) : (
-        <span>-</span>
+        <span>{EMPTY_VALUE}</span>
       ),
   },
   {
@@ -136,7 +137,7 @@ export const transactionsColumns: ColumnConfiguration[] = [
       row.original.endTime ? (
         <TimestampDisplay isoTimestamp={row.original.endTime} />
       ) : (
-        <span>-</span>
+        <span>{EMPTY_VALUE}</span>
       ),
   },
 ];
