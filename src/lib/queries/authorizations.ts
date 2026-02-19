@@ -30,6 +30,7 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       personalMessage
       cacheExpiryDateTime
       allowedConnectorTypes
+      disallowedEvseIdPrefixes
       createdAt
       updatedAt
     }
@@ -67,6 +68,8 @@ export const GET_AUTHORIZATIONS_BY_TRANSACTION = gql`
       language2
       personalMessage
       cacheExpiryDateTime
+      allowedConnectorTypes
+      disallowedEvseIdPrefixes
       createdAt
       updatedAt
     }

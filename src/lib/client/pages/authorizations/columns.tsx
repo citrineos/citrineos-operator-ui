@@ -12,6 +12,7 @@ import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
 import { isEmpty } from '@lib/utils/assertion';
+import { EMPTY_VALUE } from '@lib/utils/consts';
 
 export const authorizationsColumns: ColumnConfiguration[] = [
   {
@@ -64,14 +65,31 @@ export const authorizationsColumns: ColumnConfiguration[] = [
     cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
       !isEmpty(row.original.allowedConnectorTypes) ? (
         <div className="flex items-center gap-1 flex-wrap">
-          {row.original.allowedConnectorTypes?.map((connectorType: string) => (
+          {row.original.allowedConnectorTypes.map((connectorType: string) => (
             <Badge variant="muted" key={connectorType}>
               {connectorType}
             </Badge>
           ))}
         </div>
       ) : (
-        <span>-</span>
+        <span>{EMPTY_VALUE}</span>
+      ),
+  },
+  {
+    key: AuthorizationProps.disallowedEvseIdPrefixes,
+    header: 'Disallowed Prefixes',
+    visible: false,
+    cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
+      !isEmpty(row.original.disallowedEvseIdPrefixes) ? (
+        <div className="flex items-center gap-1 flex-wrap">
+          {row.original.disallowedEvseIdPrefixes.map((prefix: string) => (
+            <Badge variant="muted" key={prefix}>
+              {prefix}
+            </Badge>
+          ))}
+        </div>
+      ) : (
+        <span>{EMPTY_VALUE}</span>
       ),
   },
 ];
