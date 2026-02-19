@@ -22,7 +22,7 @@ import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { isEmpty } from '@lib/utils/assertion';
-import { EMPTY_VALUE, NOT_APPLICABLE } from '@lib/utils/consts';
+import { EMPTY_VALUE } from '@lib/utils/consts';
 import { badgeListStyle } from '@lib/client/styles/page';
 import { Badge } from '@lib/client/components/ui/badge';
 

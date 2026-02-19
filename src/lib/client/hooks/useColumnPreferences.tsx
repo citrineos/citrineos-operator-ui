@@ -169,7 +169,6 @@ export const useColumnPreferences = (
 
   return {
     columnSelector,
-    renderColumns: convertToTableColumns,
     renderedVisibleColumns,
   };
 };
