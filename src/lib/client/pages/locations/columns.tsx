@@ -16,6 +16,10 @@ import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
 import { ACTIONS_COLUMN } from '@lib/client/hooks/useColumnPreferences';
+import { EMPTY_VALUE } from '@lib/utils/consts';
+import { badgeListStyle } from '@lib/client/styles/page';
+import { isEmpty } from '@lib/utils/assertion';
+import { Badge } from '@lib/client/components/ui/badge';
 
 export const locationsColumns: ColumnConfiguration[] = [
   {
@@ -39,6 +43,58 @@ export const locationsColumns: ColumnConfiguration[] = [
           ? getFullAddress(row.original as Partial<LocationDto>)
           : 'No address'}
       </span>
+    ),
+  },
+  {
+    key: 'latitude',
+    header: 'Latitude',
+    visible: false,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
+      <span>
+        {row.original.coordinates
+          ? row.original.coordinates.coordinates[1].toFixed(4)
+          : EMPTY_VALUE}
+      </span>
+    ),
+  },
+  {
+    key: 'longitude',
+    header: 'Longitude',
+    visible: false,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
+      <span>
+        {row.original.coordinates
+          ? row.original.coordinates.coordinates[0].toFixed(4)
+          : EMPTY_VALUE}
+      </span>
+    ),
+  },
+  {
+    key: LocationProps.timeZone,
+    header: 'Time Zone',
+    visible: false,
+  },
+  {
+    key: LocationProps.parkingType,
+    header: 'Parking Type',
+    visible: false,
+  },
+  {
+    key: LocationProps.facilities,
+    header: 'Facilities',
+    visible: false,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
+      <div className={badgeListStyle}>
+        {!isEmpty(row.original.facilities) ? (
+          row.original.facilities.map((facility: any) => (
+            <Badge key={facility} variant="muted">
+              {facility}
+            </Badge>
+          ))
+        ) : (
+          <span>{EMPTY_VALUE}</span>
+        )}
+      </div>
     ),
   },
   {
