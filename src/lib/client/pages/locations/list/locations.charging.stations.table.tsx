@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { heading3Style, pageFlex } from '@lib/client/styles/page';
 import { cardHeaderFlex } from '@lib/client/styles/card';
 import { buttonIconSize } from '@lib/client/styles/icon';
-import { renderColumns } from '@lib/client/hooks/useColumnPreferences';
+import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
 
 export interface LocationsChargingStationsTableProps {
   location: LocationDto;
@@ -33,7 +33,9 @@ export const LocationsChargingStationsTable = ({
   // Use filteredStations if provided, otherwise use all stations from the location
   const stationsToDisplay = location.chargingPool ?? [];
 
-  const renderedColumns = renderColumns(getChargingStationColumns(false));
+  const renderedColumns = convertToTableColumns(
+    getChargingStationColumns(false),
+  );
 
   return (
     <div className={pageFlex}>

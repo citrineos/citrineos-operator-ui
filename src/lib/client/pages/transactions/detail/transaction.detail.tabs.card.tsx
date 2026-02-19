@@ -36,7 +36,7 @@ import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { useState } from 'react';
 import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
-import { renderColumns } from '@lib/client/hooks/useColumnPreferences';
+import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
 import { authorizationColumns } from '@lib/client/pages/authorizations/columns';
 
 export const TransactionDetailTabsCard = ({
@@ -72,7 +72,7 @@ export const TransactionDetailTabsCard = ({
 
   const authorization = transaction?.authorization;
 
-  const authColumns = renderColumns(authorizationColumns);
+  const authColumns = convertToTableColumns(authorizationColumns);
 
   return (
     <Card>

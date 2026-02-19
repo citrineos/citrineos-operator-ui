@@ -25,32 +25,29 @@ import { GET_TRANSACTION_LIST_FOR_STATION } from '@lib/queries/transactions';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { TransactionClass } from '@lib/cls/transaction.dto';
 import { AggregatedMeterValuesData } from '@lib/client/pages/charging-stations/detail/charging.station.aggregated.data';
-import React, { useMemo } from 'react';
+import React from 'react';
 import ChargingStationConfiguration from '@lib/client/pages/charging-stations/detail/charging.station.configuration';
-import { useRouter } from 'next/navigation';
 import {
-  getTransactionColumns,
   transactionChargingStationLocationNameField,
+  transactionColumns,
   transactionStationIdField,
 } from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
+import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
 
 export const ChargingStationDetailTabsCard = ({
   stationId,
 }: {
   stationId: string;
 }) => {
-  const { push } = useRouter();
   const translate = useTranslate();
 
-  const transactionColumns = useMemo(
-    () =>
-      getTransactionColumns(push).filter(
-        (tc) =>
-          tc.key !== transactionStationIdField &&
-          tc.key !== transactionChargingStationLocationNameField,
-      ),
-    [push],
+  const columns = convertToTableColumns(
+    transactionColumns.filter(
+      (tc) =>
+        tc.key !== transactionStationIdField &&
+        tc.key !== transactionChargingStationLocationNameField,
+    ),
   );
 
   return (
@@ -143,7 +140,7 @@ export const ChargingStationDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {transactionColumns}
+                {columns}
               </Table>
             </CanAccess>
           </TabsContent>

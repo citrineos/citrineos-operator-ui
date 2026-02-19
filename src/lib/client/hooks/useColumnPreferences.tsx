@@ -36,7 +36,7 @@ import { useTranslate } from '@refinedev/core';
 const EMPTY_PLACEHOLDER = '-';
 export const ACTIONS_COLUMN = 'actions';
 
-export const renderColumns = (columns: ColumnConfiguration[]) =>
+export const convertToTableColumns = (columns: ColumnConfiguration[]) =>
   columns.map((c) => (
     <Table.Column
       id={c.key}
@@ -118,7 +118,7 @@ export const useColumnPreferences = (
     );
   };
 
-  const renderedVisibleColumns = renderColumns(
+  const renderedVisibleColumns = convertToTableColumns(
     finalColumns.filter((c) => c.visible),
   );
 
@@ -169,7 +169,7 @@ export const useColumnPreferences = (
 
   return {
     columnSelector,
-    renderColumns,
+    renderColumns: convertToTableColumns,
     renderedVisibleColumns,
   };
 };
