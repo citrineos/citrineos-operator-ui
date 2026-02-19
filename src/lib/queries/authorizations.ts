@@ -29,6 +29,7 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       language2
       personalMessage
       cacheExpiryDateTime
+      allowedConnectorTypes
       createdAt
       updatedAt
     }

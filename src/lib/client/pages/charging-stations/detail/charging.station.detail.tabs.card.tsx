@@ -33,7 +33,7 @@ import {
   transactionStationIdField,
 } from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
-import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const ChargingStationDetailTabsCard = ({
   stationId,
@@ -42,12 +42,13 @@ export const ChargingStationDetailTabsCard = ({
 }) => {
   const translate = useTranslate();
 
-  const columns = convertToTableColumns(
+  const { renderedVisibleColumns } = useColumnPreferences(
     transactionsColumns.filter(
       (tc) =>
         tc.key !== transactionStationIdField &&
         tc.key !== transactionChargingStationLocationNameField,
     ),
+    ResourceType.TRANSACTIONS,
   );
 
   return (
@@ -140,7 +141,7 @@ export const ChargingStationDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {columns}
+                {renderedVisibleColumns}
               </Table>
             </CanAccess>
           </TabsContent>

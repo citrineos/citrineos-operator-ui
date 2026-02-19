@@ -36,7 +36,7 @@ import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { useState } from 'react';
 import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
-import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 import { authorizationsColumns } from '@lib/client/pages/authorizations/columns';
 
 export const TransactionDetailTabsCard = ({
@@ -72,7 +72,10 @@ export const TransactionDetailTabsCard = ({
 
   const authorization = transaction?.authorization;
 
-  const authColumns = convertToTableColumns(authorizationsColumns);
+  const { renderedVisibleColumns } = useColumnPreferences(
+    authorizationsColumns,
+    ResourceType.AUTHORIZATIONS,
+  );
 
   return (
     <Card>
@@ -116,7 +119,7 @@ export const TransactionDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {authColumns}
+                {renderedVisibleColumns}
               </Table>
             </CanAccess>
           </TabsContent>

@@ -24,7 +24,7 @@ import {
   transactionsColumns,
 } from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
-import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const AuthorizationDetailTabsCard = ({
   authorization,
@@ -33,10 +33,11 @@ export const AuthorizationDetailTabsCard = ({
 }) => {
   const authIdToken = authorization?.idToken;
 
-  const columns = convertToTableColumns(
+  const { renderedVisibleColumns } = useColumnPreferences(
     transactionsColumns.filter(
       (tc) => tc.key !== transactionAuthorizationIdTokenField,
     ),
+    ResourceType.TRANSACTIONS,
   );
 
   return (
@@ -71,7 +72,7 @@ export const AuthorizationDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {columns}
+                {renderedVisibleColumns}
               </Table>
             </CanAccess>
           </TabsContent>

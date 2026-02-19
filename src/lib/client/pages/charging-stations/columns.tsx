@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React from 'react';
 import { ChargingStationProps, LocationProps } from '@citrineos/base';
 import { CanAccess, type CrudFilter } from '@refinedev/core';
 import type { ColumnConfiguration } from '@lib/utils/column.configuration';
@@ -20,7 +21,7 @@ import { StartTransactionButton } from '@lib/client/pages/charging-stations/star
 import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
-import React from 'react';
+import { isEmpty } from '@lib/utils/assertion';
 
 export const getChargingStationsColumns = (
   includeLocation = true,
@@ -90,8 +91,7 @@ export const getChargingStationsColumns = (
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => {
-        const hasActiveTransactions =
-          (row.original.transactions?.length ?? 0) > 0;
+        const hasActiveTransactions = !isEmpty(row.original.transactions);
 
         return row.original.isOnline ? (
           <CanAccess

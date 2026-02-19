@@ -9,7 +9,7 @@ import { AuthorizationClass } from '@lib/cls/authorization.dto';
 import { AUTHORIZATIONS_LIST_QUERY } from '@lib/queries/authorizations';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 import { authorizationsColumns } from '@lib/client/pages/authorizations/columns';
 
 interface PartnerAuthorizationsProps {
@@ -19,7 +19,10 @@ interface PartnerAuthorizationsProps {
 export const PartnerAuthorizations: React.FC<PartnerAuthorizationsProps> = ({
   partnerId,
 }) => {
-  const columns = convertToTableColumns(authorizationsColumns);
+  const { renderedVisibleColumns } = useColumnPreferences(
+    authorizationsColumns,
+    ResourceType.AUTHORIZATIONS,
+  );
 
   return (
     <Table
@@ -43,7 +46,7 @@ export const PartnerAuthorizations: React.FC<PartnerAuthorizationsProps> = ({
       enableFilters
       showHeader
     >
-      {columns}
+      {renderedVisibleColumns}
     </Table>
   );
 };

@@ -11,6 +11,7 @@ import type { CrudFilter } from '@refinedev/core';
 import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
+import { isEmpty } from '@lib/utils/assertion';
 
 export const authorizationsColumns: ColumnConfiguration[] = [
   {
@@ -55,6 +56,23 @@ export const authorizationsColumns: ColumnConfiguration[] = [
         </Badge>
       );
     },
+  },
+  {
+    key: AuthorizationProps.allowedConnectorTypes,
+    header: 'Allowed Types',
+    visible: false,
+    cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
+      !isEmpty(row.original.allowedConnectorTypes) ? (
+        <div className="flex items-center gap-1 flex-wrap">
+          {row.original.allowedConnectorTypes?.map((connectorType: string) => (
+            <Badge variant="muted" key={connectorType}>
+              {connectorType}
+            </Badge>
+          ))}
+        </div>
+      ) : (
+        <span>-</span>
+      ),
   },
 ];
 

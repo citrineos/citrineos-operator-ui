@@ -5,18 +5,18 @@
 
 import type { LocationDto } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
-import { Table, type ColumnProps } from '@lib/client/components/table';
+import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import { getChargingStationsColumns } from '@lib/client/pages/charging-stations/columns';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { CanAccess, useTranslate, type HttpError } from '@refinedev/core';
+import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { heading3Style, pageFlex } from '@lib/client/styles/page';
 import { cardHeaderFlex } from '@lib/client/styles/card';
 import { buttonIconSize } from '@lib/client/styles/icon';
-import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export interface LocationsChargingStationsTableProps {
   location: LocationDto;
@@ -33,8 +33,9 @@ export const LocationsChargingStationsTable = ({
   // Use filteredStations if provided, otherwise use all stations from the location
   const stationsToDisplay = location.chargingPool ?? [];
 
-  const renderedColumns = convertToTableColumns(
+  const { renderedVisibleColumns } = useColumnPreferences(
     getChargingStationsColumns(false),
+    ResourceType.CHARGING_STATIONS,
   );
 
   return (
@@ -69,7 +70,7 @@ export const LocationsChargingStationsTable = ({
         fallback={<AccessDeniedFallback />}
       >
         <Table data={stationsToDisplay} useClientData>
-          {renderedColumns}
+          {renderedVisibleColumns}
         </Table>
       </CanAccess>
     </div>
