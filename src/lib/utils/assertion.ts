@@ -6,7 +6,7 @@ export function isNullOrUndefined(object: any): object is null | undefined {
   return object === undefined || object === null;
 }
 
-export function isEmpty(object: any[]): boolean {
+export function isEmpty(object: any[] | null | undefined): boolean {
   return isNullOrUndefined(object) || object.length === 0;
 }
 
