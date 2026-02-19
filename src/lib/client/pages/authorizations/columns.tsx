@@ -13,6 +13,7 @@ import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
 import { isEmpty } from '@lib/utils/assertion';
 import { EMPTY_VALUE } from '@lib/utils/consts';
+import { badgeListStyle } from '@lib/client/styles/page';
 
 export const authorizationsColumns: ColumnConfiguration[] = [
   {
@@ -64,7 +65,7 @@ export const authorizationsColumns: ColumnConfiguration[] = [
     visible: false,
     cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
       !isEmpty(row.original.allowedConnectorTypes) ? (
-        <div className="flex items-center gap-1 flex-wrap">
+        <div className={badgeListStyle}>
           {row.original.allowedConnectorTypes.map((connectorType: string) => (
             <Badge variant="muted" key={connectorType}>
               {connectorType}
@@ -81,7 +82,7 @@ export const authorizationsColumns: ColumnConfiguration[] = [
     visible: false,
     cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
       !isEmpty(row.original.disallowedEvseIdPrefixes) ? (
-        <div className="flex items-center gap-1 flex-wrap">
+        <div className={badgeListStyle}>
           {row.original.disallowedEvseIdPrefixes.map((prefix: string) => (
             <Badge variant="muted" key={prefix}>
               {prefix}

@@ -32,8 +32,8 @@ import {
 } from '@lib/client/components/ui/command';
 import { cn } from '@lib/utils/cn';
 import { useTranslate } from '@refinedev/core';
+import { EMPTY_VALUE } from '@lib/utils/consts';
 
-const EMPTY_PLACEHOLDER = '-';
 export const ACTIONS_COLUMN = 'actions';
 
 export const convertToTableColumns = (columns: ColumnConfiguration[]) =>
@@ -48,7 +48,7 @@ export const convertToTableColumns = (columns: ColumnConfiguration[]) =>
         c.cellRender ? (
           c.cellRender(context)
         ) : (
-          <span>{context.row.original[c.key] ?? EMPTY_PLACEHOLDER}</span>
+          <span>{context.row.original[c.key] || EMPTY_VALUE}</span>
         )
       }
     />

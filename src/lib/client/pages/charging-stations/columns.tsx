@@ -22,6 +22,9 @@ import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { isEmpty } from '@lib/utils/assertion';
+import { EMPTY_VALUE, NOT_APPLICABLE } from '@lib/utils/consts';
+import { badgeListStyle } from '@lib/client/styles/page';
+import { Badge } from '@lib/client/components/ui/badge';
 
 export const getChargingStationsColumns = (
   includeLocation = true,
@@ -81,8 +84,70 @@ export const getChargingStationsColumns = (
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
-        <ProtocolTag protocol={row.original[ChargingStationProps.protocol]} />
+        <ProtocolTag
+          protocol={row.original[ChargingStationDetailsProps.protocol]}
+        />
       ),
+    },
+    {
+      key: 'vendorModel',
+      header: 'Vendor / Model',
+      visible: false,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => (
+        <span>{`${row.original.chargePointVendor ?? EMPTY_VALUE} / ${row.original.chargePointModel ?? EMPTY_VALUE}`}</span>
+      ),
+    },
+    {
+      key: ChargingStationDetailsProps.floorLevel,
+      header: 'Floor Level',
+      visible: false,
+    },
+    {
+      key: ChargingStationDetailsProps.parkingRestrictions,
+      header: 'Parking Restrictions',
+      visible: false,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => (
+        <div className={badgeListStyle}>
+          {!isEmpty(row.original.parkingRestrictions) ? (
+            row.original.parkingRestrictions.map((pr: any) => (
+              <Badge key={pr} variant="muted">
+                {pr}
+              </Badge>
+            ))
+          ) : (
+            <span>{EMPTY_VALUE}</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: ChargingStationDetailsProps.capabilities,
+      header: 'Capabilities',
+      visible: false,
+      cellRender: ({
+        row,
+      }: CellContext<ChargingStationDetailsDto, unknown>) => (
+        <div className={badgeListStyle}>
+          {!isEmpty(row.original.capabilities) ? (
+            row.original.capabilities.map((cap: any) => (
+              <Badge key={cap} variant="muted">
+                {cap}
+              </Badge>
+            ))
+          ) : (
+            <span>{EMPTY_VALUE}</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: ChargingStationDetailsProps.firmwareVersion,
+      header: 'Firmware Version',
+      visible: false,
     },
     {
       key: ACTIONS_COLUMN,
