@@ -10,7 +10,7 @@ import { AUTHORIZATIONS_LIST_QUERY } from '@lib/queries/authorizations';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
-import { authorizationColumns } from '@lib/client/pages/authorizations/columns';
+import { authorizationsColumns } from '@lib/client/pages/authorizations/columns';
 
 interface PartnerAuthorizationsProps {
   partnerId: number;
@@ -19,7 +19,7 @@ interface PartnerAuthorizationsProps {
 export const PartnerAuthorizations: React.FC<PartnerAuthorizationsProps> = ({
   partnerId,
 }) => {
-  const columns = convertToTableColumns(authorizationColumns);
+  const columns = convertToTableColumns(authorizationsColumns);
 
   return (
     <Table

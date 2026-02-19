@@ -12,7 +12,7 @@ import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
 
-export const authorizationColumns: ColumnConfiguration[] = [
+export const authorizationsColumns: ColumnConfiguration[] = [
   {
     key: AuthorizationProps.idToken,
     header: 'Authorization ID',

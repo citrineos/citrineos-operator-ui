@@ -29,7 +29,7 @@ import React from 'react';
 import ChargingStationConfiguration from '@lib/client/pages/charging-stations/detail/charging.station.configuration';
 import {
   transactionChargingStationLocationNameField,
-  transactionColumns,
+  transactionsColumns,
   transactionStationIdField,
 } from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
@@ -43,7 +43,7 @@ export const ChargingStationDetailTabsCard = ({
   const translate = useTranslate();
 
   const columns = convertToTableColumns(
-    transactionColumns.filter(
+    transactionsColumns.filter(
       (tc) =>
         tc.key !== transactionStationIdField &&
         tc.key !== transactionChargingStationLocationNameField,

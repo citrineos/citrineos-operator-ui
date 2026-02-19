@@ -17,7 +17,7 @@ import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { CellContext } from '@tanstack/react-table';
 import { ACTIONS_COLUMN } from '@lib/client/hooks/useColumnPreferences';
 
-export const locationColumns: ColumnConfiguration[] = [
+export const locationsColumns: ColumnConfiguration[] = [
   {
     key: LocationProps.name,
     header: 'Name',

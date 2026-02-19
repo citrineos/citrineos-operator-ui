@@ -37,7 +37,7 @@ import { useState } from 'react';
 import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
 import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
-import { authorizationColumns } from '@lib/client/pages/authorizations/columns';
+import { authorizationsColumns } from '@lib/client/pages/authorizations/columns';
 
 export const TransactionDetailTabsCard = ({
   transaction,
@@ -72,7 +72,7 @@ export const TransactionDetailTabsCard = ({
 
   const authorization = transaction?.authorization;
 
-  const authColumns = convertToTableColumns(authorizationColumns);
+  const authColumns = convertToTableColumns(authorizationsColumns);
 
   return (
     <Card>

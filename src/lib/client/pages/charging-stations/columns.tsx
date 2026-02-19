@@ -3,26 +3,26 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import React from 'react';
 import { ChargingStationProps, LocationProps } from '@citrineos/base';
+import { CanAccess, type CrudFilter } from '@refinedev/core';
+import type { ColumnConfiguration } from '@lib/utils/column.configuration';
+import type { CellContext } from '@tanstack/react-table';
+import {
+  type ChargingStationDetailsDto,
+  ChargingStationDetailsProps,
+} from '@lib/cls/charging.station.dto';
+import { TableCellLink } from '@lib/client/components/table-cell-link';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import ProtocolTag from '@lib/client/components/protocol-tag';
-import {
-  ChargingStationDetailsProps,
-  type ChargingStationDetailsDto,
-} from '@lib/cls/charging.station.dto';
+import { ACTIONS_COLUMN } from '@lib/client/hooks/useColumnPreferences';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { CanAccess, type CrudFilter } from '@refinedev/core';
-import type { CellContext } from '@tanstack/react-table';
 import { StartTransactionButton } from '@lib/client/pages/charging-stations/start.transaction.button';
 import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.transaction.button';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
-import { TableCellLink } from '@lib/client/components/table-cell-link';
-import type { ColumnConfiguration } from '@lib/utils/column.configuration';
-import { ACTIONS_COLUMN } from '@lib/client/hooks/useColumnPreferences';
+import React from 'react';
 
-export const getChargingStationColumns = (
+export const getChargingStationsColumns = (
   includeLocation = true,
 ): ColumnConfiguration[] => {
   return [

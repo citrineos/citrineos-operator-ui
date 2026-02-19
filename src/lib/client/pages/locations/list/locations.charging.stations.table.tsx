@@ -7,7 +7,7 @@ import type { LocationDto } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Table, type ColumnProps } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
-import { getChargingStationColumns } from '@lib/client/pages/charging-stations/columns';
+import { getChargingStationsColumns } from '@lib/client/pages/charging-stations/columns';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { CanAccess, useTranslate, type HttpError } from '@refinedev/core';
@@ -34,7 +34,7 @@ export const LocationsChargingStationsTable = ({
   const stationsToDisplay = location.chargingPool ?? [];
 
   const renderedColumns = convertToTableColumns(
-    getChargingStationColumns(false),
+    getChargingStationsColumns(false),
   );
 
   return (

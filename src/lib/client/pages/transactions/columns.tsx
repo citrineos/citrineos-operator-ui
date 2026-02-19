@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React from 'react';
 import {
   AuthorizationProps,
   LocationProps,
@@ -10,12 +11,9 @@ import {
   TransactionProps,
 } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
-import { Table } from '@lib/client/components/table';
 import GenericTag from '@lib/client/components/tag';
 import { TimestampDisplay } from '@lib/client/components/timestamp-display';
-import type { RouterPush } from '@lib/utils/types';
 import { CircleCheck, CircleX } from 'lucide-react';
-import React from 'react';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import type { BaseRecord, CrudFilters } from '@refinedev/core';
 import { TableCellLink } from '@lib/client/components/table-cell-link';
@@ -28,7 +26,7 @@ export const transactionChargingStationLocationNameField =
   'ChargingStation.Location.name';
 export const transactionAuthorizationIdTokenField = 'authorization.idToken';
 
-export const transactionColumns: ColumnConfiguration[] = [
+export const transactionsColumns: ColumnConfiguration[] = [
   {
     key: TransactionProps.transactionId,
     header: 'Transaction ID',

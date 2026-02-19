@@ -21,9 +21,7 @@ import { TransactionClass } from '@lib/cls/transaction.dto';
 import type { AuthorizationDto } from '@citrineos/base';
 import {
   transactionAuthorizationIdTokenField,
-  transactionChargingStationLocationNameField,
-  transactionColumns,
-  transactionStationIdField,
+  transactionsColumns,
 } from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
 import { convertToTableColumns } from '@lib/client/hooks/useColumnPreferences';
@@ -36,7 +34,7 @@ export const AuthorizationDetailTabsCard = ({
   const authIdToken = authorization?.idToken;
 
   const columns = convertToTableColumns(
-    transactionColumns.filter(
+    transactionsColumns.filter(
       (tc) => tc.key !== transactionAuthorizationIdTokenField,
     ),
   );

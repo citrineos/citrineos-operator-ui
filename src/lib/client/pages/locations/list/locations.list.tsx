@@ -10,7 +10,7 @@ import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import {
   getLocationFilters,
-  locationColumns,
+  locationsColumns,
 } from '@lib/client/pages/locations/columns';
 import { LocationsChargingStationsTable } from '@lib/client/pages/locations/list/locations.charging.stations.table';
 import { LocationClass } from '@lib/cls/location.dto';
@@ -40,7 +40,7 @@ export const LocationsList = () => {
   const translate = useTranslate();
 
   const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
-    locationColumns,
+    locationsColumns,
     ResourceType.LOCATIONS,
   );
 

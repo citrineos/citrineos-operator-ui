@@ -8,7 +8,7 @@ import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import {
-  getChargingStationColumns,
+  getChargingStationsColumns,
   getChargingStationsFilters,
 } from '@lib/client/pages/charging-stations/columns';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
@@ -38,7 +38,7 @@ export const ChargingStationsList = () => {
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
 
   const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
-    getChargingStationColumns(),
+    getChargingStationsColumns(),
     ResourceType.CHARGING_STATIONS,
   );
 
