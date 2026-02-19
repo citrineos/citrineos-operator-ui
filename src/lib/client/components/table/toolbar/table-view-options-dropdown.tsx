@@ -21,6 +21,9 @@ interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
 
+/**
+ * TODO deprecate or revisit, as {@link useColumnPreferences} potentially replaces this.
+ */
 export const DataTableViewOptions = <TData,>({
   table,
 }: DataTableViewOptionsProps<TData>): ReturnType<

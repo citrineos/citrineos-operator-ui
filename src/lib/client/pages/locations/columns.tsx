@@ -10,67 +10,50 @@ import {
   ChargingStationProps,
 } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
-import { Table } from '@lib/client/components/table';
 import { getFullAddress } from '@lib/utils/geocoding';
-import { clickableLinkStyle } from '@lib/client/styles/page';
 import { ChevronDownIcon } from 'lucide-react';
+import type { ColumnConfiguration } from '@lib/utils/column.configuration';
+import { TableCellLink } from '@lib/client/components/table-cell-link';
+import type { CellContext } from '@tanstack/react-table';
+import { ACTIONS_COLUMN } from '@lib/client/hooks/useColumnPreferences';
 
-/**
- * Get column definitions for locations table
- * @returns React.ReactNode with Table.Column definitions
- */
-export const getLocationsColumns = (push: (path: string) => void) => [
-  <Table.Column
-    key={LocationProps.name}
-    id={LocationProps.name}
-    accessorKey={LocationProps.name}
-    header="Name"
-    cell={({ row }) => (
-      <div
-        className={clickableLinkStyle}
-        onClick={(event: React.MouseEvent) => {
-          event.stopPropagation();
-          const path = `/${MenuSection.LOCATIONS}/${row.original.id}`;
-
-          // If Ctrl key (or Command key on Mac) is pressed, open in new window/tab
-          if (event.ctrlKey || event.metaKey) {
-            window.open(path, '_blank');
-          } else {
-            // Default behavior - navigate in current window
-            push(path);
-          }
-        }}
-      >
-        {row.original.name || 'Unnamed Location'}
-      </div>
-    )}
-  />,
-  <Table.Column
-    key={LocationProps.address}
-    id={LocationProps.address}
-    accessorKey={LocationProps.address}
-    header="Address"
-    cell={({ row }) => (
+export const locationColumns: ColumnConfiguration[] = [
+  {
+    key: LocationProps.name,
+    header: 'Name',
+    visible: true,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
+      <TableCellLink
+        path={`/${MenuSection.LOCATIONS}/${row.original.id}`}
+        value={row.original.name ?? 'Unnamed Location'}
+      />
+    ),
+  },
+  {
+    key: LocationProps.address,
+    header: 'Address',
+    visible: true,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
       <span>
         {row.original.address
           ? getFullAddress(row.original as Partial<LocationDto>)
           : 'No address'}
       </span>
-    )}
-  />,
-  <Table.Column
-    key="totalStations"
-    id="totalStations"
-    accessorKey="totalStations"
-    header="Total Stations"
-    cell={({ row }) => <span>{row.original.chargingPool?.length ?? 0}</span>}
-  />,
-  <Table.Column
-    key="actions"
-    id="actions"
-    accessorKey="actions"
-    header=""
-    cell={({ row }) => (
+    ),
+  },
+  {
+    key: 'totalStations',
+    header: 'Total Stations',
+    visible: true,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
+      <span>{row.original.chargingPool?.length ?? 0}</span>
+    ),
+  },
+  {
+    key: ACTIONS_COLUMN,
+    header: '',
+    visible: true,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
       <div
         className="flex items-center justify-end gap-2 cursor-pointer hover:text-primary transition-colors"
         onClick={(e) => {
@@ -85,8 +68,8 @@ export const getLocationsColumns = (push: (path: string) => void) => [
           }`}
         />
       </div>
-    )}
-  />,
+    ),
+  },
 ];
 
 /**

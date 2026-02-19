@@ -20,6 +20,7 @@ import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { TableCellLink } from '@lib/client/components/table-cell-link';
 import type { ColumnConfiguration } from '@lib/utils/column.configuration';
+import { ACTIONS_COLUMN } from '@lib/client/hooks/useColumnPreferences';
 
 export const getChargingStationColumns = (
   includeLocation = true,
@@ -83,7 +84,7 @@ export const getChargingStationColumns = (
       ),
     },
     {
-      key: 'actions',
+      key: ACTIONS_COLUMN,
       header: 'Actions',
       visible: true,
       cellRender: ({

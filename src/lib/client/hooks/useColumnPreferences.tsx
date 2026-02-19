@@ -31,8 +31,28 @@ import {
   CommandSeparator,
 } from '@lib/client/components/ui/command';
 import { cn } from '@lib/utils/cn';
+import { useTranslate } from '@refinedev/core';
 
 const EMPTY_PLACEHOLDER = '-';
+export const ACTIONS_COLUMN = 'actions';
+
+export const renderColumns = (columns: ColumnConfiguration[]) =>
+  columns.map((c) => (
+    <Table.Column
+      id={c.key}
+      key={c.key}
+      accessorKey={c.accessorKey ?? c.key}
+      header={c.header}
+      enableSorting={c.sortable}
+      cell={(context: CellContext<any, unknown>) =>
+        c.cellRender ? (
+          c.cellRender(context)
+        ) : (
+          <span>{context.row.original[c.key] ?? EMPTY_PLACEHOLDER}</span>
+        )
+      }
+    />
+  ));
 
 /**
  * useColumnPreferences assists with rendering table columns based on
@@ -46,6 +66,7 @@ export const useColumnPreferences = (
   resource: ResourceType,
 ) => {
   const dispatch = useDispatch();
+  const translate = useTranslate();
   const visibleColumnsPreference = useSelector((state) =>
     getVisibleColumnsPreference(state, resource),
   );
@@ -56,6 +77,10 @@ export const useColumnPreferences = (
         visible: visibleColumnsPreference.includes(ac.key),
       }))
     : allColumns;
+
+  const toggleableColumns = finalColumns.filter(
+    (fc) => fc.key !== ACTIONS_COLUMN,
+  );
 
   const changeColumnVisibility = (selectedColumn: ColumnConfiguration) => {
     let finalPreferences;
@@ -93,30 +118,16 @@ export const useColumnPreferences = (
     );
   };
 
-  const renderedVisibleColumns = finalColumns
-    .filter((c) => c.visible)
-    .map((c) => (
-      <Table.Column
-        id={c.key}
-        key={c.key}
-        accessorKey={c.accessorKey ?? c.key}
-        header={c.header}
-        enableSorting={c.sortable}
-        cell={(context: CellContext<any, unknown>) =>
-          c.cellRender ? (
-            c.cellRender(context)
-          ) : (
-            <span>{context.row.original[c.key] ?? EMPTY_PLACEHOLDER}</span>
-          )
-        }
-      />
-    ));
+  const renderedVisibleColumns = renderColumns(
+    finalColumns.filter((c) => c.visible),
+  );
 
   const columnSelector = (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="secondary">
-          <Columns3Cog className={buttonIconSize} /> Columns
+          <Columns3Cog className={buttonIconSize} />{' '}
+          {translate('buttons.columns')}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0">
@@ -125,7 +136,7 @@ export const useColumnPreferences = (
           <CommandList>
             <CommandEmpty></CommandEmpty>
             <CommandGroup>
-              {finalColumns.map((column) => (
+              {toggleableColumns.map((column) => (
                 <CommandItem
                   key={column.key}
                   onSelect={() => changeColumnVisibility(column)}
@@ -147,7 +158,7 @@ export const useColumnPreferences = (
                 className="w-full"
                 onClick={resetColumnPreferences}
               >
-                Reset Columns
+                {translate('table.resetColumns')}
               </Button>
             </CommandGroup>
           </CommandList>
@@ -157,7 +168,8 @@ export const useColumnPreferences = (
   );
 
   return {
-    renderedVisibleColumns,
     columnSelector,
+    renderColumns,
+    renderedVisibleColumns,
   };
 };
