@@ -20,7 +20,6 @@ import {
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { Table } from '@lib/client/components/table';
 import {
-  BaseProps,
   type MeterValueDto,
   MeterValueProps,
   OCPP2_0_1,
@@ -34,18 +33,17 @@ import { ChartsWrapper } from '@lib/client/pages/transactions/chart/charts.wrapp
 import { TransactionEventsList } from '@lib/client/pages/transactions/detail/transaction-events/transaction.events.list';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '@lib/queries/meter.values';
 import { MeterValueClass } from '@lib/cls/meter.value.dto';
-import { useMemo, useState } from 'react';
-import { getAuthorizationColumns } from '@lib/client/pages/authorizations/columns';
-import { useRouter } from 'next/navigation';
-import { DEFAULT_SORTERS } from '../../../../utils/consts';
-import { AuthorizationClass } from '../../../../cls/authorization.dto';
+import { useState } from 'react';
+import { DEFAULT_SORTERS } from '@lib/utils/consts';
+import { AuthorizationClass } from '@lib/cls/authorization.dto';
+import { renderColumns } from '@lib/client/hooks/useColumnPreferences';
+import { authorizationColumns } from '@lib/client/pages/authorizations/columns';
 
 export const TransactionDetailTabsCard = ({
   transaction,
 }: {
   transaction: TransactionDto;
 }) => {
-  const { push } = useRouter();
   const translate = useTranslate();
 
   const [validContexts, setValidContexts] = useState<
@@ -74,7 +72,7 @@ export const TransactionDetailTabsCard = ({
 
   const authorization = transaction?.authorization;
 
-  const authColumns = useMemo(() => getAuthorizationColumns(push), [push]);
+  const authColumns = renderColumns(authorizationColumns);
 
   return (
     <Card>
