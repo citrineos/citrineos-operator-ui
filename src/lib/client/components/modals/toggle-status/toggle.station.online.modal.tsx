@@ -5,7 +5,7 @@
 
 import { Button } from '@lib/client/components/ui/button';
 import { CHARGING_STATIONS_EDIT_MUTATION } from '@lib/queries/charging.stations';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { ResourceType } from '@lib/utils/access.types';
 import { useTranslate, useUpdate } from '@refinedev/core';
 import { useState } from 'react';

@@ -13,8 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@lib/client/components/ui/dialog';
-import { closeModal, selectModal } from '@lib/utils/modal.slice';
+import { closeModal, selectModal } from '@lib/utils/store/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
+// Shared Modals (same for both OCPP versions)
+import { DataTransferModal } from '@lib/client/components/modals/data-transfer/data.transfer.modal';
 // OCPP 1.6 Modals
 import { ChangeAvailabilityModal as ChangeAvailabilityModal16 } from '@lib/client/components/modals/1.6/change-availability/change.availability.modal';
 import { ChangeConfigurationModal } from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
@@ -44,6 +46,7 @@ import { ToggleStationOnlineModal } from '@lib/client/components/modals/toggle-s
 import { ToggleTransactionActiveModal } from '@lib/client/components/modals/toggle-status/toggle.transaction.active.modal';
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
+import { GetDiagnosticsModal } from './1.6/get-diagnostics/get.diagnostics.modal';
 
 const MODAL_COMPONENTS: Partial<{
   [key in ModalComponentType]: React.FC<any>;
@@ -55,10 +58,13 @@ const MODAL_COMPONENTS: Partial<{
   [ModalComponentType.remoteStop]: RemoteStopTransactionModal,
   [ModalComponentType.reset]: ResetModal,
   [ModalComponentType.otherCommands]: OtherCommandsModal,
+  // Shared
+  [ModalComponentType.dataTransfer]: DataTransferModal,
   // OCPP 1.6
   [ModalComponentType.changeAvailability16]: ChangeAvailabilityModal16,
   [ModalComponentType.changeConfiguration16]: ChangeConfigurationModal,
   [ModalComponentType.getConfiguration16]: GetConfigurationModal,
+  [ModalComponentType.getDiagnostics16]: GetDiagnosticsModal,
   [ModalComponentType.triggerMessage16]: TriggerMessageModal16,
   [ModalComponentType.updateFirmware16]: UpdateFirmwareModal16,
   // OCPP 2.0.1
@@ -99,10 +105,9 @@ const AppModal = () => {
   const { isOpen, title, modalComponentType, modalComponentProps } =
     useSelector(selectModal);
 
-  const ModalComponent =
-    modalComponentType != undefined
-      ? MODAL_COMPONENTS[modalComponentType]
-      : null;
+  const ModalComponent = modalComponentType
+    ? MODAL_COMPONENTS[modalComponentType]
+    : null;
 
   return (
     <Dialog

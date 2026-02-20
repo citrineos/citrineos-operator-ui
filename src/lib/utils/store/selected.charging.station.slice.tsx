@@ -5,7 +5,7 @@
 import type { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from './store';
+import type { RootState } from '@lib/utils/store/store';
 
 interface SelectedChargingStationState {
   selectedChargingStation: ChargingStationClass | undefined;
@@ -15,7 +15,7 @@ const initialState: SelectedChargingStationState = {
   selectedChargingStation: undefined,
 };
 
-const selectedChargingStationSlice = createSlice({
+export const selectedChargingStationSlice = createSlice({
   name: 'selectedChargingStation',
   initialState,
   reducers: {
@@ -39,4 +39,3 @@ export const getSelectedChargingStation = () =>
 
 export const { setSelectedChargingStation } =
   selectedChargingStationSlice.actions;
-export default selectedChargingStationSlice.reducer;

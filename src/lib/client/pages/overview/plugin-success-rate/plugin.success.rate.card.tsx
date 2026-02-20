@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { Loader } from '@lib/client/components/ui/loader';
+import React from 'react';
 import { TRANSACTION_SUCCESS_RATE_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-fallback-card';
 import { CanAccess, useCustom, useTranslate } from '@refinedev/core';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { heading2Style } from '@lib/client/styles/page';
+import { OverviewCardSkeleton } from '@lib/client/pages/overview/overview.card.skeleton';
 
 export const PluginSuccessRateCard = () => {
   const translate = useTranslate();
@@ -27,14 +28,13 @@ export const PluginSuccessRateCard = () => {
   const percentage = totalCount === 0 ? 0 : (successCount / totalCount) * 100;
   const roundedPercentage = Math.round(percentage * 10) / 10;
 
-  if (isLoading) return <Loader />;
-  if (error) return <p>{translate('overview.errorLoadingData')}</p>;
+  if (isLoading) return <OverviewCardSkeleton />;
 
   return (
     <CanAccess
       resource={ResourceType.TRANSACTIONS}
       action={ActionType.LIST}
-      fallback={<AccessDeniedFallback />}
+      fallback={<AccessDeniedFallbackCard />}
     >
       <Card>
         <CardHeader>
@@ -43,15 +43,19 @@ export const PluginSuccessRateCard = () => {
           </h2>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4">
-            <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary transition-all duration-300"
-                style={{ width: `${roundedPercentage}%` }}
-              />
+          {error ? (
+            <p>{translate('overview.errorLoadingData')}</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${roundedPercentage}%` }}
+                />
+              </div>
+              <div className="text-3xl">{roundedPercentage}%</div>
             </div>
-            <div className="text-3xl">{roundedPercentage}%</div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </CanAccess>

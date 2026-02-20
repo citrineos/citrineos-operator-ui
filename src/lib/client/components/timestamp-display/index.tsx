@@ -29,5 +29,5 @@ export const formatDate = (
   if (!isoTimestamp) {
     return 'N/A';
   }
-  return moment(isoTimestamp).format(format);
+  return moment(isoTimestamp).local().format(format);
 };

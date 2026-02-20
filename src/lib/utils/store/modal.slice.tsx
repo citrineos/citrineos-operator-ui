@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ModalComponentType } from '@lib/client/components/modals/modal.types';
-import type { RootState } from '@lib/utils/store';
+import type { RootState } from '@lib/utils/store/store';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
@@ -23,7 +23,7 @@ const initialState: ModalState = {
   modalComponentProps: {},
 };
 
-const modalSlice = createSlice({
+export const modalSlice = createSlice({
   name: ModalStateName,
   initialState,
   reducers: {
@@ -54,7 +54,6 @@ export const selectIsModalOpen = createSelector(
   (modal) => modal.isOpen,
 );
 
-export const selectModal = (state: RootState) => state.modal;
+export const selectModal = (state: RootState): ModalState => state.modal;
 
 export const { openModal, closeModal } = modalSlice.actions;
-export default modalSlice.reducer;

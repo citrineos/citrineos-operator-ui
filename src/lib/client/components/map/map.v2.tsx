@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   getGoogleMapsApiKey,
   setGoogleMapsApiKey,
-} from '@lib/utils/maps.slice';
+} from '@lib/utils/store/maps.slice';
 import { getGoogleMapsApiKeyAction } from '@lib/server/actions/map/getGoogleMapsApiKeyAction';
 import type { LocationDto } from '@citrineos/base';
 import { ClusteredLocationMarkers } from '@lib/client/components/map/map.clusters';

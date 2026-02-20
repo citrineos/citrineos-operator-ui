@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Card, CardContent } from '@lib/client/components/ui/card';
 import {
   Tabs,
@@ -19,20 +19,26 @@ import { GET_TRANSACTIONS_FOR_AUTHORIZATION } from '@lib/queries/transactions';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { TransactionClass } from '@lib/cls/transaction.dto';
 import type { AuthorizationDto } from '@citrineos/base';
-import { getTransactionColumns } from '@lib/client/pages/transactions/columns';
-import { useRouter } from 'next/navigation';
+import {
+  transactionAuthorizationIdTokenField,
+  transactionsColumns,
+} from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const AuthorizationDetailTabsCard = ({
   authorization,
 }: {
   authorization: AuthorizationDto;
 }) => {
-  const { push } = useRouter();
-
   const authIdToken = authorization?.idToken;
 
-  const transactionColumns = useMemo(() => getTransactionColumns(push), [push]);
+  const { renderedVisibleColumns } = useColumnPreferences(
+    transactionsColumns.filter(
+      (tc) => tc.key !== transactionAuthorizationIdTokenField,
+    ),
+    ResourceType.TRANSACTIONS,
+  );
 
   return (
     <Card>
@@ -66,7 +72,7 @@ export const AuthorizationDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {transactionColumns}
+                {renderedVisibleColumns}
               </Table>
             </CanAccess>
           </TabsContent>

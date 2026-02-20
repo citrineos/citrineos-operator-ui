@@ -33,7 +33,7 @@ import {
 } from '@lib/queries/connectors';
 import { ResourceType } from '@lib/utils/access.types';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { getSelectedChargingStation } from '@lib/utils/selected.charging.station.slice';
+import { getSelectedChargingStation } from '@lib/utils/store/selected.charging.station.slice';
 import { useForm } from '@refinedev/react-hook-form';
 import { useSelector } from 'react-redux';
 import { Field, FieldError, FieldLabel } from '@lib/client/components/ui/field';
