@@ -80,6 +80,7 @@
     "react-redux": "9.2.0",
     "react-syntax-highlighter": "15.6.6",
     "recharts": "3.5.1",
+    "redux-persist": "6.0.0",
     "reflect-metadata": "0.2.2",
     "sass": "1.93.2",
     "shadcn": "2.4.1",

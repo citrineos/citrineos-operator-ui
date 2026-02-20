@@ -6,19 +6,23 @@
 import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
 import { Button } from '@lib/client/components/ui/button';
 import { CanAccess, useTranslate } from '@refinedev/core';
+import { useDispatch } from 'react-redux';
+import type { ChargingStationDto } from '@citrineos/base';
+import { openModal } from '@lib/utils/store/modal.slice';
+import { ModalComponentType } from '@lib/client/components/modals/modal.types';
+import { instanceToPlain } from 'class-transformer';
 
 /**
  * Intended to trigger the "Stop Transaction" modal; used by charging stations views.
  */
 export const StopTransactionButton = ({
-  stationId,
-  onClickAction,
+  station,
   disabled = false,
 }: {
-  stationId: string;
-  onClickAction: () => void;
+  station: ChargingStationDto;
   disabled?: boolean;
 }) => {
+  const dispatch = useDispatch();
   const translate = useTranslate();
 
   return (
@@ -26,11 +30,25 @@ export const StopTransactionButton = ({
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.COMMAND}
       params={{
-        id: stationId,
+        id: station.id,
         commandType: CommandType.STOP_TRANSACTION,
       }}
     >
-      <Button variant="destructive" disabled={disabled} onClick={onClickAction}>
+      <Button
+        variant="destructive"
+        disabled={disabled}
+        onClick={() => {
+          dispatch(
+            openModal({
+              title: translate('ChargingStations.remoteStop'),
+              modalComponentType: ModalComponentType.remoteStop,
+              modalComponentProps: {
+                station: instanceToPlain(station),
+              },
+            }),
+          );
+        }}
+      >
         {translate('ChargingStations.stopTransaction')}
       </Button>
     </CanAccess>

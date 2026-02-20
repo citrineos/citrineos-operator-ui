@@ -64,11 +64,11 @@ export function MultiSelect<T extends string>({
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-(--radix-popover-trigger-width) p-0 ">
+      <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
-          <CommandInput placeholder={searchPlaceholder ?? 'Search Items'} />
+          <CommandInput placeholder={searchPlaceholder ?? 'Search Options'} />
           <CommandList>
-            <CommandEmpty>No context found.</CommandEmpty>
+            <CommandEmpty>Nothing found.</CommandEmpty>
             <CommandGroup>
               {options.map((context) => (
                 <CommandItem

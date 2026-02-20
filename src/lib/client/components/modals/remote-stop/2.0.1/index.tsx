@@ -11,11 +11,12 @@ import { ComboboxFormField } from '@lib/client/components/form/field';
 import type { ChargingStationWithTransactionsDto } from '@lib/client/components/modals/remote-stop/remote.stop.modal';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { useForm } from '@refinedev/react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
+import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
 export interface OCPP2_0_1_RemoteStopProps {
   station: ChargingStationWithTransactionsDto;
@@ -78,7 +79,14 @@ export const OCPP2_0_1_RemoteStop = ({
   return hasNoActiveTransactions ? (
     <div>No active transactions found for this charging station.</div>
   ) : (
-    <Form {...form} loading={loading} submitHandler={onFinish} hideCancel>
+    <Form
+      {...form}
+      loading={loading}
+      submitHandler={onFinish}
+      hideCancel
+      submitButtonVariant={FormButtonVariants.delete}
+      submitButtonLabel="Stop"
+    >
       <ComboboxFormField
         control={form.control}
         label="Active Transactions"
