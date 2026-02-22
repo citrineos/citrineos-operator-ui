@@ -12,7 +12,7 @@ import { Input } from '@lib/client/components/ui/input';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { useForm } from '@refinedev/react-hook-form';
 import { plainToInstance } from 'class-transformer';
 import { useMemo, useState } from 'react';
@@ -26,13 +26,12 @@ export interface UpdateFirmwareModalProps {
 
 const UpdateFirmwareSchema = z.object({
   location: z
-    .string()
     .url('Must be a valid URL')
     .min(1, 'Location is required')
     .max(512),
   retrieveDate: z.string().min(1, 'Retrieve date is required'),
-  retries: z.number().int().min(0).optional(),
-  retryInterval: z.number().int().min(0).optional(),
+  retries: z.coerce.number<number>().int().min(0).optional(),
+  retryInterval: z.coerce.number<number>().int().min(0).optional(),
 });
 
 type UpdateFirmwareFormData = z.infer<typeof UpdateFirmwareSchema>;

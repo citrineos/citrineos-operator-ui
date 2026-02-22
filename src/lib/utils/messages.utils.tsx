@@ -5,8 +5,8 @@
 import { HttpMethod, OCPPVersion } from '@citrineos/base';
 import { BaseRestClient } from '@lib/utils/BaseRestClient';
 import { MessageConfirmation } from '@lib/utils/MessageConfirmation';
-import { closeModal } from '@lib/utils/modal.slice';
-import store from '@lib/utils/store';
+import { closeModal } from '@lib/utils/store/modal.slice';
+import store from '@lib/utils/store/store';
 import { Expose } from 'class-transformer';
 import { toast } from 'sonner';
 

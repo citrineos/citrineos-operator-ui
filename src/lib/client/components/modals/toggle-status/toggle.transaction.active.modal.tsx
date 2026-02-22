@@ -5,7 +5,7 @@
 
 import { Button } from '@lib/client/components/ui/button';
 import { TRANSACTION_EDIT_MUTATION } from '@lib/queries/transactions';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { ResourceType } from '@lib/utils/access.types';
 import { useTranslate, useUpdate } from '@refinedev/core';
 import { useState } from 'react';

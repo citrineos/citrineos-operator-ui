@@ -6,7 +6,7 @@
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
-import { getPartnersColumns } from '@lib/client/pages/partners/columns';
+import { partnersColumns } from '@lib/client/pages/partners/columns';
 import { TenantPartnerClass } from '@lib/cls/tenant.partner.cls';
 import { PARTNERS_LIST_QUERY } from '@lib/queries/tenant.partners';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
@@ -16,7 +16,6 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import {
   tableHeaderWrapperFlex,
@@ -24,12 +23,16 @@ import {
   tableWrapperStyle,
 } from '@lib/client/styles/table';
 import { buttonIconSize } from '@lib/client/styles/icon';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const PartnersList = () => {
   const { push } = useRouter();
   const translate = useTranslate();
 
-  const columns = useMemo(() => getPartnersColumns(push), [push]);
+  const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
+    partnersColumns,
+    ResourceType.PARTNERS,
+  );
 
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
@@ -50,6 +53,9 @@ export const PartnersList = () => {
               {translate('buttons.add')}{' '}
               {translate('TenantPartners.TenantPartners')}
             </Button>
+          </CanAccess>
+          <CanAccess resource={ResourceType.PARTNERS} action={ActionType.LIST}>
+            {columnSelector}
           </CanAccess>
         </div>
       </div>
@@ -76,7 +82,7 @@ export const PartnersList = () => {
           enableFilters
           showHeader
         >
-          {columns}
+          {renderedVisibleColumns}
         </Table>
       </CanAccess>
     </div>

@@ -21,9 +21,9 @@ import {
   CHARGING_STATIONS_DELETE_MUTATION,
   CHARGING_STATIONS_GET_QUERY,
 } from '@lib/queries/charging.stations';
-import { ActionType, CommandType, ResourceType } from '@lib/utils/access.types';
+import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/modal.slice';
+import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import {
   CanAccess,
@@ -62,6 +62,9 @@ import { StopTransactionButton } from '@lib/client/pages/charging-stations/stop.
 import { CommandsUnavailableText } from '@lib/client/pages/charging-stations/commands.unavailable.text';
 import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { ForceDisconnectButton } from '../force.disconnect.button';
+import { Skeleton } from '@lib/client/components/ui/skeleton';
+import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
+import { isEmpty } from '@lib/utils/assertion';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -147,48 +150,7 @@ export const ChargingStationDetailCard = ({
         }),
       );
     },
-    [dispatch],
-  );
-
-  const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStart'),
-          modalComponentType: ModalComponentType.remoteStart,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStop'),
-          modalComponentType: ModalComponentType.remoteStop,
-          modalComponentProps: {
-            station: instanceToPlain(station),
-          },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.reset'),
-          modalComponentType: ModalComponentType.reset,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch],
+    [dispatch, translate],
   );
 
   const showOtherCommandsModal = useCallback(() => {
@@ -201,7 +163,7 @@ export const ChargingStationDetailCard = ({
         modalComponentProps: { station: instanceToPlain(station) },
       }),
     );
-  }, [dispatch, station]);
+  }, [dispatch, station, translate]);
 
   const showToggleOnlineModal = useCallback(() => {
     if (!station) return;
@@ -218,8 +180,15 @@ export const ChargingStationDetailCard = ({
     );
   }, [dispatch, station, translate]);
 
-  if (isLoading) return <p>{translate('loading')}</p>;
-  if (!station) return <p>{translate('noDataFound')}</p>;
+  if (isLoading) {
+    return <Skeleton className="h-50 w-full" />;
+  } else if (!station) {
+    return (
+      <NoDataFoundCard
+        message={translate('ChargingStations.noDataFound', { id: stationId })}
+      />
+    );
+  }
 
   const hasActiveTransactions =
     station.transactions && station.transactions.length > 0;
@@ -369,7 +338,7 @@ export const ChargingStationDetailCard = ({
 
               <KeyValueDisplay
                 keyLabel="Floor Level"
-                value={station.floorLevel}
+                value={station.floorLevel || NOT_APPLICABLE}
               />
 
               <KeyValueDisplay
@@ -442,12 +411,12 @@ export const ChargingStationDetailCard = ({
               <KeyValueDisplay
                 keyLabel="Connector Types"
                 value={
-                  (station.connectors?.length ?? 0) > 0
-                    ? station
+                  isEmpty(station.connectors)
+                    ? NOT_APPLICABLE
+                    : station
                         .connectors!.map((c) => c.type)
                         .filter(Boolean)
                         .join(', ')
-                    : NOT_APPLICABLE
                 }
               />
 
@@ -491,23 +460,17 @@ export const ChargingStationDetailCard = ({
                 />
                 {!hasActiveTransactions && (
                   <StartTransactionButton
-                    stationId={station.id}
-                    onClickAction={() => showRemoteStartModal(station)}
+                    station={station}
                     disabled={!station.isOnline}
                   />
                 )}
                 {hasActiveTransactions && (
                   <StopTransactionButton
-                    stationId={station.id}
-                    onClickAction={() => handleStopTransactionClick(station)}
+                    station={station}
                     disabled={!station.isOnline}
                   />
                 )}
-                <ResetButton
-                  stationId={station.id}
-                  onClickAction={() => showResetStartModal(station)}
-                  disabled={!station.isOnline}
-                />
+                <ResetButton station={station} disabled={!station.isOnline} />
                 <Button
                   onClick={showOtherCommandsModal}
                   disabled={!station.isOnline}

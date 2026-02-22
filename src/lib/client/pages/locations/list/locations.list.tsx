@@ -10,7 +10,7 @@ import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import {
   getLocationFilters,
-  getLocationsColumns,
+  locationsColumns,
 } from '@lib/client/pages/locations/columns';
 import { LocationsChargingStationsTable } from '@lib/client/pages/locations/list/locations.charging.stations.table';
 import { LocationClass } from '@lib/cls/location.dto';
@@ -23,7 +23,7 @@ import { CanAccess, useTranslate } from '@refinedev/core';
 import type { ExpandedState } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import {
@@ -31,6 +31,7 @@ import {
   tableSearchFlex,
   tableWrapperStyle,
 } from '@lib/client/styles/table';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const LocationsList = () => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -38,7 +39,10 @@ export const LocationsList = () => {
   const { push } = useRouter();
   const translate = useTranslate();
 
-  const columns = useMemo(() => getLocationsColumns(push), [push]);
+  const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
+    locationsColumns,
+    ResourceType.LOCATIONS,
+  );
 
   const onSearch = (value: string) => {
     setSearchValue(value);
@@ -65,10 +69,13 @@ export const LocationsList = () => {
               {translate('buttons.add')} {translate('Locations.location')}
             </Button>
           </CanAccess>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('Locations.Locations')}`}
-          />
+          <CanAccess resource={ResourceType.LOCATIONS} action={ActionType.LIST}>
+            {columnSelector}
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('Locations.Locations')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess
@@ -105,7 +112,7 @@ export const LocationsList = () => {
             expandedRowClassName: 'bg-muted/10',
           }}
         >
-          {columns}
+          {renderedVisibleColumns}
         </Table>
       </CanAccess>
     </div>

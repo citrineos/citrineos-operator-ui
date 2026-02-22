@@ -40,6 +40,10 @@ export const OCPP2_0_1_COMMANDS_REGISTRY: Record<string, CommandDefinition> = {
     displayName: 'Customer Information',
     modalType: ModalComponentType.customerInformation,
   },
+  'Data Transfer': {
+    displayName: 'Data Transfer',
+    modalType: ModalComponentType.dataTransfer,
+  },
   'Delete Certificate': {
     displayName: 'Delete Certificate',
     modalType: ModalComponentType.deleteCertificate,

@@ -5,11 +5,10 @@
 
 import type { ChargingStationDto } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
-import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import {
-  getChargingStationColumns,
+  getChargingStationsColumns,
   getChargingStationsFilters,
 } from '@lib/client/pages/charging-stations/columns';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
@@ -17,14 +16,11 @@ import { CHARGING_STATIONS_LIST_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
-import { instanceToPlain } from 'class-transformer';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import {
   tableHeaderWrapperFlex,
@@ -33,69 +29,17 @@ import {
 } from '@lib/client/styles/table';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const ChargingStationsList = () => {
   const { push } = useRouter();
-  const dispatch = useDispatch();
   const translate = useTranslate();
 
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
 
-  const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStart'),
-          modalComponentType: ModalComponentType.remoteStart,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStop'),
-          modalComponentType: ModalComponentType.remoteStop,
-          modalComponentProps: {
-            station: instanceToPlain(station),
-          },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.reset'),
-          modalComponentType: ModalComponentType.reset,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const columns = useMemo(
-    () =>
-      getChargingStationColumns(
-        push,
-        showRemoteStartModal,
-        handleStopTransactionClick,
-        showResetStartModal,
-      ),
-    [
-      push,
-      showRemoteStartModal,
-      handleStopTransactionClick,
-      showResetStartModal,
-    ],
+  const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
+    getChargingStationsColumns(),
+    ResourceType.CHARGING_STATIONS,
   );
 
   const onSearch = (value: string) => {
@@ -122,10 +66,16 @@ export const ChargingStationsList = () => {
               {translate('ChargingStations.chargingStation')}
             </Button>
           </CanAccess>
-          <DebounceSearch
-            onSearch={onSearch}
-            placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
-          />
+          <CanAccess
+            resource={ResourceType.CHARGING_STATIONS}
+            action={ActionType.LIST}
+          >
+            {columnSelector}
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('ChargingStations.ChargingStations')}`}
+            />
+          </CanAccess>
         </div>
       </div>
       <CanAccess
@@ -154,7 +104,7 @@ export const ChargingStationsList = () => {
           enableFilters
           showHeader
         >
-          {columns}
+          {renderedVisibleColumns}
         </Table>
       </CanAccess>
     </div>

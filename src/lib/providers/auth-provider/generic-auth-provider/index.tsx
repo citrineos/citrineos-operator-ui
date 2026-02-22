@@ -22,6 +22,7 @@ import config from '@lib/utils/config';
 import { HasuraHeader, HasuraRole } from '@lib/utils/hasura.types';
 import { useLogin, type AuthProvider } from '@refinedev/core';
 import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
 
 /**
  * Configuration for the auth provider
@@ -36,6 +37,13 @@ export interface GenericAuthProviderConfig {
  */
 const ADMIN_EMAIL = config.adminEmail;
 const ADMIN_PASSWORD = config.adminPassword;
+
+export const genericAdminUser: User = {
+  id: '1',
+  name: 'Admin User',
+  email: ADMIN_EMAIL,
+  roles: ['admin'],
+};
 
 /**
  * Custom Login Page Component using shadcn/ui
@@ -125,14 +133,6 @@ export const createGenericAuthProvider = (
   config: GenericAuthProviderConfig = {},
 ): AuthProvider & AuthenticationContextProvider => {
   const { tokenKey = 'auth_token', userKey = 'auth_user' } = config;
-
-  const adminUser: User = {
-    id: '1',
-    name: 'Admin User',
-    email: ADMIN_EMAIL,
-    roles: ['admin'],
-  };
-
   /**
    * Save token to storage
    */
@@ -216,9 +216,12 @@ export const createGenericAuthProvider = (
           },
         };
       }
+
+      await signIn('generic', { callbackUrl: '/overview' });
+
       const mockToken = 'mock_token_' + Math.random().toString(36).slice(2);
       saveToken(mockToken);
-      saveUser(adminUser);
+      saveUser(genericAdminUser);
 
       // Refresh the page to ensure all auth-dependent components re-render
       window.location.href = '/overview';

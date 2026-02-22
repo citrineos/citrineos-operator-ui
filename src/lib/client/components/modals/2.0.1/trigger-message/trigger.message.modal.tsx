@@ -13,7 +13,7 @@ import { EvseSelector } from '@lib/client/components/modals/shared/evse-selector
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { useForm } from '@refinedev/react-hook-form';
 import { plainToInstance } from 'class-transformer';
 import { useDispatch } from 'react-redux';

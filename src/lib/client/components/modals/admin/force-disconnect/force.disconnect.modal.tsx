@@ -6,7 +6,7 @@ import { HttpMethod, type ChargingStationDto } from '@citrineos/base';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { plainToInstance } from 'class-transformer';
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';

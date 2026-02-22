@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * NextAuth configuration for Keycloak authentication
+ * NextAuth configuration for authentication
  *
- * Token Refresh:
+ * Keycloak Token Refresh:
  * - Access tokens are automatically refreshed 60 seconds before expiration
  * - Refresh tokens are used to obtain new access tokens without re-authentication
  * - If token refresh fails, the user will be logged out and redirected to login
@@ -41,13 +41,19 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import config from '@lib/utils/config';
 import { parseJwt } from '@lib/utils/jwt';
 import { HasuraRole } from '@lib/utils/hasura.types';
+import { genericAdminUser } from '@lib/providers/auth-provider/generic-auth-provider';
 
 const keycloakServerUrl = config.keycloakServerUrl || config.keycloakUrl;
+const authProvider = config.authProvider;
 
 /**
  * Refreshes an expired access token using the refresh token
  */
 async function refreshAccessToken(token: any) {
+  if (authProvider === 'generic') {
+    return token;
+  }
+
   try {
     const url = `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`;
 
@@ -94,69 +100,63 @@ async function refreshAccessToken(token: any) {
   }
 }
 
-const isKeycloakAuth = config.authProvider === 'keycloak';
+/**
+ * Defaults to Generic Auth Provider if Keycloak is not configured.
+ */
+const getProvider = () => {
+  if (authProvider === 'keycloak') {
+    return KeycloakProvider({
+      clientId: config.keycloakClientId!,
+      clientSecret: config.keycloakClientSecret!,
+      wellKnown: undefined,
+      issuer: `${config.keycloakUrl}/realms/${config.keycloakRealm}`,
+      authorization: {
+        url: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/auth`,
+      },
+      token: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`,
+      userinfo: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/userinfo`,
+      jwks_endpoint: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
+    });
+  } else {
+    return CredentialsProvider({
+      id: 'generic',
+      credentials: {
+        username: { label: 'Username', type: 'text' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials, _req) {
+        if (
+          credentials &&
+          credentials.username === config.adminEmail &&
+          credentials.password === config.adminPassword
+        ) {
+          return genericAdminUser;
+        } else {
+          return null;
+        }
+      },
+    });
+  }
+};
 
 const authOptions: AuthOptions = {
-  providers: isKeycloakAuth
-    ? [
-        KeycloakProvider({
-          clientId: config.keycloakClientId!,
-          clientSecret: config.keycloakClientSecret!,
-          wellKnown: undefined,
-          issuer: `${config.keycloakUrl}/realms/${config.keycloakRealm}`,
-          authorization: {
-            url: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/auth`,
-          },
-          token: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`,
-          userinfo: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/userinfo`,
-          jwks_endpoint: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
-        }),
-      ]
-    : [
-        CredentialsProvider({
-          name: 'Generic',
-          credentials: {
-            email: { label: 'Email', type: 'text' },
-            password: { label: 'Password', type: 'password' },
-          },
-          async authorize(credentials) {
-            const adminEmail = config.adminEmail;
-            const adminPassword = config.adminPassword;
+  providers: [getProvider()],
+  events: {
+    async signOut({ token }: { token: any }) {
+      // End the Keycloak session when user signs out
+      if (token?.idToken) {
+        try {
+          const params = new URLSearchParams({
+            id_token_hint: token.idToken,
+            post_logout_redirect_uri: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/login`,
+          });
 
-            if (
-              credentials?.email === adminEmail &&
-              credentials?.password === adminPassword
-            ) {
-              return {
-                id: '1',
-                name: 'Admin User',
-                email: adminEmail,
-              };
-            }
+          const endSessionUrl = `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/logout?${params.toString()}`;
 
-            return null;
-          },
-        }),
-      ],
-  events: isKeycloakAuth
-    ? {
-        async signOut({ token }: { token: any }) {
-          // End the Keycloak session when user signs out
-          if (token?.idToken) {
-            try {
-              const params = new URLSearchParams({
-                id_token_hint: token.idToken,
-                post_logout_redirect_uri: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/login`,
-              });
-
-              const endSessionUrl = `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/logout?${params.toString()}`;
-
-              await fetch(endSessionUrl, { method: 'GET' });
-            } catch (error) {
-              console.error('Error ending Keycloak session:', error);
-            }
-          }
-        },
+          await fetch(endSessionUrl, { method: 'GET' });
+        } catch (error) {
+          console.error('Error ending Keycloak session:', error);
+        }
       }
     : {},
   callbacks: {
