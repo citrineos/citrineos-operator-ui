@@ -20,6 +20,14 @@ const bucketName = config.awsS3BucketName;
 // 3. EC2 instance metadata (IAM role)
 const s3Config: any = { region };
 
+if (config.awsS3Endpoint) {
+  s3Config.endpoint = config.awsS3Endpoint;
+}
+
+if (config.awsS3ForcePathStyle !== undefined) {
+  s3Config.forcePathStyle = config.awsS3ForcePathStyle;
+}
+
 // Only add explicit credentials if they're provided
 if (config.awsAccessKeyId && config.awsSecretAccessKey) {
   s3Config.credentials = {

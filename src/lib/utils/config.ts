@@ -36,6 +36,8 @@ const getConfig: () => {
   awsAccessKeyId?: string;
   awsSecretAccessKey?: string;
   awsSessionToken?: string; // Optional. Needed for temporary credentials
+  awsS3Endpoint?: string;
+  awsS3ForcePathStyle?: boolean;
   awsS3BucketName?: string;
   awsS3CoreBucketName?: string;
   fileStorageType?: string;
@@ -92,6 +94,9 @@ const getConfig: () => {
     awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
     awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     awsSessionToken: process.env.AWS_SESSION_TOKEN,
+    awsS3Endpoint: process.env.AWS_S3_ENDPOINT,
+    awsS3ForcePathStyle:
+      process.env.AWS_S3_FORCE_PATH_STYLE?.toLowerCase() === 'true',
     fileStorageType: process.env.FILE_STORAGE_TYPE || 's3',
     gcpCloudStorageBucketName: process.env.GCP_CLOUD_STORAGE_BUCKET_NAME,
     gcpCloudStorageCoreBucketName:

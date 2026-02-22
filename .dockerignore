@@ -5,4 +5,7 @@ npm-debug.log
 .coverage
 .coverage.*
 .env
+.env.local
+.env.*
+!.env.dokploy.example
 .next

@@ -21,6 +21,9 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY . .
 
+# Never use repository-local env files in production build images.
+RUN rm -f .env.local .env
+
 RUN npm run build
 
 FROM base AS runner
