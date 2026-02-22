@@ -44,6 +44,15 @@ const getConfig: () => {
   gcpCloudStorageBucketName?: string;
   gcpCloudStorageCoreBucketName?: string;
 } = () => {
+  const normalizeEnv = (value?: string): string | undefined => {
+    if (!value) return undefined;
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+    // Dokploy-style placeholders should never be used as runtime values.
+    if (trimmed.startsWith('${{') && trimmed.endsWith('}}')) return undefined;
+    return trimmed;
+  };
+
   const authProviderResult = AuthProviderTypeEnum.safeParse(
     process.env.NEXT_PUBLIC_AUTH_PROVIDER,
   );
@@ -82,8 +91,11 @@ const getConfig: () => {
     fileServer: process.env.NEXT_PUBLIC_FILE_SERVER_URL,
     logoUrl: process.env.NEXT_PUBLIC_LOGO_URL,
     metricsUrl: process.env.NEXT_PUBLIC_METRICS_URL,
-    adminEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL,
-    adminPassword: process.env.NEXT_PUBLIC_ADMIN_PASSWORD,
+    adminEmail:
+      normalizeEnv(process.env.NEXT_PUBLIC_ADMIN_EMAIL) ||
+      'admin@citrineos.com',
+    adminPassword:
+      normalizeEnv(process.env.NEXT_PUBLIC_ADMIN_PASSWORD) || 'CitrineOS!',
     authProvider,
     keycloakUrl: process.env.NEXT_PUBLIC_KEYCLOAK_URL,
     keycloakServerUrl: process.env.KEYCLOAK_SERVER_URL,

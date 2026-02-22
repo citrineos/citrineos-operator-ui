@@ -37,8 +37,10 @@
 
 import type { AuthOptions } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import config from '@lib/utils/config';
 import { parseJwt } from '@lib/utils/jwt';
+import { HasuraRole } from '@lib/utils/hasura.types';
 
 const keycloakServerUrl = config.keycloakServerUrl || config.keycloakUrl;
 
@@ -92,40 +94,71 @@ async function refreshAccessToken(token: any) {
   }
 }
 
+const isKeycloakAuth = config.authProvider === 'keycloak';
+
 const authOptions: AuthOptions = {
-  providers: [
-    KeycloakProvider({
-      clientId: config.keycloakClientId!,
-      clientSecret: config.keycloakClientSecret!,
-      wellKnown: undefined,
-      issuer: `${config.keycloakUrl}/realms/${config.keycloakRealm}`,
-      authorization: {
-        url: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/auth`,
-      },
-      token: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`,
-      userinfo: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/userinfo`,
-      jwks_endpoint: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
-    }),
-  ],
-  events: {
-    async signOut({ token }: { token: any }) {
-      // End the Keycloak session when user signs out
-      if (token?.idToken) {
-        try {
-          const params = new URLSearchParams({
-            id_token_hint: token.idToken,
-            post_logout_redirect_uri: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/login`,
-          });
+  providers: isKeycloakAuth
+    ? [
+        KeycloakProvider({
+          clientId: config.keycloakClientId!,
+          clientSecret: config.keycloakClientSecret!,
+          wellKnown: undefined,
+          issuer: `${config.keycloakUrl}/realms/${config.keycloakRealm}`,
+          authorization: {
+            url: `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/auth`,
+          },
+          token: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/token`,
+          userinfo: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/userinfo`,
+          jwks_endpoint: `${keycloakServerUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/certs`,
+        }),
+      ]
+    : [
+        CredentialsProvider({
+          name: 'Generic',
+          credentials: {
+            email: { label: 'Email', type: 'text' },
+            password: { label: 'Password', type: 'password' },
+          },
+          async authorize(credentials) {
+            const adminEmail = config.adminEmail;
+            const adminPassword = config.adminPassword;
 
-          const endSessionUrl = `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/logout?${params.toString()}`;
+            if (
+              credentials?.email === adminEmail &&
+              credentials?.password === adminPassword
+            ) {
+              return {
+                id: '1',
+                name: 'Admin User',
+                email: adminEmail,
+              };
+            }
 
-          await fetch(endSessionUrl, { method: 'GET' });
-        } catch (error) {
-          console.error('Error ending Keycloak session:', error);
-        }
+            return null;
+          },
+        }),
+      ],
+  events: isKeycloakAuth
+    ? {
+        async signOut({ token }: { token: any }) {
+          // End the Keycloak session when user signs out
+          if (token?.idToken) {
+            try {
+              const params = new URLSearchParams({
+                id_token_hint: token.idToken,
+                post_logout_redirect_uri: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/login`,
+              });
+
+              const endSessionUrl = `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/logout?${params.toString()}`;
+
+              await fetch(endSessionUrl, { method: 'GET' });
+            } catch (error) {
+              console.error('Error ending Keycloak session:', error);
+            }
+          }
+        },
       }
-    },
-  },
+    : {},
   callbacks: {
     async redirect({ url, baseUrl }) {
       // Redirect to overview page after successful login
@@ -147,7 +180,15 @@ const authOptions: AuthOptions = {
       // Default to overview page for any other case
       return `${baseUrl}/overview`;
     },
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
+      if (!isKeycloakAuth) {
+        if (user) {
+          token.roles = [HasuraRole.ADMIN];
+          token.tenantId = config.tenantId;
+        }
+        return token;
+      }
+
       // Initial sign in - store Keycloak tokens in JWT
       if (account) {
         token.accessToken = account.access_token;
@@ -180,6 +221,14 @@ const authOptions: AuthOptions = {
       return refreshAccessToken(token);
     },
     async session({ session, token }) {
+      if (!isKeycloakAuth) {
+        if (session.user) {
+          (session.user as any).roles = [HasuraRole.ADMIN];
+          (session.user as any).tenantId = config.tenantId;
+        }
+        return session;
+      }
+
       // Pass JWT info to client session
       if (session.user) {
         (session.user as any).roles = token.roles;
