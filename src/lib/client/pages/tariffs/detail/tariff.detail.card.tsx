@@ -65,9 +65,7 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() =>
-                push(`/${MenuSection.TARIFFS}/${tariff.id}/edit`)
-              }
+              onClick={() => push(`/${MenuSection.TARIFFS}/${tariff.id}/edit`)}
               title={translate('actions.edit')}
             >
               <Pencil className={buttonIconSize} />
@@ -94,13 +92,13 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
           <KeyValueDisplay keyLabel="Currency" value={tariff.currency} />
           <KeyValueDisplay
             keyLabel="Price / kWh"
-            value={tariff.pricePerKwh?.toFixed(4) ?? NOT_APPLICABLE}
+            value={tariff.pricePerKwh?.toFixed(2) ?? NOT_APPLICABLE}
           />
           <KeyValueDisplay
             keyLabel="Price / min"
             value={
               tariff.pricePerMin != null
-                ? tariff.pricePerMin.toFixed(4)
+                ? tariff.pricePerMin.toFixed(2)
                 : NOT_APPLICABLE
             }
           />
@@ -108,7 +106,7 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
             keyLabel="Price / session"
             value={
               tariff.pricePerSession != null
-                ? tariff.pricePerSession.toFixed(4)
+                ? tariff.pricePerSession.toFixed(2)
                 : NOT_APPLICABLE
             }
           />
@@ -116,7 +114,7 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
             keyLabel="Authorization Amount"
             value={
               tariff.authorizationAmount != null
-                ? tariff.authorizationAmount.toFixed(4)
+                ? tariff.authorizationAmount.toFixed(2)
                 : NOT_APPLICABLE
             }
           />
@@ -124,7 +122,7 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
             keyLabel="Payment Fee"
             value={
               tariff.paymentFee != null
-                ? tariff.paymentFee.toFixed(4)
+                ? tariff.paymentFee.toFixed(2)
                 : NOT_APPLICABLE
             }
           />
