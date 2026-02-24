@@ -12,6 +12,7 @@ public/locales/en/common.json
 public/locales/en/authorizations.json
 public/locales/en/chargingStations.json
 public/locales/en/locations.json
+public/locales/en/tariffs.json
 public/locales/en/tenantPartners.json
 public/locales/en/transactions.json
 public/logo-black.svg
