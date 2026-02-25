@@ -21,18 +21,16 @@ import {
 } from 'lucide-react';
 import { parseAsJson, useQueryState } from 'nuqs';
 import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
-import { isNullOrUndefined } from '@lib/utils/assertion';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getPageSizePreference,
   setPageSizePreference,
 } from '@lib/utils/store/table.preferences.slice';
-import { DEFAULT_TABLE_STATE } from '@lib/utils/consts';
 
 interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   table: UseTableReturnType<TData>['reactTable'];
   showSelectedText?: boolean;
-  tableStateKey?: string;
+  tableStateKey: string;
 }
 
 export const Pagination = <TData extends BaseRecord = BaseRecord>({
@@ -43,7 +41,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
   const dispatch = useDispatch();
   const translate = useTranslate();
   const [tableQueryState, setTableQueryState] = useQueryState(
-    tableStateKey ?? DEFAULT_TABLE_STATE,
+    tableStateKey,
     parseAsJson(TableQueryStateSchema.parse),
   );
   const pageSizePreference = useSelector((state) =>
@@ -51,41 +49,32 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
   );
 
   const setPage = (pageIndex: number) => {
-    if (!isNullOrUndefined(tableStateKey)) {
-      // store both page and size in query params for context
-      setTableQueryState({
-        ...tableQueryState,
-        page: pageIndex + 1,
-        size: pageSizePreference,
-      }).then();
-    } else {
-      table.setPageIndex(pageIndex);
-    }
+    // store both page and size in query params for context
+    setTableQueryState({
+      ...tableQueryState,
+      page: pageIndex + 1,
+      size: pageSizePreference,
+    }).then();
   };
 
   const setPageSize = (pageSizeString: string) => {
     const pageSize = Number(pageSizeString);
 
-    if (!isNullOrUndefined(tableStateKey)) {
-      dispatch(
-        setPageSizePreference({
-          resource: tableStateKey,
-          pageSize,
-        }),
-      );
+    dispatch(
+      setPageSizePreference({
+        resource: tableStateKey,
+        pageSize,
+      }),
+    );
 
-      // reset page-related query params after change
-      const newParams = { ...tableQueryState };
-      delete newParams.page;
-      delete newParams.size;
+    // reset page-related query params after change
+    const newParams = { ...tableQueryState };
+    delete newParams.page;
+    delete newParams.size;
 
-      setTableQueryState(
-        Object.keys(newParams).length > 0 ? newParams : null,
-      ).then();
-    } else {
-      table.setPageSize(pageSize);
-      table.setPageIndex(0);
-    }
+    setTableQueryState(
+      Object.keys(newParams).length > 0 ? newParams : null,
+    ).then();
   };
 
   return (
