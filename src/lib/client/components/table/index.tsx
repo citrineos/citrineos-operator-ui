@@ -68,6 +68,8 @@ import {
 import { parseAsJson, useQueryState } from 'nuqs';
 import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
 import { isNullOrUndefined } from '@lib/utils/assertion';
+import { useSelector } from 'react-redux';
+import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
 
 export type TableListFilterOption = BaseOption & {
   icon?: React.ComponentType<{ className?: string }>;
@@ -188,6 +190,10 @@ export function Table<
     parseAsJson(TableQueryStateSchema.parse),
   );
 
+  const pageSizePreference = useSelector((state) =>
+    getPageSizePreference(state, tableStateKey),
+  );
+
   // When using client data, we still need to call useTable (React hooks must be called unconditionally)
   // but we configure it to skip the query and use provided data
   const table = useTable({
@@ -200,7 +206,7 @@ export function Table<
               pageIndex: paginationQueryState?.page
                 ? paginationQueryState.page - 1
                 : 0,
-              pageSize: 10, // TODO replace with redux
+              pageSize: pageSizePreference,
             },
           }
         : {}),

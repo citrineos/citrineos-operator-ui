@@ -22,6 +22,11 @@ import {
 import { parseAsJson, useQueryState } from 'nuqs';
 import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
 import { isNullOrUndefined } from '@lib/utils/assertion';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getPageSizePreference,
+  setPageSizePreference,
+} from '@lib/utils/store/table.preferences.slice';
 
 interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   table: UseTableReturnType<TData>['reactTable'];
@@ -34,13 +39,15 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
   showSelectedText,
   tableStateKey,
 }: DataTablePaginationProps<TData>) => {
+  const dispatch = useDispatch();
   const translate = useTranslate();
   const [paginationQueryState, setPaginationQueryState] = useQueryState(
     tableStateKey ?? 'table',
     parseAsJson(TableQueryStateSchema.parse),
   );
-
-  // TODO also page preferences should be here also, that comes from redux
+  const pageSizePreference = useSelector((state) =>
+    getPageSizePreference(state, tableStateKey),
+  );
 
   const setPage = (pageIndex: number) => {
     if (!isNullOrUndefined(tableStateKey)) {
@@ -50,6 +57,23 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
       }).then();
     } else {
       table.setPageIndex(pageIndex);
+    }
+  };
+
+  const setPageSize = (pageSizeString: string) => {
+    const pageSize = Number(pageSizeString);
+
+    if (!isNullOrUndefined(tableStateKey)) {
+      dispatch(
+        setPageSizePreference({
+          resource: tableStateKey,
+          pageSize: pageSize,
+        }),
+      );
+      setPage(0);
+    } else {
+      table.setPageSize(pageSize);
+      table.setPageIndex(0);
     }
   };
 
@@ -66,16 +90,12 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <p className="text-sm font-medium">
             {translate('pagination.rowsPerPage')}
           </p>
-          {/* TODO replace the value with pageSize from redux */}
           <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-              setPage(0);
-            }}
+            value={`${pageSizePreference}`}
+            onValueChange={(value) => setPageSize(value)}
           >
             <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {[10, 20, 30, 40, 50].map((pageSize) => (
