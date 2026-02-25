@@ -46,6 +46,7 @@ import React, {
   type ReactElement,
   type ReactNode,
   useCallback,
+  useEffect,
   useMemo,
 } from 'react';
 import { RowAction, RowActions } from './actions';
@@ -70,7 +71,7 @@ import { TableQueryStateSchema } from '@lib/client/components/table/fields/table
 import { isNullOrUndefined } from '@lib/utils/assertion';
 import { useSelector } from 'react-redux';
 import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
-import { DEFAULT_TABLE_STATE } from '@lib/utils/consts';
+import { DEFAULT_SORTERS, DEFAULT_TABLE_STATE } from '@lib/utils/consts';
 
 export type TableListFilterOption = BaseOption & {
   icon?: React.ComponentType<{ className?: string }>;
@@ -236,6 +237,21 @@ export function Table<
   const tableQuery = useClientData
     ? { isLoading: false, data: props.data }
     : table.refineCore.tableQuery;
+
+  useEffect(() => {
+    if (tableQueryState?.sortBy && tableQueryState?.direction) {
+      table.refineCore.setSorters([
+        {
+          field: tableQueryState.sortBy,
+          order: tableQueryState.direction,
+        },
+      ]);
+    } else {
+      table.refineCore.setSorters(
+        props.refineCoreProps?.sorters?.initial ?? DEFAULT_SORTERS.initial,
+      );
+    }
+  }, [tableQueryState?.sortBy, tableQueryState?.direction]);
 
   const tableOptions = useMemo<TableOptionsResolved<TData>>(
     () => reactTable.options,

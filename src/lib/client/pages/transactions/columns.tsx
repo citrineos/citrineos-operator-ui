@@ -8,6 +8,7 @@ import {
   AuthorizationProps,
   LocationProps,
   OCPP2_0_1,
+  type TransactionDto,
   TransactionProps,
 } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
@@ -96,9 +97,12 @@ export const transactionsColumns: ColumnConfiguration[] = [
     header: 'Total kWh',
     visible: true,
     sortable: true,
-    cellRender: ({ row }: CellContext<TransactionClass, unknown>) => (
-      <span>{row.original.totalKwh?.toFixed(2)} kWh</span>
-    ),
+    cellRender: ({ row }: CellContext<TransactionClass, unknown>) =>
+      row.original.totalKwh ? (
+        <span>{row.original.totalKwh.toFixed(2)} kWh</span>
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
   },
   {
     key: 'status',
@@ -136,6 +140,30 @@ export const transactionsColumns: ColumnConfiguration[] = [
     cellRender: ({ row }: CellContext<TransactionClass, unknown>) =>
       row.original.endTime ? (
         <TimestampDisplay isoTimestamp={row.original.endTime} />
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
+  },
+  {
+    key: TransactionProps.createdAt,
+    header: 'Created At',
+    visible: true,
+    sortable: true,
+    cellRender: ({ row }: CellContext<TransactionDto, unknown>) =>
+      row.original.createdAt ? (
+        <TimestampDisplay isoTimestamp={row.original.createdAt} />
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
+  },
+  {
+    key: TransactionProps.updatedAt,
+    header: 'Updated At',
+    visible: true,
+    sortable: true,
+    cellRender: ({ row }: CellContext<TransactionDto, unknown>) =>
+      row.original.updatedAt ? (
+        <TimestampDisplay isoTimestamp={row.original.updatedAt} />
       ) : (
         <span>{EMPTY_VALUE}</span>
       ),

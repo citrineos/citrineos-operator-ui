@@ -93,15 +93,6 @@ export const ChargingStationsList = () => {
         <Table<ChargingStationDto>
           refineCoreProps={{
             resource: ResourceType.CHARGING_STATIONS,
-            sorters: {
-              permanent: [
-                {
-                  field:
-                    tableQueryState?.sortBy ?? ChargingStationProps.updatedAt,
-                  order: tableQueryState?.direction ?? 'desc',
-                },
-              ],
-            },
             filters: {
               permanent: filters,
             },

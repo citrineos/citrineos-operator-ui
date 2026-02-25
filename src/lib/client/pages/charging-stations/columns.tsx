@@ -159,7 +159,7 @@ export const getChargingStationsColumns = (
         row.original.createdAt ? (
           <TimestampDisplay isoTimestamp={row.original.createdAt} />
         ) : (
-          EMPTY_VALUE
+          <span>{EMPTY_VALUE}</span>
         ),
     },
     {
@@ -171,7 +171,7 @@ export const getChargingStationsColumns = (
         row.original.updatedAt ? (
           <TimestampDisplay isoTimestamp={row.original.updatedAt} />
         ) : (
-          EMPTY_VALUE
+          <span>{EMPTY_VALUE}</span>
         ),
     },
     {
