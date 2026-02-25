@@ -102,6 +102,7 @@ export const AuthorizationsList = () => {
           enableSorting
           enableFilters
           showHeader
+          tableStateKey={ResourceType.AUTHORIZATIONS}
         >
           {renderedVisibleColumns}
         </Table>

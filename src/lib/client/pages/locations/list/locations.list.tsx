@@ -111,6 +111,7 @@ export const LocationsList = () => {
             ),
             expandedRowClassName: 'bg-muted/10',
           }}
+          tableStateKey={ResourceType.LOCATIONS}
         >
           {renderedVisibleColumns}
         </Table>
