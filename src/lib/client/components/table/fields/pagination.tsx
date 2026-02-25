@@ -42,7 +42,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
 }: DataTablePaginationProps<TData>) => {
   const dispatch = useDispatch();
   const translate = useTranslate();
-  const [paginationQueryState, setPaginationQueryState] = useQueryState(
+  const [tableQueryState, setTableQueryState] = useQueryState(
     tableStateKey ?? DEFAULT_TABLE_STATE,
     parseAsJson(TableQueryStateSchema.parse),
   );
@@ -52,9 +52,11 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
 
   const setPage = (pageIndex: number) => {
     if (!isNullOrUndefined(tableStateKey)) {
-      setPaginationQueryState({
-        ...paginationQueryState,
+      // store both page and size in query params for context
+      setTableQueryState({
+        ...tableQueryState,
         page: pageIndex + 1,
+        size: pageSizePreference,
       }).then();
     } else {
       table.setPageIndex(pageIndex);
@@ -68,10 +70,18 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
       dispatch(
         setPageSizePreference({
           resource: tableStateKey,
-          pageSize: pageSize,
+          pageSize,
         }),
       );
-      setPage(0);
+
+      // reset page-related query params after change
+      const newParams = { ...tableQueryState };
+      delete newParams.page;
+      delete newParams.size;
+
+      setTableQueryState(
+        Object.keys(newParams).length > 0 ? newParams : null,
+      ).then();
     } else {
       table.setPageSize(pageSize);
       table.setPageIndex(0);
@@ -92,7 +102,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             {translate('pagination.rowsPerPage')}
           </p>
           <Select
-            value={`${pageSizePreference}`}
+            value={`${tableQueryState?.size ?? pageSizePreference}`}
             onValueChange={(value) => setPageSize(value)}
           >
             <SelectTrigger className="h-8 w-[70px]">
