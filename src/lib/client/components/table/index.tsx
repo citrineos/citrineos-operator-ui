@@ -65,6 +65,9 @@ import {
   tableHeaderRowStyle,
   tableHeaderTextStyle,
 } from '@lib/client/styles/table';
+import { parseAsJson, useQueryState } from 'nuqs';
+import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
+import { isNullOrUndefined } from '@lib/utils/assertion';
 
 export type TableListFilterOption = BaseOption & {
   icon?: React.ComponentType<{ className?: string }>;
@@ -121,7 +124,7 @@ export type TableProps<
   rowClassName?: string | ((record: TData, index: number) => string);
   showToolbar?: boolean;
   // specific key to track query state with nuqs
-  queryStateKey?: string;
+  tableStateKey?: string;
 };
 
 export function Table<
@@ -136,7 +139,7 @@ export function Table<
   rowClassName,
   useClientData = false,
   showToolbar = false,
-  queryStateKey = 'table',
+  tableStateKey = 'table',
   ...props
 }: TableProps<TData, TError>) {
   const translate = useTranslate();
@@ -180,12 +183,27 @@ export function Table<
     return [];
   }, [children, mapColumn]);
 
+  const [paginationQueryState, _] = useQueryState(
+    tableStateKey ?? 'table',
+    parseAsJson(TableQueryStateSchema.parse),
+  );
+
   // When using client data, we still need to call useTable (React hooks must be called unconditionally)
   // but we configure it to skip the query and use provided data
   const table = useTable({
     columns,
     state: {
       expanded: expandable?.expandedRowKeys,
+      ...(tableStateKey
+        ? {
+            pagination: {
+              pageIndex: paginationQueryState?.page
+                ? paginationQueryState.page - 1
+                : 0,
+              pageSize: 10, // TODO replace with redux
+            },
+          }
+        : {}),
     },
     onExpandedChange: expandable?.onExpandedRowsChange,
     getRowCanExpand: expandable
@@ -201,6 +219,7 @@ export function Table<
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    manualPagination: !isNullOrUndefined(tableStateKey),
     // Configure query options to disable fetching when in client mode
     refineCoreProps: useClientData
       ? {
@@ -208,7 +227,11 @@ export function Table<
             enabled: false,
           },
         }
-      : undefined,
+      : {
+          pagination: {
+            currentPage: 2,
+          },
+        },
     ...props,
   });
 
@@ -345,7 +368,9 @@ export function Table<
             )}
           </TableBody>
         </TableUi>
-        <Pagination table={reactTable} queryStateKey={queryStateKey} />
+        {!useClientData && (
+          <Pagination table={reactTable} tableStateKey={tableStateKey} />
+        )}
       </div>
     </DeleteProvider>
   );

@@ -57,7 +57,7 @@ export const ChargingStationDetailTabsCard = ({
         <Tabs defaultValue="evses">
           <TabsList>
             <TabsTrigger value="evses">EVSEs</TabsTrigger>
-            <TabsTrigger value="ocpp-logs">OCPP Logs</TabsTrigger>
+            <TabsTrigger value="ocpp-messages">OCPP Messages</TabsTrigger>
             <TabsTrigger value="configuration">Configuration</TabsTrigger>
             <TabsTrigger value="transactions">
               {translate('Transactions.Transactions')}
@@ -85,7 +85,7 @@ export const ChargingStationDetailTabsCard = ({
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="ocpp-logs" className={cardTabsStyle}>
+          <TabsContent value="ocpp-messages" className={cardTabsStyle}>
             <CanAccess
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}

@@ -21,40 +21,38 @@ import {
 } from 'lucide-react';
 import { parseAsJson, useQueryState } from 'nuqs';
 import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
-import { useEffect } from 'react';
+import { isNullOrUndefined } from '@lib/utils/assertion';
 
 interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   table: UseTableReturnType<TData>['reactTable'];
   showSelectedText?: boolean;
-  queryStateKey: string;
+  tableStateKey?: string;
 }
 
 export const Pagination = <TData extends BaseRecord = BaseRecord>({
   table,
   showSelectedText,
-  queryStateKey,
+  tableStateKey,
 }: DataTablePaginationProps<TData>) => {
+  const translate = useTranslate();
   const [paginationQueryState, setPaginationQueryState] = useQueryState(
-    queryStateKey,
+    tableStateKey ?? 'table',
     parseAsJson(TableQueryStateSchema.parse),
   );
-
-  useEffect(() => {
-    if (paginationQueryState) {
-      table.setPageIndex(
-        paginationQueryState.page ? paginationQueryState.page - 1 : 0,
-      );
-    }
-  }, [paginationQueryState]);
 
   // TODO also page preferences should be here also, that comes from redux
 
   const setPage = (pageIndex: number) => {
-    setPaginationQueryState({ ...paginationQueryState, page: pageIndex + 1 });
-    table.setPageIndex(pageIndex);
+    if (!isNullOrUndefined(tableStateKey)) {
+      setPaginationQueryState({
+        ...paginationQueryState,
+        page: pageIndex + 1,
+      }).then();
+    } else {
+      table.setPageIndex(pageIndex);
+    }
   };
 
-  const translate = useTranslate();
   return (
     <div className="flex flex-col sm:flex-row gap-y-4 sm-gap-y-0 items-center justify-between">
       {showSelectedText && (
@@ -73,6 +71,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
+              setPage(0);
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
