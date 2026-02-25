@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import type { ChargingStationDto } from '@citrineos/base';
+import { type ChargingStationDto, ChargingStationProps } from '@citrineos/base';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
@@ -15,7 +15,7 @@ import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { CHARGING_STATIONS_LIST_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
+import { EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
@@ -30,10 +30,17 @@ import {
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
+import { parseAsJson, useQueryState } from 'nuqs';
+import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
 
 export const ChargingStationsList = () => {
   const { push } = useRouter();
   const translate = useTranslate();
+
+  const [tableQueryState, _] = useQueryState(
+    ResourceType.CHARGING_STATIONS,
+    parseAsJson(TableQueryStateSchema.parse),
+  );
 
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
 
@@ -86,7 +93,15 @@ export const ChargingStationsList = () => {
         <Table<ChargingStationDto>
           refineCoreProps={{
             resource: ResourceType.CHARGING_STATIONS,
-            sorters: DEFAULT_SORTERS,
+            sorters: {
+              permanent: [
+                {
+                  field:
+                    tableQueryState?.sortBy ?? ChargingStationProps.updatedAt,
+                  order: tableQueryState?.direction ?? 'desc',
+                },
+              ],
+            },
             filters: {
               permanent: filters,
             },
