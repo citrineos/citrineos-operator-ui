@@ -225,6 +225,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
           rowClassName={(record) => getRowClassName(record)}
           enableFilters
           showHeader
+          tableStateKey={ResourceType.OCPP_MESSAGES}
         >
           {[
             <Table.Column
