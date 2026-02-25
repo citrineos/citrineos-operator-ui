@@ -68,7 +68,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
     );
 
     // reset page-related query params after change
-    const newParams = { ...tableQueryState };
+    const newParams = { ...(tableQueryState ?? {}) };
     delete newParams.page;
     delete newParams.size;
 

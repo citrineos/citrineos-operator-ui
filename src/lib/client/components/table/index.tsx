@@ -186,7 +186,7 @@ export function Table<
     return [];
   }, [children, mapColumn]);
 
-  const [paginationQueryState, _] = useQueryState(
+  const [tableQueryState, _] = useQueryState(
     tableStateKey,
     parseAsJson(TableQueryStateSchema.parse),
   );
@@ -201,16 +201,10 @@ export function Table<
     columns,
     state: {
       expanded: expandable?.expandedRowKeys,
-      ...(tableStateKey
-        ? {
-            pagination: {
-              pageIndex: paginationQueryState?.page
-                ? paginationQueryState.page - 1
-                : 0,
-              pageSize: pageSizePreference,
-            },
-          }
-        : {}),
+      pagination: {
+        pageIndex: tableQueryState?.page ? tableQueryState.page - 1 : 0,
+        pageSize: tableQueryState?.size ?? pageSizePreference,
+      },
     },
     onExpandedChange: expandable?.onExpandedRowsChange,
     getRowCanExpand: expandable
@@ -234,11 +228,7 @@ export function Table<
             enabled: false,
           },
         }
-      : {
-          pagination: {
-            currentPage: 2,
-          },
-        },
+      : undefined,
     ...props,
   });
 
@@ -300,9 +290,13 @@ export function Table<
                                 header.column.columnDef.header,
                                 header.getContext(),
                               )}
-                          {tableOptions.enableSorting &&
+                          {!useClientData &&
+                            tableOptions.enableSorting &&
                             columnDef.enableSorting && (
-                              <SortAction column={header.column} />
+                              <SortAction
+                                column={header.column}
+                                tableStateKey={tableStateKey}
+                              />
                             )}
                           {isFilterable &&
                             columnDef?.filter &&
