@@ -14,7 +14,7 @@ import { AuthorizationClass } from '@lib/cls/authorization.dto';
 import { AUTHORIZATIONS_LIST_QUERY } from '@lib/queries/authorizations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
+import { EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
@@ -85,7 +85,6 @@ export const AuthorizationsList = () => {
         <Table<AuthorizationDto>
           refineCoreProps={{
             resource: ResourceType.AUTHORIZATIONS,
-            sorters: DEFAULT_SORTERS,
             filters: {
               permanent: filters,
             },
