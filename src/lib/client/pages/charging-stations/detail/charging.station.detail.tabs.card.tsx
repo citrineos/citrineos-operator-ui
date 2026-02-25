@@ -66,7 +66,11 @@ export const ChargingStationDetailTabsCard = ({
     <Card>
       <CardContent>
         <Tabs
-          value={tab ?? ChargingStationDetailTabType.evses}
+          value={
+            tab && tab in ChargingStationDetailTabType
+              ? tab
+              : ChargingStationDetailTabType.evses
+          }
           onValueChange={(selectedTab: string) => setTab(selectedTab)}
         >
           <TabsList>
