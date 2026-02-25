@@ -34,7 +34,7 @@ import { Copy, Download, Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { buttonIconSize } from '@lib/client/styles/icon';
-import { formatDate } from '@lib/client/components/timestamp-display';
+import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 import { Table } from '@lib/client/components/table';
 import type { CellContext } from '@tanstack/react-table';
 import { copy } from '@lib/utils/copy';
@@ -223,6 +223,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
           }}
           rowClassName={(record) => getRowClassName(record)}
+          enableSorting
           enableFilters
           showHeader
           tableStateKey={ResourceType.OCPP_MESSAGES}
@@ -296,14 +297,13 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               key="timestamp"
               accessorKey="timestamp"
               header="Timestamp"
+              enableSorting
               cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
                 return (
-                  <span>
-                    {formatDate(
-                      row.original.timestamp,
-                      'YYYY-MM-DD HH:mm:ss.SSS',
-                    )}
-                  </span>
+                  <TimestampDisplay
+                    isoTimestamp={row.original.timestamp}
+                    format="YYYY-MM-DD HH:mm:ss.SSS"
+                  />
                 );
               }}
             />,
