@@ -27,6 +27,7 @@ import {
   getPageSizePreference,
   setPageSizePreference,
 } from '@lib/utils/store/table.preferences.slice';
+import { DEFAULT_TABLE_STATE } from '@lib/utils/consts';
 
 interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   table: UseTableReturnType<TData>['reactTable'];
@@ -42,7 +43,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
   const dispatch = useDispatch();
   const translate = useTranslate();
   const [paginationQueryState, setPaginationQueryState] = useQueryState(
-    tableStateKey ?? 'table',
+    tableStateKey ?? DEFAULT_TABLE_STATE,
     parseAsJson(TableQueryStateSchema.parse),
   );
   const pageSizePreference = useSelector((state) =>

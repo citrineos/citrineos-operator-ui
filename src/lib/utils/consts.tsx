@@ -44,6 +44,7 @@ export const DEFAULT_EXPANDED_DATA_FILTER = (
 
 export const NOT_APPLICABLE = 'N/A';
 export const EMPTY_VALUE = '-';
+export const DEFAULT_TABLE_STATE = 'table';
 
 // S3 bucket folder name
 export const S3_BUCKET_FOLDER_IMAGES_LOCATIONS = `images/${ResourceType.LOCATIONS}`;
