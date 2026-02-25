@@ -33,6 +33,8 @@ interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   tableStateKey: string;
 }
 
+const MAX_PAGE_SIZE = 50;
+
 export const Pagination = <TData extends BaseRecord = BaseRecord>({
   table,
   showSelectedText,
@@ -91,14 +93,14 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             {translate('pagination.rowsPerPage')}
           </p>
           <Select
-            value={`${tableQueryState?.size ?? pageSizePreference}`}
+            value={`${Math.min(tableQueryState?.size ?? pageSizePreference, MAX_PAGE_SIZE)}`}
             onValueChange={(value) => setPageSize(value)}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {[10, 20, 30, 40, MAX_PAGE_SIZE].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
