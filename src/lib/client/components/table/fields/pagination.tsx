@@ -19,16 +19,41 @@ import {
   ChevronsLeftIcon,
   ChevronsRightIcon,
 } from 'lucide-react';
+import { parseAsJson, useQueryState } from 'nuqs';
+import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
+import { useEffect } from 'react';
 
 interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   table: UseTableReturnType<TData>['reactTable'];
   showSelectedText?: boolean;
+  queryStateKey: string;
 }
 
 export const Pagination = <TData extends BaseRecord = BaseRecord>({
   table,
   showSelectedText,
+  queryStateKey,
 }: DataTablePaginationProps<TData>) => {
+  const [paginationQueryState, setPaginationQueryState] = useQueryState(
+    queryStateKey,
+    parseAsJson(TableQueryStateSchema.parse),
+  );
+
+  useEffect(() => {
+    if (paginationQueryState) {
+      table.setPageIndex(
+        paginationQueryState.page ? paginationQueryState.page - 1 : 0,
+      );
+    }
+  }, [paginationQueryState]);
+
+  // TODO also page preferences should be here also, that comes from redux
+
+  const setPage = (pageIndex: number) => {
+    setPaginationQueryState({ ...paginationQueryState, page: pageIndex + 1 });
+    table.setPageIndex(pageIndex);
+  };
+
   const translate = useTranslate();
   return (
     <div className="flex flex-col sm:flex-row gap-y-4 sm-gap-y-0 items-center justify-between">
@@ -43,6 +68,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <p className="text-sm font-medium">
             {translate('pagination.rowsPerPage')}
           </p>
+          {/* TODO replace the value with pageSize from redux */}
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -69,16 +95,18 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(0)}
+            onClick={() => setPage(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">
+              {translate('pagination.buttons.goToFirstPage')}
+            </span>
             <ChevronsLeftIcon className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => table.previousPage()}
+            onClick={() => setPage(table.getState().pagination.pageIndex - 1)}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">
@@ -89,7 +117,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => table.nextPage()}
+            onClick={() => setPage(table.getState().pagination.pageIndex + 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">
@@ -100,7 +128,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            onClick={() => setPage(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">

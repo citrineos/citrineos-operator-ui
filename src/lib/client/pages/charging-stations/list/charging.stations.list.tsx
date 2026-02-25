@@ -103,6 +103,7 @@ export const ChargingStationsList = () => {
           enableSorting
           enableFilters
           showHeader
+          queryStateKey={ResourceType.CHARGING_STATIONS}
         >
           {renderedVisibleColumns}
         </Table>

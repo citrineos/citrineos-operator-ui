@@ -120,6 +120,8 @@ export type TableProps<
   };
   rowClassName?: string | ((record: TData, index: number) => string);
   showToolbar?: boolean;
+  // specific key to track query state with nuqs
+  queryStateKey?: string;
 };
 
 export function Table<
@@ -134,6 +136,7 @@ export function Table<
   rowClassName,
   useClientData = false,
   showToolbar = false,
+  queryStateKey = 'table',
   ...props
 }: TableProps<TData, TError>) {
   const translate = useTranslate();
@@ -342,7 +345,7 @@ export function Table<
             )}
           </TableBody>
         </TableUi>
-        <Pagination table={reactTable} />
+        <Pagination table={reactTable} queryStateKey={queryStateKey} />
       </div>
     </DeleteProvider>
   );
