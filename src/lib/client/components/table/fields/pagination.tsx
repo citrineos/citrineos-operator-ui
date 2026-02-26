@@ -53,9 +53,9 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
   const setPage = (pageIndex: number) => {
     // store both page and size in query params for context
     setTableQueryState({
-      ...tableQueryState,
+      ...(tableQueryState ?? {}),
       page: pageIndex + 1,
-      size: pageSizePreference,
+      size: tableQueryState?.size ?? pageSizePreference,
     }).then();
   };
 
