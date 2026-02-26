@@ -71,7 +71,7 @@ import { TableQueryStateSchema } from '@lib/client/components/table/fields/table
 import { isNullOrUndefined } from '@lib/utils/assertion';
 import { useSelector } from 'react-redux';
 import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
-import { DEFAULT_SORTERS, DEFAULT_TABLE_STATE } from '@lib/utils/consts';
+import { DEFAULT_TABLE_STATE } from '@lib/utils/consts';
 
 export type TableListFilterOption = BaseOption & {
   icon?: React.ComponentType<{ className?: string }>;
@@ -248,7 +248,7 @@ export function Table<
       ]);
     } else {
       table.refineCore.setSorters(
-        props.refineCoreProps?.sorters?.initial ?? DEFAULT_SORTERS.initial,
+        props.refineCoreProps?.sorters?.initial ?? [],
       );
     }
   }, [tableQueryState?.sortBy, tableQueryState?.direction]);

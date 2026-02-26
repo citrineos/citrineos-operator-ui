@@ -12,7 +12,7 @@ import { TransactionClass } from '@lib/cls/transaction.dto';
 import { TRANSACTION_LIST_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { EMPTY_FILTER } from '@lib/utils/consts';
+import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { useState } from 'react';
@@ -65,6 +65,7 @@ export const TransactionsList = () => {
         <Table
           refineCoreProps={{
             resource: ResourceType.TRANSACTIONS,
+            sorters: DEFAULT_SORTERS,
             filters: {
               permanent: filters,
             },

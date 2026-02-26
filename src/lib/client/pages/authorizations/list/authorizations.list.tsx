@@ -27,7 +27,7 @@ import {
   tableWrapperStyle,
 } from '@lib/client/styles/table';
 import { buttonIconSize } from '@lib/client/styles/icon';
-import type { AuthorizationDto } from '@citrineos/base';
+import { type AuthorizationDto, AuthorizationProps } from '@citrineos/base';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
@@ -85,6 +85,9 @@ export const AuthorizationsList = () => {
         <Table<AuthorizationDto>
           refineCoreProps={{
             resource: ResourceType.AUTHORIZATIONS,
+            sorters: {
+              initial: [{ field: AuthorizationProps.idToken, order: 'asc' }],
+            },
             filters: {
               permanent: filters,
             },

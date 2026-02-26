@@ -86,6 +86,7 @@ export const LocationsList = () => {
         <Table<LocationDto>
           refineCoreProps={{
             resource: ResourceType.LOCATIONS,
+            sorters: DEFAULT_SORTERS,
             meta: {
               gqlQuery: LOCATIONS_LIST_QUERY,
               gqlVariables: getLocationFilters(searchValue),

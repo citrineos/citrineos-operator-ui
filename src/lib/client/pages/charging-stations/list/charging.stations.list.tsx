@@ -15,7 +15,7 @@ import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { CHARGING_STATIONS_LIST_QUERY } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { EMPTY_FILTER } from '@lib/utils/consts';
+import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
@@ -93,6 +93,7 @@ export const ChargingStationsList = () => {
         <Table<ChargingStationDto>
           refineCoreProps={{
             resource: ResourceType.CHARGING_STATIONS,
+            sorters: DEFAULT_SORTERS,
             filters: {
               permanent: filters,
             },
