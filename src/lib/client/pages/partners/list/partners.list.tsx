@@ -11,6 +11,7 @@ import { TenantPartnerClass } from '@lib/cls/tenant.partner.cls';
 import { PARTNERS_LIST_QUERY } from '@lib/queries/tenant.partners';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
+import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
@@ -66,6 +67,7 @@ export const PartnersList = () => {
         <Table
           refineCoreProps={{
             resource: ResourceType.PARTNERS,
+            sorters: DEFAULT_SORTERS,
             meta: {
               gqlQuery: PARTNERS_LIST_QUERY,
             },
