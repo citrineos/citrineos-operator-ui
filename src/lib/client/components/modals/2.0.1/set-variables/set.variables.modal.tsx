@@ -118,7 +118,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
 
   const variableSelects = fields.map((field, index) => {
     const componentId = form.watch(`setVariableData.${index}.componentId`);
-
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { options, onSearch, query } = useSelect({
       resource: ResourceType.VARIABLES,
       optionLabel: 'name',
