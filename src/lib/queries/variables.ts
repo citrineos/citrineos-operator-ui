@@ -46,8 +46,8 @@ export const VARIABLE_LIST_BY_COMPONENT_QUERY = gql`
       order_by: $order_by
       where: {
         _and: [
-          { ComponentVariables: { componentId: { _eq: $componentId } } },
-          $where,
+          { ComponentVariables: { componentId: { _eq: $componentId } } }
+          $where
           { VariableAttributes: { mutability: { _neq: $mutability } } }
         ]
       }
@@ -61,7 +61,7 @@ export const VARIABLE_LIST_BY_COMPONENT_QUERY = gql`
     Variables_aggregate(
       where: {
         _and: [
-          { ComponentVariables: { componentId: { _eq: $componentId } } },
+          { ComponentVariables: { componentId: { _eq: $componentId } } }
           $where
         ]
       }

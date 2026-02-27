@@ -57,9 +57,12 @@ export const GetVariablesSchema = z.object({
   getVariableData: z
     .array(GetVariableDataSchema)
     .min(1, 'At least one variable is required')
-    .refine((data) => data.every(item => item.componentId && item.variableId), {
-      message: 'Component and Variable are required for each entry'
-    }),
+    .refine(
+      (data) => data.every((item) => item.componentId && item.variableId),
+      {
+        message: 'Component and Variable are required for each entry',
+      },
+    ),
 });
 
 export type GetVariablesFormData = z.infer<typeof GetVariablesSchema>;
@@ -177,7 +180,8 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
       <Alert className="mb-4">
         <InfoIcon className="h-4 w-4" />
         <AlertDescription>
-          Send a GetBaseReport to this Charging Station to populate Components and Variables.
+          Send a GetBaseReport to this Charging Station to populate Components
+          and Variables.
         </AlertDescription>
       </Alert>
       <div className="flex items-start">
@@ -198,9 +202,15 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
       </div>
       <div className="flex flex-col gap-6 w-full">
         {fields.map((field, index) => {
-          const componentId = form.watch(`getVariableData.${index}.componentId`);
-          const { options: variableOptions, onSearch: variableOnSearch, isLoading: variableLoading } = useComponentVariables(componentId || 0);
-          
+          const componentId = form.watch(
+            `getVariableData.${index}.componentId`,
+          );
+          const {
+            options: variableOptions,
+            onSearch: variableOnSearch,
+            isLoading: variableLoading,
+          } = useComponentVariables(componentId || 0);
+
           return (
             <div key={field.id} className={nestedFormRowFlex}>
               <ComboboxFormField
@@ -228,28 +238,28 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
                 disabled={!componentId || componentId === 0}
               />
 
-            <FormField
-              control={form.control}
-              label={`Component Instance #${index + 1}`}
-              name={`getVariableData.${index}.componentInstance`}
-            >
-              <Input placeholder="Instance" />
-            </FormField>
-            <FormField
-              control={form.control}
-              label={`Variable Instance #${index + 1}`}
-              name={`getVariableData.${index}.variableInstance`}
-            >
-              <Input placeholder="Instance" />
-            </FormField>
+              <FormField
+                control={form.control}
+                label={`Component Instance #${index + 1}`}
+                name={`getVariableData.${index}.componentInstance`}
+              >
+                <Input placeholder="Instance" />
+              </FormField>
+              <FormField
+                control={form.control}
+                label={`Variable Instance #${index + 1}`}
+                name={`getVariableData.${index}.variableInstance`}
+              >
+                <Input placeholder="Instance" />
+              </FormField>
 
-            <SelectFormField
-              control={form.control}
-              label={`Attribute Type #${index + 1}`}
-              name={`getVariableData.${index}.attributeType`}
-              options={attributeTypes}
-              placeholder="Select Attribute Type"
-            />
+              <SelectFormField
+                control={form.control}
+                label={`Attribute Type #${index + 1}`}
+                name={`getVariableData.${index}.attributeType`}
+                options={attributeTypes}
+                placeholder="Select Attribute Type"
+              />
 
               <RemoveArrayItemButton onRemoveAction={() => remove(index)} />
             </div>
