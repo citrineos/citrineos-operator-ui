@@ -51,15 +51,9 @@ export const StateOfCharge = ({
       meterValues,
       OCPP2_0_1.MeasurandEnumType.SoC,
       new Set(validContexts),
-    ).map(([elapsedTime]) => ({
+    ).map(([elapsedTime, value]) => ({
       elapsedTime,
-    }));
-
-    if (rawData.length === 0) return [];
-
-    return rawData.map(({ elapsedTime }, index) => ({
-      elapsedTime,
-      stateOfCharge: (20 + (index / (rawData.length - 1)) * 60).toFixed(2),
+      stateOfCharge: value,
     }));
   }, [meterValues, validContexts]);
 

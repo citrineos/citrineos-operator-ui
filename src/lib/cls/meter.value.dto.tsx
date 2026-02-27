@@ -116,7 +116,6 @@ export const normalizeValue = (overallValue: SampledValue): string | null => {
       powerOfTen -= 3;
       break;
     case 'PERCENT':
-      powerOfTen -= 2;
       break;
     case 'V':
     case 'A':
