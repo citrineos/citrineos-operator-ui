@@ -20,6 +20,7 @@ import {
 import { Input } from '@lib/client/components/ui/input';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { COMPONENT_LIST_QUERY } from '@lib/queries/components';
+import { VARIABLE_LIST_BY_COMPONENT_QUERY } from '@lib/queries/variables';
 import { ResourceType } from '@lib/utils/access.types';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
@@ -37,7 +38,6 @@ import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 import { Alert, AlertDescription } from '@lib/client/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
-import { useComponentVariables } from '@lib/hooks/use-component-variables';
 
 interface SetVariablesModalProps {
   station: any;
@@ -70,6 +70,9 @@ const attributeTypes = Object.keys(OCPP2_0_1.AttributeEnumType);
 export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [variableOptionsMap, setVariableOptionsMap] = useState<
+    Record<number, { label: string; value: number }[]>
+  >({});
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -111,6 +114,34 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
       },
     },
     pagination: { mode: 'off' },
+  });
+
+  const variableSelects = fields.map((field, index) => {
+    const componentId = form.watch(`setVariableData.${index}.componentId`);
+
+    const { options, onSearch, query } = useSelect({
+      resource: ResourceType.VARIABLES,
+      optionLabel: 'name',
+      optionValue: 'id',
+      meta: {
+        gqlQuery: VARIABLE_LIST_BY_COMPONENT_QUERY,
+        gqlVariables: componentId
+          ? { componentId, offset: 0, limit: 100, mutability: 'ReadOnly' }
+          : undefined,
+      },
+      pagination: { mode: 'off' },
+      queryOptions: { enabled: !!componentId && componentId > 0 },
+    });
+
+    if (
+      componentId > 0 &&
+      options.length > 0 &&
+      variableOptionsMap[index] !== options
+    ) {
+      setVariableOptionsMap((prev) => ({ ...prev, [index]: options }));
+    }
+
+    return { options, onSearch, isLoading: query.isLoading };
   });
 
   const onFinish = async (values: SetVariablesFormData) => {
@@ -188,7 +219,11 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
             options: variableOptions,
             onSearch: variableOnSearch,
             isLoading: variableLoading,
-          } = useComponentVariables(componentId || 0, 'ReadOnly');
+          } = variableSelects[index] || {
+            options: [],
+            onSearch: () => {},
+            isLoading: false,
+          };
 
           return (
             <div key={field.id} className={nestedFormRowFlex}>
