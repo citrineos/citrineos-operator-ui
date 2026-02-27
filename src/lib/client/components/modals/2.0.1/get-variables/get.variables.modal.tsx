@@ -35,6 +35,9 @@ import z from 'zod';
 import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-item-button';
 import { AddArrayItemButton } from '@lib/client/components/form/add-array-item-button';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { Alert, AlertDescription } from '@lib/client/components/ui/alert';
+import { InfoIcon } from 'lucide-react';
+import { useComponentVariables } from '@lib/hooks/use-component-variables';
 
 export interface GetVariablesModalProps {
   station: any;
@@ -53,7 +56,10 @@ const GetVariableDataSchema = z.object({
 export const GetVariablesSchema = z.object({
   getVariableData: z
     .array(GetVariableDataSchema)
-    .min(1, 'At least one variable is required'),
+    .min(1, 'At least one variable is required')
+    .refine((data) => data.every(item => item.componentId && item.variableId), {
+      message: 'Component and Variable are required for each entry'
+    }),
 });
 
 export type GetVariablesFormData = z.infer<typeof GetVariablesSchema>;
@@ -168,6 +174,12 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
       submitButtonlabel="Get Variables"
       hideCancel
     >
+      <Alert className="mb-4">
+        <InfoIcon className="h-4 w-4" />
+        <AlertDescription>
+          Send a GetBaseReport to this Charging Station to populate Components and Variables.
+        </AlertDescription>
+      </Alert>
       <div className="flex items-start">
         <AddArrayItemButton
           onAppendAction={() =>
@@ -185,19 +197,36 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
         />
       </div>
       <div className="flex flex-col gap-6 w-full">
-        {fields.map((field, index) => (
-          <div key={field.id} className={nestedFormRowFlex}>
-            <ComboboxFormField
-              control={form.control}
-              label={`Component #${index + 1}`}
-              name={`getVariableData.${index}.componentId`}
-              options={componentOptions}
-              onSearch={onSearch}
-              placeholder="Select Component"
-              searchPlaceholder="Search Components"
-              isLoading={componentQuery.isLoading}
-              required
-            />
+        {fields.map((field, index) => {
+          const componentId = form.watch(`getVariableData.${index}.componentId`);
+          const { options: variableOptions, onSearch: variableOnSearch, isLoading: variableLoading } = useComponentVariables(componentId || 0);
+          
+          return (
+            <div key={field.id} className={nestedFormRowFlex}>
+              <ComboboxFormField
+                control={form.control}
+                label={`Component #${index + 1}`}
+                name={`getVariableData.${index}.componentId`}
+                options={componentOptions}
+                onSearch={onSearch}
+                placeholder="Select Component"
+                searchPlaceholder="Search Components"
+                isLoading={componentQuery.isLoading}
+                required
+              />
+
+              <ComboboxFormField
+                control={form.control}
+                label={`Variable #${index + 1}`}
+                name={`getVariableData.${index}.variableId`}
+                options={variableOptions}
+                onSearch={variableOnSearch}
+                placeholder="Select Variable"
+                searchPlaceholder="Search Variables"
+                isLoading={variableLoading}
+                required
+                disabled={!componentId || componentId === 0}
+              />
 
             <FormField
               control={form.control}
@@ -222,9 +251,10 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
               placeholder="Select Attribute Type"
             />
 
-            <RemoveArrayItemButton onRemoveAction={() => remove(index)} />
-          </div>
-        ))}
+              <RemoveArrayItemButton onRemoveAction={() => remove(index)} />
+            </div>
+          );
+        })}
       </div>
     </Form>
   );

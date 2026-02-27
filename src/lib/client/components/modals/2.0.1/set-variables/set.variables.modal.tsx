@@ -35,6 +35,9 @@ import { Form } from '@lib/client/components/form';
 import { AddArrayItemButton } from '@lib/client/components/form/add-array-item-button';
 import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-item-button';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { Alert, AlertDescription } from '@lib/client/components/ui/alert';
+import { InfoIcon } from 'lucide-react';
+import { useComponentVariables } from '@lib/hooks/use-component-variables';
 
 interface SetVariablesModalProps {
   station: any;
@@ -50,7 +53,10 @@ const SetVariableDataSchema = z.object({
 const SetVariablesSchema = z.object({
   setVariableData: z
     .array(SetVariableDataSchema)
-    .min(1, 'At least one variable is required'),
+    .min(1, 'At least one variable is required')
+    .refine((data) => data.every(item => item.componentId && item.variableId && item.value), {
+      message: 'Component, Variable, and Value are required for each entry'
+    }),
 });
 
 type SetVariablesFormData = z.infer<typeof SetVariablesSchema>;
@@ -149,6 +155,12 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
       submitButtonLabel="Set Variables"
       hideCancel
     >
+      <Alert className="mb-4">
+        <InfoIcon className="h-4 w-4" />
+        <AlertDescription>
+          Send a GetBaseReport to this Charging Station to populate Components and Variables.
+        </AlertDescription>
+      </Alert>
       <div className="flex items-start">
         <AddArrayItemButton
           onAppendAction={() =>
@@ -163,25 +175,35 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
         />
       </div>
       <div className="flex flex-col gap-6 w-full">
-        {fields.map((field, index) => (
-          <div key={field.id} className={nestedFormRowFlex}>
-            <ComboboxFormField
-              control={form.control}
-              label={`Component #${index + 1}`}
-              name={`setVariableData.${index}.componentId`}
-              options={componentOptions}
-              onSearch={componentOnSearch}
-              placeholder="Select Component"
-              searchPlaceholder="Search Component"
-              isLoading={componentQuery.isLoading}
-            />
-            <FormField
-              control={form.control}
-              label={`Variable Name #${index + 1}`}
-              name={`setVariableData.${index}.variableId`}
-            >
-              <Input placeholder="Variable Name" />
-            </FormField>
+        {fields.map((field, index) => {
+          const componentId = form.watch(`setVariableData.${index}.componentId`);
+          const { options: variableOptions, onSearch: variableOnSearch, isLoading: variableLoading } = useComponentVariables(componentId || 0, "ReadOnly");
+          
+          return (
+            <div key={field.id} className={nestedFormRowFlex}>
+              <ComboboxFormField
+                control={form.control}
+                label={`Component #${index + 1}`}
+                name={`setVariableData.${index}.componentId`}
+                options={componentOptions}
+                onSearch={componentOnSearch}
+                placeholder="Select Component"
+                searchPlaceholder="Search Component"
+                isLoading={componentQuery.isLoading}
+              />
+
+              <ComboboxFormField
+                control={form.control}
+                label={`Variable Name #${index + 1}`}
+                name={`setVariableData.${index}.variableId`}
+                options={variableOptions}
+                onSearch={variableOnSearch}
+                placeholder="Select Variable"
+                searchPlaceholder="Search Variables"
+                isLoading={variableLoading}
+                required
+                disabled={!componentId || componentId === 0}
+              />
 
             <FormField
               control={form.control}
@@ -199,9 +221,10 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
               placeholder="Select Attribute Type"
             />
 
-            <RemoveArrayItemButton onRemoveAction={() => remove(index)} />
-          </div>
-        ))}
+              <RemoveArrayItemButton onRemoveAction={() => remove(index)} />
+            </div>
+          );
+        })}
       </div>
     </Form>
   );
