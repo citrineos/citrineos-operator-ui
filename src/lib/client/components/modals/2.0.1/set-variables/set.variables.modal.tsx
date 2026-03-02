@@ -240,7 +240,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
 
               <ComboboxFormField
                 control={form.control}
-                label={`Variable Name #${index + 1}`}
+                label={`Variable #${index + 1}`}
                 name={`setVariableData.${index}.variableId`}
                 options={variableOptions}
                 onSearch={variableOnSearch}
