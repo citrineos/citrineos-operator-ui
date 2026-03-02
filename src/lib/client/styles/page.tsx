@@ -13,4 +13,4 @@ export const pageFlex = 'flex flex-col gap-4';
 export const clickableLinkStyle =
   'cursor-pointer font-semibold underline hover:text-primary dark:hover:text-secondary';
 
-export const badgeListStyle = 'flex flex-wrap items-center gap-2';
+export const badgeListStyle = 'flex flex-wrap items-center gap-1';

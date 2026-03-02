@@ -10,12 +10,13 @@ import { SelectFormField } from '@lib/client/components/form/field';
 import { EvseSelector } from '@lib/client/components/modals/shared/evse-selector/evse.selector';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { useForm } from '@refinedev/react-hook-form';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Controller } from 'react-hook-form';
+import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
 export interface OCPP2_0_1_ResetProps {
   station: ChargingStationDto;
@@ -67,7 +68,14 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
   };
 
   return (
-    <Form {...form} loading={loading} submitHandler={handleSubmit} hideCancel>
+    <Form
+      {...form}
+      loading={loading}
+      submitHandler={handleSubmit}
+      hideCancel
+      submitButtonVariant={FormButtonVariants.submit}
+      submitButtonLabel="Reset"
+    >
       <SelectFormField
         control={form.control}
         label="Reset Type"

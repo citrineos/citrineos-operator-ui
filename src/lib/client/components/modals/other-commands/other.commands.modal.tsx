@@ -5,7 +5,7 @@
 import type { ChargingStationDto } from '@citrineos/base';
 import { OCPPVersion } from '@citrineos/base';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
-import { selectIsModalOpen } from '@lib/utils/modal.slice';
+import { selectIsModalOpen } from '@lib/utils/store/modal.slice';
 import { Loader2 } from 'lucide-react';
 import { plainToInstance } from 'class-transformer';
 import { useEffect, useMemo, useState } from 'react';

@@ -27,7 +27,7 @@ import { CHARGING_STATION_SEQUENCES_GET_QUERY } from '@lib/queries/charging.stat
 import { ResourceType } from '@lib/utils/access.types';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { useCustom, useSelect } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import { plainToInstance } from 'class-transformer';
@@ -36,6 +36,7 @@ import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Controller } from 'react-hook-form';
 import { isEmpty } from '@lib/utils/assertion';
+import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 
 export interface OCPP2_0_1_RemoteStartProps {
   station: ChargingStationDto;
@@ -172,6 +173,8 @@ export const OCPP2_0_1_RemoteStart = ({
       }
       submitHandler={onFinish}
       hideCancel
+      submitButtonVariant={FormButtonVariants.confirm}
+      submitButtonLabel="Start"
     >
       <FormField
         control={form.control}

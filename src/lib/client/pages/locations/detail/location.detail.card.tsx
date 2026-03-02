@@ -13,7 +13,7 @@ import { CanAccess, useTranslate } from '@refinedev/core';
 import { ChevronLeft, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
-import { heading2Style } from '@lib/client/styles/page';
+import { badgeListStyle, heading2Style } from '@lib/client/styles/page';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
@@ -101,7 +101,7 @@ export const LocationDetailCard = ({
                 keyLabel="Facilities"
                 value={
                   location.facilities ? (
-                    <div className="flex flex-wrap gap-1">
+                    <div className={badgeListStyle}>
                       {location.facilities.map((facility, idx) => (
                         <Badge variant="muted" key={idx}>
                           {facility}

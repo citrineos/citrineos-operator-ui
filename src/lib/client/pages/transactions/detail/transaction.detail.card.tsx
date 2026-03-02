@@ -20,7 +20,7 @@ import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { CanAccess, Link, useTranslate } from '@refinedev/core';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/modal.slice';
+import { openModal } from '@lib/utils/store/modal.slice';
 import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 
 export interface TransactionDetailCardProps {

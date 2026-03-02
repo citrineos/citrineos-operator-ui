@@ -203,6 +203,10 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       StartTransaction {
         idTokenDatabaseId
       }
+      authorization: Authorization {
+        id
+        idToken
+      }
       chargingStation: ChargingStation {
         id
         isOnline

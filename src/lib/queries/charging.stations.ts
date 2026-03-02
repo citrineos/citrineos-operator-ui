@@ -21,8 +21,14 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       isOnline
       protocol
       locationId
+      chargePointVendor
+      chargePointModel
+      firmwareVersion
       createdAt
       updatedAt
+      floorLevel
+      parkingRestrictions
+      capabilities
       location: Location {
         id
         name
@@ -34,6 +40,12 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
         coordinates
         createdAt
         updatedAt
+      }
+      evses: Evses {
+        id
+        evseTypeId
+        evseId
+        physicalReference
       }
       LatestStatusNotifications {
         id

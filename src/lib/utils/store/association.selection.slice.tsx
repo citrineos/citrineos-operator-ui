@@ -4,7 +4,7 @@
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from './store';
+import type { RootState } from '@lib/utils/store/store';
 import { instanceToPlain } from 'class-transformer';
 
 interface AssociationSelectionState {
@@ -15,7 +15,7 @@ const initialState: AssociationSelectionState = {
   models: {},
 };
 
-const associationSelectionSlice = createSlice({
+export const associationSelectionSlice = createSlice({
   name: 'associationSelection',
   initialState,
   reducers: {
@@ -36,4 +36,3 @@ export const getSelectedAssociatedItems = (storageKey: string) =>
   );
 
 export const { setSelectedAssociatedItems } = associationSelectionSlice.actions;
-export default associationSelectionSlice.reducer;

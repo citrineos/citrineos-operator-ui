@@ -13,7 +13,7 @@ import { MarkerIconCircle } from '@lib/client/components/map/marker.icons';
 import {
   getGoogleMapsApiKey,
   setGoogleMapsApiKey,
-} from '@lib/utils/maps.slice';
+} from '@lib/utils/store/maps.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGoogleMapsApiKeyAction } from '@lib/server/actions/map/getGoogleMapsApiKeyAction';
 import { Skeleton } from '@lib/client/components/ui/skeleton';

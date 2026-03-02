@@ -48,8 +48,8 @@ export const VARIABLE_LIST_BY_COMPONENT_QUERY = gql`
         _and: [
           { ComponentVariables: { componentId: { _eq: $componentId } } }
           $where
+          { VariableAttributes: { mutability: { _neq: $mutability } } }
         ]
-        VariableAttributes: { mutability: { _neq: $mutability } }
       }
     ) {
       id

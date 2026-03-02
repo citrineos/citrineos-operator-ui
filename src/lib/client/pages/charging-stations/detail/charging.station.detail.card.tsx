@@ -23,7 +23,7 @@ import {
 } from '@lib/queries/charging.stations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
-import { openModal } from '@lib/utils/modal.slice';
+import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import {
   CanAccess,
@@ -64,6 +64,7 @@ import { ResetButton } from '@lib/client/pages/charging-stations/reset.button';
 import { ForceDisconnectButton } from '../force.disconnect.button';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 import { NoDataFoundCard } from '@lib/client/components/no-data-found-card';
+import { isEmpty } from '@lib/utils/assertion';
 
 const UNKNOWN_TEXT = 'Unknown';
 
@@ -145,47 +146,6 @@ export const ChargingStationDetailCard = ({
         openModal({
           title: translate('ChargingStations.forceDisconnect'),
           modalComponentType: ModalComponentType.forceDisconnect,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch, translate],
-  );
-
-  const showRemoteStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStart'),
-          modalComponentType: ModalComponentType.remoteStart,
-          modalComponentProps: { station: instanceToPlain(station) },
-        }),
-      );
-    },
-    [dispatch, translate],
-  );
-
-  const handleStopTransactionClick = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.remoteStop'),
-          modalComponentType: ModalComponentType.remoteStop,
-          modalComponentProps: {
-            station: instanceToPlain(station),
-          },
-        }),
-      );
-    },
-    [dispatch, translate],
-  );
-
-  const showResetStartModal = useCallback(
-    (station: ChargingStationDto) => {
-      dispatch(
-        openModal({
-          title: translate('ChargingStations.reset'),
-          modalComponentType: ModalComponentType.reset,
           modalComponentProps: { station: instanceToPlain(station) },
         }),
       );
@@ -378,7 +338,7 @@ export const ChargingStationDetailCard = ({
 
               <KeyValueDisplay
                 keyLabel="Floor Level"
-                value={station.floorLevel}
+                value={station.floorLevel || NOT_APPLICABLE}
               />
 
               <KeyValueDisplay
@@ -451,12 +411,12 @@ export const ChargingStationDetailCard = ({
               <KeyValueDisplay
                 keyLabel="Connector Types"
                 value={
-                  (station.connectors?.length ?? 0) > 0
-                    ? station
+                  isEmpty(station.connectors)
+                    ? NOT_APPLICABLE
+                    : station
                         .connectors!.map((c) => c.type)
                         .filter(Boolean)
                         .join(', ')
-                    : NOT_APPLICABLE
                 }
               />
 
@@ -500,23 +460,17 @@ export const ChargingStationDetailCard = ({
                 />
                 {!hasActiveTransactions && (
                   <StartTransactionButton
-                    stationId={station.id}
-                    onClickAction={() => showRemoteStartModal(station)}
+                    station={station}
                     disabled={!station.isOnline}
                   />
                 )}
                 {hasActiveTransactions && (
                   <StopTransactionButton
-                    stationId={station.id}
-                    onClickAction={() => handleStopTransactionClick(station)}
+                    station={station}
                     disabled={!station.isOnline}
                   />
                 )}
-                <ResetButton
-                  stationId={station.id}
-                  onClickAction={() => showResetStartModal(station)}
-                  disabled={!station.isOnline}
-                />
+                <ResetButton station={station} disabled={!station.isOnline} />
                 <Button
                   onClick={showOtherCommandsModal}
                   disabled={!station.isOnline}

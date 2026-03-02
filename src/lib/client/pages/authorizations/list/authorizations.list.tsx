@@ -7,7 +7,7 @@ import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Table } from '@lib/client/components/table';
 import { Button } from '@lib/client/components/ui/button';
 import {
-  getAuthorizationColumns,
+  authorizationsColumns,
   getAuthorizationFilters,
 } from '@lib/client/pages/authorizations/columns';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
@@ -19,7 +19,7 @@ import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import {
   tableHeaderWrapperFlex,
@@ -29,13 +29,17 @@ import {
 import { buttonIconSize } from '@lib/client/styles/icon';
 import type { AuthorizationDto } from '@citrineos/base';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
 export const AuthorizationsList = () => {
   const { push } = useRouter();
   const [filters, setFilters] = useState<any>(EMPTY_FILTER);
   const translate = useTranslate();
 
-  const columns = useMemo(() => getAuthorizationColumns(push), [push]);
+  const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
+    authorizationsColumns,
+    ResourceType.AUTHORIZATIONS,
+  );
 
   const onSearch = (value: string) => {
     setFilters(value ? getAuthorizationFilters(value) : EMPTY_FILTER);
@@ -65,6 +69,7 @@ export const AuthorizationsList = () => {
             resource={ResourceType.AUTHORIZATIONS}
             action={ActionType.LIST}
           >
+            {columnSelector}
             <DebounceSearch
               onSearch={onSearch}
               placeholder={`${translate('placeholders.search')} ${translate('Authorizations.authorization')}`}
@@ -98,7 +103,7 @@ export const AuthorizationsList = () => {
           enableFilters
           showHeader
         >
-          {columns}
+          {renderedVisibleColumns}
         </Table>
       </CanAccess>
     </div>

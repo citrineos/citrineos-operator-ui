@@ -7,7 +7,7 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import type { RootState } from '@lib/utils/store';
+import type { RootState } from '@lib/utils/store/store';
 
 interface MapsState {
   googleMapsApiKey: string | undefined;
@@ -17,7 +17,7 @@ const initialState: MapsState = {
   googleMapsApiKey: undefined,
 };
 
-const mapsSlice = createSlice({
+export const mapsSlice = createSlice({
   name: 'maps',
   initialState,
   reducers: {
@@ -33,4 +33,3 @@ export const getGoogleMapsApiKey = createSelector(
 );
 
 export const { setGoogleMapsApiKey } = mapsSlice.actions;
-export default mapsSlice.reducer;

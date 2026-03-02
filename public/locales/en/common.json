@@ -137,7 +137,7 @@
     "selectAll": "Select all",
     "selected": "selected",
     "toggleColumns": "Toggle columns",
-    "columns": {}
+    "resetColumns": "Reset Columns"
   },
   "dialogs": {
     "areYouSure": "Are you sure?",

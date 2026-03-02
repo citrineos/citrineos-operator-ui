@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@lib/client/components/ui/dialog';
-import { closeModal, selectModal } from '@lib/utils/modal.slice';
+import { closeModal, selectModal } from '@lib/utils/store/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 // Shared Modals (same for both OCPP versions)
 import { DataTransferModal } from '@lib/client/components/modals/data-transfer/data.transfer.modal';
@@ -105,10 +105,9 @@ const AppModal = () => {
   const { isOpen, title, modalComponentType, modalComponentProps } =
     useSelector(selectModal);
 
-  const ModalComponent =
-    modalComponentType != undefined
-      ? MODAL_COMPONENTS[modalComponentType]
-      : null;
+  const ModalComponent = modalComponentType
+    ? MODAL_COMPONENTS[modalComponentType]
+    : null;
 
   return (
     <Dialog

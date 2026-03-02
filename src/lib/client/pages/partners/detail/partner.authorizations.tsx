@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
+import React from 'react';
 import { Table } from '@lib/client/components/table';
-import { getAuthorizationColumns } from '@lib/client/pages/authorizations/columns';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
 import { AUTHORIZATIONS_LIST_QUERY } from '@lib/queries/authorizations';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { useRouter } from 'next/navigation';
-import React, { useMemo } from 'react';
+import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
+import { authorizationsColumns } from '@lib/client/pages/authorizations/columns';
 
 interface PartnerAuthorizationsProps {
   partnerId: number;
@@ -19,9 +19,10 @@ interface PartnerAuthorizationsProps {
 export const PartnerAuthorizations: React.FC<PartnerAuthorizationsProps> = ({
   partnerId,
 }) => {
-  const { push } = useRouter();
-
-  const columns = useMemo(() => getAuthorizationColumns(push), [push]);
+  const { renderedVisibleColumns } = useColumnPreferences(
+    authorizationsColumns,
+    ResourceType.AUTHORIZATIONS,
+  );
 
   return (
     <Table
@@ -45,7 +46,7 @@ export const PartnerAuthorizations: React.FC<PartnerAuthorizationsProps> = ({
       enableFilters
       showHeader
     >
-      {columns}
+      {renderedVisibleColumns}
     </Table>
   );
 };

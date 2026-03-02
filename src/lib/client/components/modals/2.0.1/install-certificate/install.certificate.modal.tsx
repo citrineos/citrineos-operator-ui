@@ -17,7 +17,7 @@ import {
   formatPem,
   triggerMessageAndHandleResponse,
 } from '@lib/utils/messages.utils';
-import { closeModal } from '@lib/utils/modal.slice';
+import { closeModal } from '@lib/utils/store/modal.slice';
 import { useForm } from '@refinedev/react-hook-form';
 import { plainToInstance } from 'class-transformer';
 import { useMemo, useState } from 'react';
