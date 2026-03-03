@@ -49,21 +49,22 @@ export const TariffsList = () => {
       <div className={tableHeaderWrapperFlex}>
         <h2 className={heading2Style}>{translate('Tariffs.Tariffs')}</h2>
         <div className={tableSearchFlex}>
+          <CanAccess resource={ResourceType.TARIFFS} action={ActionType.CREATE}>
+            <Button
+              onClick={() => push(`/${MenuSection.TARIFFS}/new`)}
+              variant="success"
+              size="sm"
+            >
+              <Plus className={buttonIconSize} />
+              {translate('actions.create')} {translate('Tariffs.tariff')}
+            </Button>
+          </CanAccess>
           <CanAccess resource={ResourceType.TARIFFS} action={ActionType.LIST}>
             {columnSelector}
             <DebounceSearch
               onSearch={onSearch}
               placeholder={`${translate('placeholders.search')} ${translate('Tariffs.Tariffs')}`}
             />
-          </CanAccess>
-          <CanAccess resource={ResourceType.TARIFFS} action={ActionType.CREATE}>
-            <Button
-              onClick={() => push(`/${MenuSection.TARIFFS}/new`)}
-              size="sm"
-            >
-              <Plus className={buttonIconSize} />
-              {translate('actions.create')} {translate('Tariffs.tariff')}
-            </Button>
           </CanAccess>
         </div>
       </div>
