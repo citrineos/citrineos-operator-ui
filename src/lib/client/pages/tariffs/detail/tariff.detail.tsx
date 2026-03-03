@@ -9,7 +9,6 @@ import { TariffDetailTabsCard } from '@lib/client/pages/tariffs/detail/tariff.de
 import { TariffClass } from '@lib/cls/tariff.dto';
 import { TARIFF_GET_QUERY } from '@lib/queries/tariffs';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';
@@ -46,9 +45,7 @@ export const TariffDetail = ({ params }: TariffDetailProps) => {
   } else if (!tariff) {
     return (
       <div className={`${pageMargin} ${pageFlex}`}>
-        <NoDataFoundCard
-          message={translate('Tariffs.noDataFound', { id })}
-        />
+        <NoDataFoundCard message={translate('Tariffs.noDataFound', { id })} />
       </div>
     );
   }
