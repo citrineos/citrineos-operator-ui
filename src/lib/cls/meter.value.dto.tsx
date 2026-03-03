@@ -107,24 +107,11 @@ export const findOverallValue = (
 export const normalizeValue = (overallValue: SampledValue): string | null => {
   let powerOfTen = overallValue.unitOfMeasure?.multiplier ?? 0;
   const unit = overallValue.unitOfMeasure?.unit?.toUpperCase();
-  switch (unit) {
-    case 'KWH':
-      break;
-    case 'WH':
-    case 'W':
-    case undefined:
-      powerOfTen -= 3;
-      break;
-    case 'PERCENT':
-      powerOfTen -= 2;
-      break;
-    case 'V':
-    case 'A':
-      break;
-    default:
-      throw new Error(
-        `Unknown unit for measurand ${overallValue.measurand} unit ${unit} `,
-      );
+
+  if (unit === undefined || unit === 'WH' || unit === 'W') {
+    powerOfTen -= 3;
+  } else if (unit === 'PERCENT') {
+    powerOfTen -= 2;
   }
 
   return (overallValue.value * 10 ** powerOfTen).toFixed(2);
