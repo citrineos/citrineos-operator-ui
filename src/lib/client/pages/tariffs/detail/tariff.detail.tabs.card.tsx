@@ -25,75 +25,21 @@ import {
   GET_CHARGING_STATIONS_FOR_TARIFF,
   GET_TRANSACTIONS_FOR_TARIFF,
 } from '@lib/queries/tariffs';
-import { useRouter } from 'next/navigation';
-import {
-  getTransactionColumns,
-  transactionChargingStationLocationNameField,
-} from '@lib/client/pages/transactions/columns';
-import { getChargingStationColumns } from '@lib/client/pages/charging-stations/columns';
-import { useDispatch } from 'react-redux';
-import { openModal } from '@lib/utils/modal.slice';
-import { ModalComponentType } from '@lib/client/components/modals/modal.types';
-import { instanceToPlain } from 'class-transformer';
-import type { ChargingStationDto } from '@citrineos/base';
+import { transactionsColumns } from '@lib/client/pages/transactions/columns';
+import { getChargingStationsColumns } from '@lib/client/pages/charging-stations/columns';
+import { useColumnPreferences } from '../../../hooks/useColumnPreferences';
 
-export const TariffDetailTabsCard = ({
-  tariff,
-}: {
-  tariff: TariffDto;
-}) => {
-  const { push } = useRouter();
-  const dispatch = useDispatch();
+export const TariffDetailTabsCard = ({ tariff }: { tariff: TariffDto }) => {
   const translate = useTranslate();
 
-  const showRemoteStartModal = (station: ChargingStationDto) => {
-    dispatch(
-      openModal({
-        title: translate('ChargingStations.remoteStart'),
-        modalComponentType: ModalComponentType.remoteStart,
-        modalComponentProps: { station: instanceToPlain(station) },
-      }),
+  const { renderedVisibleColumns: renderedChargingStationColumns } =
+    useColumnPreferences(
+      getChargingStationsColumns(false),
+      ResourceType.CHARGING_STATIONS,
     );
-  };
 
-  const handleStopTransactionClick = (station: ChargingStationDto) => {
-    dispatch(
-      openModal({
-        title: translate('ChargingStations.remoteStop'),
-        modalComponentType: ModalComponentType.remoteStop,
-        modalComponentProps: { station: instanceToPlain(station) },
-      }),
-    );
-  };
-
-  const showResetStartModal = (station: ChargingStationDto) => {
-    dispatch(
-      openModal({
-        title: translate('ChargingStations.reset'),
-        modalComponentType: ModalComponentType.reset,
-        modalComponentProps: { station: instanceToPlain(station) },
-      }),
-    );
-  };
-
-  const chargingStationColumns = useMemo(
-    () =>
-      getChargingStationColumns(
-        push,
-        showRemoteStartModal,
-        handleStopTransactionClick,
-        showResetStartModal,
-      ),
-    [push],
-  );
-
-  const transactionColumns = useMemo(
-    () =>
-      getTransactionColumns(push).filter(
-        (tc) => tc.key !== transactionChargingStationLocationNameField,
-      ),
-    [push],
-  );
+  const { renderedVisibleColumns: renderedTransactionColumns } =
+    useColumnPreferences(transactionsColumns, ResourceType.TRANSACTIONS);
 
   return (
     <Card>
@@ -128,7 +74,7 @@ export const TariffDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {chargingStationColumns}
+                {renderedChargingStationColumns}
               </Table>
             </CanAccess>
           </TabsContent>
@@ -153,7 +99,7 @@ export const TariffDetailTabsCard = ({
                 enableFilters
                 showHeader
               >
-                {transactionColumns}
+                {renderedTransactionColumns}
               </Table>
             </CanAccess>
           </TabsContent>

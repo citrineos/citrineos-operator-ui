@@ -43,6 +43,7 @@ import { Controller } from 'react-hook-form';
 import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 import { evsesFormUpsertGrid } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
 import { Combobox } from '@lib/client/components/combobox';
+import { useList } from '@refinedev/core';
 
 interface ConnectorUpsertProps {
   onSubmit: () => void;
