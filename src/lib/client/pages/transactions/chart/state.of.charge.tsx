@@ -51,10 +51,13 @@ export const StateOfCharge = ({
       meterValues,
       OCPP2_0_1.MeasurandEnumType.SoC,
       new Set(validContexts),
-    ).map(([elapsedTime, value]) => ({
-      elapsedTime,
-      stateOfCharge: value,
-    }));
+    ).map(([elapsedTime, value]) => {
+      const num = parseFloat(value);
+      return {
+        elapsedTime,
+        stateOfCharge: (num <= 1 ? num * 100 : num).toFixed(2),
+      };
+    });
 
     return rawData;
   }, [meterValues, validContexts]);
