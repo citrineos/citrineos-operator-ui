@@ -20,12 +20,14 @@ import { EMPTY_VALUE } from '@lib/utils/consts';
 import { badgeListStyle } from '@lib/client/styles/page';
 import { isEmpty } from '@lib/utils/assertion';
 import { Badge } from '@lib/client/components/ui/badge';
+import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 
 export const locationsColumns: ColumnConfiguration[] = [
   {
     key: LocationProps.name,
     header: 'Name',
     visible: true,
+    sortable: true,
     cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
       <TableCellLink
         path={`/${MenuSection.LOCATIONS}/${row.original.id}`}
@@ -73,6 +75,7 @@ export const locationsColumns: ColumnConfiguration[] = [
     key: LocationProps.timeZone,
     header: 'Time Zone',
     visible: false,
+    sortable: true,
   },
   {
     key: LocationProps.parkingType,
@@ -104,6 +107,30 @@ export const locationsColumns: ColumnConfiguration[] = [
     cellRender: ({ row }: CellContext<LocationDto, unknown>) => (
       <span>{row.original.chargingPool?.length ?? 0}</span>
     ),
+  },
+  {
+    key: LocationProps.createdAt,
+    header: 'Created At',
+    visible: false,
+    sortable: true,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) =>
+      row.original.createdAt ? (
+        <TimestampDisplay isoTimestamp={row.original.createdAt} />
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
+  },
+  {
+    key: LocationProps.updatedAt,
+    header: 'Updated At',
+    visible: false,
+    sortable: true,
+    cellRender: ({ row }: CellContext<LocationDto, unknown>) =>
+      row.original.updatedAt ? (
+        <TimestampDisplay isoTimestamp={row.original.updatedAt} />
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
   },
   {
     key: ACTIONS_COLUMN,

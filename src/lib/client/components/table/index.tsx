@@ -46,6 +46,7 @@ import React, {
   type ReactElement,
   type ReactNode,
   useCallback,
+  useEffect,
   useMemo,
 } from 'react';
 import { RowAction, RowActions } from './actions';
@@ -65,6 +66,12 @@ import {
   tableHeaderRowStyle,
   tableHeaderTextStyle,
 } from '@lib/client/styles/table';
+import { parseAsJson, useQueryState } from 'nuqs';
+import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
+import { isNullOrUndefined } from '@lib/utils/assertion';
+import { useSelector } from 'react-redux';
+import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
+import { DEFAULT_TABLE_STATE } from '@lib/utils/consts';
 
 export type TableListFilterOption = BaseOption & {
   icon?: React.ComponentType<{ className?: string }>;
@@ -120,6 +127,8 @@ export type TableProps<
   };
   rowClassName?: string | ((record: TData, index: number) => string);
   showToolbar?: boolean;
+  // specific key to track query state with nuqs
+  tableStateKey?: string;
 };
 
 export function Table<
@@ -134,6 +143,7 @@ export function Table<
   rowClassName,
   useClientData = false,
   showToolbar = false,
+  tableStateKey = DEFAULT_TABLE_STATE,
   ...props
 }: TableProps<TData, TError>) {
   const translate = useTranslate();
@@ -177,12 +187,25 @@ export function Table<
     return [];
   }, [children, mapColumn]);
 
+  const [tableQueryState, _] = useQueryState(
+    tableStateKey,
+    parseAsJson(TableQueryStateSchema.parse),
+  );
+
+  const pageSizePreference = useSelector((state) =>
+    getPageSizePreference(state, tableStateKey),
+  );
+
   // When using client data, we still need to call useTable (React hooks must be called unconditionally)
   // but we configure it to skip the query and use provided data
   const table = useTable({
     columns,
     state: {
       expanded: expandable?.expandedRowKeys,
+      pagination: {
+        pageIndex: tableQueryState?.page ? tableQueryState.page - 1 : 0,
+        pageSize: tableQueryState?.size ?? pageSizePreference,
+      },
     },
     onExpandedChange: expandable?.onExpandedRowsChange,
     getRowCanExpand: expandable
@@ -198,6 +221,7 @@ export function Table<
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    manualPagination: !isNullOrUndefined(tableStateKey),
     // Configure query options to disable fetching when in client mode
     refineCoreProps: useClientData
       ? {
@@ -213,6 +237,21 @@ export function Table<
   const tableQuery = useClientData
     ? { isLoading: false, data: props.data }
     : table.refineCore.tableQuery;
+
+  useEffect(() => {
+    if (tableQueryState?.sortBy && tableQueryState?.direction) {
+      table.refineCore.setSorters([
+        {
+          field: tableQueryState.sortBy,
+          order: tableQueryState.direction,
+        },
+      ]);
+    } else {
+      table.refineCore.setSorters(
+        props.refineCoreProps?.sorters?.initial ?? [],
+      );
+    }
+  }, [tableQueryState?.sortBy, tableQueryState?.direction]);
 
   const tableOptions = useMemo<TableOptionsResolved<TData>>(
     () => reactTable.options,
@@ -267,9 +306,13 @@ export function Table<
                                 header.column.columnDef.header,
                                 header.getContext(),
                               )}
-                          {tableOptions.enableSorting &&
+                          {!useClientData &&
+                            tableOptions.enableSorting &&
                             columnDef.enableSorting && (
-                              <SortAction column={header.column} />
+                              <SortAction
+                                column={header.column}
+                                tableStateKey={tableStateKey}
+                              />
                             )}
                           {isFilterable &&
                             columnDef?.filter &&
@@ -342,7 +385,9 @@ export function Table<
             )}
           </TableBody>
         </TableUi>
-        <Pagination table={reactTable} />
+        {!useClientData && (
+          <Pagination table={reactTable} tableStateKey={tableStateKey} />
+        )}
       </div>
     </DeleteProvider>
   );

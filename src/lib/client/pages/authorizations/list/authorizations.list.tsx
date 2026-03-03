@@ -14,7 +14,7 @@ import { AuthorizationClass } from '@lib/cls/authorization.dto';
 import { AUTHORIZATIONS_LIST_QUERY } from '@lib/queries/authorizations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
+import { EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { Plus } from 'lucide-react';
@@ -27,7 +27,7 @@ import {
   tableWrapperStyle,
 } from '@lib/client/styles/table';
 import { buttonIconSize } from '@lib/client/styles/icon';
-import type { AuthorizationDto } from '@citrineos/base';
+import { type AuthorizationDto, AuthorizationProps } from '@citrineos/base';
 import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
@@ -85,7 +85,9 @@ export const AuthorizationsList = () => {
         <Table<AuthorizationDto>
           refineCoreProps={{
             resource: ResourceType.AUTHORIZATIONS,
-            sorters: DEFAULT_SORTERS,
+            sorters: {
+              initial: [{ field: AuthorizationProps.idToken, order: 'asc' }],
+            },
             filters: {
               permanent: filters,
             },
@@ -102,6 +104,7 @@ export const AuthorizationsList = () => {
           enableSorting
           enableFilters
           showHeader
+          tableStateKey={ResourceType.AUTHORIZATIONS}
         >
           {renderedVisibleColumns}
         </Table>

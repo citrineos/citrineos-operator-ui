@@ -19,17 +19,66 @@ import {
   ChevronsLeftIcon,
   ChevronsRightIcon,
 } from 'lucide-react';
+import { parseAsJson, useQueryState } from 'nuqs';
+import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getPageSizePreference,
+  setPageSizePreference,
+} from '@lib/utils/store/table.preferences.slice';
 
 interface DataTablePaginationProps<TData extends BaseRecord = BaseRecord> {
   table: UseTableReturnType<TData>['reactTable'];
   showSelectedText?: boolean;
+  tableStateKey: string;
 }
+
+const MAX_PAGE_SIZE = 50;
 
 export const Pagination = <TData extends BaseRecord = BaseRecord>({
   table,
   showSelectedText,
+  tableStateKey,
 }: DataTablePaginationProps<TData>) => {
+  const dispatch = useDispatch();
   const translate = useTranslate();
+  const [tableQueryState, setTableQueryState] = useQueryState(
+    tableStateKey,
+    parseAsJson(TableQueryStateSchema.parse),
+  );
+  const pageSizePreference = useSelector((state) =>
+    getPageSizePreference(state, tableStateKey),
+  );
+
+  const setPage = (pageIndex: number) => {
+    // store both page and size in query params for context
+    setTableQueryState({
+      ...(tableQueryState ?? {}),
+      page: pageIndex + 1,
+      size: tableQueryState?.size ?? pageSizePreference,
+    }).then();
+  };
+
+  const setPageSize = (pageSizeString: string) => {
+    const pageSize = Number(pageSizeString);
+
+    dispatch(
+      setPageSizePreference({
+        resource: tableStateKey,
+        pageSize,
+      }),
+    );
+
+    // reset page-related query params after change
+    const newParams = { ...(tableQueryState ?? {}) };
+    delete newParams.page;
+    delete newParams.size;
+
+    setTableQueryState(
+      Object.keys(newParams).length > 0 ? newParams : null,
+    ).then();
+  };
+
   return (
     <div className="flex flex-col sm:flex-row gap-y-4 sm-gap-y-0 items-center justify-between">
       {showSelectedText && (
@@ -44,16 +93,14 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
             {translate('pagination.rowsPerPage')}
           </p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
+            value={`${Math.min(tableQueryState?.size ?? pageSizePreference, MAX_PAGE_SIZE)}`}
+            onValueChange={(value) => setPageSize(value)}
           >
             <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {[10, 20, 30, 40, MAX_PAGE_SIZE].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -69,16 +116,18 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(0)}
+            onClick={() => setPage(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">
+              {translate('pagination.buttons.goToFirstPage')}
+            </span>
             <ChevronsLeftIcon className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => table.previousPage()}
+            onClick={() => setPage(table.getState().pagination.pageIndex - 1)}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">
@@ -89,7 +138,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => table.nextPage()}
+            onClick={() => setPage(table.getState().pagination.pageIndex + 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">
@@ -100,7 +149,7 @@ export const Pagination = <TData extends BaseRecord = BaseRecord>({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            onClick={() => setPage(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">

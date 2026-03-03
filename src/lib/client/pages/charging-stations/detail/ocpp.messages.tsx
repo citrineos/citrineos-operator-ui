@@ -34,7 +34,7 @@ import { Copy, Download, Link } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { buttonIconSize } from '@lib/client/styles/icon';
-import { formatDate } from '@lib/client/components/timestamp-display';
+import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 import { Table } from '@lib/client/components/table';
 import type { CellContext } from '@tanstack/react-table';
 import { copy } from '@lib/utils/copy';
@@ -42,6 +42,10 @@ import { DebounceSearch } from '@lib/client/components/debounce-search';
 import { MultiSelect } from '@lib/client/components/multi-select';
 import { OCPPMessagesExportDialog } from '@lib/client/pages/charging-stations/detail/ocpp.messages.export.dialog';
 import { DateTimePicker } from '@lib/client/components/ui/date-time-picker';
+import { parseAsJson, useQueryState } from 'nuqs';
+import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
+import { useSelector } from 'react-redux';
+import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
 
 export interface OCPPMessagesProps {
   stationId: string;
@@ -77,11 +81,29 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
 
   const translate = useTranslate();
 
+  const [tableQueryState, _] = useQueryState(
+    ResourceType.OCPP_MESSAGES,
+    parseAsJson(TableQueryStateSchema.parse),
+  );
+
+  const pageSizePreference = useSelector((state) =>
+    getPageSizePreference(state, ResourceType.OCPP_MESSAGES),
+  );
+
   const {
     query: { data },
   } = useList<OCPPMessageDto>({
     resource: ResourceType.OCPP_MESSAGES,
-    sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
+    pagination: {
+      currentPage: tableQueryState?.page ?? 1,
+      pageSize: tableQueryState?.size ?? pageSizePreference,
+    },
+    sorters: [
+      {
+        field: tableQueryState?.sortBy ?? OCPPMessageProps.timestamp,
+        order: tableQueryState?.direction ?? 'desc',
+      },
+    ],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
       gqlVariables: { stationId },
@@ -223,8 +245,10 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
           }}
           rowClassName={(record) => getRowClassName(record)}
+          enableSorting
           enableFilters
           showHeader
+          tableStateKey={ResourceType.OCPP_MESSAGES}
         >
           {[
             <Table.Column
@@ -295,14 +319,13 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
               key="timestamp"
               accessorKey="timestamp"
               header="Timestamp"
+              enableSorting
               cell={({ row }: CellContext<OCPPMessageDto, unknown>) => {
                 return (
-                  <span>
-                    {formatDate(
-                      row.original.timestamp,
-                      'YYYY-MM-DD HH:mm:ss.SSS',
-                    )}
-                  </span>
+                  <TimestampDisplay
+                    isoTimestamp={row.original.timestamp}
+                    format="YYYY-MM-DD HH:mm:ss.SSS"
+                  />
                 );
               }}
             />,
