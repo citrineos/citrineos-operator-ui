@@ -31,6 +31,8 @@ export const AUTHORIZATIONS_LIST_QUERY = gql`
       cacheExpiryDateTime
       allowedConnectorTypes
       disallowedEvseIdPrefixes
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
     }
@@ -70,6 +72,8 @@ export const GET_AUTHORIZATIONS_BY_TRANSACTION = gql`
       cacheExpiryDateTime
       allowedConnectorTypes
       disallowedEvseIdPrefixes
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
     }
@@ -125,6 +129,8 @@ export const AUTHORIZATIONS_CREATE_MUTATION = gql`
       language2
       personalMessage
       cacheExpiryDateTime
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
     }
@@ -146,6 +152,8 @@ export const AUTHORIZATIONS_EDIT_MUTATION = gql`
       language2
       personalMessage
       cacheExpiryDateTime
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
     }
@@ -167,6 +175,8 @@ export const AUTHORIZATIONS_DELETE_MUTATION = gql`
       language2
       personalMessage
       cacheExpiryDateTime
+      realTimeAuth
+      realTimeAuthUrl
       createdAt
       updatedAt
     }
