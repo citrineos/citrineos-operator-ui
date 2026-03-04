@@ -58,6 +58,7 @@ const AuthorizationCreateSchema = AuthorizationSchema.pick({
   [AuthorizationProps.realTimeAuthUrl]: true,
   [AuthorizationProps.concurrentTransaction]: true,
 }).extend({
+  [AuthorizationProps.realTimeAuthUrl]: z.string().nullable().optional(),
   [AuthorizationProps.allowedConnectorTypes]: z.string().nullable().optional(),
   [AuthorizationProps.disallowedEvseIdPrefixes]: z
     .string()
