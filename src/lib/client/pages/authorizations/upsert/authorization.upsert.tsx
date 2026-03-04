@@ -16,7 +16,7 @@ import {
   ComboboxFormField,
   formCheckboxStyle,
   FormField,
-  SelectFormField,
+  nestedFormRowFlex,
 } from '@lib/client/components/form/field';
 import { Input } from '@lib/client/components/ui/input';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
@@ -32,9 +32,11 @@ import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import z from 'zod';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
-import { Textarea } from '@lib/client/components/ui/textarea';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import React from 'react';
+import { useFieldArray } from 'react-hook-form';
+import { AddArrayItemButton } from '@lib/client/components/form/add-array-item-button';
+import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-item-button';
 import { Card, CardContent, CardHeader } from '@lib/client/components/ui/card';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
@@ -72,7 +74,10 @@ const AuthorizationCreateSchema = AuthorizationSchema.pick({
     .number<number>()
     .nullable()
     .optional(),
-  [AuthorizationProps.additionalInfo]: z.string().nullable().optional(),
+  [AuthorizationProps.additionalInfo]: z
+    .array(z.object({ additionalIdToken: z.string(), type: z.string() }))
+    .nullable()
+    .optional(),
   realTimeAuthTimeout: z.coerce.number<number>().nullable().optional(),
 });
 
@@ -90,8 +95,8 @@ const defaultValues = {
   [AuthorizationProps.disallowedEvseIdPrefixes]: '',
   [AuthorizationProps.realTimeAuth]: undefined,
   [AuthorizationProps.realTimeAuthUrl]: '',
-  realTimeAuthTimeout: undefined,
-  [AuthorizationProps.additionalInfo]: '',
+  [AuthorizationProps.realTimeAuthTimeout]: undefined,
+  [AuthorizationProps.additionalInfo]: [],
   [AuthorizationProps.concurrentTransaction]: false,
 };
 
@@ -122,6 +127,7 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
               data.data?.allowedConnectorTypes?.join?.(', '),
             disallowedEvseIdPrefixes:
               data.data?.disallowedEvseIdPrefixes?.join?.(', '),
+            realTimeAuthUrl: data.data?.realTimeAuthUrl ?? '',
           };
           return { ...data, data: formData };
         },
@@ -139,6 +145,15 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
     defaultValues: { ...defaultValues },
     resolver: zodResolver(AuthorizationCreateSchema),
     warnWhenUnsavedChanges: true,
+  });
+
+  const {
+    fields: additionalInfoFields,
+    append: appendAdditionalInfo,
+    remove: removeAdditionalInfo,
+  } = useFieldArray({
+    control: form.control,
+    name: AuthorizationProps.additionalInfo as 'additionalInfo',
   });
 
   const handleOnFinish = async (values: AuthorizationCreateDto) => {
@@ -188,7 +203,7 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
       }
     }
 
-    if (newItem.additionalInfo === '') {
+    if (!newItem.additionalInfo || newItem.additionalInfo.length === 0) {
       newItem.additionalInfo = null;
     }
 
@@ -320,12 +335,16 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 <Input placeholder="e.g., EVSE1, EVSE2" />
               </FormField>
 
-              <SelectFormField
+              <ComboboxFormField
                 control={form.control}
                 label="Real-Time Authentication"
                 name={AuthorizationProps.realTimeAuth}
-                options={authorizationWhitelistOptions}
+                options={authorizationWhitelistOptions.map((options) => ({
+                  label: options,
+                  value: options,
+                }))}
                 placeholder="Select Option"
+                searchPlaceholder="Search Option"
               />
 
               <FormField
@@ -346,19 +365,45 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
 
               <FormField
                 control={form.control}
-                label="Additional Info (JSON)"
-                name={AuthorizationProps.additionalInfo}
-              >
-                <Textarea placeholder='[{ "key1": "value1" }, { "key2": "value2" }]' />
-              </FormField>
-
-              <FormField
-                control={form.control}
                 label="Allow Concurrent Transaction"
                 name={AuthorizationProps.concurrentTransaction}
               >
                 <Checkbox className={formCheckboxStyle} />
               </FormField>
+
+              <div className="col-span-full flex flex-col gap-4">
+                <div className="flex items-start">
+                  <AddArrayItemButton
+                    onAppendAction={() =>
+                      appendAdditionalInfo({ additionalIdToken: '', type: '' })
+                    }
+                    itemLabel="Additional Info"
+                  />
+                </div>
+                <div className="flex flex-col gap-6 w-full">
+                  {additionalInfoFields.map((field, index) => (
+                    <div key={field.id} className={nestedFormRowFlex}>
+                      <FormField
+                        control={form.control}
+                        label={`Additional Id Token #${index + 1}`}
+                        name={`additionalInfo.${index}.additionalIdToken`}
+                      >
+                        <Input placeholder="Additional Info" />
+                      </FormField>
+                      <FormField
+                        control={form.control}
+                        label={`Type #${index + 1}`}
+                        name={`additionalInfo.${index}.type`}
+                      >
+                        <Input placeholder="Type" />
+                      </FormField>
+                      <RemoveArrayItemButton
+                        onRemoveAction={() => removeAdditionalInfo(index)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </Form>
         </CardContent>

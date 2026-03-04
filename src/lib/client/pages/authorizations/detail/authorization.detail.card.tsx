@@ -185,6 +185,29 @@ export const AuthorizationDetailCard: React.FC<
                 : NOT_APPLICABLE
             }
           />
+          <KeyValueDisplay
+            keyLabel="Additional Info"
+            value={authorization.additionalInfo}
+            valueRender={(additionalInfo) =>
+              additionalInfo?.length > 0 ? (
+                <div className="flex flex-col gap-1">
+                  {additionalInfo.map(
+                    (
+                      item: { additionalIdToken: string; type: string },
+                      index: number,
+                    ) => (
+                      <div key={index} className="flex gap-2">
+                        <Badge variant="muted">{item.additionalIdToken}</Badge>
+                        <Badge variant="outline">{item.type}</Badge>
+                      </div>
+                    ),
+                  )}
+                </div>
+              ) : (
+                <span>{NOT_APPLICABLE}</span>
+              )
+            }
+          />
         </div>
       </CardContent>
     </Card>
