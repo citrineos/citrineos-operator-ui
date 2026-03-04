@@ -91,7 +91,7 @@ export const PowerOverTime = ({
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Line
-                dataKey="kWh"
+                dataKey="kw"
                 stroke="var(--color-secondary)"
                 dot={{
                   fill: 'var(--color-secondary)',
