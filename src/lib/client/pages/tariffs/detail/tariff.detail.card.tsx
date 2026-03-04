@@ -13,7 +13,7 @@ import { KeyValueDisplay } from '@lib/client/components/key-value-display';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { NOT_APPLICABLE } from '@lib/utils/consts';
-import { ChevronLeft, Pencil, Trash2 } from 'lucide-react';
+import { ChevronLeft, Edit, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@lib/client/components/ui/button';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { useDelete } from '@refinedev/core';
@@ -63,12 +63,12 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
             params={{ id: tariff.id }}
           >
             <Button
-              variant="ghost"
-              size="icon"
+              variant="secondary"
+              size="sm"
               onClick={() => push(`/${MenuSection.TARIFFS}/${tariff.id}/edit`)}
-              title={translate('actions.edit')}
             >
-              <Pencil className={buttonIconSize} />
+              <Edit className={buttonIconSize} />
+              {translate('buttons.edit')}
             </Button>
           </CanAccess>
           <CanAccess
@@ -76,13 +76,9 @@ export const TariffDetailCard = ({ tariff }: TariffDetailCardProps) => {
             action={ActionType.DELETE}
             params={{ id: tariff.id }}
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDelete}
-              title={translate('actions.delete')}
-            >
-              <Trash2 className={`${buttonIconSize} text-destructive`} />
+            <Button variant="destructive" size="sm" onClick={handleDelete}>
+              <Trash2 className={buttonIconSize} />
+              {translate('buttons.delete')}
             </Button>
           </CanAccess>
         </div>
