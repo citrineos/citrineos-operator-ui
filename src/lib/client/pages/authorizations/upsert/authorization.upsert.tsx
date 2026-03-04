@@ -344,7 +344,6 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 }))}
                 placeholder="Select Option"
                 searchPlaceholder="Search Option"
-                required
               />
 
               <FormField
