@@ -152,18 +152,22 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
       return;
     }
 
-    const setVariableData = values.setVariableData.map((item) => {
+    const setVariableData = values.setVariableData.map((item,index) => {
       const component = componentOptions.find(
         (c) => c.value === item.componentId,
       );
       const componentName = (component as any)?.label || '';
+
+      const variable = variableOptionsMap[index]?.find(
+        v => v.value === item.variableId
+      );
 
       return {
         component: {
           name: componentName,
         },
         variable: {
-          name: item.variableId,
+          name: variable?.label || '',
         },
         attributeValue: item.value,
         ...(item.attributeType && { attributeType: item.attributeType }),
