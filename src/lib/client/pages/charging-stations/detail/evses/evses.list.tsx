@@ -236,8 +236,9 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
                           >
                             <span>View Connectors</span>
                             <ChevronDown
-                              className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''
-                                }`}
+                              className={`h-4 w-4 transition-transform ${
+                                isExpanded ? 'rotate-180' : ''
+                              }`}
                             />
                           </Button>
                           <Button
