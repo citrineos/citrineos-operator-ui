@@ -118,7 +118,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
 
   const hasConnections =
     coreConfig?.util?.networkConnection?.websocketServers?.length && host;
-
+    
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className={'overflow-auto max-h-150!'}>
@@ -126,7 +126,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
           <DialogTitle>Charging Station Connection</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Use the following websocket URLs to connect to the server. The
+          Use the following tenant-specific websocket URLs to connect to the server. The
           connection can be upgraded from No Authentication to Security Profile
           3 one by one.
         </DialogDescription>
@@ -163,19 +163,19 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
                         <span className="font-small mr-2">{s.protocol}</span>
                         <div className="flex items-center gap-2 flex-1">
                           <a
-                            href={`${wsUrl}:${s.port}`}
+                            href={`${wsUrl}:${s.port}/${tenantId}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 underline text-sm truncate"
-                            title={`${wsUrl}:${s.port}`}
+                            title={`${wsUrl}:${s.port}/${tenantId}`}
                           >
-                            {`${wsUrl}:${s.port}`}
+                            {`${wsUrl}:${s.port}/${tenantId}`}
                           </a>
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              copyToClipboard(s.id, `${wsUrl}:${s.port}`)
+                              copyToClipboard(s.id, `${wsUrl}:${s.port}/${tenantId}`)
                             }
                           >
                             <Copy className="w-4 h-4" />
