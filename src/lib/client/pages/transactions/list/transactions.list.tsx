@@ -82,6 +82,7 @@ export const TransactionsList = () => {
           enableSorting
           enableFilters
           showHeader
+          tableStateKey={ResourceType.TRANSACTIONS}
         >
           {renderedVisibleColumns}
         </Table>

@@ -88,7 +88,6 @@ export function Providers({
               i18nProvider={i18nProvider}
               resources={resources}
               options={{
-                syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
                 projectId: '6ZV3T4-Lyy7B3-Dr5Uhd',
                 liveMode: 'auto',

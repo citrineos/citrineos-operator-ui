@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Home,
   MapPin,
+  Receipt,
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -31,6 +32,7 @@ export enum MenuSection {
   CHARGING_STATIONS = 'charging-stations',
   AUTHORIZATIONS = 'authorizations',
   TRANSACTIONS = 'transactions',
+  TARIFFS = 'tariffs',
   PARTNERS = 'partners',
 }
 
@@ -85,6 +87,11 @@ export const MainMenu = ({ activeSection }: MainMenuProps) => {
       key: `/${MenuSection.TRANSACTIONS}`,
       label: translate('Transactions.Transactions'),
       icon: <ArrowLeftRight className={sidebarIconSize} />,
+    },
+    {
+      key: `/${MenuSection.TARIFFS}`,
+      label: translate('Tariffs.Tariffs'),
+      icon: <Receipt className={sidebarIconSize} />,
     },
     {
       key: `/${MenuSection.PARTNERS}`,

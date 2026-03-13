@@ -3,85 +3,94 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Table } from '@lib/client/components/table';
-import { Button } from '@lib/client/components/ui/button';
-import { partnersColumns } from '@lib/client/pages/partners/columns';
-import { TenantPartnerClass } from '@lib/cls/tenant.partner.cls';
-import { PARTNERS_LIST_QUERY } from '@lib/queries/tenant.partners';
+import {
+  getTariffsFilters,
+  tariffsColumns,
+} from '@lib/client/pages/tariffs/columns';
+import { TariffClass } from '@lib/cls/tariff.dto';
+import { TARIFF_LIST_QUERY } from '@lib/queries/tariffs';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import { DEFAULT_SORTERS } from '@lib/utils/consts';
+import { DEFAULT_SORTERS, EMPTY_FILTER } from '@lib/utils/consts';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useTranslate } from '@refinedev/core';
-import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import {
   tableHeaderWrapperFlex,
   tableSearchFlex,
   tableWrapperStyle,
 } from '@lib/client/styles/table';
+import { DebounceSearch } from '@lib/client/components/debounce-search';
+import { Button } from '@lib/client/components/ui/button';
+import { Plus } from 'lucide-react';
 import { buttonIconSize } from '@lib/client/styles/icon';
+import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 
-export const PartnersList = () => {
+export const TariffsList = () => {
   const { push } = useRouter();
+  const [filters, setFilters] = useState<any>(EMPTY_FILTER);
   const translate = useTranslate();
 
   const { renderedVisibleColumns, columnSelector } = useColumnPreferences(
-    partnersColumns,
-    ResourceType.PARTNERS,
+    tariffsColumns,
+    ResourceType.TARIFFS,
   );
+
+  const onSearch = (value: string) => {
+    setFilters(value ? getTariffsFilters(value) : EMPTY_FILTER);
+  };
 
   return (
     <div className={`${pageMargin} ${tableWrapperStyle}`}>
       <div className={tableHeaderWrapperFlex}>
-        <h2 className={heading2Style}>
-          {translate('TenantPartners.TenantPartners')}
-        </h2>
+        <h2 className={heading2Style}>{translate('Tariffs.Tariffs')}</h2>
         <div className={tableSearchFlex}>
-          <CanAccess
-            resource={ResourceType.PARTNERS}
-            action={ActionType.CREATE}
-          >
+          <CanAccess resource={ResourceType.TARIFFS} action={ActionType.CREATE}>
             <Button
+              onClick={() => push(`/${MenuSection.TARIFFS}/new`)}
               variant="success"
-              onClick={() => push(`/${MenuSection.PARTNERS}/new`)}
+              size="sm"
             >
               <Plus className={buttonIconSize} />
-              {translate('buttons.add')}{' '}
-              {translate('TenantPartners.TenantPartners')}
+              {translate('actions.create')} {translate('Tariffs.tariff')}
             </Button>
           </CanAccess>
-          <CanAccess resource={ResourceType.PARTNERS} action={ActionType.LIST}>
+          <CanAccess resource={ResourceType.TARIFFS} action={ActionType.LIST}>
             {columnSelector}
+            <DebounceSearch
+              onSearch={onSearch}
+              placeholder={`${translate('placeholders.search')} ${translate('Tariffs.Tariffs')}`}
+            />
           </CanAccess>
         </div>
       </div>
       <CanAccess
-        resource={ResourceType.PARTNERS}
+        resource={ResourceType.TARIFFS}
         action={ActionType.LIST}
         fallback={<AccessDeniedFallback />}
       >
         <Table
           refineCoreProps={{
-            resource: ResourceType.PARTNERS,
+            resource: ResourceType.TARIFFS,
             sorters: DEFAULT_SORTERS,
+            filters: {
+              permanent: filters,
+            },
             meta: {
-              gqlQuery: PARTNERS_LIST_QUERY,
+              gqlQuery: TARIFF_LIST_QUERY,
             },
             queryOptions: {
-              ...getPlainToInstanceOptions(TenantPartnerClass),
-              select: (data: any) => {
-                return data;
-              },
+              ...getPlainToInstanceOptions(TariffClass),
+              select: (data: any) => data,
             },
           }}
           enableSorting
           enableFilters
           showHeader
-          tableStateKey={ResourceType.PARTNERS}
         >
           {renderedVisibleColumns}
         </Table>

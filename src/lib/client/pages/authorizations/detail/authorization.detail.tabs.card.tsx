@@ -65,7 +65,7 @@ export const AuthorizationDetailTabsCard = ({
                   },
                   queryOptions: {
                     enabled: !!authIdToken,
-                    ...getPlainToInstanceOptions(TransactionClass, true),
+                    ...getPlainToInstanceOptions(TransactionClass),
                   },
                 }}
                 enableSorting

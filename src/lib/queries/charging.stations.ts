@@ -246,6 +246,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
           format
           powerType
           termsAndConditionsUrl
+          tariffId
           errorCode
           timestamp
           info
@@ -299,6 +300,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
         format
         powerType
         termsAndConditionsUrl
+        tariffId
         errorCode
         timestamp
         info

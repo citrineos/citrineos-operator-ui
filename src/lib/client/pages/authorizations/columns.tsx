@@ -14,6 +14,7 @@ import type { CellContext } from '@tanstack/react-table';
 import { isEmpty } from '@lib/utils/assertion';
 import { EMPTY_VALUE } from '@lib/utils/consts';
 import { badgeListStyle } from '@lib/client/styles/page';
+import { TimestampDisplay } from '@lib/client/components/timestamp-display';
 
 export const authorizationsColumns: ColumnConfiguration[] = [
   {
@@ -89,6 +90,30 @@ export const authorizationsColumns: ColumnConfiguration[] = [
             </Badge>
           ))}
         </div>
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
+  },
+  {
+    key: AuthorizationProps.createdAt,
+    header: 'Created At',
+    visible: false,
+    sortable: true,
+    cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
+      row.original.createdAt ? (
+        <TimestampDisplay isoTimestamp={row.original.createdAt} />
+      ) : (
+        <span>{EMPTY_VALUE}</span>
+      ),
+  },
+  {
+    key: AuthorizationProps.updatedAt,
+    header: 'Updated At',
+    visible: false,
+    sortable: true,
+    cellRender: ({ row }: CellContext<AuthorizationDto, unknown>) =>
+      row.original.updatedAt ? (
+        <TimestampDisplay isoTimestamp={row.original.updatedAt} />
       ) : (
         <span>{EMPTY_VALUE}</span>
       ),

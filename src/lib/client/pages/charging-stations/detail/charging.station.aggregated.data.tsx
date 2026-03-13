@@ -71,7 +71,7 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
         order_by: { createdAt: 'asc' },
       },
     },
-    queryOptions: getPlainToInstanceOptions(TransactionClass, true),
+    queryOptions: getPlainToInstanceOptions(TransactionClass),
   });
   const txIds = useMemo(() => txData?.data.map((tx) => tx.id) ?? [], [txData]);
 
@@ -83,7 +83,7 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
       gqlQuery: GET_METER_VALUES_FOR_STATION,
       gqlVariables: { transactionDatabaseIds: txIds, limit: 10000, offset: 0 },
     },
-    queryOptions: getPlainToInstanceOptions(MeterValueClass, true),
+    queryOptions: getPlainToInstanceOptions(MeterValueClass),
   });
   const defaultRange: DateRange = {
     from: startOfDay(subDays(new Date(), 7)),

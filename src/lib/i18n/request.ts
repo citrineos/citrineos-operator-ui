@@ -12,6 +12,7 @@ const messageFilenames = [
   'chargingStations',
   'locations',
   'authorizations',
+  'tariffs',
   'transactions',
   'tenantPartners',
 ];

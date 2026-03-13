@@ -83,6 +83,7 @@ export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
       maximumVoltage
       maximumPowerWatts
       termsAndConditionsUrl
+      tariffId
       createdAt
       updatedAt
     }
@@ -112,6 +113,7 @@ export const CONNECTOR_CREATE_MUTATION = gql`
       format
       powerType
       termsAndConditionsUrl
+      tariffId
       errorCode
       timestamp
       info
@@ -139,6 +141,7 @@ export const CONNECTOR_EDIT_MUTATION = gql`
       format
       powerType
       termsAndConditionsUrl
+      tariffId
       errorCode
       timestamp
       info

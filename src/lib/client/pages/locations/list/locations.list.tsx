@@ -111,6 +111,8 @@ export const LocationsList = () => {
             ),
             expandedRowClassName: 'bg-muted/10',
           }}
+          enableSorting
+          tableStateKey={ResourceType.LOCATIONS}
         >
           {renderedVisibleColumns}
         </Table>
