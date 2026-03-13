@@ -16,7 +16,7 @@ const initialState: SelectedChargingStationState = {
 };
 
 export const selectedChargingStationSlice = createSlice({
-  name: 'selectedChargingStationSlice',
+  name: 'selectedChargingStation',
   initialState,
   reducers: {
     setSelectedChargingStation: (
@@ -31,10 +31,8 @@ export const selectedChargingStationSlice = createSlice({
 
 export const getSelectedChargingStation = () =>
   createSelector(
-    (state: RootState) =>
-      state.selectedChargingStationSlice.selectedChargingStation,
-    (selectedChargingStation: any) =>
-      selectedChargingStation ? JSON.parse(selectedChargingStation) : undefined,
+    (state: RootState) => state.selectedChargingStation,
+    (state: SelectedChargingStationState) => state?.selectedChargingStation,
   );
 
 export const { setSelectedChargingStation } =
