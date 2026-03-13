@@ -6,6 +6,7 @@ import type { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@lib/utils/store/store';
+import type { ChargingStationDto } from '@citrineos/base';
 
 interface SelectedChargingStationState {
   selectedChargingStation: ChargingStationClass | undefined;
@@ -21,7 +22,7 @@ export const selectedChargingStationSlice = createSlice({
   reducers: {
     setSelectedChargingStation: (
       state,
-      action: PayloadAction<{ selectedChargingStation: string }>,
+      action: PayloadAction<{ selectedChargingStation: ChargingStationDto }>,
     ) => {
       (state as any).selectedChargingStation =
         action.payload.selectedChargingStation;
@@ -31,10 +32,8 @@ export const selectedChargingStationSlice = createSlice({
 
 export const getSelectedChargingStation = () =>
   createSelector(
-    (state: RootState) =>
-      state.selectedChargingStationSlice.selectedChargingStation,
-    (selectedChargingStation: any) =>
-      selectedChargingStation ? JSON.parse(selectedChargingStation) : undefined,
+    (state: RootState) => state.selectedChargingStation,
+    (state: SelectedChargingStationState) => state?.selectedChargingStation,
   );
 
 export const { setSelectedChargingStation } =
