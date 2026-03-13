@@ -55,7 +55,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     queryOptions: getPlainToInstanceOptions(ChargingStationClass, true),
   });
 
-  const station = data?.data;
+  const station = { ...data?.data } as ChargingStationDto;
 
   const openModal = useCallback(
     (
@@ -86,7 +86,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
   useEffect(() => {
     dispatch(
       setSelectedChargingStation({
-        selectedChargingStation: JSON.stringify(station),
+        selectedChargingStation: station,
       }),
     );
   }, [dispatch, station]);
@@ -233,9 +233,8 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
                           >
                             <span>View Connectors</span>
                             <ChevronDown
-                              className={`h-4 w-4 transition-transform ${
-                                isExpanded ? 'rotate-180' : ''
-                              }`}
+                              className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''
+                                }`}
                             />
                           </Button>
                           <Button
