@@ -57,7 +57,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
 
   const station = React.useMemo(() => {
     const station = { ...data?.data } as ChargingStationDto;
-    return station
+    return station;
   }, [data?.data]);
 
   const openModal = useCallback(
