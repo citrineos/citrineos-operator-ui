@@ -118,7 +118,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
 
   const hasConnections =
     coreConfig?.util?.networkConnection?.websocketServers?.length && host;
-    
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className={'overflow-auto max-h-150!'}>
@@ -126,9 +126,9 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
           <DialogTitle>Charging Station Connection</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Use the following tenant-specific websocket URLs to connect to the server. The
-          connection can be upgraded from No Authentication to Security Profile
-          3 one by one.
+          Use the following tenant-specific websocket URLs to connect to the
+          server. The connection can be upgraded from No Authentication to
+          Security Profile 3 one by one.
         </DialogDescription>
 
         {loading ? (
@@ -175,7 +175,10 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              copyToClipboard(s.id, `${wsUrl}:${s.port}/${tenantId}`)
+                              copyToClipboard(
+                                s.id,
+                                `${wsUrl}:${s.port}/${tenantId}`,
+                              )
                             }
                           >
                             <Copy className="w-4 h-4" />
