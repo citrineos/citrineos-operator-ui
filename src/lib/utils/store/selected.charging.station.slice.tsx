@@ -16,7 +16,7 @@ const initialState: SelectedChargingStationState = {
 };
 
 export const selectedChargingStationSlice = createSlice({
-  name: 'selectedChargingStation',
+  name: 'selectedChargingStationSlice',
   initialState,
   reducers: {
     setSelectedChargingStation: (
