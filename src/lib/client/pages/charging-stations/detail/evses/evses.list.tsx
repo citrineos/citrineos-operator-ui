@@ -55,7 +55,10 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
     queryOptions: getPlainToInstanceOptions(ChargingStationClass, true),
   });
 
-  const station = { ...data?.data } as ChargingStationDto;
+  const station = React.useMemo(() => {
+    const station = { ...data?.data } as ChargingStationDto;
+    return station
+  }, [data?.data]);
 
   const openModal = useCallback(
     (
