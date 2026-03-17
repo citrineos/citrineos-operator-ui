@@ -110,15 +110,18 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
   // Group servers by security profile
   const groupedServers: Record<number, WebsocketServerConfig[]> = {};
   const fallbackServers: Record<number, WebsocketServerConfig[]> = {};
-  
+
   coreConfig?.util?.networkConnection?.websocketServers?.forEach((server) => {
     const serverWithMapping = server as any;
-    
+
     // Check if server has tenant path mapping and dynamic tenant resolution enabled
-    if (serverWithMapping.tenantPathMapping && serverWithMapping.dynamicTenantResolution) {
+    if (
+      serverWithMapping.tenantPathMapping &&
+      serverWithMapping.dynamicTenantResolution
+    ) {
       const pathMapping = serverWithMapping.tenantPathMapping;
       const hasTenantMapping = Object.values(pathMapping).includes(tenantId);
-      
+
       if (hasTenantMapping) {
         if (!groupedServers[server.securityProfile])
           groupedServers[server.securityProfile] = [];
@@ -131,16 +134,23 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
     }
   });
 
-  const buildWebsocketUrl = (server: WebsocketServerConfig, host: string, tenantId: number): string => {
+  const buildWebsocketUrl = (
+    server: WebsocketServerConfig,
+    host: string,
+    tenantId: number,
+  ): string => {
     const protocol = server.securityProfile > 1 ? 'wss' : 'ws';
 
     const serverWithMapping = server as any;
-    
+
     // Check if tenant path mapping exists and dynamic tenant resolution is enabled
-    if (serverWithMapping.tenantPathMapping && serverWithMapping.dynamicTenantResolution) {
+    if (
+      serverWithMapping.tenantPathMapping &&
+      serverWithMapping.dynamicTenantResolution
+    ) {
       const pathMapping = serverWithMapping.tenantPathMapping;
       const pathEntry = Object.entries(pathMapping).find(
-        ([_, mappedTenantId]) => mappedTenantId === tenantId
+        ([_, mappedTenantId]) => mappedTenantId === tenantId,
       );
       if (pathEntry) {
         return `${protocol}://${host}:${server.port}/${pathEntry[0]}`;
@@ -212,9 +222,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() =>
-                                copyToClipboard(s.id, `${wsUrl}`)
-                              }
+                              onClick={() => copyToClipboard(s.id, `${wsUrl}`)}
                             >
                               <Copy className="w-4 h-4" />
                             </Button>
