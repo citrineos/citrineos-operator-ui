@@ -75,8 +75,8 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
       setLoading(true);
       fetchFileAction(`${S3_BUCKET_FILE_CORE_CONFIG}`, BucketType.CORE)
         .then((data) => setCoreConfig(data))
-
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => setLoading(false));
     }
   }, [open, coreConfig]);
 
@@ -90,6 +90,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
         .finally(() => setLoading(false));
     }
   }, [open, operatorConfig]);
+
   const host = operatorConfig?.centralSystem?.host;
   // Get tenant id, if not found, use default tenant id from operator config
   const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
@@ -108,13 +109,48 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
 
   // Group servers by security profile
   const groupedServers: Record<number, WebsocketServerConfig[]> = {};
+  const fallbackServers: Record<number, WebsocketServerConfig[]> = {};
+  
   coreConfig?.util?.networkConnection?.websocketServers?.forEach((server) => {
-    if (server.tenantId === tenantId) {
-      if (!groupedServers[server.securityProfile])
-        groupedServers[server.securityProfile] = [];
-      groupedServers[server.securityProfile].push(server);
+    const serverWithMapping = server as any;
+    
+    // Check if server has tenant path mapping and dynamic tenant resolution enabled
+    if (serverWithMapping.tenantPathMapping && serverWithMapping.dynamicTenantResolution) {
+      const pathMapping = serverWithMapping.tenantPathMapping;
+      const hasTenantMapping = Object.values(pathMapping).includes(tenantId);
+      
+      if (hasTenantMapping) {
+        if (!groupedServers[server.securityProfile])
+          groupedServers[server.securityProfile] = [];
+        groupedServers[server.securityProfile].push(server);
+      }
+    } else {
+      if (!fallbackServers[server.securityProfile])
+        fallbackServers[server.securityProfile] = [];
+      fallbackServers[server.securityProfile].push(server);
     }
   });
+
+  const buildWebsocketUrl = (server: WebsocketServerConfig, host: string, tenantId: number): string => {
+    const protocol = server.securityProfile > 1 ? 'wss' : 'ws';
+
+    const serverWithMapping = server as any;
+    
+    // Check if tenant path mapping exists and dynamic tenant resolution is enabled
+    if (serverWithMapping.tenantPathMapping && serverWithMapping.dynamicTenantResolution) {
+      const pathMapping = serverWithMapping.tenantPathMapping;
+      const pathEntry = Object.entries(pathMapping).find(
+        ([_, mappedTenantId]) => mappedTenantId === tenantId
+      );
+      if (pathEntry) {
+        return `${protocol}://${host}:${server.port}/${pathEntry[0]}`;
+      } else {
+        return `${protocol}://${host}:${server.port}`;
+      }
+    } else {
+      return `${protocol}://${host}:${server.port}`;
+    }
+  };
 
   const hasConnections =
     coreConfig?.util?.networkConnection?.websocketServers?.length && host;
@@ -141,7 +177,6 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
               const profile = Number(key);
               const servers = groupedServers[profile];
               if (!servers?.length) return null;
-              const wsUrl = `${profile > 1 ? 'wss' : 'ws'}://${host}`;
 
               return (
                 <div
@@ -155,44 +190,45 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
                     {SecurityProfiles[profile].description}
                   </p>
                   <ul className="space-y-2">
-                    {servers.map((s) => (
-                      <li
-                        key={s.id}
-                        className="border p-2 rounded flex justify-between items-center"
-                      >
-                        <span className="font-small mr-2">{s.protocol}</span>
-                        <div className="flex items-center gap-2 flex-1">
-                          <a
-                            href={`${wsUrl}:${s.port}/${tenantId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline text-sm truncate"
-                            title={`${wsUrl}:${s.port}/${tenantId}`}
-                          >
-                            {`${wsUrl}:${s.port}/${tenantId}`}
-                          </a>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                              copyToClipboard(
-                                s.id,
-                                `${wsUrl}:${s.port}/${tenantId}`,
-                              )
-                            }
-                          >
-                            <Copy className="w-4 h-4" />
-                          </Button>
+                    {servers.map((s) => {
+                      if (!tenantId) return null;
+                      const wsUrl = buildWebsocketUrl(s, host, tenantId);
+                      return (
+                        <li
+                          key={s.id}
+                          className="border p-2 rounded flex justify-between items-center"
+                        >
+                          <span className="font-small mr-2">{s.protocol}</span>
+                          <div className="flex items-center gap-2 flex-1">
+                            <a
+                              href={`${wsUrl}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline text-sm truncate"
+                              title={`${wsUrl}`}
+                            >
+                              {`${wsUrl}`}
+                            </a>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                copyToClipboard(s.id, `${wsUrl}`)
+                              }
+                            >
+                              <Copy className="w-4 h-4" />
+                            </Button>
 
-                          {/* Copied message */}
-                          {copiedId === s.id && (
-                            <span className="text-green-600 text-xs">
-                              Copied!
-                            </span>
-                          )}
-                        </div>
-                      </li>
-                    ))}
+                            {/* Copied message */}
+                            {copiedId === s.id && (
+                              <span className="text-green-600 text-xs">
+                                Copied!
+                              </span>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               );
