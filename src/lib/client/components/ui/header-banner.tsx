@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import config from '@lib/utils/config';
 
@@ -16,9 +20,7 @@ const HeaderBanner: React.FC = () =>
             <strong className="font-semibold">{config.bannerMessage}</strong>
           </p>
         </div>
-        <div className="flex flex-1 justify-end">
-
-        </div>
+        <div className="flex flex-1 justify-end" />
       </div>
     )}
   </>;
