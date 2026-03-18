@@ -13,7 +13,7 @@ import { useIsAuthenticated, useTranslate } from '@refinedev/core';
 import { usePathname, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { heading2Style } from '@lib/client/styles/page';
-import HeaderBanner from '../ui/header-banner';
+import { HeaderBanner } from '@lib/client/components/ui/header-banner';
 
 type AuthenticatedLayoutProps = {
   children: React.ReactNode;

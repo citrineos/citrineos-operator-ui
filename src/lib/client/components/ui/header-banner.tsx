@@ -5,7 +5,7 @@
 import React from 'react';
 import config from '@lib/utils/config';
 
-const HeaderBanner: React.FC = () => (
+export const HeaderBanner: React.FC = () => (
   <>
     {config.bannerMessage && (
       <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1 dark:bg-gray-800/50 dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:bottom-0 dark:after:h-px dark:after:bg-white/10">
@@ -31,5 +31,3 @@ const HeaderBanner: React.FC = () => (
     )}
   </>
 );
-
-export default HeaderBanner;
