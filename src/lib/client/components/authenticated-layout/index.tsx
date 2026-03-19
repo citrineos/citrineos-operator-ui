@@ -10,7 +10,11 @@ import {
 } from '@lib/client/components/main-menu/main.menu';
 import { ConnectionModal } from '@lib/client/components/modals/shared/connection-modal/connection.modal';
 import AppModal from '@lib/client/components/modals';
-import { useIsAuthenticated, useTranslate, useGetIdentity } from '@refinedev/core';
+import {
+  useIsAuthenticated,
+  useTranslate,
+  useGetIdentity,
+} from '@refinedev/core';
 import { usePathname, useRouter } from 'next/navigation';
 import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 import { Loader2 } from 'lucide-react';
@@ -39,7 +43,7 @@ export default function AuthenticatedLayout({
     if (data?.authenticated && identity?.id) {
       const firstLoginKey = `firstLoginHelp:${identity.id}`;
       const hasSeenFirstLoginModal = localStorage.getItem(firstLoginKey);
-      
+
       if (!hasSeenFirstLoginModal) {
         setShowFirstLoginModal(true);
         localStorage.setItem(firstLoginKey, 'true');
@@ -105,9 +109,9 @@ export default function AuthenticatedLayout({
           </main>
         </div>
       </div>
-      <ConnectionModal 
-        open={showFirstLoginModal} 
-        onClose={handleFirstLoginModalClose} 
+      <ConnectionModal
+        open={showFirstLoginModal}
+        onClose={handleFirstLoginModalClose}
         isFirstLogin={true}
       />
     </div>

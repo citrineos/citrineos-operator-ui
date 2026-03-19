@@ -63,7 +63,11 @@ interface ConnectionModalProps {
   isFirstLogin?: boolean;
 }
 
-export const ConnectionModal = ({ open, onClose, isFirstLogin = false }: ConnectionModalProps) => {
+export const ConnectionModal = ({
+  open,
+  onClose,
+  isFirstLogin = false,
+}: ConnectionModalProps) => {
   const [coreConfig, setCoreConfig] = useState<SystemConfig | null>(null);
   const [operatorConfig, setOperatorConfig] = useState<OperatorConfig | null>(
     null,
@@ -98,7 +102,7 @@ export const ConnectionModal = ({ open, onClose, isFirstLogin = false }: Connect
         .finally(() => setLoading(false));
     }
   }, [open, operatorConfig]);
-  
+
   const host = operatorConfig?.centralSystem?.host;
   // Get tenant id, if not found, use default tenant id from operator config
   const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
@@ -140,7 +144,9 @@ export const ConnectionModal = ({ open, onClose, isFirstLogin = false }: Connect
       <DialogContent className={'overflow-auto max-h-150!'}>
         <DialogHeader>
           <DialogTitle>
-            {showHelpContent ? 'Welcome to CitrineOS Operator UI' : 'Charging Station Connection'}
+            {showHelpContent
+              ? 'Welcome to CitrineOS Operator UI'
+              : 'Charging Station Connection'}
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
@@ -190,23 +196,30 @@ export const ConnectionModal = ({ open, onClose, isFirstLogin = false }: Connect
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-3">
-                This video demonstrates how to connect charging stations to the CitrineOS platform.
+                This video demonstrates how to connect charging stations to the
+                CitrineOS platform.
               </p>
             </div>
 
             <div className="border rounded-lg p-4">
               <h3 className="font-semibold mb-3">Quick Steps</h3>
               <ol className="space-y-2 text-sm">
-                <li>1. Configure your charging station with the appropriate websocket URL</li>
+                <li>
+                  1. Configure your charging station with the appropriate
+                  websocket URL
+                </li>
                 <li>2. Choose the security profile that matches your setup</li>
-                <li>3. Copy the connection URL from the connection info section</li>
+                <li>
+                  3. Copy the connection URL from the connection info section
+                </li>
                 <li>4. Test the connection from your charging station</li>
               </ol>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
-                <strong>Remember:</strong> You can always access this help content by clicking the Help button in the sidebar.
+                <strong>Remember:</strong> You can always access this help
+                content by clicking the Help button in the sidebar.
               </p>
             </div>
           </div>
