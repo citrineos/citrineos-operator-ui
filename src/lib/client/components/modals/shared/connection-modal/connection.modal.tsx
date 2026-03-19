@@ -4,7 +4,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Copy, Loader2 } from 'lucide-react';
+import { Copy, Loader2, Play, HelpCircle } from 'lucide-react';
 import { Button } from '@lib/client/components/ui/button';
 import {
   Dialog,
@@ -17,6 +17,7 @@ import {
   S3_BUCKET_FILE_CONFIG,
   S3_BUCKET_FILE_CORE_CONFIG,
 } from '@lib/utils/consts';
+import config from '@lib/utils/config';
 import { useGetIdentity } from '@refinedev/core';
 import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 import type { SystemConfig, WebsocketServerConfig } from '@citrineos/base';
@@ -59,15 +60,17 @@ export const SecurityProfiles: Record<
 interface ConnectionModalProps {
   open: boolean;
   onClose: () => void;
+  isFirstLogin?: boolean;
 }
 
-export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
+export const ConnectionModal = ({ open, onClose, isFirstLogin = false }: ConnectionModalProps) => {
   const [coreConfig, setCoreConfig] = useState<SystemConfig | null>(null);
   const [operatorConfig, setOperatorConfig] = useState<OperatorConfig | null>(
     null,
   );
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showHelpContent, setShowHelpContent] = useState(isFirstLogin);
 
   // Get web server config from core
   useEffect(() => {
@@ -80,6 +83,11 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
     }
   }, [open, coreConfig]);
 
+  // Reset help content state when modal opens/closes
+  useEffect(() => {
+    setShowHelpContent(isFirstLogin);
+  }, [open, isFirstLogin]);
+
   // Get host from operator ui config
   useEffect(() => {
     if (open && !operatorConfig) {
@@ -90,6 +98,7 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
         .finally(() => setLoading(false));
     }
   }, [open, operatorConfig]);
+  
   const host = operatorConfig?.centralSystem?.host;
   // Get tenant id, if not found, use default tenant id from operator config
   const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
@@ -119,19 +128,89 @@ export const ConnectionModal = ({ open, onClose }: ConnectionModalProps) => {
   const hasConnections =
     coreConfig?.util?.networkConnection?.websocketServers?.length && host;
 
+  // Video URL configuration - can be easily replaced via environment variable
+  const helpVideoUrl = config.helpVideoUrl;
+
+  const toggleHelpContent = () => {
+    setShowHelpContent(!showHelpContent);
+  };
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className={'overflow-auto max-h-150!'}>
         <DialogHeader>
-          <DialogTitle>Charging Station Connection</DialogTitle>
+          <DialogTitle>
+            {showHelpContent ? 'Welcome to CitrineOS Operator UI' : 'Charging Station Connection'}
+          </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Use the following websocket URLs to connect to the server. The
-          connection can be upgraded from No Authentication to Security Profile
-          3 one by one.
+          {showHelpContent
+            ? 'Watch this quick introduction video to learn how to connect charging stations. You can access this information anytime by clicking the Help button.'
+            : 'Use the following tenant-specific websocket URLs to connect to the server. The connection can be upgraded from No Authentication to Security Profile 3 one by one.'}
         </DialogDescription>
 
-        {loading ? (
+        <div className="flex justify-center mb-4">
+          <Button
+            variant="outline"
+            onClick={toggleHelpContent}
+            className="flex items-center gap-2"
+          >
+            {showHelpContent ? (
+              <>
+                <HelpCircle className="w-4 h-4" />
+                Show Connection Info
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" />
+                Show Help Video
+              </>
+            )}
+          </Button>
+        </div>
+
+        {showHelpContent ? (
+          <div className="space-y-6">
+            <div className="border rounded-lg p-4">
+              <h3 className="font-semibold mb-3">Getting Started Video</h3>
+              <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                {helpVideoUrl ? (
+                  <video
+                    controls
+                    className="w-full h-full rounded-lg"
+                    poster="/video-poster.jpg"
+                  >
+                    <source src={helpVideoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-muted-foreground">No video available</p>
+                  </div>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground mt-3">
+                This video demonstrates how to connect charging stations to the CitrineOS platform.
+              </p>
+            </div>
+
+            <div className="border rounded-lg p-4">
+              <h3 className="font-semibold mb-3">Quick Steps</h3>
+              <ol className="space-y-2 text-sm">
+                <li>1. Configure your charging station with the appropriate websocket URL</li>
+                <li>2. Choose the security profile that matches your setup</li>
+                <li>3. Copy the connection URL from the connection info section</li>
+                <li>4. Test the connection from your charging station</li>
+              </ol>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                <strong>Remember:</strong> You can always access this help content by clicking the Help button in the sidebar.
+              </p>
+            </div>
+          </div>
+        ) : loading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>

@@ -41,6 +41,7 @@ const getConfig: () => {
   fileStorageType?: string;
   gcpCloudStorageBucketName?: string;
   gcpCloudStorageCoreBucketName?: string;
+  helpVideoUrl?: string;
 } = () => {
   const authProviderResult = AuthProviderTypeEnum.safeParse(
     process.env.NEXT_PUBLIC_AUTH_PROVIDER,
@@ -100,6 +101,8 @@ const getConfig: () => {
       process.env.AWS_S3_BUCKET_NAME || 'YOUR_AWS_S3_BUCKET_NAME',
     awsS3CoreBucketName:
       process.env.AWS_S3_CORE_BUCKET_NAME || 'YOUR_AWS_S3_CORE_BUCKET_NAME',
+    helpVideoUrl:
+      process.env.NEXT_PUBLIC_HELP_VIDEO_URL || '/videos/help-video.mp4', // Default local path; override with env var for external URLs
   };
 };
 
