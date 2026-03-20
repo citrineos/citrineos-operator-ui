@@ -29,6 +29,8 @@ export const SERVER_NETWORK_PROFILE_LIST_QUERY = gql`
       tlsCertificateChainFilePath
       mtlsCertificateAuthorityKeyFilePath
       rootCACertificateFilePath
+      tenantPathMapping
+      dynamicTenantResolution
     }
     ServerNetworkProfiles_aggregate(where: $where) {
       aggregate {
@@ -53,6 +55,8 @@ export const SERVER_NETWORK_PROFILE_GET_QUERY = gql`
       tlsCertificateChainFilePath
       mtlsCertificateAuthorityKeyFilePath
       rootCACertificateFilePath
+      tenantPathMapping
+      dynamicTenantResolution
     }
   }
 `;
