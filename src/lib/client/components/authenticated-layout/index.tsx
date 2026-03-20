@@ -13,6 +13,7 @@ import { useIsAuthenticated, useTranslate } from '@refinedev/core';
 import { usePathname, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { heading2Style } from '@lib/client/styles/page';
+import { HeaderBanner } from '@lib/client/components/ui/header-banner';
 
 type AuthenticatedLayoutProps = {
   children: React.ReactNode;
@@ -80,7 +81,12 @@ export default function AuthenticatedLayout({
           <AppModal />
           <main className={`content-container ${routeClassName}`}>
             <div className="content-outer-wrap">
-              <div className="content-inner-wrap">{children}</div>
+              <div className="content-inner-wrap">
+                <>
+                  <HeaderBanner />
+                  {children}
+                </>
+              </div>
             </div>
           </main>
         </div>
