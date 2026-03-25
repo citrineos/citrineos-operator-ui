@@ -299,7 +299,9 @@ export const ConnectionModal = ({
                           key={s.id}
                           className="border p-2 rounded flex justify-between items-center"
                         >
-                          <span className="font-small mr-2">{s.protocol}</span>
+                          <span className="font-small mr-2">
+                            {s.protocols.join(', ')}
+                          </span>
                           <div className="flex items-center gap-2 flex-1">
                             <a
                               href={`${wsUrl}`}
