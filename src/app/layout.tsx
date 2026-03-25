@@ -11,6 +11,7 @@ import localFont from 'next/font/local';
 import { cookies } from 'next/headers';
 import React from 'react';
 import './globals.css';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const roobertFont = localFont({
   src: [
@@ -81,7 +82,9 @@ export default async function RootLayout({
           locale={locale}
           messages={{ ...fallbackMessages, ...messages }}
         >
-          <Providers defaultMode={mode}>{children}</Providers>
+          <NuqsAdapter>
+            <Providers defaultMode={mode}>{children}</Providers>
+          </NuqsAdapter>
         </NextIntlClientProvider>
       </body>
     </html>

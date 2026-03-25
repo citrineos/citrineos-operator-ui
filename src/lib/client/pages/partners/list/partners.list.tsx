@@ -81,6 +81,7 @@ export const PartnersList = () => {
           enableSorting
           enableFilters
           showHeader
+          tableStateKey={ResourceType.PARTNERS}
         >
           {renderedVisibleColumns}
         </Table>

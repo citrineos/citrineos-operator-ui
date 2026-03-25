@@ -34,10 +34,17 @@ import { TransactionEventsList } from '@lib/client/pages/transactions/detail/tra
 import { GET_METER_VALUES_FOR_TRANSACTION } from '@lib/queries/meter.values';
 import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { useState } from 'react';
-import { DEFAULT_SORTERS } from '@lib/utils/consts';
 import { AuthorizationClass } from '@lib/cls/authorization.dto';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
 import { authorizationsColumns } from '@lib/client/pages/authorizations/columns';
+import { useQueryState } from 'nuqs';
+import { DETAIL_TAB_STATE } from '@lib/utils/consts';
+
+enum TransactionDetailTabType {
+  authorizations = 'authorizations',
+  meterValues = 'meterValues',
+  events = 'events',
+}
 
 export const TransactionDetailTabsCard = ({
   transaction,
@@ -77,19 +84,35 @@ export const TransactionDetailTabsCard = ({
     ResourceType.AUTHORIZATIONS,
   );
 
+  const [tab, setTab] = useQueryState(DETAIL_TAB_STATE);
+
   return (
     <Card>
       <CardContent>
-        <Tabs defaultValue="authorizations">
+        <Tabs
+          value={
+            tab && tab in TransactionDetailTabType
+              ? tab
+              : TransactionDetailTabType.authorizations
+          }
+          onValueChange={(selectedTab: string) => setTab(selectedTab)}
+        >
           <TabsList>
-            <TabsTrigger value="authorizations">
+            <TabsTrigger value={TransactionDetailTabType.authorizations}>
               {translate('Authorizations.Authorizations')}
             </TabsTrigger>
-            <TabsTrigger value="meter-values">Meter Value Data</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
+            <TabsTrigger value={TransactionDetailTabType.meterValues}>
+              Meter Value Data
+            </TabsTrigger>
+            <TabsTrigger value={TransactionDetailTabType.events}>
+              Events
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="authorizations" className={cardTabsStyle}>
+          <TabsContent
+            value={TransactionDetailTabType.authorizations}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.AUTHORIZATIONS}
               action={ActionType.LIST}
@@ -98,7 +121,6 @@ export const TransactionDetailTabsCard = ({
               <Table
                 refineCoreProps={{
                   resource: ResourceType.AUTHORIZATIONS,
-                  sorters: DEFAULT_SORTERS,
                   meta: {
                     gqlQuery: GET_AUTHORIZATIONS_BY_TRANSACTION,
                     gqlVariables: {
@@ -118,13 +140,17 @@ export const TransactionDetailTabsCard = ({
                 enableSorting
                 enableFilters
                 showHeader
+                tableStateKey={ResourceType.AUTHORIZATIONS}
               >
                 {renderedVisibleColumns}
               </Table>
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="meter-values" className={cardTabsStyle}>
+          <TabsContent
+            value={TransactionDetailTabType.meterValues}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.TRANSACTIONS}
               action={ActionType.ACCESS}
@@ -154,7 +180,10 @@ export const TransactionDetailTabsCard = ({
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="events" className={cardTabsStyle}>
+          <TabsContent
+            value={TransactionDetailTabType.events}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.TRANSACTIONS}
               action={ActionType.ACCESS}

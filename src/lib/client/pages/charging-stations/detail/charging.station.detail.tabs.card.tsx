@@ -20,7 +20,7 @@ import { EVSESList } from '@lib/client/pages/charging-stations/detail/evses/evse
 import { OCPPMessages } from '@lib/client/pages/charging-stations/detail/ocpp.messages';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { Table } from '@lib/client/components/table';
-import { DEFAULT_SORTERS } from '@lib/utils/consts';
+import { DEFAULT_SORTERS, DETAIL_TAB_STATE } from '@lib/utils/consts';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '@lib/queries/transactions';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { TransactionClass } from '@lib/cls/transaction.dto';
@@ -34,6 +34,15 @@ import {
 } from '@lib/client/pages/transactions/columns';
 import { cardTabsStyle } from '@lib/client/styles/card';
 import { useColumnPreferences } from '@lib/client/hooks/useColumnPreferences';
+import { useQueryState } from 'nuqs';
+
+enum ChargingStationDetailTabType {
+  evses = 'evses',
+  ocppMessages = 'ocppMessages',
+  configuration = 'configuration',
+  transactions = 'transactions',
+  aggregated = 'aggregated',
+}
 
 export const ChargingStationDetailTabsCard = ({
   stationId,
@@ -51,23 +60,41 @@ export const ChargingStationDetailTabsCard = ({
     ResourceType.TRANSACTIONS,
   );
 
+  const [tab, setTab] = useQueryState(DETAIL_TAB_STATE);
+
   return (
     <Card>
       <CardContent>
-        <Tabs defaultValue="evses">
+        <Tabs
+          value={
+            tab && tab in ChargingStationDetailTabType
+              ? tab
+              : ChargingStationDetailTabType.evses
+          }
+          onValueChange={(selectedTab: string) => setTab(selectedTab)}
+        >
           <TabsList>
-            <TabsTrigger value="evses">EVSEs</TabsTrigger>
-            <TabsTrigger value="ocpp-logs">OCPP Logs</TabsTrigger>
-            <TabsTrigger value="configuration">Configuration</TabsTrigger>
-            <TabsTrigger value="transactions">
+            <TabsTrigger value={ChargingStationDetailTabType.evses}>
+              EVSEs
+            </TabsTrigger>
+            <TabsTrigger value={ChargingStationDetailTabType.ocppMessages}>
+              OCPP Messages
+            </TabsTrigger>
+            <TabsTrigger value={ChargingStationDetailTabType.configuration}>
+              Configuration
+            </TabsTrigger>
+            <TabsTrigger value={ChargingStationDetailTabType.transactions}>
               {translate('Transactions.Transactions')}
             </TabsTrigger>
-            <TabsTrigger value="aggregated">
+            <TabsTrigger value={ChargingStationDetailTabType.aggregated}>
               Aggregated Meter Values Data
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="evses" className={cardTabsStyle}>
+          <TabsContent
+            value={ChargingStationDetailTabType.evses}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}
@@ -85,7 +112,10 @@ export const ChargingStationDetailTabsCard = ({
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="ocpp-logs" className={cardTabsStyle}>
+          <TabsContent
+            value={ChargingStationDetailTabType.ocppMessages}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}
@@ -103,7 +133,10 @@ export const ChargingStationDetailTabsCard = ({
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="configuration" className={cardTabsStyle}>
+          <TabsContent
+            value={ChargingStationDetailTabType.configuration}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}
@@ -121,7 +154,10 @@ export const ChargingStationDetailTabsCard = ({
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="transactions" className={cardTabsStyle}>
+          <TabsContent
+            value={ChargingStationDetailTabType.transactions}
+            className={cardTabsStyle}
+          >
             <CanAccess
               resource={ResourceType.TRANSACTIONS}
               action={ActionType.LIST}
@@ -140,13 +176,17 @@ export const ChargingStationDetailTabsCard = ({
                 enableSorting
                 enableFilters
                 showHeader
+                tableStateKey={ResourceType.TRANSACTIONS}
               >
                 {renderedVisibleColumns}
               </Table>
             </CanAccess>
           </TabsContent>
 
-          <TabsContent value="aggregated" className={cardTabsStyle}>
+          <TabsContent
+            value={ChargingStationDetailTabType.aggregated}
+            className={cardTabsStyle}
+          >
             <AggregatedMeterValuesData stationId={stationId} />
           </TabsContent>
         </Tabs>

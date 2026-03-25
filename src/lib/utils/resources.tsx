@@ -42,4 +42,14 @@ export const resources = [
       canDelete: true,
     },
   },
+  {
+    name: ResourceType.TARIFFS,
+    list: '/tariffs',
+    create: '/tariffs/new',
+    show: '/tariffs/:id',
+    edit: '/tariffs/:id/edit',
+    meta: {
+      canDelete: true,
+    },
+  },
 ];

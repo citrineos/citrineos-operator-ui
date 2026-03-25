@@ -1,6 +1,6 @@
 {
   "name": "citrineos-operator-ui",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "engines": {
     "node": ">=20"
@@ -24,7 +24,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.930.0",
     "@aws-sdk/s3-request-presigner": "3.930.0",
-    "@citrineos/base": "1.8.2",
+    "@citrineos/base": "1.8.3",
     "@ferdiunal/refine-shadcn": "1.6.1",
     "@google-cloud/storage": "7.18.0",
     "@googlemaps/markerclusterer": "2.5.3",
@@ -72,6 +72,7 @@
     "next-auth": "4.24.13",
     "next-intl": "4.4.0",
     "next-themes": "0.4.6",
+    "nuqs": "2.8.8",
     "postcss": "8.5.3",
     "react": "19.1.4",
     "react-day-picker": "9.11.1",

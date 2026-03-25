@@ -4,7 +4,7 @@
 'use client';
 
 import React from 'react';
-import { type ConnectorDto } from '@citrineos/base';
+import { type ConnectorDto, type TariffDto } from '@citrineos/base';
 import {
   ConnectorFormatEnum,
   ConnectorPowerTypeEnum,
@@ -13,6 +13,7 @@ import {
 } from '@citrineos/base';
 import { Form } from '@lib/client/components/form';
 import {
+  ComboboxFormField,
   FormField,
   formLabelStyle,
   formLabelWrapperStyle,
@@ -31,6 +32,7 @@ import {
   CONNECTOR_CREATE_MUTATION,
   CONNECTOR_EDIT_MUTATION,
 } from '@lib/queries/connectors';
+import { TARIFF_LIST_QUERY } from '@lib/queries/tariffs';
 import { ResourceType } from '@lib/utils/access.types';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { getSelectedChargingStation } from '@lib/utils/store/selected.charging.station.slice';
@@ -41,6 +43,7 @@ import { Controller } from 'react-hook-form';
 import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 import { evsesFormUpsertGrid } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
 import { Combobox } from '@lib/client/components/combobox';
+import { useList } from '@refinedev/core';
 
 interface ConnectorUpsertProps {
   onSubmit: () => void;
@@ -88,8 +91,29 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
       maximumVoltage: connector?.maximumVoltage || 0,
       maximumPowerWatts: connector?.maximumPowerWatts || 0,
       termsAndConditionsUrl: connector?.termsAndConditionsUrl || '',
+      tariffId: (connector as any)?.tariffId ?? undefined,
     },
   });
+
+  const { query: tariffQuery } = useList<TariffDto>({
+    resource: ResourceType.TARIFFS,
+    meta: {
+      gqlQuery: TARIFF_LIST_QUERY,
+      gqlVariables: {
+        order_by: { updatedAt: 'desc' },
+        offset: 0,
+        limit: 50,
+      },
+    },
+    pagination: { mode: 'off' },
+  });
+
+  const tariffOptions = (tariffQuery.data?.data ?? []).map(
+    (tariff: TariffDto) => ({
+      label: `#${tariff.id} - ${tariff.currency} ${tariff.pricePerKwh}/kWh`,
+      value: tariff.id as number,
+    }),
+  );
 
   const reset = () => {
     form.reset({
@@ -103,6 +127,7 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
       maximumVoltage: 0,
       maximumPowerWatts: 0,
       termsAndConditionsUrl: '',
+      tariffId: undefined,
     });
   };
 
@@ -270,6 +295,16 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
           >
             <Input />
           </FormField>
+
+          <ComboboxFormField<number, any>
+            control={form.control}
+            name="tariffId"
+            label="Tariff"
+            options={tariffOptions}
+            placeholder="Select Tariff"
+            searchPlaceholder="Search Tariffs"
+            isLoading={tariffQuery.isLoading}
+          />
         </div>
       </ScrollArea>
     </Form>

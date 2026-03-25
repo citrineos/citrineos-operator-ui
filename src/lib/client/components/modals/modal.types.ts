@@ -45,4 +45,5 @@ export enum ModalComponentType {
   // Status Toggle Confirmations
   toggleStationOnlineStatus,
   toggleTransactionActiveStatus,
+  firstLoginHelp,
 }
