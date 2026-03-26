@@ -22,7 +22,11 @@ import {
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { CanAccess, type GetOneResponse } from '@refinedev/core';
+import {
+  CanAccess,
+  type GetOneResponse,
+  useGetIdentity,
+} from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import { ChevronLeft } from 'lucide-react';
 import { useFieldArray } from 'react-hook-form';
@@ -39,6 +43,7 @@ import { useRouter } from 'next/navigation';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { AddArrayItemButton } from '@lib/client/components/form/add-array-item-button';
 import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-item-button';
+import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 
 type PartnersUpsertProps = {
   params: { id?: string };
@@ -93,6 +98,9 @@ export const PartnersUpsert = ({ params }: PartnersUpsertProps) => {
   const { id } = params;
   const { back, replace } = useRouter();
 
+  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
+  const tenantId = Number(identity?.tenantId) || config.tenantId;
+
   const form = useForm({
     refineCoreProps: {
       resource: ResourceType.PARTNERS,
@@ -137,7 +145,7 @@ export const PartnersUpsert = ({ params }: PartnersUpsertProps) => {
     const newItem: any = getSerializedValues(values, TenantPartnerClass);
 
     if (!id) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
     newItem.updatedAt = now;

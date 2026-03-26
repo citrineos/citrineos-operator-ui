@@ -31,7 +31,12 @@ import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { CanAccess, useTranslate, useUpdateMany } from '@refinedev/core';
+import {
+  CanAccess,
+  useGetIdentity,
+  useTranslate,
+  useUpdateMany,
+} from '@refinedev/core';
 import { ChevronLeft, Upload as UploadIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { heading2Style, pageFlex, pageMargin } from '@lib/client/styles/page';
@@ -69,6 +74,7 @@ import {
 } from '@lib/utils/country.config';
 import { OpeningHoursForm } from '@lib/client/components/opening-hours';
 import { isValid, parseISO } from 'date-fns';
+import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -131,6 +137,9 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   const { replace, back } = useRouter();
   const { mutate } = useUpdateMany();
   const translate = useTranslate();
+
+  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
+  const tenantId = Number(identity?.tenantId) || config.tenantId;
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -290,7 +299,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
     const newItem: any = getSerializedValues({ ...values }, LocationClass);
 
     if (!locationId) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
 

@@ -38,6 +38,7 @@ import { getSerializedValues } from '@lib/utils/middleware';
 import {
   CanAccess,
   type CrudFilter,
+  useGetIdentity,
   useNotification,
   useSelect,
   useTranslate,
@@ -57,6 +58,7 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Label } from '@lib/client/components/ui/label';
+import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
@@ -100,6 +102,9 @@ export const ChargingStationUpsert = ({
   const { id: stationId } = params || {};
   const searchParams = useSearchParams();
   const locationId = searchParams?.get('locationId');
+
+  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
+  const tenantId = Number(identity?.tenantId) || config.tenantId;
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -230,7 +235,7 @@ export const ChargingStationUpsert = ({
     }
 
     if (!stationId) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
     newItem.updatedAt = now;

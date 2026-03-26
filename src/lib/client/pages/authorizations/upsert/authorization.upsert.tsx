@@ -28,7 +28,12 @@ import {
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
+import {
+  CanAccess,
+  type GetOneResponse,
+  useGetIdentity,
+  useTranslate,
+} from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import z from 'zod';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
@@ -42,6 +47,7 @@ import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 
 type AuthorizationUpsertProps = {
   params: { id?: string };
@@ -112,6 +118,9 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
   const { id } = params;
   const { back } = useRouter();
   const translate = useTranslate();
+
+  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
+  const tenantId = Number(identity?.tenantId) || config.tenantId;
 
   const form = useForm({
     refineCoreProps: {
@@ -208,7 +217,7 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
     }
 
     if (!id) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
     newItem.updatedAt = now;
