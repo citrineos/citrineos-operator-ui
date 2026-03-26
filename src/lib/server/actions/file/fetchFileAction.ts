@@ -19,10 +19,10 @@ export async function fetchFileAction(
     bucketType === BucketType.CORE
       ? config.fileStorageType === 'gcp'
         ? config.gcpCloudStorageCoreBucketName
-        : config.awsS3BucketName
+        : config.awsS3CoreBucketName
       : config.fileStorageType === 'gcp'
         ? config.gcpCloudStorageBucketName
-        : config.awsS3CoreBucketName;
+        : config.awsS3BucketName;
 
   try {
     return await fetchFile(fileKey, bucket);
