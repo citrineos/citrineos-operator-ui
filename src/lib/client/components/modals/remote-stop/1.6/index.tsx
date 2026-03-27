@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface OCPP1_6_RemoteStopProps {
   station: ChargingStationWithTransactionsDto;
@@ -32,6 +33,8 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const tenantId = useTenantId();
+
   const form = useForm({
     resolver: zodResolver(RemoteStopSchema),
     defaultValues: {
@@ -43,7 +46,7 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
     const data = { transactionId: values.transactionId };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=1`,
+      url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=${tenantId}`,
       data,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,

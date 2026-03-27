@@ -19,9 +19,7 @@ import { ResourceType } from '@lib/utils/access.types';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { useForm } from '@refinedev/react-hook-form';
 import { evsesFormUpsertGrid } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
-import { useGetIdentity } from '@refinedev/core';
-import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
-import config from '@lib/utils/config';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
@@ -34,8 +32,7 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
   stationId,
   evse,
 }) => {
-  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  const tenantId = Number(identity?.tenantId) || config.tenantId;
+  const tenantId = useTenantId();
 
   const form = useForm({
     refineCoreProps: {

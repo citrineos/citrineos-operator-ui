@@ -29,14 +29,8 @@ import {
 } from '@lib/queries/locations';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
-import {
-  CanAccess,
-  useGetIdentity,
-  useTranslate,
-  useUpdateMany,
-} from '@refinedev/core';
+import { CanAccess, useTranslate, useUpdateMany } from '@refinedev/core';
 import { ChevronLeft, Upload as UploadIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { heading2Style, pageFlex, pageMargin } from '@lib/client/styles/page';
@@ -51,7 +45,6 @@ import {
   formLabelWrapperStyle,
   formRequiredAsterisk,
   MultiSelectFormField,
-  SelectFormField,
 } from '@lib/client/components/form/field';
 import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { buttonIconSize } from '@lib/client/styles/icon';
@@ -74,7 +67,7 @@ import {
 } from '@lib/utils/country.config';
 import { OpeningHoursForm } from '@lib/client/components/opening-hours';
 import { isValid, parseISO } from 'date-fns';
-import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -138,8 +131,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   const { mutate } = useUpdateMany();
   const translate = useTranslate();
 
-  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  const tenantId = Number(identity?.tenantId) || config.tenantId;
+  const tenantId = useTenantId();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);

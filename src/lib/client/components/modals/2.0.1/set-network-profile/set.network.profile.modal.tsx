@@ -35,6 +35,7 @@ import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface SetNetworkProfileModalProps {
   station: any;
@@ -120,6 +121,8 @@ export const SetNetworkProfileModal = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
+  const tenantId = useTenantId();
+
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
     [station],
@@ -194,7 +197,7 @@ export const SetNetworkProfileModal = ({
       connectionData,
     };
 
-    let url = `/configuration/setNetworkProfile?identifier=${parsedStation.id}&tenantId=1`;
+    let url = `/configuration/setNetworkProfile?identifier=${parsedStation.id}&tenantId=${tenantId}`;
     if (values.websocketServerConfigId) {
       url = `${url}&websocketServerConfigId=${values.websocketServerConfigId}`;
     }

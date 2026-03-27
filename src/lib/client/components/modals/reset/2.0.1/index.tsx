@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Controller } from 'react-hook-form';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface OCPP2_0_1_ResetProps {
   station: ChargingStationDto;
@@ -37,6 +38,8 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const tenantId = useTenantId();
+
   const form = useForm({
     resolver: zodResolver(ResetSchema),
     defaultValues: {
@@ -54,7 +57,7 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/reset?identifier=${station.id}&tenantId=1`,
+      url: `/configuration/reset?identifier=${station.id}&tenantId=${tenantId}`,
       data,
       setLoading,
     }).then(() => {

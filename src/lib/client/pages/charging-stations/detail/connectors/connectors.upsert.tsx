@@ -43,9 +43,8 @@ import { Controller } from 'react-hook-form';
 import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 import { evsesFormUpsertGrid } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
 import { Combobox } from '@lib/client/components/combobox';
-import { useGetIdentity, useList } from '@refinedev/core';
-import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
-import config from '@lib/utils/config';
+import { useList } from '@refinedev/core';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface ConnectorUpsertProps {
   onSubmit: () => void;
@@ -66,8 +65,7 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
 }) => {
   const selectedChargingStation = useSelector(getSelectedChargingStation());
 
-  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  const tenantId = Number(identity?.tenantId) || config.tenantId;
+  const tenantId = useTenantId();
 
   const form = useForm({
     refineCoreProps: {

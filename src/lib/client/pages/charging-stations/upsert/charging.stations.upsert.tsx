@@ -33,12 +33,10 @@ import {
 import { LOCATIONS_LIST_QUERY } from '@lib/queries/locations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
 import {
   CanAccess,
   type CrudFilter,
-  useGetIdentity,
   useNotification,
   useSelect,
   useTranslate,
@@ -58,7 +56,7 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Label } from '@lib/client/components/ui/label';
-import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
@@ -103,8 +101,7 @@ export const ChargingStationUpsert = ({
   const searchParams = useSearchParams();
   const locationId = searchParams?.get('locationId');
 
-  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  const tenantId = Number(identity?.tenantId) || config.tenantId;
+  const tenantId = useTenantId();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);

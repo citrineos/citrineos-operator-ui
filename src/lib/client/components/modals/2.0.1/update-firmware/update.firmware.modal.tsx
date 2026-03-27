@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import z from 'zod';
 import { Textarea } from '@lib/client/components/ui/textarea';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface UpdateFirmwareModalProps {
   station: ChargingStationDto;
@@ -47,6 +48,8 @@ type UpdateFirmwareFormData = z.infer<typeof UpdateFirmwareSchema>;
 export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -126,7 +129,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,
