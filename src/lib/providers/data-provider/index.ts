@@ -17,7 +17,6 @@ const requestMiddleware = async (request: any) => {
   const requestHeaders = {
     ...request.headers,
   };
-  requestHeaders[HasuraHeader.X_HASURA_TENANT_ID] = config.tenantId;
 
   const hasuraAdminSecret = await getHasuraAdminSecretAction();
 
