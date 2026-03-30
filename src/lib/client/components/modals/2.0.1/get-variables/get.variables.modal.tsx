@@ -38,6 +38,7 @@ import { AddArrayItemButton } from '@lib/client/components/form/add-array-item-b
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 import { Alert, AlertDescription } from '@lib/client/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface GetVariablesModalProps {
   station: any;
@@ -72,6 +73,9 @@ const attributeTypes = Object.keys(OCPP2_0_1.AttributeEnumType);
 export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const tenantId = useTenantId();
+
   const [variableOptionsMap, setVariableOptionsMap] = useState<
     Record<number, { label: string; value: string }[]>
   >({});
@@ -188,7 +192,7 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
     });
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/monitoring/getVariables?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/monitoring/getVariables?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: { getVariableData },
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

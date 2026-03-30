@@ -30,6 +30,7 @@ import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Form } from '@lib/client/components/form';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface CustomerInformationModalProps {
   station: any;
@@ -55,6 +56,8 @@ export const CustomerInformationModal = ({
 }: CustomerInformationModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -112,7 +115,7 @@ export const CustomerInformationModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: payload,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

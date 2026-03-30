@@ -16,7 +16,6 @@ import {
   TARIFF_GET_QUERY,
 } from '@lib/queries/tariffs';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
@@ -28,6 +27,7 @@ import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Textarea } from '@lib/client/components/ui/textarea';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type TariffUpsertProps = {
   params: { id?: string };
@@ -64,6 +64,8 @@ export const TariffUpsert = ({ params }: TariffUpsertProps) => {
   const { id } = params;
   const { back } = useRouter();
   const translate = useTranslate();
+
+  const tenantId = useTenantId();
 
   const form = useForm({
     refineCoreProps: {
@@ -124,7 +126,7 @@ export const TariffUpsert = ({ params }: TariffUpsertProps) => {
     }
 
     if (!id) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
     newItem.updatedAt = now;

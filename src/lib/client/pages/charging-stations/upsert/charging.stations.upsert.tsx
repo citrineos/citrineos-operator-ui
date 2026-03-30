@@ -33,7 +33,6 @@ import {
 import { LOCATIONS_LIST_QUERY } from '@lib/queries/locations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
-import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
 import {
   CanAccess,
@@ -57,6 +56,7 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Label } from '@lib/client/components/ui/label';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
@@ -100,6 +100,8 @@ export const ChargingStationUpsert = ({
   const { id: stationId } = params || {};
   const searchParams = useSearchParams();
   const locationId = searchParams?.get('locationId');
+
+  const tenantId = useTenantId();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -230,7 +232,7 @@ export const ChargingStationUpsert = ({
     }
 
     if (!stationId) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
     newItem.updatedAt = now;

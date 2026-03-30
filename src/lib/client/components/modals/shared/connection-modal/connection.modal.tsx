@@ -18,11 +18,10 @@ import {
   S3_BUCKET_FILE_CORE_CONFIG,
 } from '@lib/utils/consts';
 import config from '@lib/utils/config';
-import { useGetIdentity } from '@refinedev/core';
-import type { KeycloakUserIdentity } from '@lib/providers/auth-provider/keycloak-auth-provider';
 import type { SystemConfig, WebsocketServerConfig } from '@citrineos/base';
 import { fetchFileAction } from '@lib/server/actions/file/fetchFileAction';
 import { BucketType } from '@lib/utils/enums';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface OperatorConfig {
   centralSystem: {
@@ -104,10 +103,8 @@ export const ConnectionModal = ({
   }, [open, operatorConfig]);
 
   const host = operatorConfig?.centralSystem?.host;
-  // Get tenant id, if not found, use default tenant id from operator config
-  const { data: identity } = useGetIdentity<KeycloakUserIdentity>();
-  const tenantId =
-    Number(identity?.tenantId) || operatorConfig?.defaultTenantId;
+
+  const tenantId = useTenantId();
 
   const copyToClipboard = (id: string, text: string) => {
     navigator.clipboard

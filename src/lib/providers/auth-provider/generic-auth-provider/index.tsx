@@ -37,6 +37,7 @@ export interface GenericAuthProviderConfig {
  */
 const ADMIN_EMAIL = config.adminEmail;
 const ADMIN_PASSWORD = config.adminPassword;
+const TENANT_ID = config.tenantId;
 
 export const genericAdminUser: User = {
   id: '1',
@@ -200,6 +201,8 @@ export const createGenericAuthProvider = (
     } else {
       hasuraHeaders.set(HasuraHeader.X_HASURA_ROLE, HasuraRole.USER);
     }
+
+    hasuraHeaders.set(HasuraHeader.X_HASURA_TENANT_ID, TENANT_ID);
 
     return hasuraHeaders;
   };

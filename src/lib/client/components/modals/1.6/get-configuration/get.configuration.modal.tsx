@@ -24,6 +24,7 @@ import { AddArrayItemButton } from '@lib/client/components/form/add-array-item-b
 import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-item-button';
 import { useFieldArray } from 'react-hook-form';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface GetConfigurationModalProps {
   station: any;
@@ -46,6 +47,8 @@ export const GetConfigurationModal = ({
 }: GetConfigurationModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -84,7 +87,7 @@ export const GetConfigurationModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/getConfiguration?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/getConfiguration?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

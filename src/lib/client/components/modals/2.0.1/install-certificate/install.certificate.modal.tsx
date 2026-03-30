@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import z from 'zod';
 import { Textarea } from '@lib/client/components/ui/textarea';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface InstallCertificateModalProps {
   station: any;
@@ -52,6 +53,8 @@ export const InstallCertificateModal = ({
 }: InstallCertificateModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -86,7 +89,7 @@ export const InstallCertificateModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/installCertificate?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/certificates/installCertificate?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

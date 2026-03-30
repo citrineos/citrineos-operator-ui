@@ -19,6 +19,7 @@ import z from 'zod';
 import { Form } from '@lib/client/components/form';
 import { Controller } from 'react-hook-form';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface UnlockConnectorModalProps {
   station: any;
@@ -40,6 +41,8 @@ export const UnlockConnectorModal = ({
 }: UnlockConnectorModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -70,7 +73,7 @@ export const UnlockConnectorModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/unlockConnector?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/evdriver/unlockConnector?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

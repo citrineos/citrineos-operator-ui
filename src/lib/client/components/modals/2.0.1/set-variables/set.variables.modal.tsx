@@ -38,6 +38,7 @@ import { RemoveArrayItemButton } from '@lib/client/components/form/remove-array-
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
 import { Alert, AlertDescription } from '@lib/client/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface SetVariablesModalProps {
   station: any;
@@ -73,6 +74,8 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
   const [variableOptionsMap, setVariableOptionsMap] = useState<
     Record<number, { label: string; value: number }[]>
   >({});
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -175,7 +178,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
     });
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/monitoring/setVariables?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/monitoring/setVariables?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: { setVariableData },
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

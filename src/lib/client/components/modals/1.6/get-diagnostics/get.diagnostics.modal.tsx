@@ -18,6 +18,7 @@ import { Form } from '@lib/client/components/form';
 import { FormField } from '@lib/client/components/form/field';
 import { Input } from '@lib/client/components/ui/input';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface GetDiagnosticsModalProps {
   station: any;
@@ -39,6 +40,8 @@ type GetDiagnosticsFormData = z.infer<typeof GetDiagnosticsSchema>;
 export const GetDiagnosticsModal = ({ station }: GetDiagnosticsModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -77,7 +80,7 @@ export const GetDiagnosticsModal = ({ station }: GetDiagnosticsModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/getDiagnostics?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/reporting/getDiagnostics?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

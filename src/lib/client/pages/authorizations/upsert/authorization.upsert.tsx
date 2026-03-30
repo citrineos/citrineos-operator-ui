@@ -26,7 +26,6 @@ import {
   AUTHORIZATIONS_SHOW_QUERY,
 } from '@lib/queries/authorizations';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
@@ -42,6 +41,7 @@ import { heading2Style, pageMargin } from '@lib/client/styles/page';
 import { cardGridStyle, cardHeaderFlex } from '@lib/client/styles/card';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type AuthorizationUpsertProps = {
   params: { id?: string };
@@ -112,6 +112,8 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
   const { id } = params;
   const { back } = useRouter();
   const translate = useTranslate();
+
+  const tenantId = useTenantId();
 
   const form = useForm({
     refineCoreProps: {
@@ -208,7 +210,7 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
     }
 
     if (!id) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
     newItem.updatedAt = now;
