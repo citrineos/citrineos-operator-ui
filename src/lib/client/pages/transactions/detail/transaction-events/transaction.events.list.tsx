@@ -21,9 +21,12 @@ import { useList } from '@refinedev/core';
 import { ChevronDownIcon } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import type { ExpandedState } from '@tanstack/react-table';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
   const [expanded, setExpanded] = useState<ExpandedState>({});
+
+  const tenantId = useTenantId();
 
   const {
     query: { data: eventsData },
@@ -73,7 +76,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
       numberOfPhasesUsed: 0 as TransactionEventDto['numberOfPhasesUsed'],
       cableMaxCurrent: 0 as TransactionEventDto['cableMaxCurrent'],
       reservationId: 0 as TransactionEventDto['reservationId'],
-      tenantId: 1,
+      tenantId,
     }));
     return [...events, ...messageRows];
   }, [eventsData?.data, messagesData?.data, transactionDatabaseId]);
