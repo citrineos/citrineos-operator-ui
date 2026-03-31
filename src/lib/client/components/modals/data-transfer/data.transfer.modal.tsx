@@ -76,7 +76,7 @@ export const DataTransferModal = ({ station }: DataTransferModalProps) => {
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/dataTransfer?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/dataTransfer?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion,

@@ -112,7 +112,7 @@ export const CustomerInformationModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data: payload,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

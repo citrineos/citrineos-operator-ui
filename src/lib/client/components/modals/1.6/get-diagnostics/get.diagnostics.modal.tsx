@@ -77,7 +77,7 @@ export const GetDiagnosticsModal = ({ station }: GetDiagnosticsModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/getDiagnostics?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/reporting/getDiagnostics?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

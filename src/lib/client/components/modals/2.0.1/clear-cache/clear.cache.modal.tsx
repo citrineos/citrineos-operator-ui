@@ -35,7 +35,7 @@ export const ClearCacheModal = ({ station }: ClearCacheModalProps) => {
     }
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/clearCache?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/evdriver/clearCache?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data: {},
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

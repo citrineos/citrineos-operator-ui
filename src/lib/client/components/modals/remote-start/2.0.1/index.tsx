@@ -156,7 +156,7 @@ export const OCPP2_0_1_RemoteStart = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=1`,
+      url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
     }).then(() => {

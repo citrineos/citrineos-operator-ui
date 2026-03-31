@@ -108,7 +108,7 @@ export const DeleteCertificateModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/deleteCertificate?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/certificates/deleteCertificate?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

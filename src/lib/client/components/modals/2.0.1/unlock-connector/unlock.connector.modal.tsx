@@ -70,7 +70,7 @@ export const UnlockConnectorModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/unlockConnector?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/evdriver/unlockConnector?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

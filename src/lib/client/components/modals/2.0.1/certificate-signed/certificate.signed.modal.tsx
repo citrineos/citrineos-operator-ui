@@ -93,7 +93,7 @@ export const CertificateSignedModal = ({
         };
 
         triggerMessageAndHandleResponse<MessageConfirmation[]>({
-          url: `/certificates/certificateSigned?identifier=${parsedStation.id}&tenantId=1`,
+          url: `/certificates/certificateSigned?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
           data,
           setLoading,
         }).then(() => {

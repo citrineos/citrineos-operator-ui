@@ -194,7 +194,7 @@ export const SetNetworkProfileModal = ({
       connectionData,
     };
 
-    let url = `/configuration/setNetworkProfile?identifier=${parsedStation.id}&tenantId=1`;
+    let url = `/configuration/setNetworkProfile?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`;
     if (values.websocketServerConfigId) {
       url = `${url}&websocketServerConfigId=${values.websocketServerConfigId}`;
     }

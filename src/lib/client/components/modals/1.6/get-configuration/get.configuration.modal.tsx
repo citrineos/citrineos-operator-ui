@@ -84,7 +84,7 @@ export const GetConfigurationModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/getConfiguration?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/getConfiguration?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

@@ -43,7 +43,7 @@ export const OCPP1_6_RemoteStop = ({ station }: OCPP1_6_RemoteStopProps) => {
     const data = { transactionId: values.transactionId };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=1`,
+      url: `/evdriver/remoteStopTransaction?identifier=${station.id}&tenantId=${parsedStation.tenantId}`,
       data,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,

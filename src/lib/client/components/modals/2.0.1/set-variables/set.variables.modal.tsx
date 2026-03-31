@@ -175,7 +175,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
     });
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/monitoring/setVariables?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/monitoring/setVariables?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data: { setVariableData },
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

@@ -102,7 +102,7 @@ export const OCPP1_6_RemoteStart = ({ station }: OCPP1_6_RemoteStartProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/remoteStartTransaction?identifier=${station.id}&tenantId=1`,
+      url: `/evdriver/remoteStartTransaction?identifier=${station.id}&tenantId=${parsedStation.tenantId}`,
       data,
       ocppVersion: OCPPVersion.OCPP1_6,
       setLoading,

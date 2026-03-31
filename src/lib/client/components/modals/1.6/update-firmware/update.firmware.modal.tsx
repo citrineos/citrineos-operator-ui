@@ -73,7 +73,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

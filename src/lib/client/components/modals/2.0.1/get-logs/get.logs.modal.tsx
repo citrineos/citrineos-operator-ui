@@ -90,7 +90,7 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
     }).then(() => {

@@ -188,7 +188,7 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
     });
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/monitoring/getVariables?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/monitoring/getVariables?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data: { getVariableData },
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

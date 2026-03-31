@@ -86,7 +86,7 @@ export const InstallCertificateModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/installCertificate?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/certificates/installCertificate?identifier=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,
