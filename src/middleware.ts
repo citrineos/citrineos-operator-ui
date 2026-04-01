@@ -23,6 +23,14 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  // skip server side auth for generic auth provider
+  if (
+    !process.env.NEXT_PUBLIC_AUTH_PROVIDER ||
+    process.env.NEXT_PUBLIC_AUTH_PROVIDER === 'generic'
+  ) {
+    return NextResponse.next();
+  }
+
   // No valid session — redirect to login
   if (!token) {
     console.debug('No token found, redirecting to /login');
