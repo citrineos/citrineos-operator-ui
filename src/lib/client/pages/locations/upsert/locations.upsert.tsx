@@ -29,7 +29,6 @@ import {
 } from '@lib/queries/locations';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import config from '@lib/utils/config';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { CanAccess, useTranslate, useUpdateMany } from '@refinedev/core';
 import { ChevronLeft, Upload as UploadIcon } from 'lucide-react';
@@ -46,7 +45,6 @@ import {
   formLabelWrapperStyle,
   formRequiredAsterisk,
   MultiSelectFormField,
-  SelectFormField,
 } from '@lib/client/components/form/field';
 import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { buttonIconSize } from '@lib/client/styles/icon';
@@ -69,6 +67,7 @@ import {
 } from '@lib/utils/country.config';
 import { OpeningHoursForm } from '@lib/client/components/opening-hours';
 import { isValid, parseISO } from 'date-fns';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -131,6 +130,8 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
   const { replace, back } = useRouter();
   const { mutate } = useUpdateMany();
   const translate = useTranslate();
+
+  const tenantId = useTenantId();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -290,7 +291,7 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
     const newItem: any = getSerializedValues({ ...values }, LocationClass);
 
     if (!locationId) {
-      newItem.tenantId = config.tenantId;
+      newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
 

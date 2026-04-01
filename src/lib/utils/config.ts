@@ -53,7 +53,7 @@ const getConfig: () => {
 
   return {
     appName: process.env.NEXT_PUBLIC_APP_NAME || 'CitrineOS',
-    bannerMessage: 'OCPP 2.1 Coming Soon!',
+    bannerMessage: process.env.NEXT_PUBLIC_BANNER_MESSAGE,
     googleMapsApiKey:
       process.env.GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY',
     googleMapsAddressApiKey:

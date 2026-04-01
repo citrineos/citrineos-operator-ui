@@ -28,6 +28,7 @@ import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface TriggerMessageModalProps {
   station: ChargingStationDto;
@@ -49,6 +50,8 @@ const triggerMessages = Object.keys(
 export const TriggerMessageModal = ({ station }: TriggerMessageModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -101,7 +104,7 @@ export const TriggerMessageModal = ({ station }: TriggerMessageModalProps) => {
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/triggerMessage?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/triggerMessage?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

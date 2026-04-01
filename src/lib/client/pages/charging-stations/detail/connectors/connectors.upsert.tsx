@@ -44,6 +44,7 @@ import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 import { evsesFormUpsertGrid } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
 import { Combobox } from '@lib/client/components/combobox';
 import { useList } from '@refinedev/core';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface ConnectorUpsertProps {
   onSubmit: () => void;
@@ -63,6 +64,8 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
   evseId,
 }) => {
   const selectedChargingStation = useSelector(getSelectedChargingStation());
+
+  const tenantId = useTenantId();
 
   const form = useForm({
     refineCoreProps: {
@@ -132,13 +135,22 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
   };
 
   const handleOnFinish = (data: any) => {
+    const now = new Date().toISOString();
+
+    const newItem: any = getSerializedValues({ ...data }, ConnectorClass);
+
     if (evseId) {
-      data.evseId = evseId;
+      newItem.evseId = evseId;
     }
 
-    form.refineCore
-      .onFinish(getSerializedValues(data, ConnectorClass))
-      .then(() => reset());
+    if (!newItem.id) {
+      newItem.tenantId = tenantId;
+      newItem.createdAt = now;
+    }
+
+    newItem.updatedAt = now;
+
+    form.refineCore.onFinish(newItem).then(() => reset());
   };
 
   return (

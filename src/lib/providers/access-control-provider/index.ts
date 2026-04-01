@@ -34,13 +34,14 @@ const ROLE_PERMISSIONS = {
     [ActionType.COMMAND]: true,
   },
   user: {
+    // Customize user access as needed; for now has the same permissions as Admin
     [ActionType.LIST]: true,
     [ActionType.SHOW]: true,
-    [ActionType.CREATE]: false,
-    [ActionType.EDIT]: false,
-    [ActionType.DELETE]: false,
+    [ActionType.CREATE]: true,
+    [ActionType.EDIT]: true,
+    [ActionType.DELETE]: true,
     [ActionType.ACCESS]: true,
-    [ActionType.COMMAND]: false,
+    [ActionType.COMMAND]: true,
   },
 };
 

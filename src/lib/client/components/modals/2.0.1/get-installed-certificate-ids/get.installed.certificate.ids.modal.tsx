@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { Form } from '@lib/client/components/form';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface GetInstalledCertificateIdsModalProps {
   station: any;
@@ -45,6 +46,8 @@ export const GetInstalledCertificateIdsModal = ({
 }: GetInstalledCertificateIdsModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -74,7 +77,7 @@ export const GetInstalledCertificateIdsModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/getInstalledCertificateIds?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/certificates/getInstalledCertificateIds?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP2_0_1,

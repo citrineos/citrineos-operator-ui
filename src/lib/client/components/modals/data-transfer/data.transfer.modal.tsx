@@ -19,6 +19,7 @@ import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import z from 'zod';
 import { FormButtonVariants } from '@lib/client/components/buttons/form.button';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface DataTransferModalProps {
   station: any;
@@ -35,6 +36,8 @@ type DataTransferFormData = z.infer<typeof DataTransferSchema>;
 export const DataTransferModal = ({ station }: DataTransferModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const tenantId = useTenantId();
 
   const parsedStation: ChargingStationDto = useMemo(
     () => plainToInstance(ChargingStationClass, station),
@@ -76,7 +79,7 @@ export const DataTransferModal = ({ station }: DataTransferModalProps) => {
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/dataTransfer?identifier=${parsedStation.id}&tenantId=1`,
+      url: `/configuration/dataTransfer?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion,

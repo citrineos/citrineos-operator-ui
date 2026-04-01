@@ -19,6 +19,7 @@ import { ResourceType } from '@lib/utils/access.types';
 import { getSerializedValues } from '@lib/utils/middleware';
 import { useForm } from '@refinedev/react-hook-form';
 import { evsesFormUpsertGrid } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
+import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
@@ -31,6 +32,8 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
   stationId,
   evse,
 }) => {
+  const tenantId = useTenantId();
+
   const form = useForm({
     refineCoreProps: {
       resource: ResourceType.EVSES,
@@ -63,7 +66,16 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
   };
 
   const handleOnFinish = (data: any) => {
+    const now = new Date().toISOString();
+
     const newItem = getSerializedValues(data, EvseClass);
+
+    if (!newItem.id) {
+      newItem.tenantId = tenantId;
+      newItem.createdAt = now;
+    }
+
+    newItem.updatedAt = now;
     newItem.stationId = stationId;
 
     form.refineCore.onFinish(newItem).then(() => reset());
