@@ -75,7 +75,7 @@ export const OCPP2_0_1_RemoteStart = ({
     meta: {
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       gqlVariables: {
-        stationId: station.id,
+        stationPkId: station.pkId,
         type: ChargingStationSequenceTypeEnum.remoteStartId,
       },
     },

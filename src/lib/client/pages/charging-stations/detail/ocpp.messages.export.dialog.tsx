@@ -45,7 +45,7 @@ export const OCPPMessagesExportDialog = ({
     sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationId },
+      gqlVariables: { stationPkId: Number(stationId) },
     },
     filters,
     download: true,

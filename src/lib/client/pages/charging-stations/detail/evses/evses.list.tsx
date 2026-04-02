@@ -143,6 +143,7 @@ export const EVSESList: React.FC<EVSESListProps> = ({ stationId }) => {
         <EvseUpsert
           onSubmit={handleFormSubmit}
           stationId={stationId}
+          stationStringId={station.id}
           evse={currentEvse}
         />
       );

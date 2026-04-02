@@ -17,6 +17,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       order_by: $order_by
       where: $where
     ) {
+      pkId
       id
       isOnline
       protocol
@@ -120,6 +121,7 @@ export const FAULTED_CHARGING_STATIONS_LIST_QUERY = gql`
         ]
       }
     ) {
+      pkId
       id
       isOnline
       protocol
@@ -195,8 +197,133 @@ export const CHARGING_STATIONS_STATUS_COUNT_QUERY = gql`
 `;
 
 export const CHARGING_STATIONS_GET_QUERY = gql`
-  query GetChargingStationById($id: String!) {
-    ChargingStations_by_pk(id: $id) {
+  query GetChargingStationById($id: Int!) {
+    ChargingStations_by_pk(pkId: $id) {
+      pkId
+      tenantId
+      id
+      isOnline
+      protocol
+      locationId
+      chargePointVendor
+      chargePointModel
+      firmwareVersion
+      createdAt
+      updatedAt
+      floorLevel
+      parkingRestrictions
+      capabilities
+      coordinates
+      use16StatusNotification0
+      location: Location {
+        id
+        name
+        address
+        city
+        postalCode
+        state
+        country
+        coordinates
+        createdAt
+        updatedAt
+      }
+      evses: Evses {
+        id
+        evseTypeId
+        evseId
+        physicalReference
+        removed
+        createdAt
+        updatedAt
+        connectors: Connectors {
+          id
+          stationId
+          evseId
+          evseTypeConnectorId
+          connectorId
+          status
+          type
+          maximumPowerWatts
+          maximumAmperage
+          maximumVoltage
+          format
+          powerType
+          termsAndConditionsUrl
+          tariffId
+          errorCode
+          timestamp
+          info
+          vendorId
+          vendorErrorCode
+          createdAt
+          updatedAt
+        }
+      }
+      LatestStatusNotifications {
+        id
+        stationId
+        statusNotificationId
+        updatedAt
+        createdAt
+        StatusNotification {
+          connectorId
+          connectorStatus
+          createdAt
+          evseId
+          stationId
+          id
+          timestamp
+          updatedAt
+        }
+      }
+      transactions: Transactions(where: { isActive: { _eq: true } }) {
+        id
+        timeSpentCharging
+        isActive
+        chargingState
+        stationId
+        stoppedReason
+        transactionId
+        evseId
+        remoteStartId
+        totalKwh
+        createdAt
+        updatedAt
+      }
+      connectors: Connectors {
+        id
+        stationId
+        evseId
+        connectorId
+        status
+        type
+        maximumPowerWatts
+        maximumAmperage
+        maximumVoltage
+        format
+        powerType
+        termsAndConditionsUrl
+        tariffId
+        errorCode
+        timestamp
+        info
+        vendorId
+        vendorErrorCode
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
+// Add a new query to fetch by business ID (id + tenantId)
+export const CHARGING_STATIONS_GET_BY_BUSINESS_ID_QUERY = gql`
+  query GetChargingStationByBusinessId($id: String!, $tenantId: String!) {
+    ChargingStations(
+      where: { id: { _eq: $id }, tenantId: { _eq: $tenantId } }
+      limit: 1
+    ) {
+      pkId
       tenantId
       id
       isOnline
@@ -316,6 +443,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
 export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS = gql`
   query GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransactions {
     ChargingStations {
+      pkId
       id
       isOnline
       protocol
@@ -371,8 +499,9 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
 `;
 
 export const CHARGING_STATION_ONLINE_STATUS_QUERY = gql`
-  query ChargingStationOnlineStatus($id: String!) {
-    ChargingStations_by_pk(id: $id) {
+  query ChargingStationOnlineStatus($id: Int!) {
+    ChargingStations_by_pk(pkId: $id) {
+      pkId
       id
       isOnline
       protocol
@@ -383,6 +512,7 @@ export const CHARGING_STATION_ONLINE_STATUS_QUERY = gql`
 export const CHARGING_STATIONS_CREATE_MUTATION = gql`
   mutation ChargingStationsCreate($object: ChargingStations_insert_input!) {
     insert_ChargingStations_one(object: $object) {
+      pkId
       id
       isOnline
       protocol
@@ -398,10 +528,11 @@ export const CHARGING_STATIONS_CREATE_MUTATION = gql`
 
 export const CHARGING_STATIONS_EDIT_MUTATION = gql`
   mutation ChargingStationsEdit(
-    $id: String!
+    $id: Int!
     $object: ChargingStations_set_input!
   ) {
-    update_ChargingStations_by_pk(pk_columns: { id: $id }, _set: $object) {
+    update_ChargingStations_by_pk(pk_columns: { pkId: $id }, _set: $object) {
+      pkId
       id
       isOnline
       protocol
@@ -413,8 +544,9 @@ export const CHARGING_STATIONS_EDIT_MUTATION = gql`
 `;
 
 export const CHARGING_STATIONS_DELETE_MUTATION = gql`
-  mutation ChargingStationsDelete($id: String!) {
-    delete_ChargingStations_by_pk(id: $id) {
+  mutation ChargingStationsDelete($id: Int!) {
+    delete_ChargingStations_by_pk(pkId: $id) {
+      pkId
       id
       isOnline
       protocol

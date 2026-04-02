@@ -84,7 +84,6 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
       },
     },
     defaultValues: {
-      stationId: connector?.stationId || selectedChargingStation?.id || '',
       connectorId: connector?.connectorId || '',
       evseTypeConnectorId: connector?.evseTypeConnectorId || '',
       type: connector?.type || '',
@@ -120,7 +119,6 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
 
   const reset = () => {
     form.reset({
-      stationId: '',
       connectorId: '',
       evseTypeConnectorId: '',
       type: '',
@@ -149,6 +147,10 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
     }
 
     newItem.updatedAt = now;
+    newItem.stationPkId =
+      (connector as any)?.stationPkId ?? selectedChargingStation?.pkId;
+    newItem.stationId =
+      (connector as any)?.stationId ?? selectedChargingStation?.id;
 
     form.refineCore.onFinish(newItem).then(() => reset());
   };
@@ -157,14 +159,6 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
     <Form {...form} submitHandler={handleOnFinish}>
       <ScrollArea>
         <div className={evsesFormUpsertGrid}>
-          <FormField
-            control={form.control}
-            name={ConnectorProps.stationId}
-            label="Station ID"
-          >
-            <Input disabled={!!selectedChargingStation?.id} />
-          </FormField>
-
           <FormField
             control={form.control}
             name={ConnectorProps.connectorId}

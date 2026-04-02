@@ -48,6 +48,7 @@ export type ChargingStationStatusCountsDto = z.infer<
 >;
 
 export class ChargingStationClass implements Partial<ChargingStationDto> {
+  pkId?: number;
   id!: string;
   @IsBoolean()
   isOnline!: boolean;

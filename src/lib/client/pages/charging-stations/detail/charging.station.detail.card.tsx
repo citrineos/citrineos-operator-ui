@@ -126,7 +126,7 @@ export const ChargingStationDetailCard = ({
 
     mutate(
       {
-        id: station.id.toString(),
+        id: station.pkId,
         resource: ResourceType.CHARGING_STATIONS,
         meta: {
           gqlMutation: CHARGING_STATIONS_DELETE_MUTATION,
@@ -244,7 +244,7 @@ export const ChargingStationDetailCard = ({
               variant="secondary"
               size="sm"
               onClick={() =>
-                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
+                push(`/${MenuSection.CHARGING_STATIONS}/${station.pkId}/edit`)
               }
             >
               <Edit className={buttonIconSize} />

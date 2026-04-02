@@ -50,10 +50,7 @@ const client = new GraphQLClient(API_URL, {
 });
 
 const hasuraProviderOptions = {
-  idType: (resource: string) => {
-    if (resource === ResourceType.CHARGING_STATIONS) return 'String';
-    return 'Int';
-  },
+  idType: 'Int',
   namingConvention: 'hasura-default',
 };
 
