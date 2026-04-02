@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
 import { getServerSession } from 'next-auth';
 import authOptions from '@app/api/auth/[...nextauth]/options';
 import { type Session } from 'next-auth';
