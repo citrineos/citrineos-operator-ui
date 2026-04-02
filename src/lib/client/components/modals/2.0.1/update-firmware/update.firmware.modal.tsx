@@ -66,7 +66,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
     meta: {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-      gqlVariables: { stationId: station.id, type: 'updateFirmware' },
+      gqlVariables: { stationPkId: station.pkId, type: 'updateFirmware' },
     },
   });
 

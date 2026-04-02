@@ -106,7 +106,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
     ],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationId },
+      gqlVariables: { stationPkId: Number(stationId) },
     },
     filters,
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
@@ -240,7 +240,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             },
             meta: {
               gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-              gqlVariables: { stationId },
+              gqlVariables: { stationPkId: Number(stationId) },
             },
             queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
           }}

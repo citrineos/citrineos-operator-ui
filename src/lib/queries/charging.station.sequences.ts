@@ -5,9 +5,9 @@
 import { gql } from 'graphql-tag';
 
 export const CHARGING_STATION_SEQUENCES_GET_QUERY = gql`
-  query ChargingStationSequencesGet($stationId: String!, $type: String!) {
+  query ChargingStationSequencesGet($stationPkId: Int!, $type: String!) {
     ChargingStationSequences(
-      where: { stationId: { _eq: $stationId }, type: { _eq: $type } }
+      where: { stationPkId: { _eq: $stationPkId }, type: { _eq: $type } }
     ) {
       value
     }
