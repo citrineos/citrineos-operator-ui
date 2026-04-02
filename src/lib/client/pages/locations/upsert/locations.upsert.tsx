@@ -367,15 +367,22 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
         // Upload image
         if (uploadedFile && finalLocationId) {
           const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES_LOCATIONS}/${finalLocationId}`;
-          uploadFileViaPresignedUrl(uploadedFile, renamedFileName).catch(
-            (err: any) => {
+          uploadFileViaPresignedUrl(uploadedFile, renamedFileName)
+            .then((result) => {
+              if (!result.success) {
+                open?.({
+                  type: 'error',
+                  message: translate('imageUploadFailed'),
+                });
+              }
+            })
+            .catch((err: any) => {
               console.error(err);
               open?.({
                 type: 'error',
                 message: translate('imageUploadFailed'),
               });
-            },
-          );
+            });
         }
 
         replace(`/${MenuSection.LOCATIONS}/${finalLocationId}`);

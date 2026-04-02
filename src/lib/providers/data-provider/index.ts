@@ -18,7 +18,9 @@ const requestMiddleware = async (request: any) => {
     ...request.headers,
   };
 
-  const hasuraAdminSecret = await getHasuraAdminSecretAction();
+  const hasuraAdminSecret = await getHasuraAdminSecretAction().then((result) =>
+    result.success ? result.data : '',
+  );
 
   if (hasuraAdminSecret) {
     console.debug('Authorizing to Hasura via Hasura Admin Secret');

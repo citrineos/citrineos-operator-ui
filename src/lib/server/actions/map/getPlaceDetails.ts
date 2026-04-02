@@ -4,6 +4,7 @@
 'use server';
 
 import config from '@lib/utils/config';
+import { authedAction, type ActionResult } from '@lib/utils/action-guard';
 
 export interface PlaceDetailsResponse {
   id: string;
@@ -29,44 +30,61 @@ export interface PlaceDetailsResponse {
   types?: string[];
 }
 
-/**
- * Get detailed information about a place using its place_id
- * Uses the new Places API (New) - Place Details endpoint
- *
- * @param placeId - The place_id from autocomplete results
- * @param sessionToken - Optional session token for cost optimization
- * @returns Place details including address components and coordinates
- */
+// Google Place IDs are always alphanumeric with limited punctuation.
+// Reject anything that doesn't match before it touches the URL.
+const PLACE_ID_REGEX = /^[A-Za-z0-9_-]{10,250}$/;
+
+// Session tokens are UUIDs
+const SESSION_TOKEN_REGEX = /^[0-9a-f-]{36}$/i;
+
 export async function getPlaceDetails(
   placeId: string,
   sessionToken?: string,
-): Promise<PlaceDetailsResponse> {
-  if (!placeId) {
-    throw new Error('Place ID is required');
-  }
+): Promise<ActionResult<PlaceDetailsResponse>> {
+  return authedAction(async (_session) => {
+    if (!placeId) {
+      throw new Error('Place ID is required');
+    }
 
-  // Construct URL with optional session token
-  let url = `https://places.googleapis.com/v1/places/${placeId}`;
-  if (sessionToken) {
-    url += `?sessionToken=${sessionToken}`;
-  }
+    if (!PLACE_ID_REGEX.test(placeId)) {
+      throw new Error('Invalid place ID');
+    }
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Goog-Api-Key': config.googleMapsAddressApiKey!,
-      'X-Goog-FieldMask':
-        'id,displayName,formattedAddress,addressComponents,location,plusCode,types',
-    },
+    if (sessionToken !== undefined && !SESSION_TOKEN_REGEX.test(sessionToken)) {
+      throw new Error('Invalid session token');
+    }
+
+    const url = new URL(`https://places.googleapis.com/v1/places/${placeId}`);
+    if (sessionToken) {
+      url.searchParams.set('sessionToken', sessionToken);
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': config.googleMapsAddressApiKey!,
+          'X-Goog-FieldMask':
+            'id,displayName,formattedAddress,addressComponents,location,plusCode,types',
+        },
+      });
+    } catch (err) {
+      console.error('Network error fetching place details:', err);
+      throw new Error('Failed to fetch place details');
+    }
+
+    if (!response.ok) {
+      console.error(
+        'Google Places API error:',
+        response.status,
+        await response.text(),
+      );
+      throw new Error('Failed to fetch place details');
+    }
+
+    const data = await response.json();
+    return data as PlaceDetailsResponse;
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Failed to fetch place details:', response.status, errorText);
-    throw new Error(`Failed to fetch place details: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data as PlaceDetailsResponse;
 }

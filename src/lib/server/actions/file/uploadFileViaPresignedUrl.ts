@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 'use server';
 
+import { authedAction, type ActionResult } from '@lib/utils/action-guard';
+
 /*
  * Uploads a file to S3 bucket using a presigned URL
  * @param file - The file to upload
@@ -15,22 +17,24 @@ import { generatePresignedPutUrl } from '@lib/server/clients/file/fileAccess';
 export async function uploadFileViaPresignedUrl(
   file: File,
   fileName?: string,
-): Promise<string> {
-  // Get signed URL
-  const { url, key } = await generatePresignedPutUrl(
-    fileName || file.name,
-    file.type,
-  );
+): Promise<ActionResult<string>> {
+  return authedAction<string>(async (_session) => {
+    // Get signed URL
+    const { url, key } = await generatePresignedPutUrl(
+      fileName || file.name,
+      file.type,
+    );
 
-  // Upload file using signed URL
-  const uploadRes = await fetch(url, {
-    method: 'PUT',
-    body: file,
-    headers: { 'Content-Type': file.type },
+    // Upload file using signed URL
+    const uploadRes = await fetch(url, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': file.type },
+    });
+    if (!uploadRes.ok) {
+      throw new Error('Failed to upload file');
+    }
+
+    return key;
   });
-  if (!uploadRes.ok) {
-    throw new Error('Failed to upload file');
-  }
-
-  return key;
 }
