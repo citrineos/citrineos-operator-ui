@@ -80,7 +80,13 @@ export const ConnectionModal = ({
     if (open && !coreConfig) {
       setLoading(true);
       fetchFileAction(`${S3_BUCKET_FILE_CORE_CONFIG}`, BucketType.CORE)
-        .then((data) => setCoreConfig(data))
+        .then((result) => {
+          if (result.success) {
+            setCoreConfig(result.data);
+          } else {
+            throw new Error(result.error);
+          }
+        })
         .catch(console.error)
         .finally(() => setLoading(false));
     }
@@ -96,7 +102,13 @@ export const ConnectionModal = ({
     if (open && !operatorConfig) {
       setLoading(true);
       fetchFileAction(`${S3_BUCKET_FILE_CONFIG}`)
-        .then((data) => setOperatorConfig(data))
+        .then((result) => {
+          if (result.success) {
+            setOperatorConfig(result.data);
+          } else {
+            throw new Error(result.error);
+          }
+        })
         .catch(console.error)
         .finally(() => setLoading(false));
     }

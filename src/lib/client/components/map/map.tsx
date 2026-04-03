@@ -51,8 +51,8 @@ export const LocationMap: React.FC<MapProps> = ({
 
   useEffect(() => {
     if (apiKey === undefined) {
-      getGoogleMapsApiKeyAction().then((key) =>
-        dispatch(setGoogleMapsApiKey(key)),
+      getGoogleMapsApiKeyAction().then((result) =>
+        dispatch(setGoogleMapsApiKey(result.success ? result.data : '')),
       );
     }
   }, []);

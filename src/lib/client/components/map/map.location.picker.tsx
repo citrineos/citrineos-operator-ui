@@ -46,8 +46,8 @@ export const MapLocationPicker: React.FC<LocationPickerMapProps> = ({
 
   useEffect(() => {
     if (apiKey === undefined) {
-      getGoogleMapsApiKeyAction().then((key) =>
-        dispatch(setGoogleMapsApiKey(key)),
+      getGoogleMapsApiKeyAction().then((result) =>
+        dispatch(setGoogleMapsApiKey(result.success ? result.data : '')),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
