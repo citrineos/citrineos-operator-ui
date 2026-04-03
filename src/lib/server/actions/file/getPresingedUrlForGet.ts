@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 'use server';
 
+import { authedAction, type ActionResult } from '@lib/utils/action-guard';
+
 /*
  * Fetches a presigned URL from S3
  * @param fileKey - The key of the file to fetch
@@ -12,15 +14,17 @@ import { generatePresignedGetUrlIfExists } from '@lib/server/clients/file/fileAc
 
 export const getPresignedUrlForGet = async (
   fileKey: string,
-): Promise<string | null> => {
-  if (!fileKey) {
-    throw new Error('Missing file key');
-  }
+): Promise<ActionResult<string | null>> => {
+  return authedAction<string | null>(async (_session) => {
+    if (!fileKey) {
+      throw new Error('Missing file key');
+    }
 
-  try {
-    return await generatePresignedGetUrlIfExists(fileKey);
-  } catch (err) {
-    console.error('Failed to fetch Presigned URL', err);
-    return null;
-  }
+    try {
+      return await generatePresignedGetUrlIfExists(fileKey);
+    } catch (err) {
+      console.error('Failed to fetch Presigned URL', err);
+      return null;
+    }
+  });
 };

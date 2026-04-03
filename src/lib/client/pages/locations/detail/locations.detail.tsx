@@ -52,7 +52,11 @@ export const LocationsDetail = ({ params }: LocationDetailProps) => {
     if (location?.id) {
       getPresignedUrlForGet(
         `${S3_BUCKET_FOLDER_IMAGES_LOCATIONS}/${location.id}`,
-      ).then(setImageUrl);
+      ).then((result) => {
+        if (result.success) {
+          return setImageUrl(result.data);
+        }
+      });
     }
   }, [location?.id]);
 

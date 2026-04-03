@@ -56,7 +56,11 @@ export const AddressAutocomplete: React.FC<Props> = ({
     const searchCountryCode = countryCode?.toUpperCase() || 'US';
 
     autocompleteAddress(input, searchCountryCode, sessionToken)
-      .then((data) => setPredictions(data))
+      .then((result) => {
+        if (result.success) {
+          return setPredictions(result.data);
+        }
+      })
       .catch((err) => {
         console.log(err);
         setPredictions([]);
@@ -88,7 +92,12 @@ export const AddressAutocomplete: React.FC<Props> = ({
     onChangeAction(prediction.description);
 
     getPlaceDetails(prediction.place_id, sessionToken)
-      .then((details) => {
+      .then((result) => {
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        const details = result.data;
+
         const location = details.location;
         const components = details.addressComponents;
 

@@ -28,7 +28,11 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
     if (id) {
       getPresignedUrlForGet(
         `${S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS}/${id}`,
-      ).then(setImageUrl);
+      ).then((result) => {
+        if (result.success) {
+          return setImageUrl(result.data);
+        }
+      });
     }
   }, [id]);
 
