@@ -11,11 +11,16 @@
  */
 
 import { generatePresignedPutUrl } from '@lib/server/clients/file/fileAccess';
+import config from '@lib/utils/config';
 
 export async function uploadFileViaPresignedUrl(
   file: File,
   fileName?: string,
 ): Promise<string> {
+  if (!config.allowImageUpload) {
+    throw new Error('Image upload is disabled');
+  }
+
   // Get signed URL
   const { url, key } = await generatePresignedPutUrl(
     fileName || file.name,

@@ -60,6 +60,7 @@ import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
+  allowImageUpload?: boolean;
 };
 
 const ChargingStationCreateSchema = ChargingStationSchema.pick({
@@ -96,6 +97,7 @@ export type ChargingStationCreateDto = z.infer<
 
 export const ChargingStationUpsert = ({
   params,
+  allowImageUpload = false,
 }: ChargingStationUpsertProps) => {
   const { id: stationId } = params || {};
   const searchParams = useSearchParams();
@@ -423,39 +425,41 @@ export const ChargingStationUpsert = ({
                 />
               </Field>
 
-              <Field>
-                <FieldLabel>
-                  <span className={formLabelStyle}>Image</span>
-                </FieldLabel>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  id="uploadInput"
-                  style={{ display: 'none' }}
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+              {allowImageUpload && (
+                <Field>
+                  <FieldLabel>
+                    <span className={formLabelStyle}>Image</span>
+                  </FieldLabel>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    id="uploadInput"
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
 
-                    setUploadedFile(file);
-                    setUploadedFileName(file.name);
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() =>
-                    document.getElementById('uploadInput')?.click()
-                  }
-                >
-                  <UploadIcon className={buttonIconSize} />
-                  {translate('buttons.upload')}
-                </Button>
-                {uploadedFileName && (
-                  <span className="text-sm text-gray-700">
-                    {uploadedFileName}
-                  </span>
-                )}
-              </Field>
+                      setUploadedFile(file);
+                      setUploadedFileName(file.name);
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() =>
+                      document.getElementById('uploadInput')?.click()
+                    }
+                  >
+                    <UploadIcon className={buttonIconSize} />
+                    {translate('buttons.upload')}
+                  </Button>
+                  {uploadedFileName && (
+                    <span className="text-sm text-gray-700">
+                      {uploadedFileName}
+                    </span>
+                  )}
+                </Field>
+              )}
             </div>
           </Form>
         </CardContent>
