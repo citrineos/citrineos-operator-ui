@@ -16,6 +16,7 @@ import {
   ComboboxFormField,
   formCheckboxStyle,
   FormField,
+  formLabelStyle,
   nestedFormRowFlex,
 } from '@lib/client/components/form/field';
 import { Input } from '@lib/client/components/ui/input';
@@ -31,6 +32,8 @@ import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import z from 'zod';
 import { Checkbox } from '@lib/client/components/ui/checkbox';
+import { Label } from '@lib/client/components/ui/label';
+import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import React from 'react';
 import { useFieldArray } from 'react-hook-form';
@@ -365,13 +368,33 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 <Input type="number" min="0" />
               </FormField>
 
-              <FormField
-                control={form.control}
-                label="Allow Concurrent Transaction"
-                name={AuthorizationProps.concurrentTransaction}
-              >
-                <Checkbox className={formCheckboxStyle} />
-              </FormField>
+              <Field>
+                <FieldLabel>
+                  <span className={formLabelStyle}>
+                    Allow Concurrent Transaction
+                  </span>
+                </FieldLabel>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="concurrentTransaction"
+                    className={formCheckboxStyle}
+                    checked={
+                      form.watch(
+                        AuthorizationProps.concurrentTransaction,
+                      ) ?? false
+                    }
+                    onCheckedChange={(checked) => {
+                      form.setValue(
+                        AuthorizationProps.concurrentTransaction,
+                        checked === true,
+                      );
+                    }}
+                  />
+                  <Label htmlFor="concurrentTransaction">
+                    Enable concurrent transactions for this authorization
+                  </Label>
+                </div>
+              </Field>
 
               <div className="col-span-full flex flex-col gap-4">
                 <div className="flex items-start">
