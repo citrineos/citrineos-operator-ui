@@ -256,7 +256,17 @@ export const ChargingStationDetailCard = ({
             action={ActionType.DELETE}
             params={{ id: station.id }}
           >
-            <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteClick}
+              disabled={!!latestLog}
+              title={
+                latestLog
+                  ? 'Cannot delete a station that has OCPP message history'
+                  : undefined
+              }
+            >
               <Trash2 className={buttonIconSize} />
               {translate('buttons.delete')}
             </Button>
