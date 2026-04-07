@@ -13,8 +13,8 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
+  CheckboxFormField,
   ComboboxFormField,
-  formCheckboxStyle,
   FormField,
   nestedFormRowFlex,
 } from '@lib/client/components/form/field';
@@ -30,7 +30,6 @@ import { getSerializedValues } from '@lib/utils/middleware';
 import { CanAccess, type GetOneResponse, useTranslate } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 import z from 'zod';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import React from 'react';
 import { useFieldArray } from 'react-hook-form';
@@ -365,13 +364,11 @@ export const AuthorizationUpsert = ({ params }: AuthorizationUpsertProps) => {
                 <Input type="number" min="0" />
               </FormField>
 
-              <FormField
+              <CheckboxFormField
                 control={form.control}
                 label="Allow Concurrent Transaction"
                 name={AuthorizationProps.concurrentTransaction}
-              >
-                <Checkbox className={formCheckboxStyle} />
-              </FormField>
+              />
 
               <div className="col-span-full flex flex-col gap-4">
                 <div className="flex items-start">
