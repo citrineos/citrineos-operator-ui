@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo, useState } from 'react';
-import { type ChargingStationDto } from '@citrineos/base';
+import { type ChargingStationDto, OCPPVersion } from '@citrineos/base';
 import { OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
@@ -82,6 +82,7 @@ export const ChangeAvailabilityModal = ({
       url: `/configuration/changeAvailability?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
+      ocppVersion: parsedStation.protocol as OCPPVersion,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

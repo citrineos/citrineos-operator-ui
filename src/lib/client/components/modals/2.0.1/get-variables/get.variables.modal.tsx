@@ -195,7 +195,7 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
       url: `/monitoring/getVariables?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: { getVariableData },
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol as OCPPVersion,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

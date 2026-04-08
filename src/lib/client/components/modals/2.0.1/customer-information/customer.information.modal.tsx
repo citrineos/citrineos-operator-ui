@@ -118,7 +118,7 @@ export const CustomerInformationModal = ({
       url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: payload,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol as OCPPVersion,
     }).then(() => {
       form.reset({
         requestId: 1,

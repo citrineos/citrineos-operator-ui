@@ -57,7 +57,7 @@ export const OCPP2_0_1_RemoteStop = ({
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=${tenantId}`,
       data,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: station.protocol as OCPPVersion,
       setLoading,
     }).then(() => {
       dispatch(closeModal());

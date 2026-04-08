@@ -110,7 +110,7 @@ export const GetBaseReportModal = ({ station }: GetBaseReportModalProps) => {
       url: `/reporting/getBaseReport?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol as OCPPVersion,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

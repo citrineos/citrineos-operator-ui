@@ -28,6 +28,7 @@ export const RemoteStartTransactionModal = ({
       case OCPPVersion.OCPP1_6:
         return <OCPP1_6_RemoteStart station={parsedStation} />;
       case OCPPVersion.OCPP2_0_1:
+      case OCPPVersion.OCPP2_1:
         return <OCPP2_0_1_RemoteStart station={parsedStation} />;
       default:
         return (

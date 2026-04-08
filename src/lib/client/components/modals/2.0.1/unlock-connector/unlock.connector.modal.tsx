@@ -76,7 +76,7 @@ export const UnlockConnectorModal = ({
       url: `/evdriver/unlockConnector?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol as OCPPVersion,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

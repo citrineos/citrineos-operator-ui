@@ -44,10 +44,7 @@ export const DataTransferModal = ({ station }: DataTransferModalProps) => {
     [station],
   ) as ChargingStationDto;
 
-  const ocppVersion =
-    parsedStation.protocol === OCPPVersion.OCPP1_6
-      ? OCPPVersion.OCPP1_6
-      : OCPPVersion.OCPP2_0_1;
+  const ocppVersion = parsedStation.protocol as OCPPVersion;
 
   const form = useForm({
     resolver: zodResolver(DataTransferSchema),

@@ -41,7 +41,7 @@ export const ClearCacheModal = ({ station }: ClearCacheModalProps) => {
       url: `/evdriver/clearCache?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: {},
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol as OCPPVersion,
     });
 
     dispatch(closeModal());
