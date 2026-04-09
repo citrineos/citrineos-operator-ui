@@ -6,7 +6,6 @@
 import {
   type AuthorizationDto,
   type ChargingStationDto,
-  OCPPVersion,
 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -118,7 +117,7 @@ export const CustomerInformationModal = ({
       url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: payload,
       setLoading,
-      ocppVersion: parsedStation.protocol as OCPPVersion,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset({
         requestId: 1,

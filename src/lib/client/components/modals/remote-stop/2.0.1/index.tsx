@@ -4,7 +4,6 @@
 'use client';
 
 import type { EvseDto, TransactionDto } from '@citrineos/base';
-import { OCPPVersion } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import { ComboboxFormField } from '@lib/client/components/form/field';
@@ -57,7 +56,7 @@ export const OCPP2_0_1_RemoteStop = ({
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
       url: `/evdriver/requestStopTransaction?identifier=${station.id}&tenantId=${tenantId}`,
       data,
-      ocppVersion: station.protocol as OCPPVersion,
+      ocppVersion: station.protocol,
       setLoading,
     }).then(() => {
       dispatch(closeModal());

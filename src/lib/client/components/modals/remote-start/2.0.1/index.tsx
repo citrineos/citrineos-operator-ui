@@ -7,7 +7,6 @@ import type {
   AuthorizationDto,
   ChargingStationDto,
   ChargingStationSequenceDto,
-  OCPPVersion,
 } from '@citrineos/base';
 import {
   AuthorizationProps,
@@ -163,7 +162,7 @@ export const OCPP2_0_1_RemoteStart = ({
       url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: station.protocol as OCPPVersion,
+      ocppVersion: station.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

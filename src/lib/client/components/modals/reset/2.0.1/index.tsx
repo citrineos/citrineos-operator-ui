@@ -3,11 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import {
-  type ChargingStationDto,
-  OCPP2_0_1,
-  OCPPVersion,
-} from '@citrineos/base';
+import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import { SelectFormField } from '@lib/client/components/form/field';
@@ -64,7 +60,7 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
       url: `/configuration/reset?identifier=${station.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: station.protocol as OCPPVersion,
+      ocppVersion: station.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

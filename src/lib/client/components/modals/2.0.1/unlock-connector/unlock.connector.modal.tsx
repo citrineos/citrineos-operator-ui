@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { type ChargingStationDto, OCPPVersion } from '@citrineos/base';
+import { type ChargingStationDto } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ConnectorSelector } from '@lib/client/components/modals/shared/connector-selector/connector.selector';
 import { EvseSelector } from '@lib/client/components/modals/shared/evse-selector/evse.selector';
@@ -76,7 +76,7 @@ export const UnlockConnectorModal = ({
       url: `/evdriver/unlockConnector?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: parsedStation.protocol as OCPPVersion,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

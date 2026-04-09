@@ -5,7 +5,6 @@
 
 import {
   type ChargingStationDto,
-  OCPPVersion,
   type TransactionDto,
   TransactionProps,
 } from '@citrineos/base';
@@ -90,7 +89,7 @@ export const GetTransactionStatusModal = ({
       url: `/transactions/getTransactionStatus?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: parsedStation.protocol as OCPPVersion,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

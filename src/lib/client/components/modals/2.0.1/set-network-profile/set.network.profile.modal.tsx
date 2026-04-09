@@ -4,11 +4,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-  type ChargingStationDto,
-  OCPP2_0_1,
-  OCPPVersion,
-} from '@citrineos/base';
+import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
@@ -206,7 +202,7 @@ export const SetNetworkProfileModal = ({
       url,
       data,
       setLoading,
-      ocppVersion: parsedStation.protocol as OCPPVersion,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

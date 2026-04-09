@@ -3,11 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import {
-  type ChargingStationDto,
-  OCPP2_0_1,
-  OCPPVersion,
-} from '@citrineos/base';
+import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField, SelectFormField } from '@lib/client/components/form/field';
 import { Input } from '@lib/client/components/ui/input';
@@ -103,7 +99,7 @@ export const CertificateSignedModal = ({
           url: `/certificates/certificateSigned?identifier=${parsedStation.id}&tenantId=${tenantId}`,
           data,
           setLoading,
-          ocppVersion: parsedStation.protocol as OCPPVersion,
+          ocppVersion: parsedStation.protocol,
         }).then(() => {
           form.reset({
             certificateType: undefined,
