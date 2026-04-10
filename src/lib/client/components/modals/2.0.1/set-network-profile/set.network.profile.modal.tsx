@@ -12,14 +12,13 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
+  CheckboxFormField,
   ComboboxFormField,
-  formCheckboxStyle,
   FormField,
   formLabelStyle,
   formLabelWrapperStyle,
   SelectFormField,
 } from '@lib/client/components/form/field';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Input } from '@lib/client/components/ui/input';
 import { Textarea } from '@lib/client/components/ui/textarea';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
@@ -382,13 +381,11 @@ export const SetNetworkProfileModal = ({
               <Input />
             </FormField>
 
-            <FormField
+            <CheckboxFormField
               control={form.control}
               label="Use Only Preferred Network"
               name="connectionData.apn.useOnlyPreferredNetwork"
-            >
-              <Checkbox className={formCheckboxStyle} />
-            </FormField>
+            />
           </>
         )}
       </div>

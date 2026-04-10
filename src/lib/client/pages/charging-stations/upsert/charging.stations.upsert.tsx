@@ -17,6 +17,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
+  CheckboxFormField,
   ComboboxFormField,
   FormField,
   formLabelStyle,
@@ -54,8 +55,6 @@ import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { Button } from '@lib/client/components/ui/button';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
-import { Label } from '@lib/client/components/ui/label';
 import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type ChargingStationUpsertProps = {
@@ -339,27 +338,11 @@ export const ChargingStationUpsert = ({
                 searchPlaceholder="Search Capabilities"
               />
 
-              <Field>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="use16StatusNotification0"
-                    checked={
-                      form.watch(
-                        ChargingStationProps.use16StatusNotification0,
-                      ) ?? true
-                    }
-                    onCheckedChange={(checked) => {
-                      form.setValue(
-                        ChargingStationProps.use16StatusNotification0,
-                        checked === true,
-                      );
-                    }}
-                  />
-                  <Label htmlFor="use16StatusNotification0">
-                    {translate('ChargingStations.use16StatusNotification0')}
-                  </Label>
-                </div>
-              </Field>
+              <CheckboxFormField
+                control={form.control}
+                name={ChargingStationProps.use16StatusNotification0}
+                label={translate('ChargingStations.use16StatusNotification0')}
+              />
 
               {/* Coordinates Section */}
               <Field>

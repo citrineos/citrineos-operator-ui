@@ -8,10 +8,9 @@ import type { EvseDto } from '@citrineos/base';
 import { EvseProps } from '@citrineos/base';
 import { Form } from '@lib/client/components/form';
 import {
-  formCheckboxStyle,
+  CheckboxFormField,
   FormField,
 } from '@lib/client/components/form/field';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Input } from '@lib/client/components/ui/input';
 import { EvseClass } from '@lib/cls/evse.dto';
 import { EVSE_CREATE_MUTATION, EVSE_EDIT_MUTATION } from '@lib/queries/evses';
@@ -116,14 +115,12 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
           <Input />
         </FormField>
 
-        <FormField
+        <CheckboxFormField
           control={form.control}
           name={EvseProps.removed}
           label="Removed"
           description="Marked as REMOVED"
-        >
-          <Checkbox className={formCheckboxStyle} />
-        </FormField>
+        />
       </div>
     </Form>
   );
