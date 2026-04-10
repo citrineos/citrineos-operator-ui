@@ -197,7 +197,7 @@ export const ConnectionModal = ({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className={'overflow-auto max-h-150!'}>
+      <DialogContent className={'overflow-y-auto max-h-150!'}>
         <DialogHeader>
           <DialogTitle>
             {showHelpContent
@@ -337,12 +337,12 @@ export const ConnectionModal = ({
                           <span className="font-small mr-2">
                             {s.protocols.join(', ')}
                           </span>
-                          <div className="flex items-center gap-2 flex-1">
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
                             <a
                               href={`${wsUrl}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 underline text-sm truncate"
+                              className="text-blue-600 underline text-sm truncate min-w-0"
                               title={`${wsUrl}`}
                             >
                               {`${wsUrl}`}
