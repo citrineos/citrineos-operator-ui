@@ -15,10 +15,12 @@ import {
   CheckboxFormField,
   ComboboxFormField,
   FormField,
+  formCheckboxStyle,
   formLabelStyle,
   formLabelWrapperStyle,
   SelectFormField,
 } from '@lib/client/components/form/field';
+import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Input } from '@lib/client/components/ui/input';
 import { Textarea } from '@lib/client/components/ui/textarea';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';

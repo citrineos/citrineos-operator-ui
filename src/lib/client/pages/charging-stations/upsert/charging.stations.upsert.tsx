@@ -23,6 +23,8 @@ import {
   formLabelStyle,
   MultiSelectFormField,
 } from '@lib/client/components/form/field';
+import { Checkbox } from '@lib/client/components/ui/checkbox';
+import { Label } from '@lib/client/components/ui/label';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Input } from '@lib/client/components/ui/input';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
