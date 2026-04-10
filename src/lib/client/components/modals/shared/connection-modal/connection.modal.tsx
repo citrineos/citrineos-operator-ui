@@ -332,7 +332,7 @@ export const ConnectionModal = ({
                       return (
                         <li
                           key={s.id}
-                          className="border p-2 rounded flex justify-between items-center"
+                          className="border p-2 rounded flex justify-between items-start"
                         >
                           <span className="font-small mr-2">
                             {s.protocols.join(', ')}
@@ -342,7 +342,7 @@ export const ConnectionModal = ({
                               href={`${wsUrl}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 underline text-sm truncate min-w-0"
+                              className="text-blue-600 underline text-sm break-all"
                               title={`${wsUrl}`}
                             >
                               {`${wsUrl}`}
