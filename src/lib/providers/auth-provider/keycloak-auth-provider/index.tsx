@@ -132,7 +132,25 @@ export const createKeycloakAuthProvider = (): AuthProvider &
       return { success: true };
     },
     logout: async ({ redirectTo }) => {
-      await signOut({ callbackUrl: redirectTo || '/login' });
+      const session = await getSession();
+      const idToken = (session as any)?.idToken;
+      const keycloakLogoutUrl = (session as any)?.keycloakLogoutUrl;
+
+      // Clear the NextAuth session cookie without triggering a redirect
+      await signOut({ redirect: false });
+
+      // Redirect the browser to Keycloak's end-session endpoint so it can
+      // clear its own SSO cookie. Without this, Keycloak silently re-authenticates
+      // the user on the next check because the browser-side SSO session is still live.
+      if (idToken && keycloakLogoutUrl) {
+        const postLogoutUri = `${window.location.origin}${redirectTo || '/login'}`;
+        const params = new URLSearchParams({
+          id_token_hint: idToken,
+          post_logout_redirect_uri: postLogoutUri,
+        });
+        return { success: true };
+      }
+
       return { success: true, redirectTo: redirectTo || '/login' };
     },
     check: async () => {
