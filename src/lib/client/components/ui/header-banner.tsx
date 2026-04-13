@@ -5,6 +5,32 @@
 import React from 'react';
 import config from '@lib/utils/config';
 
+const EMAIL_RE = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+
+function renderMessage(text: string): React.ReactNode {
+  return text.split('\n').map((line, lineIdx, lines) => {
+    const parts = line.split(EMAIL_RE);
+    return (
+      <React.Fragment key={lineIdx}>
+        {parts.map((part, i) =>
+          EMAIL_RE.test(part) ? (
+            <a
+              key={i}
+              href={`mailto:${part}`}
+              className="underline hover:text-gray-700 dark:hover:text-gray-300"
+            >
+              {part}
+            </a>
+          ) : (
+            part
+          ),
+        )}
+        {lineIdx < lines.length - 1 && <br />}
+      </React.Fragment>
+    );
+  });
+}
+
 export const HeaderBanner: React.FC = () => (
   <>
     {config.bannerMessage && (
@@ -23,7 +49,9 @@ export const HeaderBanner: React.FC = () => (
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="text-sm/6 text-gray-900 dark:text-gray-100">
-            <strong className="font-semibold">{config.bannerMessage}</strong>
+            <strong className="font-semibold">
+              {renderMessage(config.bannerMessage)}
+            </strong>
           </p>
         </div>
         <div className="flex flex-1 justify-end" />
