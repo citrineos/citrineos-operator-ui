@@ -148,7 +148,6 @@ export const createKeycloakAuthProvider = (): AuthProvider &
           id_token_hint: idToken,
           post_logout_redirect_uri: postLogoutUri,
         });
-        window.location.href = `${keycloakLogoutUrl}?${params.toString()}`;
         return { success: true };
       }
 
