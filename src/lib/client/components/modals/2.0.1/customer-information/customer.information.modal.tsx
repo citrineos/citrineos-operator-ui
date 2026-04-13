@@ -9,11 +9,10 @@ import {
 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  CheckboxFormField,
   ComboboxFormField,
-  formCheckboxStyle,
   FormField,
 } from '@lib/client/components/form/field';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Input } from '@lib/client/components/ui/input';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import { AUTHORIZATIONS_LIST_QUERY } from '@lib/queries/authorizations';
@@ -150,13 +149,9 @@ export const CustomerInformationModal = ({
         <Input type="number" placeholder="Enter request ID" />
       </FormField>
 
-      <FormField control={form.control} label="Report" name="report">
-        <Checkbox className={formCheckboxStyle} />
-      </FormField>
+      <CheckboxFormField control={form.control} label="Report" name="report" />
 
-      <FormField control={form.control} label="Clear" name="clear">
-        <Checkbox className={formCheckboxStyle} />
-      </FormField>
+      <CheckboxFormField control={form.control} label="Clear" name="clear" />
 
       <FormField
         control={form.control}

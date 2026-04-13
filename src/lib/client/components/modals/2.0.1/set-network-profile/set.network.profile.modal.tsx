@@ -8,9 +8,10 @@ import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
+  CheckboxFormField,
   ComboboxFormField,
-  formCheckboxStyle,
   FormField,
+  formCheckboxStyle,
   formLabelStyle,
   formLabelWrapperStyle,
   SelectFormField,
@@ -378,13 +379,11 @@ export const SetNetworkProfileModal = ({
               <Input />
             </FormField>
 
-            <FormField
+            <CheckboxFormField
               control={form.control}
               label="Use Only Preferred Network"
               name="connectionData.apn.useOnlyPreferredNetwork"
-            >
-              <Checkbox className={formCheckboxStyle} />
-            </FormField>
+            />
           </>
         )}
       </div>
