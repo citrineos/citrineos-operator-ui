@@ -7,7 +7,6 @@ import {
   type ChargingStationDto,
   type InstalledCertificateDto,
   InstalledCertificateProps,
-  OCPPVersion,
 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ComboboxFormField } from '@lib/client/components/form/field';
@@ -114,7 +113,7 @@ export const DeleteCertificateModal = ({
       url: `/certificates/deleteCertificate?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset({
         certificate: '',

@@ -37,6 +37,7 @@ export const OtherCommandsModal = ({ station }: OtherCommandsModalProps) => {
       case OCPPVersion.OCPP1_6:
         return <OCPP1_6_Commands station={parsedStation} />;
       case OCPPVersion.OCPP2_0_1:
+      case OCPPVersion.OCPP2_1:
         return <OCPP2_0_1_Commands station={parsedStation} />;
       default:
         return (

@@ -4,7 +4,6 @@
 'use client';
 
 import type { ChargingStationDto } from '@citrineos/base';
-import { OCPPVersion } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import { FormField } from '@lib/client/components/form/field';
@@ -132,7 +131,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
       url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

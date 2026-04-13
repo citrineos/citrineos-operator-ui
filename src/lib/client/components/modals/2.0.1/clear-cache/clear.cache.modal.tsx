@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { type ChargingStationDto, OCPPVersion } from '@citrineos/base';
+import { type ChargingStationDto } from '@citrineos/base';
 import { Button } from '@lib/client/components/ui/button';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
@@ -41,7 +41,7 @@ export const ClearCacheModal = ({ station }: ClearCacheModalProps) => {
       url: `/evdriver/clearCache?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: {},
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     });
 
     dispatch(closeModal());
