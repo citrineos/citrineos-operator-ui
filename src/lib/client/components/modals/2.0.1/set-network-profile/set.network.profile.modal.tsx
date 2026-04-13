@@ -4,17 +4,14 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-  type ChargingStationDto,
-  OCPP2_0_1,
-  OCPPVersion,
-} from '@citrineos/base';
+import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
+  CheckboxFormField,
   ComboboxFormField,
-  formCheckboxStyle,
   FormField,
+  formCheckboxStyle,
   formLabelStyle,
   formLabelWrapperStyle,
   SelectFormField,
@@ -206,7 +203,7 @@ export const SetNetworkProfileModal = ({
       url,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());
@@ -382,13 +379,11 @@ export const SetNetworkProfileModal = ({
               <Input />
             </FormField>
 
-            <FormField
+            <CheckboxFormField
               control={form.control}
               label="Use Only Preferred Network"
               name="connectionData.apn.useOnlyPreferredNetwork"
-            >
-              <Checkbox className={formCheckboxStyle} />
-            </FormField>
+            />
           </>
         )}
       </div>

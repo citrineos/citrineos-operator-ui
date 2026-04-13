@@ -21,6 +21,11 @@ const ProtocolTag = ({ protocol }: { protocol: string | null | undefined }) => {
         'bg-purple-100 text-purple-800 hover:bg-purple-100 border-purple-200';
       protocolName = 'OCPP 2.0.1';
       break;
+    case OCPPVersion.OCPP2_1:
+      colorClass =
+        'bg-indigo-100 text-indigo-800 hover:bg-indigo-100 border-indigo-200';
+      protocolName = 'OCPP 2.1';
+      break;
     default:
       colorClass =
         'bg-gray-100 text-gray-800 hover:bg-gray-100 border-gray-200';

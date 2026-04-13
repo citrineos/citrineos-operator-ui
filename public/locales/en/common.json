@@ -166,6 +166,12 @@
       "mode": "Mode"
     }
   },
+  "telemetryConsentModal": {
+    "title": "Anonymous Metrics Consent",
+    "description": "CitrineOS collects anonymous usage metrics to help us improve the product. Would you like to send these metrics?",
+    "reject": "Reject",
+    "accept": "Accept"
+  },
   "overview": {
     "activeTransactions": "Active Transactions",
     "chargerActivity": "Charger Activity",
