@@ -197,7 +197,7 @@ export const ConnectionModal = ({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className={'overflow-y-auto max-h-150!'}>
+      <DialogContent className="overflow-y-auto w-200 max-h-150! text-wrap">
         <DialogHeader>
           <DialogTitle>
             {showHelpContent
@@ -332,37 +332,39 @@ export const ConnectionModal = ({
                       return (
                         <li
                           key={s.id}
-                          className="border p-2 rounded flex justify-between items-start"
+                          className="border p-2 rounded flex flex-col gap-1"
                         >
-                          <span className="font-small mr-2">
+                          <span className="text-sm mr-2 font-semibold">
                             {s.protocols.join(', ')}
                           </span>
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <a
-                              href={`${wsUrl}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 underline text-sm break-all"
-                              title={`${wsUrl}`}
-                            >
-                              {`${wsUrl}`}
-                            </a>
+                          <div className="flex items-center gap-1">
                             <Button
-                              size="sm"
-                              variant="outline"
+                              size="xs"
+                              variant="ghost"
                               onClick={() => copyToClipboard(s.id, `${wsUrl}`)}
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className="size-4" />
                             </Button>
+                            <div className="flex items-center gap-1">
+                              <a
+                                href={`${wsUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-secondary underline text-sm hover:text-primary"
+                                title={`${wsUrl}`}
+                              >
+                                {`${wsUrl}`}
+                              </a>
 
-                            {/* Copied message */}
-                            {copiedId === s.id && (
-                              <span className="text-green-600 text-xs">
-                                {translate(
-                                  'ChargingStations.connectionModal.copied',
-                                )}
-                              </span>
-                            )}
+                              {/* Copied message */}
+                              {copiedId === s.id && (
+                                <span className="text-success text-xs">
+                                  {translate(
+                                    'ChargingStations.connectionModal.copied',
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </li>
                       );
