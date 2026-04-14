@@ -5,19 +5,16 @@
 import { IsDateOrDayjs } from '@lib/utils/IsDateOrDayjs';
 import { Transform } from 'class-transformer';
 import dayjs from 'dayjs';
-import moment from 'moment';
+import { isValid, parseISO } from 'date-fns';
 
 export const IS_DATE = 'isDate';
 
 export const TransformDate = () => {
   const toPlain = Transform(
     ({ value }) => {
-      if (!value && !dayjs(value).isValid() && !moment(value).isValid()) {
+      if (!value && !dayjs(value).isValid()) {
         console.warn('Invalid date passed to toPlain:', value);
         return value;
-      }
-      if (moment(value).isValid()) {
-        return moment(value).toISOString();
       }
       if (dayjs(value).isValid()) {
         return dayjs(value).toISOString();
@@ -40,8 +37,8 @@ export const TransformDate = () => {
         return value;
       }
 
-      if (moment(value, moment.ISO_8601, true).isValid()) {
-        return moment(value);
+      if (isValid(parseISO(value))) {
+        return dayjs(value);
       }
 
       if (dayjs(value).isValid()) {
