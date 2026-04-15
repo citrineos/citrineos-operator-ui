@@ -6,7 +6,6 @@ import type { Constructable } from '@lib/utils/Constructable';
 import { defaultMetadataStorage } from '@lib/utils/DefaultMetadataStorage';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import dayjs from 'dayjs';
-import moment from 'moment';
 import 'reflect-metadata';
 
 const convertTimestampsToPlain = (obj: any, dtoClass?: any): any => {
@@ -36,8 +35,6 @@ const convertTimestampsToPlain = (obj: any, dtoClass?: any): any => {
       const value = obj[key];
       if (value?.$isDayjsObject) {
         acc[transformedKey] = dayjs(value).toISOString();
-      } else if (value?._isAMomentObject) {
-        acc[transformedKey] = moment(value).toISOString();
       } else if (value instanceof Date) {
         acc[transformedKey] = value.toISOString();
       } else {
