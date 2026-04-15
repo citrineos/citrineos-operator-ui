@@ -134,7 +134,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
                 <span className="font-semibold">
                   {action} - {origin}
                 </span>{' '}
-                @ {formatDate(timestamp, 'YYYY-MM-DD HH:mm:ss.SSS')}
+                @ {formatDate(timestamp, 'yyyy-MM-dd HH:mm:ss.SSS')}
               </SheetDescription>
             </SheetHeader>
           )}
