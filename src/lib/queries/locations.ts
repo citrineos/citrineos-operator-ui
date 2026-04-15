@@ -31,6 +31,7 @@ export const LOCATIONS_LIST_QUERY = gql`
       timeZone
       parkingType
       chargingPool: ChargingStations(where: $chargingStationsWhere) {
+        pkId
         id
         isOnline
         protocol
