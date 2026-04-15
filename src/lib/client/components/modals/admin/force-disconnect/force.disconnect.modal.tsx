@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
 //
 // SPDX-License-Identifier: Apache-2.0
+'use client';
 
 import { HttpMethod, type ChargingStationDto } from '@citrineos/base';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
