@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { LocationsUpsert } from '@lib/client/pages/locations/upsert/locations.upsert';
+import config from '@lib/utils/config';
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -10,5 +11,10 @@ type PageProps = {
 
 export default async function EditLocationPage({ params }: PageProps) {
   const { id } = await params;
-  return <LocationsUpsert params={{ id }} />;
+  return (
+    <LocationsUpsert
+      params={{ id }}
+      allowImageUpload={config.allowImageUpload}
+    />
+  );
 }

@@ -71,6 +71,7 @@ import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type LocationsUpsertProps = {
   params: { id?: string };
+  allowImageUpload?: boolean;
 };
 
 const LocationCreateSchema = LocationSchema.pick({
@@ -125,7 +126,10 @@ const facilities: LocationFacilityEnumType[] = Object.keys(
   LocationFacilityEnum,
 ) as LocationFacilityEnumType[];
 
-export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
+export const LocationsUpsert = ({
+  params,
+  allowImageUpload = false,
+}: LocationsUpsertProps) => {
   const locationId = params.id ?? undefined;
   const { replace, back } = useRouter();
   const { mutate } = useUpdateMany();
@@ -641,39 +645,41 @@ export const LocationsUpsert = ({ params }: LocationsUpsertProps) => {
                     placeholder="Select Facilities"
                     searchPlaceholder="Search Facilities"
                   />
-                  <Field>
-                    <FieldLabel>
-                      <span className={formLabelStyle}>Image</span>
-                    </FieldLabel>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      id="uploadInput"
-                      style={{ display: 'none' }}
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+                  {allowImageUpload && (
+                    <Field>
+                      <FieldLabel>
+                        <span className={formLabelStyle}>Image</span>
+                      </FieldLabel>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        id="uploadInput"
+                        style={{ display: 'none' }}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
 
-                        setUploadedFile(file);
-                        setUploadedFileName(file.name);
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() =>
-                        document.getElementById('uploadInput')?.click()
-                      }
-                    >
-                      <UploadIcon className={buttonIconSize} />
-                      Upload
-                    </Button>
-                    {uploadedFileName && (
-                      <span className="text-sm text-gray-700">
-                        {uploadedFileName}
-                      </span>
-                    )}
-                  </Field>
+                          setUploadedFile(file);
+                          setUploadedFileName(file.name);
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() =>
+                          document.getElementById('uploadInput')?.click()
+                        }
+                      >
+                        <UploadIcon className={buttonIconSize} />
+                        Upload
+                      </Button>
+                      {uploadedFileName && (
+                        <span className="text-sm text-gray-700">
+                          {uploadedFileName}
+                        </span>
+                      )}
+                    </Field>
+                  )}
                 </div>
                 <div>
                   <MapLocationPicker

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChargingStationUpsert } from '@lib/client/pages/charging-stations/upsert/charging.stations.upsert';
+import config from '@lib/utils/config';
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -10,5 +11,10 @@ type PageProps = {
 
 export default async function EditChargingStationPage({ params }: PageProps) {
   const { id } = await params;
-  return <ChargingStationUpsert params={{ id }} />;
+  return (
+    <ChargingStationUpsert
+      params={{ id }}
+      allowImageUpload={config.allowImageUpload}
+    />
+  );
 }
