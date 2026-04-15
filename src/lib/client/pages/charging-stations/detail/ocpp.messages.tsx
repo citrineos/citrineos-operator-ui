@@ -323,7 +323,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
                 return (
                   <TimestampDisplay
                     isoTimestamp={row.original.timestamp}
-                    format="YYYY-MM-DD HH:mm:ss.SSS"
+                    format="yyyy-MM-dd HH:mm:ss.SSS"
                   />
                 );
               }}
