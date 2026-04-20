@@ -157,10 +157,19 @@ export const TransactionDetailCard = ({
           />
           <KeyValueDisplay
             keyLabel="Tariff"
-            value={
-              transaction.connector?.tariff
-                ? `#${transaction.connector.tariff.id} - ${transaction.connector.tariff.currency} ${transaction.connector.tariff.pricePerKwh}/kWh`
-                : NOT_APPLICABLE
+            value={''}
+            valueRender={() =>
+              transaction.connector?.tariff ? (
+                <Link
+                  to={`/${MenuSection.TARIFFS}/${transaction.connector!.tariff!.id}`}
+                  className={clickableLinkStyle}
+                  title={`#${transaction.connector.tariff.id} - ${transaction.connector.tariff.currency} ${transaction.connector.tariff.pricePerKwh}/kWh`}
+                >
+                  {`#${transaction.connector.tariff.id} - ${transaction.connector.tariff.currency} ${transaction.connector.tariff.pricePerKwh}/kWh`}
+                </Link>
+              ) : (
+                <span>{NOT_APPLICABLE}</span>
+              )
             }
           />
         </div>
