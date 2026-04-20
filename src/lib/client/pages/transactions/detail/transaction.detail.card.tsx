@@ -155,6 +155,14 @@ export const TransactionDetailCard = ({
               <TimestampDisplay isoTimestamp={endTime ?? ''} />
             )}
           />
+          <KeyValueDisplay
+            keyLabel="Tariff"
+            value={
+              transaction.connector?.tariff
+                ? `#${transaction.connector.tariff.id} - ${transaction.connector.tariff.currency} ${transaction.connector.tariff.pricePerKwh}/kWh`
+                : NOT_APPLICABLE
+            }
+          />
         </div>
       </CardContent>
     </Card>
