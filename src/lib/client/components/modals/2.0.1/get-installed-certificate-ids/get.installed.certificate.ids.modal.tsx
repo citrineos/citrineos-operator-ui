@@ -4,11 +4,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  type ChargingStationDto,
-  OCPP2_0_1,
-  OCPPVersion,
-} from '@citrineos/base';
+import { type ChargingStationDto, OCPP2_0_1 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MultiSelectFormField } from '@lib/client/components/form/field';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
@@ -80,7 +76,7 @@ export const GetInstalledCertificateIdsModal = ({
       url: `/certificates/getInstalledCertificateIds?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

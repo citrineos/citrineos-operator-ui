@@ -5,7 +5,6 @@
 
 import {
   type ChargingStationDto,
-  OCPPVersion,
   type TransactionDto,
   TransactionProps,
 } from '@citrineos/base';
@@ -66,7 +65,7 @@ export const GetTransactionStatusModal = ({
     meta: {
       gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
       gqlVariables: {
-        stationId: parsedStation.id,
+        stationPkId: parsedStation.pkId,
       },
     },
     pagination: { mode: 'off' },
@@ -90,7 +89,7 @@ export const GetTransactionStatusModal = ({
       url: `/transactions/getTransactionStatus?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

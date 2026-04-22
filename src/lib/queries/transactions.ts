@@ -169,14 +169,14 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
 
 export const GET_TRANSACTION_LIST_FOR_STATION = gql`
   query GetTransactionListForStation(
-    $stationId: String!
+    $stationPkId: Int!
     $where: [Transactions_bool_exp!] = []
     $order_by: [Transactions_order_by!] = {}
     $offset: Int
     $limit: Int
   ) {
     Transactions(
-      where: { stationId: { _eq: $stationId }, _and: $where }
+      where: { stationPkId: { _eq: $stationPkId }, _and: $where }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -228,7 +228,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       }
     }
     Transactions_aggregate(
-      where: { stationId: { _eq: $stationId }, _and: $where }
+      where: { stationPkId: { _eq: $stationPkId }, _and: $where }
     ) {
       aggregate {
         count
@@ -295,6 +295,11 @@ export const TRANSACTION_GET_QUERY = gql`
         type
         createdAt
         updatedAt
+        tariff: Tariff {
+          id
+          currency
+          pricePerKwh
+        }
       }
       authorization: Authorization {
         id

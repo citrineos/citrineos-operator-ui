@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@lib/client/components/ui/select';
+import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Combobox, type ComboboxProps } from '@lib/client/components/combobox';
 import {
   MultiSelect,
@@ -195,7 +196,40 @@ export const MultiSelectFormField = <
   );
 };
 
+/**
+ * A dedicated FormField for Radix UI Checkbox components.
+ * Radix Checkbox uses `checked` + `onCheckedChange` instead of the standard
+ * `value` + `onChange` that react-hook-form provides, so a generic cloneElement
+ * spread does not work for booleans. This component wires them correctly.
+ */
+export const CheckboxFormField = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>(
+  props: Props<TFieldValues, TName>,
+) => {
+  return (
+    <Controller
+      name={props.name}
+      control={props.control}
+      render={({ field, fieldState }) => (
+        <FieldWrapper {...{ ...props, field, fieldState }}>
+          <Checkbox
+            id={field.name}
+            checked={!!field.value}
+            onCheckedChange={field.onChange}
+            onBlur={field.onBlur}
+            ref={field.ref}
+            className={formCheckboxStyle}
+          />
+        </FieldWrapper>
+      )}
+    />
+  );
+};
+
 FormField.displayName = 'FormField';
 SelectFormField.displayName = 'SelectFormField';
 ComboboxFormField.displayName = 'ComboboxFormField';
 MultiSelectFormField.displayName = 'MultiSelectFormField';
+CheckboxFormField.displayName = 'CheckboxFormField';

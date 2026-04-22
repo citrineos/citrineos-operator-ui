@@ -6,7 +6,7 @@ import { gql } from 'graphql-tag';
 
 export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
   query GetPaginatedConnectorListForStation(
-    $stationId: String!
+    $stationPkId: Int!
     $offset: Int!
     $limit: Int!
     $order_by: [Connectors_order_by!]
@@ -16,7 +16,7 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: { stationId: { _eq: $stationId } }
+      where: { stationPkId: { _eq: $stationPkId } }
     ) {
       connectorId
       createdAt
@@ -39,8 +39,8 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
 `;
 
 export const CONNECTORS_FOR_STATION_QUERY = gql`
-  query GetConnectorListForStation($stationId: String!) {
-    Connectors(where: { stationId: { _eq: $stationId } }) {
+  query GetConnectorListForStation($stationPkId: Int!) {
+    Connectors(where: { stationPkId: { _eq: $stationPkId } }) {
       connectorId
       createdAt
       errorCode
@@ -58,14 +58,14 @@ export const CONNECTORS_FOR_STATION_QUERY = gql`
 
 export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
   query GetConnectorListForStationEvse(
-    $stationId: String!
+    $stationPkId: Int!
     $where: Connectors_bool_exp = {}
     $order_by: [Connectors_order_by!] = {}
     $offset: Int
     $limit: Int
   ) {
     Connectors(
-      where: { stationId: { _eq: $stationId }, _and: [$where] }
+      where: { stationPkId: { _eq: $stationPkId }, _and: [$where] }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -88,7 +88,7 @@ export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
       updatedAt
     }
     Connectors_aggregate(
-      where: { stationId: { _eq: $stationId }, _and: [$where] }
+      where: { stationPkId: { _eq: $stationPkId }, _and: [$where] }
     ) {
       aggregate {
         count

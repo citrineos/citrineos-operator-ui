@@ -96,6 +96,7 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
       url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

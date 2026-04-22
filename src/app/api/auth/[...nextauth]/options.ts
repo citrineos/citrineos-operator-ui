@@ -140,25 +140,7 @@ const getProvider = () => {
 
 const authOptions: AuthOptions = {
   providers: [getProvider()],
-  events: {
-    async signOut({ token }: { token: any }) {
-      // End the Keycloak session when user signs out
-      if (token?.idToken) {
-        try {
-          const params = new URLSearchParams({
-            id_token_hint: token.idToken,
-            post_logout_redirect_uri: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/login`,
-          });
-
-          const endSessionUrl = `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/logout?${params.toString()}`;
-
-          await fetch(endSessionUrl, { method: 'GET' });
-        } catch (error) {
-          console.error('Error ending Keycloak session:', error);
-        }
-      }
-    },
-  },
+  events: {},
   callbacks: {
     async redirect({ url, baseUrl }) {
       // Redirect to overview page after successful login
@@ -190,6 +172,12 @@ const authOptions: AuthOptions = {
           ? account.expires_at * 1000
           : Date.now() + 300000; // Default to 5 minutes if not provided
 
+        // Store the Keycloak end-session URL so the client can perform a proper
+        // browser-level logout (server has access to realm name, client does not)
+        if (authProvider === 'keycloak') {
+          token.keycloakLogoutUrl = `${config.keycloakUrl}/realms/${config.keycloakRealm}/protocol/openid-connect/logout`;
+        }
+
         // Parse access token to get roles
         if (account.access_token) {
           const accessTokenParsed = parseJwt(account.access_token as string);
@@ -220,6 +208,7 @@ const authOptions: AuthOptions = {
       }
       (session as any).accessToken = token.accessToken;
       (session as any).idToken = token.idToken;
+      (session as any).keycloakLogoutUrl = token.keycloakLogoutUrl;
       (session as any).error = token.error;
       return session;
     },

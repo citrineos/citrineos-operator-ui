@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { type ChargingStationDto, OCPPVersion } from '@citrineos/base';
+import { type ChargingStationDto } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import { FormField } from '@lib/client/components/form/field';
@@ -44,10 +44,7 @@ export const DataTransferModal = ({ station }: DataTransferModalProps) => {
     [station],
   ) as ChargingStationDto;
 
-  const ocppVersion =
-    parsedStation.protocol === OCPPVersion.OCPP1_6
-      ? OCPPVersion.OCPP1_6
-      : OCPPVersion.OCPP2_0_1;
+  const ocppVersion = parsedStation.protocol;
 
   const form = useForm({
     resolver: zodResolver(DataTransferSchema),

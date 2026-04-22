@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import { useTranslate } from '@refinedev/core';
 import { BaseRestClient } from './BaseRestClient';
 import type { SystemConfig } from '@citrineos/base';
 import {
@@ -62,6 +63,7 @@ export const TelemetryConsentModal: React.FC<TelemetryConsentModalProps> = ({
   visible,
   onDecision,
 }) => {
+  const translate = useTranslate();
   return (
     <Dialog open={visible} onOpenChange={() => {}}>
       <DialogContent
@@ -71,17 +73,18 @@ export const TelemetryConsentModal: React.FC<TelemetryConsentModalProps> = ({
         showCloseButton={false}
       >
         <DialogHeader>
-          <DialogTitle>Anonymous Metrics Consent</DialogTitle>
+          <DialogTitle>{translate('telemetryConsentModal.title')}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          CitrineOS collects anonymous usage metrics to help us improve the
-          product. Would you like to send these metrics?
+          {translate('telemetryConsentModal.description')}
         </DialogDescription>
         <DialogFooter>
           <Button variant="outline" onClick={() => onDecision(false)}>
-            Reject
+            {translate('telemetryConsentModal.reject')}
           </Button>
-          <Button onClick={() => onDecision(true)}>Accept</Button>
+          <Button onClick={() => onDecision(true)}>
+            {translate('telemetryConsentModal.accept')}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

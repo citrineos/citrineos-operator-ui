@@ -8,10 +8,9 @@ import type { EvseDto } from '@citrineos/base';
 import { EvseProps } from '@citrineos/base';
 import { Form } from '@lib/client/components/form';
 import {
-  formCheckboxStyle,
+  CheckboxFormField,
   FormField,
 } from '@lib/client/components/form/field';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
 import { Input } from '@lib/client/components/ui/input';
 import { EvseClass } from '@lib/cls/evse.dto';
 import { EVSE_CREATE_MUTATION, EVSE_EDIT_MUTATION } from '@lib/queries/evses';
@@ -24,12 +23,14 @@ import { useTenantId } from '@lib/client/hooks/useTenantId';
 interface EvseUpsertProps {
   onSubmit: () => void;
   stationId: string;
+  stationStringId?: string;
   evse: EvseDto | null;
 }
 
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({
   onSubmit,
   stationId,
+  stationStringId,
   evse,
 }) => {
   const tenantId = useTenantId();
@@ -76,7 +77,8 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
     }
 
     newItem.updatedAt = now;
-    newItem.stationId = stationId;
+    newItem.stationPkId = Number(stationId);
+    newItem.stationId = stationStringId ?? evse?.stationId;
 
     form.refineCore.onFinish(newItem).then(() => reset());
   };
@@ -113,14 +115,12 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
           <Input />
         </FormField>
 
-        <FormField
+        <CheckboxFormField
           control={form.control}
           name={EvseProps.removed}
           label="Removed"
           description="Marked as REMOVED"
-        >
-          <Checkbox className={formCheckboxStyle} />
-        </FormField>
+        />
       </div>
     </Form>
   );

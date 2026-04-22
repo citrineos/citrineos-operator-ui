@@ -4,6 +4,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslate } from '@refinedev/core';
 import { Copy, Loader2, Play, HelpCircle } from 'lucide-react';
 import { Button } from '@lib/client/components/ui/button';
 import {
@@ -67,6 +68,7 @@ export const ConnectionModal = ({
   onClose,
   isFirstLogin = false,
 }: ConnectionModalProps) => {
+  const translate = useTranslate();
   const [coreConfig, setCoreConfig] = useState<SystemConfig | null>(null);
   const [operatorConfig, setOperatorConfig] = useState<OperatorConfig | null>(
     null,
@@ -80,7 +82,13 @@ export const ConnectionModal = ({
     if (open && !coreConfig) {
       setLoading(true);
       fetchFileAction(`${S3_BUCKET_FILE_CORE_CONFIG}`, BucketType.CORE)
-        .then((data) => setCoreConfig(data))
+        .then((result) => {
+          if (result.success) {
+            setCoreConfig(result.data);
+          } else {
+            throw new Error(result.error);
+          }
+        })
         .catch(console.error)
         .finally(() => setLoading(false));
     }
@@ -96,7 +104,13 @@ export const ConnectionModal = ({
     if (open && !operatorConfig) {
       setLoading(true);
       fetchFileAction(`${S3_BUCKET_FILE_CONFIG}`)
-        .then((data) => setOperatorConfig(data))
+        .then((result) => {
+          if (result.success) {
+            setOperatorConfig(result.data);
+          } else {
+            throw new Error(result.error);
+          }
+        })
         .catch(console.error)
         .finally(() => setLoading(false));
     }
@@ -183,18 +197,20 @@ export const ConnectionModal = ({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className={'overflow-auto max-h-150!'}>
+      <DialogContent className="overflow-y-auto w-200 max-h-150! text-wrap">
         <DialogHeader>
           <DialogTitle>
             {showHelpContent
-              ? 'Welcome to CitrineOS Operator UI'
-              : 'Charging Station Connection'}
+              ? translate('ChargingStations.connectionModal.welcomeTitle')
+              : translate('ChargingStations.connectionModal.connectionTitle')}
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
           {showHelpContent
-            ? 'Watch this quick introduction video to learn how to connect charging stations. You can access this information anytime by clicking the Help button.'
-            : 'Use the following tenant-specific websocket URLs to connect to the server. The connection can be upgraded from No Authentication to Security Profile 3 one by one.'}
+            ? translate('ChargingStations.connectionModal.welcomeDescription')
+            : translate(
+                'ChargingStations.connectionModal.connectionDescription',
+              )}
         </DialogDescription>
 
         <div className="flex justify-center mb-4">
@@ -206,12 +222,14 @@ export const ConnectionModal = ({
             {showHelpContent ? (
               <>
                 <HelpCircle className="w-4 h-4" />
-                Show Connection Info
+                {translate(
+                  'ChargingStations.connectionModal.showConnectionInfo',
+                )}
               </>
             ) : (
               <>
                 <Play className="w-4 h-4" />
-                Show Help Video
+                {translate('ChargingStations.connectionModal.showHelpVideo')}
               </>
             )}
           </Button>
@@ -220,7 +238,11 @@ export const ConnectionModal = ({
         {showHelpContent ? (
           <div className="space-y-6">
             <div className="border rounded-lg p-4">
-              <h3 className="font-semibold mb-3">Getting Started Video</h3>
+              <h3 className="font-semibold mb-3">
+                {translate(
+                  'ChargingStations.connectionModal.gettingStartedVideo',
+                )}
+              </h3>
               <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
                 {helpVideoUrl ? (
                   <video
@@ -229,39 +251,51 @@ export const ConnectionModal = ({
                     poster="/video-poster.jpg"
                   >
                     <source src={helpVideoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
+                    {translate(
+                      'ChargingStations.connectionModal.videoNotSupported',
+                    )}
                   </video>
                 ) : (
                   <div className="flex items-center justify-center h-full">
-                    <p className="text-muted-foreground">No video available</p>
+                    <p className="text-muted-foreground">
+                      {translate(
+                        'ChargingStations.connectionModal.noVideoAvailable',
+                      )}
+                    </p>
                   </div>
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-3">
-                This video demonstrates how to connect charging stations to the
-                CitrineOS platform.
+                {translate('ChargingStations.connectionModal.videoDescription')}
               </p>
             </div>
 
             <div className="border rounded-lg p-4">
-              <h3 className="font-semibold mb-3">Quick Steps</h3>
+              <h3 className="font-semibold mb-3">
+                {translate('ChargingStations.connectionModal.quickSteps')}
+              </h3>
               <ol className="space-y-2 text-sm">
                 <li>
-                  1. Configure your charging station with the appropriate
-                  websocket URL
+                  1. {translate('ChargingStations.connectionModal.step1')}
                 </li>
-                <li>2. Choose the security profile that matches your setup</li>
                 <li>
-                  3. Copy the connection URL from the connection info section
+                  2. {translate('ChargingStations.connectionModal.step2')}
                 </li>
-                <li>4. Test the connection from your charging station</li>
+                <li>
+                  3. {translate('ChargingStations.connectionModal.step3')}
+                </li>
+                <li>
+                  4. {translate('ChargingStations.connectionModal.step4')}
+                </li>
               </ol>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
-                <strong>Remember:</strong> You can always access this help
-                content by clicking the Help button in the sidebar.
+                <strong>
+                  {translate('ChargingStations.connectionModal.rememberLabel')}
+                </strong>{' '}
+                {translate('ChargingStations.connectionModal.rememberText')}
               </p>
             </div>
           </div>
@@ -282,10 +316,14 @@ export const ConnectionModal = ({
                   className="border border-transparent rounded-lg p-3"
                 >
                   <h3 className="font-semibold mb-2">
-                    {SecurityProfiles[profile].label}
+                    {translate(
+                      `ChargingStations.connectionModal.securityProfiles.${profile}.label`,
+                    )}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    {SecurityProfiles[profile].description}
+                    {translate(
+                      `ChargingStations.connectionModal.securityProfiles.${profile}.description`,
+                    )}
                   </p>
                   <ul className="space-y-2">
                     {servers.map((s) => {
@@ -294,35 +332,39 @@ export const ConnectionModal = ({
                       return (
                         <li
                           key={s.id}
-                          className="border p-2 rounded flex justify-between items-center"
+                          className="border p-2 rounded flex flex-col gap-1"
                         >
-                          <span className="font-small mr-2">
+                          <span className="text-sm mr-2 font-semibold">
                             {s.protocols.join(', ')}
                           </span>
-                          <div className="flex items-center gap-2 flex-1">
-                            <a
-                              href={`${wsUrl}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 underline text-sm truncate"
-                              title={`${wsUrl}`}
-                            >
-                              {`${wsUrl}`}
-                            </a>
+                          <div className="flex items-center gap-1">
                             <Button
-                              size="sm"
-                              variant="outline"
+                              size="xs"
+                              variant="ghost"
                               onClick={() => copyToClipboard(s.id, `${wsUrl}`)}
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className="size-4" />
                             </Button>
+                            <div className="flex items-center gap-1">
+                              <a
+                                href={`${wsUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-secondary underline text-sm hover:text-primary"
+                                title={`${wsUrl}`}
+                              >
+                                {`${wsUrl}`}
+                              </a>
 
-                            {/* Copied message */}
-                            {copiedId === s.id && (
-                              <span className="text-green-600 text-xs">
-                                Copied!
-                              </span>
-                            )}
+                              {/* Copied message */}
+                              {copiedId === s.id && (
+                                <span className="text-success text-xs">
+                                  {translate(
+                                    'ChargingStations.connectionModal.copied',
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </li>
                       );
@@ -333,7 +375,9 @@ export const ConnectionModal = ({
             })}
           </div>
         ) : (
-          <p>No websocket servers available.</p>
+          <p>
+            {translate('ChargingStations.connectionModal.noWebsocketServers')}
+          </p>
         )}
       </DialogContent>
     </Dialog>

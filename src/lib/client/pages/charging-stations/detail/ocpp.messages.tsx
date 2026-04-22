@@ -6,8 +6,7 @@
 import type { OCPPMessageDto } from '@citrineos/base';
 import {
   MessageOrigin,
-  OCPP1_6_CallAction,
-  OCPP2_0_1_CallAction,
+  OCPP_CallAction,
   OCPPMessageProps,
 } from '@citrineos/base';
 import { Button } from '@lib/client/components/ui/button';
@@ -54,8 +53,8 @@ export interface OCPPMessagesProps {
 const actionOptions = [
   ...Array.from(
     new Set([
-      ...Object.values(OCPP1_6_CallAction),
-      ...Object.values(OCPP2_0_1_CallAction),
+      ...Object.values(OCPP_CallAction),
+      ...Object.values(OCPP_CallAction),
     ]),
   ),
 ];
@@ -106,7 +105,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
     ],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationId },
+      gqlVariables: { stationPkId: Number(stationId) },
     },
     filters,
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
@@ -240,7 +239,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
             },
             meta: {
               gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-              gqlVariables: { stationId },
+              gqlVariables: { stationPkId: Number(stationId) },
             },
             queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
           }}
@@ -324,7 +323,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
                 return (
                   <TimestampDisplay
                     isoTimestamp={row.original.timestamp}
-                    format="YYYY-MM-DD HH:mm:ss.SSS"
+                    format="yyyy-MM-dd HH:mm:ss.SSS"
                   />
                 );
               }}

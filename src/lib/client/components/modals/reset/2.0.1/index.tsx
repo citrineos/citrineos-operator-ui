@@ -60,6 +60,7 @@ export const OCPP2_0_1_Reset = ({ station }: OCPP2_0_1_ResetProps) => {
       url: `/configuration/reset?identifier=${station.id}&tenantId=${tenantId}`,
       data,
       setLoading,
+      ocppVersion: station.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

@@ -8,7 +8,6 @@ import {
   type ComponentDto,
   ComponentProps,
   OCPP2_0_1,
-  OCPPVersion,
 } from '@citrineos/base';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -181,7 +180,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
       url: `/monitoring/setVariables?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data: { setVariableData },
       setLoading,
-      ocppVersion: OCPPVersion.OCPP2_0_1,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());

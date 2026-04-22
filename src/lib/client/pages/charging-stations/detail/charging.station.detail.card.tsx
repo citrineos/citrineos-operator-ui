@@ -126,7 +126,7 @@ export const ChargingStationDetailCard = ({
 
     mutate(
       {
-        id: station.id.toString(),
+        id: station.pkId!,
         resource: ResourceType.CHARGING_STATIONS,
         meta: {
           gqlMutation: CHARGING_STATIONS_DELETE_MUTATION,
@@ -173,7 +173,7 @@ export const ChargingStationDetailCard = ({
         title: translate('ChargingStations.toggleOnlineStatus'),
         modalComponentType: ModalComponentType.toggleStationOnlineStatus,
         modalComponentProps: {
-          stationId: station.id,
+          stationPkId: station.pkId,
           currentStatus: station.isOnline,
         },
       }),
@@ -244,7 +244,7 @@ export const ChargingStationDetailCard = ({
               variant="secondary"
               size="sm"
               onClick={() =>
-                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
+                push(`/${MenuSection.CHARGING_STATIONS}/${station.pkId}/edit`)
               }
             >
               <Edit className={buttonIconSize} />
@@ -256,7 +256,17 @@ export const ChargingStationDetailCard = ({
             action={ActionType.DELETE}
             params={{ id: station.id }}
           >
-            <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteClick}
+              disabled={!!latestLog}
+              title={
+                latestLog
+                  ? 'Cannot delete a station that has OCPP message history'
+                  : undefined
+              }
+            >
               <Trash2 className={buttonIconSize} />
               {translate('buttons.delete')}
             </Button>

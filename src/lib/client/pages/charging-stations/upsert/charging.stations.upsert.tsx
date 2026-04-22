@@ -17,11 +17,14 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@lib/client/components/form';
 import {
+  CheckboxFormField,
   ComboboxFormField,
   FormField,
   formLabelStyle,
   MultiSelectFormField,
 } from '@lib/client/components/form/field';
+import { Checkbox } from '@lib/client/components/ui/checkbox';
+import { Label } from '@lib/client/components/ui/label';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
 import { Input } from '@lib/client/components/ui/input';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
@@ -54,12 +57,11 @@ import { Field, FieldLabel } from '@lib/client/components/ui/field';
 import { Button } from '@lib/client/components/ui/button';
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
-import { Checkbox } from '@lib/client/components/ui/checkbox';
-import { Label } from '@lib/client/components/ui/label';
 import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type ChargingStationUpsertProps = {
   params?: { id?: string };
+  allowImageUpload?: boolean;
 };
 
 const ChargingStationCreateSchema = ChargingStationSchema.pick({
@@ -96,6 +98,7 @@ export type ChargingStationCreateDto = z.infer<
 
 export const ChargingStationUpsert = ({
   params,
+  allowImageUpload = false,
 }: ChargingStationUpsertProps) => {
   const { id: stationId } = params || {};
   const searchParams = useSearchParams();
@@ -239,20 +242,27 @@ export const ChargingStationUpsert = ({
 
     form.refineCore.onFinish(newItem).then((result) => {
       if (result) {
-        const finalStationId = stationId || (result as any).data?.id;
+        const finalStationId = stationId || (result as any).data?.pkId;
 
         // Upload image to S3
         if (uploadedFile && finalStationId) {
           const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES_CHARGING_STATIONS}/${finalStationId}`;
-          uploadFileViaPresignedUrl(uploadedFile, renamedFileName).catch(
-            (err: any) => {
+          uploadFileViaPresignedUrl(uploadedFile, renamedFileName)
+            .then((result) => {
+              if (!result.success) {
+                open?.({
+                  type: 'error',
+                  message: translate('imageUploadFailed'),
+                });
+              }
+            })
+            .catch((err: any) => {
               console.error(err);
               open?.({
                 type: 'error',
                 message: translate('imageUploadFailed'),
               });
-            },
-          );
+            });
         }
         replace(`/${MenuSection.CHARGING_STATIONS}/${finalStationId}`);
       } else if (stationId) {
@@ -332,27 +342,11 @@ export const ChargingStationUpsert = ({
                 searchPlaceholder="Search Capabilities"
               />
 
-              <Field>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="use16StatusNotification0"
-                    checked={
-                      form.watch(
-                        ChargingStationProps.use16StatusNotification0,
-                      ) ?? true
-                    }
-                    onCheckedChange={(checked) => {
-                      form.setValue(
-                        ChargingStationProps.use16StatusNotification0,
-                        checked === true,
-                      );
-                    }}
-                  />
-                  <Label htmlFor="use16StatusNotification0">
-                    {translate('ChargingStations.use16StatusNotification0')}
-                  </Label>
-                </div>
-              </Field>
+              <CheckboxFormField
+                control={form.control}
+                name={ChargingStationProps.use16StatusNotification0}
+                label={translate('ChargingStations.use16StatusNotification0')}
+              />
 
               {/* Coordinates Section */}
               <Field>
@@ -423,39 +417,41 @@ export const ChargingStationUpsert = ({
                 />
               </Field>
 
-              <Field>
-                <FieldLabel>
-                  <span className={formLabelStyle}>Image</span>
-                </FieldLabel>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  id="uploadInput"
-                  style={{ display: 'none' }}
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+              {allowImageUpload && (
+                <Field>
+                  <FieldLabel>
+                    <span className={formLabelStyle}>Image</span>
+                  </FieldLabel>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    id="uploadInput"
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
 
-                    setUploadedFile(file);
-                    setUploadedFileName(file.name);
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() =>
-                    document.getElementById('uploadInput')?.click()
-                  }
-                >
-                  <UploadIcon className={buttonIconSize} />
-                  {translate('buttons.upload')}
-                </Button>
-                {uploadedFileName && (
-                  <span className="text-sm text-gray-700">
-                    {uploadedFileName}
-                  </span>
-                )}
-              </Field>
+                      setUploadedFile(file);
+                      setUploadedFileName(file.name);
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() =>
+                      document.getElementById('uploadInput')?.click()
+                    }
+                  >
+                    <UploadIcon className={buttonIconSize} />
+                    {translate('buttons.upload')}
+                  </Button>
+                  {uploadedFileName && (
+                    <span className="text-sm text-gray-700">
+                      {uploadedFileName}
+                    </span>
+                  )}
+                </Field>
+              )}
             </div>
           </Form>
         </CardContent>

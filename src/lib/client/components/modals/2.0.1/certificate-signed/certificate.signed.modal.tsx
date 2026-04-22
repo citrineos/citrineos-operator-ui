@@ -99,6 +99,7 @@ export const CertificateSignedModal = ({
           url: `/certificates/certificateSigned?identifier=${parsedStation.id}&tenantId=${tenantId}`,
           data,
           setLoading,
+          ocppVersion: parsedStation.protocol,
         }).then(() => {
           form.reset({
             certificateType: undefined,

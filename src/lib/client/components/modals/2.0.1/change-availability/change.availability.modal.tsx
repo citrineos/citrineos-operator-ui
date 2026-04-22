@@ -82,6 +82,7 @@ export const ChangeAvailabilityModal = ({
       url: `/configuration/changeAvailability?identifier=${parsedStation.id}&tenantId=${tenantId}`,
       data,
       setLoading,
+      ocppVersion: parsedStation.protocol,
     }).then(() => {
       form.reset();
       dispatch(closeModal());
