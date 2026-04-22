@@ -295,6 +295,11 @@ export const TRANSACTION_GET_QUERY = gql`
         type
         createdAt
         updatedAt
+        tariff: Tariff {
+          id
+          currency
+          pricePerKwh
+        }
       }
       authorization: Authorization {
         id
