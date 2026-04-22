@@ -6,8 +6,7 @@
 import type { OCPPMessageDto } from '@citrineos/base';
 import {
   MessageOrigin,
-  OCPP1_6_CallAction,
-  OCPP2_0_1_CallAction,
+  OCPP_CallAction,
   OCPPMessageProps,
 } from '@citrineos/base';
 import { Button } from '@lib/client/components/ui/button';
@@ -54,8 +53,8 @@ export interface OCPPMessagesProps {
 const actionOptions = [
   ...Array.from(
     new Set([
-      ...Object.values(OCPP1_6_CallAction),
-      ...Object.values(OCPP2_0_1_CallAction),
+      ...Object.values(OCPP_CallAction),
+      ...Object.values(OCPP_CallAction),
     ]),
   ),
 ];

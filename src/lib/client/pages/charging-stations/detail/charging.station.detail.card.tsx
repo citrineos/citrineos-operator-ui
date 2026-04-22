@@ -173,7 +173,7 @@ export const ChargingStationDetailCard = ({
         title: translate('ChargingStations.toggleOnlineStatus'),
         modalComponentType: ModalComponentType.toggleStationOnlineStatus,
         modalComponentProps: {
-          stationId: station.id,
+          stationPkId: station.pkId,
           currentStatus: station.isOnline,
         },
       }),
