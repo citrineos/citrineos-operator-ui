@@ -36,7 +36,6 @@ export interface GenericAuthProviderConfig {
  * Default auth provider implementation
  */
 const ADMIN_EMAIL = config.adminEmail;
-const ADMIN_PASSWORD = config.adminPassword;
 const TENANT_ID = config.tenantId;
 
 export const genericAdminUser: User = {
@@ -210,7 +209,13 @@ export const createGenericAuthProvider = (
   // Return the auth provider implementation
   return {
     login: async ({ email, password }) => {
-      if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+      const result = await signIn('generic', {
+        username: email,
+        password,
+        redirect: false,
+      });
+
+      if (!result || result.error || !result.ok) {
         return {
           success: false,
           error: {
@@ -220,13 +225,10 @@ export const createGenericAuthProvider = (
         };
       }
 
-      await signIn('generic', { callbackUrl: '/overview' });
-
       const mockToken = 'mock_token_' + Math.random().toString(36).slice(2);
       saveToken(mockToken);
-      saveUser(genericAdminUser);
+      saveUser({ ...genericAdminUser, email });
 
-      // Refresh the page to ensure all auth-dependent components re-render
       window.location.href = '/overview';
       return {
         success: true,
