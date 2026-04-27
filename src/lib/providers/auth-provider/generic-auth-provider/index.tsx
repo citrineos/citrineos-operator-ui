@@ -220,7 +220,7 @@ export const createGenericAuthProvider = (
         };
       }
 
-      await signIn('generic', { callbackUrl: '/overview' });
+      await signIn('generic', { username: email, password, callbackUrl: '/overview' });
 
       const mockToken = 'mock_token_' + Math.random().toString(36).slice(2);
       saveToken(mockToken);
