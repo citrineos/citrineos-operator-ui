@@ -36,6 +36,7 @@ export const getChargingStationsColumns = (
       header: 'ID',
       visible: true,
       sortable: true,
+      filterConfig: { type: 'text', label: 'Station ID' },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
@@ -66,6 +67,7 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.statusNotifications,
       header: 'Status',
       visible: true,
+      filterConfig: { type: 'yesno', field: 'isOnline', label: 'Online status' },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
@@ -149,6 +151,7 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.firmwareVersion,
       header: 'Firmware Version',
       visible: false,
+      filterConfig: { type: 'text', label: 'Firmware Version' },
     },
     {
       key: ChargingStationDetailsProps.createdAt,
