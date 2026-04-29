@@ -159,6 +159,7 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
           type: r.idTokenType,
           status: r.status,
           expiryDate: r.cacheExpiryDateTime,
+          parentIdTag: r.parentIdTag,
         })),
       ]);
     };

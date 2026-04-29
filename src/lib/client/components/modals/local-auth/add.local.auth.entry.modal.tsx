@@ -25,6 +25,7 @@ export interface AddLocalAuthEntryPickedRow {
   idTokenType?: string | null;
   status: string;
   cacheExpiryDateTime?: string | null;
+  parentIdTag?: string | null;
 }
 
 export const ADD_LOCAL_AUTH_ENTRY_EVENT = 'add-local-auth-entry-picked';
@@ -69,7 +70,15 @@ export const AddLocalAuthEntryModal = ({
   };
 
   const handleConfirm = () => {
-    const rows = Object.values(selected) as AddLocalAuthEntryPickedRow[];
+    const rows: AddLocalAuthEntryPickedRow[] = Object.values(selected).map(
+      (r: any) => ({
+        idToken: r.idToken,
+        idTokenType: r.idTokenType,
+        status: r.status,
+        cacheExpiryDateTime: r.cacheExpiryDateTime,
+        parentIdTag: r.groupAuthorization?.idToken ?? null,
+      }),
+    );
     window.dispatchEvent(
       new CustomEvent<AddLocalAuthEntryPickedRow[]>(ADD_LOCAL_AUTH_ENTRY_EVENT, {
         detail: rows,

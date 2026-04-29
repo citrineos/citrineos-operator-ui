@@ -57,6 +57,10 @@ export const SEARCH_AUTHORIZATIONS_FOR_LOCAL_LIST = gql`
       status
       groupAuthorizationId
       cacheExpiryDateTime
+      groupAuthorization: GroupAuthorization {
+        id
+        idToken
+      }
     }
     Authorizations_aggregate(
       where: {
