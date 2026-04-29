@@ -27,6 +27,7 @@ import { TransactionClass } from '@lib/cls/transaction.dto';
 import { AggregatedMeterValuesData } from '@lib/client/pages/charging-stations/detail/charging.station.aggregated.data';
 import React from 'react';
 import ChargingStationConfiguration from '@lib/client/pages/charging-stations/detail/charging.station.configuration';
+import { LocalAuthListPanel } from '@lib/client/pages/charging-stations/detail/local-auth/local.auth.list.panel';
 import {
   transactionChargingStationLocationNameField,
   transactionsColumns,
@@ -42,6 +43,7 @@ enum ChargingStationDetailTabType {
   configuration = 'configuration',
   transactions = 'transactions',
   aggregated = 'aggregated',
+  localAuth = 'localAuth',
 }
 
 export const ChargingStationDetailTabsCard = ({
@@ -88,6 +90,9 @@ export const ChargingStationDetailTabsCard = ({
             </TabsTrigger>
             <TabsTrigger value={ChargingStationDetailTabType.aggregated}>
               Aggregated Meter Values Data
+            </TabsTrigger>
+            <TabsTrigger value={ChargingStationDetailTabType.localAuth}>
+              Local Auth List
             </TabsTrigger>
           </TabsList>
 
@@ -188,6 +193,27 @@ export const ChargingStationDetailTabsCard = ({
             className={cardTabsStyle}
           >
             <AggregatedMeterValuesData stationId={stationId} />
+          </TabsContent>
+
+          <TabsContent
+            value={ChargingStationDetailTabType.localAuth}
+            className={cardTabsStyle}
+          >
+            <CanAccess
+              resource={ResourceType.CHARGING_STATIONS}
+              action={ActionType.ACCESS}
+              params={{
+                id: stationId,
+                accessType: ChargingStationAccessType.LOCAL_AUTH,
+              }}
+              fallback={
+                <p className="text-muted-foreground">
+                  You don&#39;t have permission to manage the local auth list.
+                </p>
+              }
+            >
+              <LocalAuthListPanel stationId={stationId} />
+            </CanAccess>
           </TabsContent>
         </Tabs>
       </CardContent>

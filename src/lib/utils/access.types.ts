@@ -53,6 +53,7 @@ export enum ResourceType {
   RESERVATIONS = 'Reservations',
   SERVER_NETWORK_PROFILES = 'ServerNetworkProfiles',
   PARTNERS = 'TenantPartners',
+  LOCAL_LIST_VERSIONS = 'LocalListVersions',
 }
 
 export enum ActionType {
@@ -75,6 +76,7 @@ export enum ChargingStationAccessType {
   TOPOLOGY = 'topology',
   CONFIGURATION = 'configuration',
   OCPP_MESSAGES = 'ocpp-messages',
+  LOCAL_AUTH = 'local-auth',
 }
 
 export enum CommandType {

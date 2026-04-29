@@ -100,6 +100,10 @@ export const OCPP2_0_1_COMMANDS_REGISTRY: Record<string, CommandDefinition> = {
     displayName: 'Update Firmware',
     modalType: ModalComponentType.updateFirmware201,
   },
+  'Get Local List Version': {
+    displayName: 'Get Local List Version',
+    modalType: ModalComponentType.getLocalListVersion,
+  },
 };
 
 /**
