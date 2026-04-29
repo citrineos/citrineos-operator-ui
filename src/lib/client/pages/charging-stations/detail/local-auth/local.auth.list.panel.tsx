@@ -35,9 +35,9 @@ import { useDispatch } from 'react-redux';
 
 interface StagedEntry {
   idToken: string;
-  idTokenType?: string | null;
+  type?: string | null;
   status: string;
-  cacheExpiryDateTime?: string | null;
+  expiryDate?: string | null;
   parentIdTag?: string | null;
 }
 
@@ -114,7 +114,7 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
           addUpdate: stagedAdds,
           deleteIdTokens: stagedDeletes.map((d) => ({
             idToken: d.idToken,
-            type: d.idTokenType,
+            type: d.type,
           })),
           initialUpdateType,
           sendEmpty,
@@ -145,9 +145,9 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
               ...prev,
               ...rows.map((r) => ({
                 idToken: r.idToken,
-                idTokenType: r.idTokenType,
+                type: r.idTokenType,
                 status: r.status,
-                cacheExpiryDateTime: r.cacheExpiryDateTime,
+                expiryDate: r.cacheExpiryDateTime,
               })),
             ]);
           },
@@ -164,7 +164,7 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
             ...prev,
             {
               idToken: entry.idToken,
-              idTokenType: entry.idTokenType,
+              type: entry.idTokenType,
               status: String(entry.status),
             },
           ],
@@ -235,7 +235,7 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
                   <li key={s.idToken} className="flex items-center gap-2">
                     <span>
                       {s.idToken}
-                      {s.idTokenType ? ` (${s.idTokenType})` : ''} — {s.status}
+                      {s.type ? ` (${s.type})` : ''} — {s.status}
                     </span>
                     <Button
                       size="sm"
@@ -257,7 +257,7 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
                   <li key={s.idToken} className="flex items-center gap-2">
                     <span>
                       {s.idToken}
-                      {s.idTokenType ? ` (${s.idTokenType})` : ''}
+                      {s.type ? ` (${s.type})` : ''}
                     </span>
                     <Button
                       size="sm"
