@@ -50,5 +50,4 @@ export enum ModalComponentType {
   sendLocalList,
   getLocalListVersion,
   addLocalAuthEntry,
-  clearLocalAuthList,
 }

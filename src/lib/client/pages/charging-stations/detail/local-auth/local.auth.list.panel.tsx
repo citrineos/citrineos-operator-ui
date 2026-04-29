@@ -195,6 +195,10 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
   }
 
   const isOcpp16 = station.protocol === OCPPVersion.OCPP1_6;
+  // OCPP 2.0.1 differential delete is not supported by Core yet (no tombstone path
+  // in the 2.0.1 SendLocalList repo). Remove staging is hidden for 2.0.1 stations
+  // until Core gains parity. Use "Send Full" to overwrite the list instead.
+  const supportsDifferentialDelete = isOcpp16;
   const hasStagedDiff = stagedAdds.length > 0 || stagedDeletes.length > 0;
 
   return (
@@ -347,6 +351,12 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
                           size="sm"
                           variant="destructive"
                           onClick={() => stageDelete(entry)}
+                          disabled={!supportsDifferentialDelete}
+                          title={
+                            supportsDifferentialDelete
+                              ? undefined
+                              : 'Differential delete not yet supported for OCPP 2.0.1. Use Send Full to overwrite the list.'
+                          }
                         >
                           Remove
                         </Button>

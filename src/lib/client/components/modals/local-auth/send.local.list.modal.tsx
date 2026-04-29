@@ -25,15 +25,17 @@ import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
 import { closeModal } from '@lib/utils/store/modal.slice';
 import { plainToInstance } from 'class-transformer';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { showError } from '@lib/utils/messages.utils';
 import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 export interface StagedAuthorization {
-  // For 2.0.1
+  // 1.6 idTag value, or 2.0.1 idToken.idToken value.
   idToken: string;
+  // 2.0.1 idToken.type. Ignored for 1.6.
   type?: OCPP2_0_1.IdTokenEnumType | null;
-  // For 1.6 the parentIdTag string; for 2.0.1 the groupIdToken
+  // 1.6 parentIdTag (flat string), or 2.0.1 groupIdToken's idToken.
   parentIdTag?: string | null;
   status: string;
   expiryDate?: string | null;
@@ -73,12 +75,23 @@ export const SendLocalListModal = ({
   const [versionNumber, setVersionNumber] = useState<number>(
     Math.max(currentVersion + 1, 1),
   );
+  const [userEditedVersion, setUserEditedVersion] = useState(false);
   const [updateType, setUpdateType] = useState<'Full' | 'Differential'>(
     initialUpdateType,
   );
   const [empty, setEmpty] = useState<boolean>(sendEmpty);
 
+  // If the parent panel refetches and currentVersion advances past our staged
+  // value while the modal is open, push our number forward so submit doesn't
+  // silently fail. Honour user edits — only auto-advance if they haven't typed.
+  useEffect(() => {
+    if (!userEditedVersion && versionNumber <= currentVersion) {
+      setVersionNumber(currentVersion + 1);
+    }
+  }, [currentVersion, userEditedVersion, versionNumber]);
+
   const isOcpp16 = parsedStation.protocol === OCPPVersion.OCPP1_6;
+  const versionIsStale = versionNumber <= currentVersion;
 
   const buildBody = () => {
     if (isOcpp16) {
@@ -151,7 +164,10 @@ export const SendLocalListModal = ({
 
   const handleSubmit = async () => {
     if (!parsedStation?.id) return;
-    if (versionNumber <= currentVersion) {
+    if (versionIsStale) {
+      showError(
+        `Version number must be greater than current version (${currentVersion}). Server-side version may have advanced; bump and try again.`,
+      );
       return;
     }
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
@@ -172,10 +188,19 @@ export const SendLocalListModal = ({
           type="number"
           min={Math.max(currentVersion + 1, 1)}
           value={versionNumber}
-          onChange={(e) => setVersionNumber(Number(e.target.value))}
+          onChange={(e) => {
+            setUserEditedVersion(true);
+            setVersionNumber(Number(e.target.value));
+          }}
         />
-        <p className="text-xs text-muted-foreground mt-1">
-          Must be greater than current version ({currentVersion}).
+        <p
+          className={`text-xs mt-1 ${
+            versionIsStale ? 'text-destructive' : 'text-muted-foreground'
+          }`}
+        >
+          {versionIsStale
+            ? `Stale: server is at version ${currentVersion}. Bump above it.`
+            : `Must be greater than current version (${currentVersion}).`}
         </p>
       </div>
 
@@ -227,7 +252,15 @@ export const SendLocalListModal = ({
         >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} disabled={loading}>
+        <Button
+          onClick={handleSubmit}
+          disabled={loading || versionIsStale}
+          title={
+            versionIsStale
+              ? `Version must be greater than ${currentVersion}`
+              : undefined
+          }
+        >
           {loading ? 'Sending...' : 'Send Local List'}
         </Button>
       </div>
