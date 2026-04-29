@@ -14,7 +14,7 @@ import {
 import { buttonIconSize } from '@lib/client/styles/icon';
 import { formatDate } from '@lib/client/components/timestamp-display';
 
-export const dateTimePickerDateFormat = 'yyyy-MM-DD HH:mm:ss';
+export const dateTimePickerDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
 export const DateTimePicker = ({
   date,
