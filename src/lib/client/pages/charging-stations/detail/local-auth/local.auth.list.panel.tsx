@@ -4,6 +4,10 @@
 'use client';
 
 import { type ChargingStationDto, OCPPVersion } from '@citrineos/base';
+import {
+  ADD_LOCAL_AUTH_ENTRY_EVENT,
+  type AddLocalAuthEntryPickedRow,
+} from '@lib/client/components/modals/local-auth/add.local.auth.entry.modal';
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { Button } from '@lib/client/components/ui/button';
 import { Skeleton } from '@lib/client/components/ui/skeleton';
@@ -30,7 +34,7 @@ import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { useList, useOne } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 interface StagedEntry {
@@ -140,21 +144,27 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
         modalComponentType: ModalComponentType.addLocalAuthEntry,
         modalComponentProps: {
           alreadyStagedIdTokens: stagedTokens,
-          onPick: (rows: any[]) => {
-            setStagedAdds((prev) => [
-              ...prev,
-              ...rows.map((r) => ({
-                idToken: r.idToken,
-                type: r.idTokenType,
-                status: r.status,
-                expiryDate: r.cacheExpiryDateTime,
-              })),
-            ]);
-          },
         },
       }),
     );
   };
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const rows = (e as CustomEvent<AddLocalAuthEntryPickedRow[]>).detail ?? [];
+      setStagedAdds((prev) => [
+        ...prev,
+        ...rows.map((r) => ({
+          idToken: r.idToken,
+          type: r.idTokenType,
+          status: r.status,
+          expiryDate: r.cacheExpiryDateTime,
+        })),
+      ]);
+    };
+    window.addEventListener(ADD_LOCAL_AUTH_ENTRY_EVENT, handler);
+    return () => window.removeEventListener(ADD_LOCAL_AUTH_ENTRY_EVENT, handler);
+  }, []);
 
   const stageDelete = (entry: LocalListAuthorizationClass) => {
     setStagedDeletes((prev) =>

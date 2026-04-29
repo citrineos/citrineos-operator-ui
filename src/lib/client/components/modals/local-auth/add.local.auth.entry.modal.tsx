@@ -20,21 +20,21 @@ import { useList } from '@refinedev/core';
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+export interface AddLocalAuthEntryPickedRow {
+  idToken: string;
+  idTokenType?: string | null;
+  status: string;
+  cacheExpiryDateTime?: string | null;
+}
+
+export const ADD_LOCAL_AUTH_ENTRY_EVENT = 'add-local-auth-entry-picked';
+
 export interface AddLocalAuthEntryModalProps {
   alreadyStagedIdTokens?: string[];
-  onPick: (
-    rows: {
-      idToken: string;
-      idTokenType?: string | null;
-      status: string;
-      cacheExpiryDateTime?: string | null;
-    }[],
-  ) => void;
 }
 
 export const AddLocalAuthEntryModal = ({
   alreadyStagedIdTokens = [],
-  onPick,
 }: AddLocalAuthEntryModalProps) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
@@ -69,7 +69,12 @@ export const AddLocalAuthEntryModal = ({
   };
 
   const handleConfirm = () => {
-    onPick(Object.values(selected));
+    const rows = Object.values(selected) as AddLocalAuthEntryPickedRow[];
+    window.dispatchEvent(
+      new CustomEvent<AddLocalAuthEntryPickedRow[]>(ADD_LOCAL_AUTH_ENTRY_EVENT, {
+        detail: rows,
+      }),
+    );
     dispatch(closeModal());
   };
 
