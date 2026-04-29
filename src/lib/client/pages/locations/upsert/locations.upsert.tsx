@@ -395,36 +395,16 @@ export const LocationsUpsert = ({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="grid grid-cols-2 xs:grid-cols-1 gap-6">
                   {/* Name */}
-                  <FormField
-                    control={form.control}
-                    label="Name"
-                    name={LocationProps.name}
-                    required
-                  >
-                    <Input />
-                  </FormField>
-
-                  {/* Country */}
-                  <ComboboxFormField
-                    control={form.control}
-                    name={LocationProps.country}
-                    label="Country"
-                    value={chosenCountryName}
-                    options={countryList.map((country) => ({
-                      label: country.name,
-                      value: country.name,
-                    }))}
-                    placeholder="Select country"
-                    searchPlaceholder="Search countries..."
-                    onSelect={(countryName: string) => {
-                      const selected = countryList.find(
-                        (c) => c.name === countryName,
-                      );
-                      if (selected) {
-                        form.setValue(LocationProps.country, selected.code);
-                      }
-                    }}
-                  />
+                  <div className="col-span-2">
+                    <FormField
+                      control={form.control}
+                      label="Name"
+                      name={LocationProps.name}
+                      required
+                    >
+                      <Input />
+                    </FormField>
+                  </div>
 
                   {/* Street address — autocomplete pre-fills all fields below on selection */}
                   <div className="col-span-2">
@@ -508,6 +488,28 @@ export const LocationsUpsert = ({
                     <Input placeholder="e.g. 94105, SW1A 1AA, 10115" />
                   </FormField>
 
+                  {/* Country */}
+                  <ComboboxFormField
+                    control={form.control}
+                    name={LocationProps.country}
+                    label="Country"
+                    value={chosenCountryName}
+                    options={countryList.map((country) => ({
+                      label: country.name,
+                      value: country.name,
+                    }))}
+                    placeholder="Select country"
+                    searchPlaceholder="Search countries..."
+                    onSelect={(countryName: string) => {
+                      const selected = countryList.find(
+                        (c) => c.name === countryName,
+                      );
+                      if (selected) {
+                        form.setValue(LocationProps.country, selected.code);
+                      }
+                    }}
+                  />
+
                   {/* Lat / Lng */}
                   <Field>
                     <FieldLabel
@@ -584,14 +586,16 @@ export const LocationsUpsert = ({
                   />
 
                   {/* Facilities */}
-                  <MultiSelectFormField
-                    control={form.control}
-                    label="Facilities"
-                    name={LocationProps.facilities}
-                    options={facilities}
-                    placeholder="Select Facilities"
-                    searchPlaceholder="Search Facilities"
-                  />
+                  <div className="col-span-2">
+                    <MultiSelectFormField
+                      control={form.control}
+                      label="Facilities"
+                      name={LocationProps.facilities}
+                      options={facilities}
+                      placeholder="Select Facilities"
+                      searchPlaceholder="Search Facilities"
+                    />
+                  </div>
 
                   {/* Image upload */}
                   {allowImageUpload && (
