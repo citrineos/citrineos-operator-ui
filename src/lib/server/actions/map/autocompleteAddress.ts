@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use server';
 
-import { authedAction, type ActionResult } from '@lib/utils/action-guard';
+import { type ActionResult, authedAction } from '@lib/utils/action-guard';
 import config from '@lib/utils/config';
 
 export interface PlacePrediction {
@@ -16,12 +16,12 @@ export interface PlacePrediction {
 }
 
 /**
- * Autocomplete for street addresses with strict country filtering
- * Uses Places API (New) Autocomplete with includedRegionCodes for reliable country restriction
+ * Autocomplete for street addresses globally, with optional country filtering.
+ * Uses Places API (New) Autocomplete.
  */
 export async function autocompleteAddress(
   input: string,
-  country: string = 'us',
+  country?: string,
   sessionToken?: string,
 ): Promise<ActionResult<PlacePrediction[]>> {
   return authedAction<PlacePrediction[]>(async (_session) => {
@@ -35,19 +35,11 @@ export async function autocompleteAddress(
         'subpremise',
         'route',
       ],
-      includedRegionCodes: [country.toUpperCase()],
-      // Disable IP-based location bias to prevent results from being filtered by user's physical location
-      // Without this, Google uses the user's IP to bias results regardless of includedRegionCodes
-      locationBias: {
-        circle: {
-          center: {
-            latitude: 0,
-            longitude: 0,
-          },
-          radius: 1,
-        },
-      },
     };
+
+    if (country) {
+      body.includedRegionCodes = [country.toUpperCase()];
+    }
 
     if (sessionToken) {
       body.sessionToken = sessionToken;

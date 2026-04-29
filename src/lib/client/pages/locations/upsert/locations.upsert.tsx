@@ -60,10 +60,7 @@ import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
 import {
   getCountryList,
-  getCountryConfig,
   type CountryCode,
-  type AdministrativeArea,
-  getAdministrativeAreas,
 } from '@lib/utils/country.config';
 import { OpeningHoursForm } from '@lib/client/components/opening-hours';
 import { isValid, parseISO } from 'date-fns';
@@ -96,6 +93,13 @@ const LocationCreateSchema = LocationSchema.pick({
     )
     .nullable()
     .optional(),
+  [LocationProps.address]: z
+    .string()
+    .min(1, 'Street address is required'),
+  [LocationProps.city]: z.string().optional().default(''),
+  [LocationProps.state]: z.string().optional().default(''),
+  [LocationProps.postalCode]: z.string().optional().default(''),
+  [LocationProps.country]: z.string().optional().default(''),
 });
 
 type LocationCreateDto = z.infer<typeof LocationCreateSchema>;
@@ -106,7 +110,7 @@ const defaultLocation = {
   [LocationProps.city]: '',
   [LocationProps.postalCode]: '',
   [LocationProps.state]: '',
-  [LocationProps.country]: getCountryList()[0]?.code || '', // Default to first country
+  [LocationProps.country]: '',
   [LocationProps.coordinates]: {
     type: 'Point' as const,
     coordinates: [defaultLongitude, defaultLatitude],
@@ -139,10 +143,6 @@ export const LocationsUpsert = ({
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const [administrativeAreas, setAdministrativeAreas] = useState<
-    AdministrativeArea[]
-  >([]);
-  const [loadingAdminAreas, setLoadingAdminAreas] = useState(false);
 
   const { open } = useNotification();
 
@@ -171,43 +171,13 @@ export const LocationsUpsert = ({
     warnWhenUnsavedChanges: true,
   });
 
-  const chosenCountryCode = form.watch(LocationProps.country) as CountryCode;
-  const chosenState = form.watch(LocationProps.state);
   const coordinates = form.watch(LocationProps.coordinates);
   const currentChargingPool = form.watch(LocationProps.chargingPool);
+  const watchedAddress = form.watch(LocationProps.address) ?? '';
+  const chosenCountryCode = form.watch(LocationProps.country) as CountryCode;
 
-  const countryConfig = getCountryConfig(chosenCountryCode);
-
-  // Find the country name for display purposes
-  const chosenCountry = countryList.find(
-    (country) => country.code === chosenCountryCode,
-  );
-  const chosenCountryName = chosenCountry?.name || '';
-
-  // Load administrative areas when country changes
-  useEffect(() => {
-    if (chosenCountryCode && countryConfig.usesAdministrativeAreas) {
-      setLoadingAdminAreas(true);
-      getAdministrativeAreas(chosenCountryCode)
-        .then((areas) => {
-          setAdministrativeAreas(areas);
-        })
-        .catch((err) => {
-          console.error('Failed to load administrative areas:', err);
-          setAdministrativeAreas([]);
-        })
-        .finally(() => {
-          setLoadingAdminAreas(false);
-        });
-    } else {
-      setAdministrativeAreas([]);
-      // Clear state field if country doesn't use administrative areas
-      if (!countryConfig.usesAdministrativeAreas) {
-        form.setValue(LocationProps.state, '');
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chosenCountryCode, countryConfig.usesAdministrativeAreas]);
+  const chosenCountry = countryList.find((c) => c.code === chosenCountryCode);
+  const chosenCountryName = chosenCountry?.name ?? '';
 
   useEffect(() => {
     if (!originalStationIdsRef.current && currentChargingPool !== undefined) {
@@ -312,7 +282,6 @@ export const LocationsUpsert = ({
 
       const cleanedOpeningHours: Record<string, unknown> = { ...rest };
 
-      // Filter valid date periods
       const filterValidPeriods = (periods: unknown[]) =>
         (periods || []).filter((p: unknown) => {
           if (!p || typeof p !== 'object') return false;
@@ -346,8 +315,6 @@ export const LocationsUpsert = ({
         cleanedOpeningHours.regularHours = regularHours;
       }
 
-      // If after cleaning, the object only contains `twentyfourSeven`, and it's false,
-      // we can consider the whole object empty.
       if (
         Object.keys(cleanedOpeningHours).length === 1 &&
         'twentyfourSeven' in cleanedOpeningHours &&
@@ -359,16 +326,12 @@ export const LocationsUpsert = ({
       }
     }
 
-    // Remove chargingPool before sending to Hasura
-    // Will be handled after successful response
     const { chargingPool, ...finalLocation } = newItem;
 
     form.refineCore.onFinish(finalLocation).then((result) => {
       if (result) {
-        // Get final location id from existing or new location
         const finalLocationId = locationId || (result as any).data?.id;
 
-        // Upload image
         if (uploadedFile && finalLocationId) {
           const renamedFileName = `${S3_BUCKET_FOLDER_IMAGES_LOCATIONS}/${finalLocationId}`;
           uploadFileViaPresignedUrl(uploadedFile, renamedFileName)
@@ -431,15 +394,101 @@ export const LocationsUpsert = ({
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="grid grid-cols-2 xs:grid-cols-1 gap-6">
+                  {/* Name */}
+                  <div className="col-span-2">
+                    <FormField
+                      control={form.control}
+                      label="Name"
+                      name={LocationProps.name}
+                      required
+                    >
+                      <Input />
+                    </FormField>
+                  </div>
+
+                  {/* Street address — autocomplete pre-fills all fields below on selection */}
+                  <div className="col-span-2">
+                    <Field>
+                      <FieldLabel className={formLabelWrapperStyle}>
+                        <span className={formLabelStyle}>Street Address</span>
+                        {formRequiredAsterisk}
+                      </FieldLabel>
+                      <AddressAutocomplete
+                        value={watchedAddress}
+                        onChangeAction={(val) =>
+                          form.setValue(LocationProps.address, val)
+                        }
+                        onSelectPlaceAction={(_placeId, details) => {
+                          form.setValue(LocationProps.address, details.address);
+                          form.setValue(
+                            LocationProps.city,
+                            details.city ?? '',
+                          );
+                          form.setValue(
+                            LocationProps.state,
+                            details.state ?? '',
+                          );
+                          form.setValue(
+                            LocationProps.postalCode,
+                            details.postalCode ?? '',
+                          );
+                          if (details.countryCode) {
+                            form.setValue(
+                              LocationProps.country,
+                              details.countryCode,
+                            );
+                          }
+                          if (details.coordinates) {
+                            form.setValue(LocationProps.coordinates, {
+                              type: 'Point',
+                              coordinates: [
+                                details.coordinates.lng,
+                                details.coordinates.lat,
+                              ],
+                            });
+                          }
+                        }}
+                        placeholder="Start typing to search, or enter manually below"
+                      />
+                      {form.formState.errors[LocationProps.address] && (
+                        <p className="text-sm text-destructive mt-1">
+                          {
+                            form.formState.errors[LocationProps.address]
+                              ?.message as string
+                          }
+                        </p>
+                      )}
+                    </Field>
+                  </div>
+
+                  {/* City */}
                   <FormField
                     control={form.control}
-                    label="Name"
-                    name={LocationProps.name}
-                    required
+                    label="City"
+                    name={LocationProps.city}
                   >
-                    <Input />
+                    <Input placeholder="e.g. Berlin" />
                   </FormField>
 
+                  {/* State / Province / Region — free text, works globally */}
+                  <FormField
+                    control={form.control}
+                    label="State / Province / Region"
+                    name={LocationProps.state}
+                  >
+                    <Input placeholder="e.g. California, Ontario, Bayern" />
+                  </FormField>
+
+                  {/* Postal Code */}
+                  <FormField
+                    control={form.control}
+                    label="Postal Code"
+                    name={LocationProps.postalCode}
+                  >
+                    <Input placeholder="e.g. 94105, SW1A 1AA, 10115" />
+                  </FormField>
+
+                  {/* Country */}
                   <ComboboxFormField
                     control={form.control}
                     name={LocationProps.country}
@@ -449,123 +498,19 @@ export const LocationsUpsert = ({
                       label: country.name,
                       value: country.name,
                     }))}
-                    placeholder="Select Country"
-                    searchPlaceholder="Search Countries"
-                    required
+                    placeholder="Select country"
+                    searchPlaceholder="Search countries..."
                     onSelect={(countryName: string) => {
-                      const selectedCountry = countryList.find(
-                        (country) => country.name === countryName,
+                      const selected = countryList.find(
+                        (c) => c.name === countryName,
                       );
-                      if (selectedCountry) {
-                        form.setValue(
-                          LocationProps.country,
-                          selectedCountry.code,
-                        );
+                      if (selected) {
+                        form.setValue(LocationProps.country, selected.code);
                       }
                     }}
                   />
 
-                  <Controller
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <Field>
-                        <FieldLabel className={formLabelWrapperStyle}>
-                          <span className={formLabelStyle}>Address</span>
-                          {formRequiredAsterisk}
-                        </FieldLabel>
-                        <AddressAutocomplete
-                          value={field.value!}
-                          onChangeAction={field.onChange}
-                          countryCode={chosenCountryCode}
-                          onSelectPlaceAction={(_placeId, details) => {
-                            form.setValue(
-                              LocationProps.address,
-                              details.address,
-                            );
-                            form.setValue(
-                              LocationProps.city,
-                              details.city ?? '',
-                            );
-
-                            // Set country from autocomplete
-                            if (details.countryCode) {
-                              form.setValue(
-                                LocationProps.country,
-                                details.countryCode,
-                              );
-                            }
-
-                            // Set state from autocomplete
-                            if (details.state) {
-                              // Wait for administrative areas to load
-                              setTimeout(() => {
-                                form.setValue(
-                                  LocationProps.state,
-                                  details.state ?? '',
-                                );
-                              }, 100);
-                            }
-
-                            form.setValue(
-                              LocationProps.postalCode,
-                              details.postalCode ?? '',
-                            );
-
-                            if (details.coordinates) {
-                              form.setValue(LocationProps.coordinates, {
-                                type: 'Point',
-                                coordinates: [
-                                  details.coordinates.lng,
-                                  details.coordinates.lat,
-                                ],
-                              });
-                            }
-                          }}
-                        />
-                      </Field>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    label="City"
-                    name={LocationProps.city}
-                    required
-                  >
-                    <Input />
-                  </FormField>
-
-                  {countryConfig.usesAdministrativeAreas && (
-                    <ComboboxFormField
-                      control={form.control}
-                      name={LocationProps.state}
-                      label={countryConfig.administrativeAreaLabel}
-                      value={chosenState}
-                      options={
-                        administrativeAreas?.map((area) => ({
-                          label: area.name,
-                          value: area.name,
-                        })) ?? []
-                      }
-                      placeholder={`Select ${countryConfig.administrativeAreaLabel}`}
-                      searchPlaceholder={`Search ${countryConfig.administrativeAreaLabel}s`}
-                      isLoading={loadingAdminAreas}
-                      required={countryConfig.usesAdministrativeAreas}
-                    />
-                  )}
-
-                  {countryConfig.postalCodeRequired && (
-                    <FormField
-                      control={form.control}
-                      label={countryConfig.postalCodeLabel}
-                      name={LocationProps.postalCode}
-                      required={countryConfig.postalCodeRequired}
-                    >
-                      <Input />
-                    </FormField>
-                  )}
-
+                  {/* Lat / Lng */}
                   <Field>
                     <FieldLabel
                       htmlFor="latitude"
@@ -580,7 +525,6 @@ export const LocationsUpsert = ({
                       onChange={(e) => {
                         const lat = parseFloat(e.target.value);
                         const lng = coordinates?.coordinates[0] ?? 0;
-
                         if (!isNaN(lat) && !isNaN(lng))
                           form.setValue(LocationProps.coordinates, {
                             type: 'Point',
@@ -588,7 +532,7 @@ export const LocationsUpsert = ({
                           });
                       }}
                       type="number"
-                      placeholder="Click map or enter manually"
+                      placeholder="Auto-filled from address"
                     />
                   </Field>
                   <Field>
@@ -605,7 +549,6 @@ export const LocationsUpsert = ({
                       onChange={(e) => {
                         const lat = coordinates?.coordinates[1] ?? 0;
                         const lng = parseFloat(e.target.value);
-
                         if (!isNaN(lat) && !isNaN(lng))
                           form.setValue(LocationProps.coordinates, {
                             type: 'Point',
@@ -613,9 +556,11 @@ export const LocationsUpsert = ({
                           });
                       }}
                       type="number"
-                      placeholder="Click map or enter manually"
+                      placeholder="Auto-filled from address"
                     />
                   </Field>
+
+                  {/* Time Zone */}
                   <FormField
                     control={form.control}
                     label="Time Zone"
@@ -624,6 +569,8 @@ export const LocationsUpsert = ({
                   >
                     <Input />
                   </FormField>
+
+                  {/* Parking Type */}
                   <ComboboxFormField
                     control={form.control}
                     name={LocationProps.parkingType}
@@ -637,14 +584,20 @@ export const LocationsUpsert = ({
                     placeholder="Select Parking Type"
                     searchPlaceholder="Search Parking Types"
                   />
-                  <MultiSelectFormField
-                    control={form.control}
-                    label="Facilities"
-                    name={LocationProps.facilities}
-                    options={facilities}
-                    placeholder="Select Facilities"
-                    searchPlaceholder="Search Facilities"
-                  />
+
+                  {/* Facilities */}
+                  <div className="col-span-2">
+                    <MultiSelectFormField
+                      control={form.control}
+                      label="Facilities"
+                      name={LocationProps.facilities}
+                      options={facilities}
+                      placeholder="Select Facilities"
+                      searchPlaceholder="Search Facilities"
+                    />
+                  </div>
+
+                  {/* Image upload */}
                   {allowImageUpload && (
                     <Field>
                       <FieldLabel>
@@ -658,7 +611,6 @@ export const LocationsUpsert = ({
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-
                           setUploadedFile(file);
                           setUploadedFileName(file.name);
                         }}
@@ -681,6 +633,8 @@ export const LocationsUpsert = ({
                     </Field>
                   )}
                 </div>
+
+                {/* Map */}
                 <div>
                   <MapLocationPicker
                     point={geoPoint}
@@ -703,7 +657,7 @@ export const LocationsUpsert = ({
                 />
               </div>
 
-              {/* Charging Stations Selection - Only for Edit Mode */}
+              {/* Charging Stations — edit mode only */}
               {locationId && (
                 <SelectedChargingStations form={form} params={params} />
               )}
