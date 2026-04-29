@@ -51,23 +51,16 @@ import { buttonIconSize } from '@lib/client/styles/icon';
 import { Form } from '@lib/client/components/form';
 import { z } from 'zod';
 import { GeoPoint } from '@lib/utils/GeoPoint';
-import { Controller } from 'react-hook-form';
 import { AddressAutocomplete } from '@lib/client/components/form/address-autocomplete';
 import { SelectedChargingStations } from '@lib/client/pages/locations/upsert/selected.charging.stations';
 import { toast } from 'sonner';
 import { useNotification } from '@refinedev/core';
 import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
-import {
-  getCountryList,
-  getCountryConfig,
-  type CountryCode,
-  type AdministrativeArea,
-  getAdministrativeAreas,
-} from '@lib/utils/country.config';
 import { OpeningHoursForm } from '@lib/client/components/opening-hours';
 import { isValid, parseISO } from 'date-fns';
 import { useTenantId } from '@lib/client/hooks/useTenantId';
+import { Controller } from 'react-hook-form';
 
 type LocationsUpsertProps = {
   params: { id?: string };
@@ -96,6 +89,9 @@ const LocationCreateSchema = LocationSchema.pick({
     )
     .nullable()
     .optional(),
+  [LocationProps.address]: z
+    .string()
+    .min(1, 'Please search and select an address'),
 });
 
 type LocationCreateDto = z.infer<typeof LocationCreateSchema>;
@@ -106,7 +102,7 @@ const defaultLocation = {
   [LocationProps.city]: '',
   [LocationProps.postalCode]: '',
   [LocationProps.state]: '',
-  [LocationProps.country]: getCountryList()[0]?.code || '', // Default to first country
+  [LocationProps.country]: '',
   [LocationProps.coordinates]: {
     type: 'Point' as const,
     coordinates: [defaultLongitude, defaultLatitude],
@@ -139,10 +135,6 @@ export const LocationsUpsert = ({
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const [administrativeAreas, setAdministrativeAreas] = useState<
-    AdministrativeArea[]
-  >([]);
-  const [loadingAdminAreas, setLoadingAdminAreas] = useState(false);
 
   const { open } = useNotification();
 
@@ -150,8 +142,6 @@ export const LocationsUpsert = ({
   const [geoPoint, setGeoPoint] = useState<GeoPoint | undefined>(
     new GeoPoint(defaultLatitude, defaultLongitude),
   );
-
-  const countryList = getCountryList();
 
   const form = useForm({
     refineCoreProps: {
@@ -171,43 +161,13 @@ export const LocationsUpsert = ({
     warnWhenUnsavedChanges: true,
   });
 
-  const chosenCountryCode = form.watch(LocationProps.country) as CountryCode;
-  const chosenState = form.watch(LocationProps.state);
   const coordinates = form.watch(LocationProps.coordinates);
   const currentChargingPool = form.watch(LocationProps.chargingPool);
-
-  const countryConfig = getCountryConfig(chosenCountryCode);
-
-  // Find the country name for display purposes
-  const chosenCountry = countryList.find(
-    (country) => country.code === chosenCountryCode,
-  );
-  const chosenCountryName = chosenCountry?.name || '';
-
-  // Load administrative areas when country changes
-  useEffect(() => {
-    if (chosenCountryCode && countryConfig.usesAdministrativeAreas) {
-      setLoadingAdminAreas(true);
-      getAdministrativeAreas(chosenCountryCode)
-        .then((areas) => {
-          setAdministrativeAreas(areas);
-        })
-        .catch((err) => {
-          console.error('Failed to load administrative areas:', err);
-          setAdministrativeAreas([]);
-        })
-        .finally(() => {
-          setLoadingAdminAreas(false);
-        });
-    } else {
-      setAdministrativeAreas([]);
-      // Clear state field if country doesn't use administrative areas
-      if (!countryConfig.usesAdministrativeAreas) {
-        form.setValue(LocationProps.state, '');
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chosenCountryCode, countryConfig.usesAdministrativeAreas]);
+  const watchedAddress = form.watch(LocationProps.address) ?? '';
+  const watchedCity = form.watch(LocationProps.city) ?? '';
+  const watchedState = form.watch(LocationProps.state) ?? '';
+  const watchedPostalCode = form.watch(LocationProps.postalCode) ?? '';
+  const watchedCountry = form.watch(LocationProps.country) ?? '';
 
   useEffect(() => {
     if (!originalStationIdsRef.current && currentChargingPool !== undefined) {
@@ -404,6 +364,11 @@ export const LocationsUpsert = ({
     });
   };
 
+  // Parsed address summary shown below the search field
+  const addressSummary = [watchedCity, watchedState, watchedPostalCode, watchedCountry]
+    .filter(Boolean)
+    .join(', ');
+
   return (
     <CanAccess
       resource={ResourceType.LOCATIONS}
@@ -440,131 +405,62 @@ export const LocationsUpsert = ({
                     <Input />
                   </FormField>
 
-                  <ComboboxFormField
-                    control={form.control}
-                    name={LocationProps.country}
-                    label="Country"
-                    value={chosenCountryName}
-                    options={countryList.map((country) => ({
-                      label: country.name,
-                      value: country.name,
-                    }))}
-                    placeholder="Select Country"
-                    searchPlaceholder="Search Countries"
-                    required
-                    onSelect={(countryName: string) => {
-                      const selectedCountry = countryList.find(
-                        (country) => country.name === countryName,
-                      );
-                      if (selectedCountry) {
+                  <Field>
+                    <FieldLabel className={formLabelWrapperStyle}>
+                      <span className={formLabelStyle}>Address</span>
+                      {formRequiredAsterisk}
+                    </FieldLabel>
+                    <AddressAutocomplete
+                      value={watchedAddress}
+                      onChangeAction={(val) =>
+                        form.setValue(LocationProps.address, val)
+                      }
+                      onSelectPlaceAction={(_placeId, details) => {
+                        form.setValue(
+                          LocationProps.address,
+                          details.address,
+                        );
+                        form.setValue(
+                          LocationProps.city,
+                          details.city ?? '',
+                        );
                         form.setValue(
                           LocationProps.country,
-                          selectedCountry.code,
+                          details.countryCode ?? '',
                         );
-                      }
-                    }}
-                  />
-
-                  <Controller
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <Field>
-                        <FieldLabel className={formLabelWrapperStyle}>
-                          <span className={formLabelStyle}>Address</span>
-                          {formRequiredAsterisk}
-                        </FieldLabel>
-                        <AddressAutocomplete
-                          value={field.value!}
-                          onChangeAction={field.onChange}
-                          countryCode={chosenCountryCode}
-                          onSelectPlaceAction={(_placeId, details) => {
-                            form.setValue(
-                              LocationProps.address,
-                              details.address,
-                            );
-                            form.setValue(
-                              LocationProps.city,
-                              details.city ?? '',
-                            );
-
-                            // Set country from autocomplete
-                            if (details.countryCode) {
-                              form.setValue(
-                                LocationProps.country,
-                                details.countryCode,
-                              );
-                            }
-
-                            // Set state from autocomplete
-                            if (details.state) {
-                              // Wait for administrative areas to load
-                              setTimeout(() => {
-                                form.setValue(
-                                  LocationProps.state,
-                                  details.state ?? '',
-                                );
-                              }, 100);
-                            }
-
-                            form.setValue(
-                              LocationProps.postalCode,
-                              details.postalCode ?? '',
-                            );
-
-                            if (details.coordinates) {
-                              form.setValue(LocationProps.coordinates, {
-                                type: 'Point',
-                                coordinates: [
-                                  details.coordinates.lng,
-                                  details.coordinates.lat,
-                                ],
-                              });
-                            }
-                          }}
-                        />
-                      </Field>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    label="City"
-                    name={LocationProps.city}
-                    required
-                  >
-                    <Input />
-                  </FormField>
-
-                  {countryConfig.usesAdministrativeAreas && (
-                    <ComboboxFormField
-                      control={form.control}
-                      name={LocationProps.state}
-                      label={countryConfig.administrativeAreaLabel}
-                      value={chosenState}
-                      options={
-                        administrativeAreas?.map((area) => ({
-                          label: area.name,
-                          value: area.name,
-                        })) ?? []
-                      }
-                      placeholder={`Select ${countryConfig.administrativeAreaLabel}`}
-                      searchPlaceholder={`Search ${countryConfig.administrativeAreaLabel}s`}
-                      isLoading={loadingAdminAreas}
-                      required={countryConfig.usesAdministrativeAreas}
+                        form.setValue(
+                          LocationProps.state,
+                          details.state ?? '',
+                        );
+                        form.setValue(
+                          LocationProps.postalCode,
+                          details.postalCode ?? '',
+                        );
+                        if (details.coordinates) {
+                          form.setValue(LocationProps.coordinates, {
+                            type: 'Point',
+                            coordinates: [
+                              details.coordinates.lng,
+                              details.coordinates.lat,
+                            ],
+                          });
+                        }
+                      }}
                     />
-                  )}
-
-                  {countryConfig.postalCodeRequired && (
-                    <FormField
-                      control={form.control}
-                      label={countryConfig.postalCodeLabel}
-                      name={LocationProps.postalCode}
-                      required={countryConfig.postalCodeRequired}
-                    >
-                      <Input />
-                    </FormField>
-                  )}
+                    {watchedAddress && addressSummary && (
+                      <p className="mt-1.5 text-xs text-muted-foreground">
+                        {addressSummary}
+                      </p>
+                    )}
+                    {form.formState.errors[LocationProps.address] && (
+                      <p className="text-sm text-destructive mt-1">
+                        {
+                          form.formState.errors[LocationProps.address]
+                            ?.message as string
+                        }
+                      </p>
+                    )}
+                  </Field>
 
                   <Field>
                     <FieldLabel
