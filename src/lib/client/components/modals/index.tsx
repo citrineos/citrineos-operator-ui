@@ -47,6 +47,10 @@ import { ToggleTransactionActiveModal } from '@lib/client/components/modals/togg
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
 import { GetDiagnosticsModal } from './1.6/get-diagnostics/get.diagnostics.modal';
+// Local Auth List Modals (shared across OCPP versions)
+import { SendLocalListModal } from './local-auth/send.local.list.modal';
+import { GetLocalListVersionModal } from './local-auth/get.local.list.version.modal';
+import { AddLocalAuthEntryModal } from './local-auth/add.local.auth.entry.modal';
 
 const MODAL_COMPONENTS: Partial<{
   [key in ModalComponentType]: React.FC<any>;
@@ -92,6 +96,10 @@ const MODAL_COMPONENTS: Partial<{
   [ModalComponentType.toggleStationOnlineStatus]: ToggleStationOnlineModal,
   [ModalComponentType.toggleTransactionActiveStatus]:
     ToggleTransactionActiveModal,
+  // Local Auth List
+  [ModalComponentType.sendLocalList]: SendLocalListModal,
+  [ModalComponentType.getLocalListVersion]: GetLocalListVersionModal,
+  [ModalComponentType.addLocalAuthEntry]: AddLocalAuthEntryModal,
 };
 
 const largeModals = [

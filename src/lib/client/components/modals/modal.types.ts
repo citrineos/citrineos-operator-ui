@@ -46,4 +46,8 @@ export enum ModalComponentType {
   toggleStationOnlineStatus,
   toggleTransactionActiveStatus,
   firstLoginHelp,
+  // Local Auth List (shared 1.6 + 2.0.1)
+  sendLocalList,
+  getLocalListVersion,
+  addLocalAuthEntry,
 }
