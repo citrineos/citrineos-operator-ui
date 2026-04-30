@@ -4,9 +4,20 @@
 
 import { gql } from 'graphql-tag';
 
+// Refine's hasura data provider always supplies $limit and $offset on useList.
+// Hasura rejects undeclared variables, so they must appear in the query signature
+// even though the result is the (single) row keyed by stationId.
 export const LOCAL_LIST_VERSION_BY_STATION = gql`
-  query LocalListVersionByStation($stationId: String!) {
-    LocalListVersions(where: { stationId: { _eq: $stationId } }, limit: 1) {
+  query LocalListVersionByStation(
+    $stationId: String!
+    $limit: Int!
+    $offset: Int!
+  ) {
+    LocalListVersions(
+      where: { stationId: { _eq: $stationId } }
+      limit: $limit
+      offset: $offset
+    ) {
       id
       stationId
       versionNumber
@@ -34,9 +45,14 @@ export const LOCAL_LIST_VERSION_BY_STATION = gql`
   }
 `;
 
+// `idToken` is a citext column in the Hasura schema, so the variable used in
+// the citext _comparison_exp must be typed `citext` — passing `String` triggers
+// "variable 'search' is declared as 'String', but used where 'citext' is expected".
+// `idTokenType` is a plain text column, so we coerce against a separate variable.
 export const SEARCH_AUTHORIZATIONS_FOR_LOCAL_LIST = gql`
   query SearchAuthorizationsForLocalList(
-    $search: String
+    $search: citext
+    $searchText: String
     $limit: Int!
     $offset: Int!
   ) {
@@ -44,7 +60,7 @@ export const SEARCH_AUTHORIZATIONS_FOR_LOCAL_LIST = gql`
       where: {
         _or: [
           { idToken: { _ilike: $search } }
-          { idTokenType: { _ilike: $search } }
+          { idTokenType: { _ilike: $searchText } }
         ]
       }
       limit: $limit
@@ -66,7 +82,7 @@ export const SEARCH_AUTHORIZATIONS_FOR_LOCAL_LIST = gql`
       where: {
         _or: [
           { idToken: { _ilike: $search } }
-          { idTokenType: { _ilike: $search } }
+          { idTokenType: { _ilike: $searchText } }
         ]
       }
     ) {

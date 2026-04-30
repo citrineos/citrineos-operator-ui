@@ -50,6 +50,7 @@ export const AddLocalAuthEntryModal = ({
       gqlQuery: SEARCH_AUTHORIZATIONS_FOR_LOCAL_LIST,
       gqlVariables: {
         search: search ? `%${search}%` : '%%',
+        searchText: search ? `%${search}%` : '%%',
       },
     },
   });
