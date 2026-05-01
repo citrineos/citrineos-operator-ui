@@ -55,7 +55,7 @@ jobs:
           
           # Fix: Set your actual desired login credentials here
           echo "NEXT_PUBLIC_ADMIN_EMAIL=admin@redevolta.com" >> .env.local
-          echo "NEXT_PUBLIC_ADMIN_PASSWORD=3s4fwU59qt52" >> .env.local
+          echo "ADMIN_PASSWORD=3s4fwU59qt52" >> .env.local
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
