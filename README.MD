@@ -18,6 +18,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # Welcome to CitrineOS Operator UI
 
+modified for EVolta from 1.8.3
 **CitrineOS Operator UI** is the web-based operator interface for **CitrineOS**, an open-source, modular backend
 platform for managing Electric Vehicle (EV) charging infrastructure.
 
