@@ -34,6 +34,7 @@ import { openModal } from '@lib/utils/store/modal.slice';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { useList, useOne } from '@refinedev/core';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { RefreshCwIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -66,7 +67,7 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
   const station = stationData?.data as ChargingStationDto | undefined;
 
   const {
-    query: { data, refetch, isLoading },
+    query: { data, refetch, isLoading, isFetching },
   } = useList<LocalListVersionClass>({
     resource: ResourceType.LOCAL_LIST_VERSIONS,
     pagination: { pageSize: 1, currentPage: 1 },
@@ -215,7 +216,14 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
           {currentEntries.length} entries · OCPP {station.protocol}
         </div>
         <div className="ml-auto flex gap-2 flex-wrap">
-          <Button variant="outline" onClick={() => refetch()}>
+          <Button
+            variant="outline"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            <RefreshCwIcon
+              className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
+            />
             Refresh
           </Button>
           <Button variant="outline" onClick={openGetVersion}>
