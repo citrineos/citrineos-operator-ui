@@ -44,6 +44,11 @@ export const LOCAL_LIST_VERSION_BY_STATION = gql`
         }
       }
     }
+    LocalListVersions_aggregate(where: { stationId: { _eq: $stationId } }) {
+      aggregate {
+        count
+      }
+    }
   }
 `;
 
