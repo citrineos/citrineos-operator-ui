@@ -23,11 +23,15 @@ export class LocalListAuthorizationClass {
   groupAuthorization?: { id: number; idToken: string } | null;
 }
 
+export class LocalListVersionAuthorizationJoinClass {
+  LocalListAuthorization?: LocalListAuthorizationClass | null;
+}
+
 export class LocalListVersionClass {
   id!: number;
   stationId!: string;
   versionNumber!: number;
   createdAt?: string;
   updatedAt?: string;
-  LocalListAuthorizations?: LocalListAuthorizationClass[];
+  LocalListVersionAuthorizations?: LocalListVersionAuthorizationJoinClass[];
 }

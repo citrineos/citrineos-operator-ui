@@ -87,7 +87,10 @@ export const LocalAuthListPanel = ({ stationId }: LocalAuthListPanelProps) => {
   }, [data?.data]);
 
   const currentEntries: LocalListAuthorizationClass[] = useMemo(
-    () => localListVersion?.LocalListAuthorizations ?? [],
+    () =>
+      (localListVersion?.LocalListVersionAuthorizations ?? [])
+        .map((j) => j.LocalListAuthorization)
+        .filter((a): a is LocalListAuthorizationClass => a != null),
     [localListVersion],
   );
 
