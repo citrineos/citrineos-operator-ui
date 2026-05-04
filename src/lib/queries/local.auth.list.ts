@@ -23,22 +23,24 @@ export const LOCAL_LIST_VERSION_BY_STATION = gql`
       versionNumber
       updatedAt
       createdAt
-      LocalListAuthorizations {
-        id
-        authorizationId
-        idToken
-        idTokenType
-        status
-        cacheExpiryDateTime
-        groupAuthorizationId
-        chargingPriority
-        language1
-        language2
-        allowedConnectorTypes
-        disallowedEvseIdPrefixes
-        groupAuthorization: GroupAuthorization {
+      LocalListVersionAuthorizations {
+        LocalListAuthorization {
           id
+          authorizationId
           idToken
+          idTokenType
+          status
+          cacheExpiryDateTime
+          groupAuthorizationId
+          chargingPriority
+          language1
+          language2
+          allowedConnectorTypes
+          disallowedEvseIdPrefixes
+          groupAuthorization: authorizationByGroupauthorizationid {
+            id
+            idToken
+          }
         }
       }
     }
