@@ -4,8 +4,12 @@
 
 import React from 'react';
 import config from '@lib/utils/config';
+import { getUserLocale } from '@lib/server/hooks/getUserLocale';
+import { setUserLocale } from '@lib/server/hooks/getUserLocale';
+import { useTranslate } from '@refinedev/core';
 
 const EMAIL_RE = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+//const translate = useTranslate();
 
 function renderMessage(text: string): React.ReactNode {
   return text.split('\n').map((line, lineIdx, lines) => {
@@ -30,10 +34,22 @@ function renderMessage(text: string): React.ReactNode {
     );
   });
 }
+// TODO: в последствии необходимо изменить на приемлимы вариант, сейчас этот метод тестовый
+async function toggleLocale() {
+  const locale = (await getUserLocale()) ?? 'ru';
+  const newLocale = locale === 'en' ? 'ru' : 'en'
+  setUserLocale(newLocale);
+}
+
+function getButtonText(): string {
+  return useTranslate()('buttons.languageSwitch');
+}
+
 
 export const HeaderBanner: React.FC = () => (
   <>
-    {config.bannerMessage && (
+    {
+    config.bannerMessage && (
       <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1 dark:bg-gray-800/50 dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:bottom-0 dark:after:h-px dark:after:bg-white/10">
         <div
           aria-hidden="true"
@@ -55,7 +71,12 @@ export const HeaderBanner: React.FC = () => (
           </p>
         </div>
         <div className="flex flex-1 justify-end" />
-      </div>
+            <div>
+                <button type="button" onClick={toggleLocale}>
+                  {getButtonText()}
+                </button>
+            </div>
+        </div>
     )}
   </>
 );

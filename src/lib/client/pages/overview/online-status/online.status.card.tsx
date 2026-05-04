@@ -68,14 +68,14 @@ export const OnlineStatusCard = () => {
                 <span className={statusLabelStyle}>{onlineCount}</span>
                 <div className={statusIndicatorFlex}>
                   <Circle status={ChargerStatusEnum.ONLINE} />
-                  Online
+                  {translate('overview.chargingStationOnline')}
                 </div>
               </div>
               <div className={statusFlex}>
                 <span className={statusLabelStyle}>{offlineCount}</span>
                 <div className={statusIndicatorFlex}>
                   <Circle status={ChargerStatusEnum.OFFLINE} />
-                  Offline
+                  {translate('overview.chargingStationOffline')}
                 </div>
               </div>
             </div>

@@ -1,4 +1,5 @@
 [
   { "code": "US", "name": "United States" },
-  { "code": "CA", "name": "Canada" }
+  { "code": "CA", "name": "Canada" },
+  { "code": "BY", "name": "Беларусь" }
 ]
