@@ -31,6 +31,7 @@ import { pageFlex } from '@lib/client/styles/page';
 import { MultiSelect } from '@lib/client/components/multi-select';
 import { ChartsWrapper } from '@lib/client/pages/transactions/chart/charts.wrapper';
 import { TransactionEventsList } from '@lib/client/pages/transactions/detail/transaction-events/transaction.events.list';
+import { OCPPMessages } from '@lib/client/pages/charging-stations/detail/ocpp.messages';
 import { GET_METER_VALUES_FOR_TRANSACTION } from '@lib/queries/meter.values';
 import { MeterValueClass } from '@lib/cls/meter.value.dto';
 import { useState } from 'react';
@@ -44,6 +45,7 @@ enum TransactionDetailTabType {
   authorizations = 'authorizations',
   meterValues = 'meterValues',
   events = 'events',
+  ocppMessages = 'ocppMessages',
 }
 
 export const TransactionDetailTabsCard = ({
@@ -106,6 +108,9 @@ export const TransactionDetailTabsCard = ({
             </TabsTrigger>
             <TabsTrigger value={TransactionDetailTabType.events}>
               Events
+            </TabsTrigger>
+            <TabsTrigger value={TransactionDetailTabType.ocppMessages}>
+              OCPP Messages
             </TabsTrigger>
           </TabsList>
 
@@ -194,6 +199,41 @@ export const TransactionDetailTabsCard = ({
               }}
             >
               <TransactionEventsList transactionDatabaseId={transaction.id} />
+            </CanAccess>
+          </TabsContent>
+
+          <TabsContent
+            value={TransactionDetailTabType.ocppMessages}
+            className={cardTabsStyle}
+          >
+            <CanAccess
+              resource={ResourceType.TRANSACTIONS}
+              action={ActionType.ACCESS}
+              fallback={<AccessDeniedFallback />}
+              params={{
+                id: transaction.id,
+                accessType: TransactionAccessType.EVENTS,
+              }}
+            >
+              <OCPPMessages
+                stationId={transaction.stationId}
+                initialStartDate={
+                  transaction.startTime
+                    ? new Date(
+                        new Date(transaction.startTime).getTime() -
+                          2 * 60 * 1000,
+                      )
+                    : null
+                }
+                initialEndDate={
+                  transaction.endTime
+                    ? new Date(
+                        new Date(transaction.endTime).getTime() +
+                          2 * 60 * 1000,
+                      )
+                    : new Date()
+                }
+              />
             </CanAccess>
           </TabsContent>
         </Tabs>
