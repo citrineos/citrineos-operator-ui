@@ -48,6 +48,8 @@ enum TransactionDetailTabType {
   ocppMessages = 'ocppMessages',
 }
 
+const twoMinutesInMs = twoMinutesInMs;
+
 export const TransactionDetailTabsCard = ({
   transaction,
 }: {
@@ -221,7 +223,7 @@ export const TransactionDetailTabsCard = ({
                   transaction.startTime
                     ? new Date(
                         new Date(transaction.startTime).getTime() -
-                          2 * 60 * 1000,
+                          twoMinutesInMs,
                       )
                     : null
                 }
@@ -229,7 +231,7 @@ export const TransactionDetailTabsCard = ({
                   transaction.endTime
                     ? new Date(
                         new Date(transaction.endTime).getTime() +
-                          2 * 60 * 1000,
+                          twoMinutesInMs,
                       )
                     : new Date()
                 }
