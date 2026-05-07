@@ -55,9 +55,9 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
 `;
 
 export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
-  query DownloadVariableAttributes($stationPkId: Int!) {
+  query DownloadVariableAttributes($stationId: String!) {
     VariableAttributes(
-      where: { stationPkId: { _eq: $stationPkId } }
+      where: { stationId: { _eq: $stationId } }
       order_by: { createdAt: desc }
     ) {
       id
@@ -89,9 +89,7 @@ export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
         updatedAt
       }
     }
-    VariableAttributes_aggregate(
-      where: { stationPkId: { _eq: $stationPkId } }
-    ) {
+    VariableAttributes_aggregate(where: { stationId: { _eq: $stationId } }) {
       aggregate {
         count
       }

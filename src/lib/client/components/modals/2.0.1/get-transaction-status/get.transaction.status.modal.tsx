@@ -65,7 +65,7 @@ export const GetTransactionStatusModal = ({
     meta: {
       gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
       gqlVariables: {
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
       },
     },
     pagination: { mode: 'off' },

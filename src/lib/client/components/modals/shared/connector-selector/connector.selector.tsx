@@ -50,13 +50,13 @@ export const ConnectorSelector = ({
       ? {
           offset: 0,
           limit: 10,
-          stationPkId: station.pkId,
+          stationId: station.id,
           where: { evseId: { _eq: evseId } },
         }
       : {
           offset: 0,
           limit: 10,
-          stationPkId: station.pkId,
+          stationId: station.id,
         };
 
   const { options, onSearch, query } = useSelect<ConnectorDto>({

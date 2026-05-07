@@ -126,7 +126,7 @@ export const ChargingStationDetailCard = ({
 
     mutate(
       {
-        id: station.pkId!,
+        id: station.id,
         resource: ResourceType.CHARGING_STATIONS,
         meta: {
           gqlMutation: CHARGING_STATIONS_DELETE_MUTATION,
@@ -173,7 +173,7 @@ export const ChargingStationDetailCard = ({
         title: translate('ChargingStations.toggleOnlineStatus'),
         modalComponentType: ModalComponentType.toggleStationOnlineStatus,
         modalComponentProps: {
-          stationPkId: station.pkId,
+          stationId: station.id,
           currentStatus: station.isOnline,
         },
       }),
@@ -244,7 +244,7 @@ export const ChargingStationDetailCard = ({
               variant="secondary"
               size="sm"
               onClick={() =>
-                push(`/${MenuSection.CHARGING_STATIONS}/${station.pkId}/edit`)
+                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
               }
             >
               <Edit className={buttonIconSize} />

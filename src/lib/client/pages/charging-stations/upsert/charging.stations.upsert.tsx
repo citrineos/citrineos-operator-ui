@@ -242,7 +242,7 @@ export const ChargingStationUpsert = ({
 
     form.refineCore.onFinish(newItem).then((result) => {
       if (result) {
-        const finalStationId = stationId || (result as any).data?.pkId;
+        const finalStationId = stationId || (result as any).data?.id;
 
         // Upload image to S3
         if (uploadedFile && finalStationId) {

@@ -66,7 +66,7 @@ export const GetBaseReportModal = ({ station }: GetBaseReportModalProps) => {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       gqlVariables: {
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
         type: 'getBaseReport',
       },
     },

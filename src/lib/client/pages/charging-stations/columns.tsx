@@ -40,7 +40,7 @@ export const getChargingStationsColumns = (
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
         <TableCellLink
-          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.pkId}`}
+          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.id}`}
           value={row.original.id}
         />
       ),

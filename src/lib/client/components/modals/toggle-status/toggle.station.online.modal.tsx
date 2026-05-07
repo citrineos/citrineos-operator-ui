@@ -12,13 +12,13 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface ToggleStationOnlineModalProps {
-  stationPkId: string;
+  stationId: string;
   currentStatus: boolean;
   onSuccess?: () => void;
 }
 
 export const ToggleStationOnlineModal = ({
-  stationPkId,
+  stationId,
   currentStatus,
   onSuccess,
 }: ToggleStationOnlineModalProps) => {
@@ -35,7 +35,7 @@ export const ToggleStationOnlineModal = ({
 
     mutate(
       {
-        id: stationPkId,
+        id: stationId,
         resource: ResourceType.CHARGING_STATIONS,
         values: { isOnline: newStatus },
         meta: {

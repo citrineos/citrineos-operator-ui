@@ -118,27 +118,14 @@ export const ChargingStationConfiguration: React.FC<
   const [editValue, setEditValue] = useState<string | null>(null);
   const versionInitialized = useRef(false);
 
-  const {
-    query: { data },
-  } = useOne<ChargingStationClass>({
-    resource: ResourceType.CHARGING_STATIONS,
-    id: stationId,
-    meta: {
-      gqlQuery: CHARGING_STATION_ONLINE_STATUS_QUERY,
-    },
-    queryOptions: getPlainToInstanceOptions(ChargingStationClass, true),
-  });
-  const station = data?.data;
-  const isConnected = !!station?.isOnline;
-
   const attributeFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'stationPkId', operator: 'eq', value: Number(stationId) }],
+    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
     [stationId],
   );
 
   const configFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'stationId', operator: 'eq', value: station?.id ?? '' }],
-    [station?.id],
+    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    [stationId],
   );
 
   const {
@@ -184,7 +171,7 @@ export const ChargingStationConfiguration: React.FC<
     resource: 'VariableAttributes',
     meta: {
       gqlQuery: VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
-      gqlVariables: { stationPkId: Number(stationId) },
+      gqlVariables: { stationId },
     },
     pagination: {
       mode: 'off',
@@ -200,12 +187,25 @@ export const ChargingStationConfiguration: React.FC<
     resource: 'ChangeConfigurations',
     meta: {
       gqlQuery: CHANGE_CONFIGURATION_DOWNLOAD_QUERY,
-      gqlVariables: { stationId: station?.id ?? '' },
+      gqlVariables: { stationId },
     },
     pagination: {
       mode: 'off',
     },
   });
+
+  const {
+    query: { data },
+  } = useOne<ChargingStationClass>({
+    resource: ResourceType.CHARGING_STATIONS,
+    id: stationId,
+    meta: {
+      gqlQuery: CHARGING_STATION_ONLINE_STATUS_QUERY,
+    },
+    queryOptions: getPlainToInstanceOptions(ChargingStationClass, true),
+  });
+  const station = data?.data;
+  const isConnected = !!station?.isOnline;
 
   // Set initial version based on station protocol
   useEffect(() => {

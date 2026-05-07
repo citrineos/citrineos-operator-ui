@@ -74,7 +74,7 @@ export const ChangeAvailabilityModal = ({
       gqlVariables: {
         offset: 0,
         limit: 10,
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
       },
     },
     sorters: [{ field: ConnectorProps.connectorId, order: 'asc' }],

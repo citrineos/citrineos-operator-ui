@@ -75,7 +75,7 @@ export const TriggerMessageModal = ({ station }: TriggerMessageModalProps) => {
       gqlVariables: {
         offset: 0,
         limit: 10,
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
       },
     },
     sorters: [{ field: ConnectorProps.connectorId, order: 'asc' }],
