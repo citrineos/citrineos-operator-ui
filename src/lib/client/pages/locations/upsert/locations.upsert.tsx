@@ -96,6 +96,7 @@ const LocationCreateSchema = LocationSchema.pick({
     )
     .nullable()
     .optional(),
+  [LocationProps.state]: z.string().nullable(),
 });
 
 type LocationCreateDto = z.infer<typeof LocationCreateSchema>;
