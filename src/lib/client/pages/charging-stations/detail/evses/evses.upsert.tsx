@@ -75,6 +75,7 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
     }
 
     newItem.updatedAt = now;
+    newItem.stationId = stationId;
 
     form.refineCore.onFinish(newItem).then(() => reset());
   };

@@ -45,7 +45,6 @@ import {
   useTranslate,
 } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
-import { debounce } from 'lodash';
 import { ChevronLeft, UploadIcon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import z from 'zod';
@@ -134,48 +133,44 @@ export const ChargingStationUpsert = ({
     warnWhenUnsavedChanges: true,
   });
 
+  const selectedLocationIdValue = form.watch(ChargingStationProps.locationId);
+
   // Location search using refine core's useSelect
   const {
     options: locationOptions,
     onSearch,
     query: locationQuery,
+    defaultValueQuery: locationDefaultValueQuery,
   } = useSelect<LocationDto>({
     resource: ResourceType.LOCATIONS,
     optionLabel: 'name',
     optionValue: 'id',
+    defaultValue: selectedLocationIdValue ?? undefined,
     meta: {
       gqlQuery: LOCATIONS_LIST_QUERY,
       gqlVariables: {
-        where: locationId ? { id: { _eq: Number(locationId) } } : {},
-        order_by: { updatedAt: 'desc' },
         offset: 0,
         limit: 5,
+        order_by: { updatedAt: 'desc' },
       },
     },
-    pagination: {
-      mode: 'off',
-    },
+    pagination: { mode: 'off' },
     onSearch: (value: string) => {
-      const debouncedSearch = debounce((value: string): CrudFilter[] => {
-        if (!value) {
-          return [];
-        }
-        const valueList = [
-          { field: LocationProps.name, operator: 'contains', value },
-          { field: LocationProps.address, operator: 'contains', value },
-          { field: LocationProps.city, operator: 'contains', value },
-          { field: LocationProps.state, operator: 'contains', value },
-          { field: LocationProps.postalCode, operator: 'contains', value },
-        ];
-        return [
-          {
-            operator: 'or',
-            value: valueList,
-          } as CrudFilter,
-        ];
-      }, 300);
-
-      return debouncedSearch(value) || [];
+      if (!value) {
+        return [];
+      }
+      return [
+        {
+          operator: 'or',
+          value: [
+            { field: LocationProps.name, operator: 'contains', value },
+            { field: LocationProps.address, operator: 'contains', value },
+            { field: LocationProps.city, operator: 'contains', value },
+            { field: LocationProps.state, operator: 'contains', value },
+            { field: LocationProps.postalCode, operator: 'contains', value },
+          ],
+        } as CrudFilter,
+      ];
     },
   });
 
@@ -206,15 +201,25 @@ export const ChargingStationUpsert = ({
       const selectedLocationId = form.getValues(
         ChargingStationProps.locationId,
       );
-      const selectedLocation = locationQuery.data?.data?.find(
-        (loc: LocationDto) => loc.id === selectedLocationId,
+      const loadedLocations: LocationDto[] = [
+        ...(locationQuery.data?.data || []),
+        ...(locationDefaultValueQuery.result?.data || []),
+      ];
+      const selectedLocation = loadedLocations.find(
+        (loc) => loc.id === selectedLocationId,
       );
       if (selectedLocation?.coordinates) {
         setLatitude(selectedLocation.coordinates.coordinates[1]);
         setLongitude(selectedLocation.coordinates.coordinates[0]);
       }
     }
-  }, [useLocationCoordinates, locationOptions, form, locationQuery.data?.data]);
+  }, [
+    useLocationCoordinates,
+    locationOptions,
+    form,
+    locationQuery.data?.data,
+    locationDefaultValueQuery.result?.data,
+  ]);
 
   const handleOnFinish = (values: ChargingStationCreateDto) => {
     const now = new Date().toISOString();
@@ -361,8 +366,12 @@ export const ChargingStationUpsert = ({
                         const selectedLocationId = form.getValues(
                           ChargingStationProps.locationId,
                         );
-                        const selectedLocation = locationQuery.data?.data?.find(
-                          (loc: LocationDto) => loc.id === selectedLocationId,
+                        const loadedLocations: LocationDto[] = [
+                          ...(locationQuery.data?.data || []),
+                          ...(locationDefaultValueQuery.result?.data || []),
+                        ];
+                        const selectedLocation = loadedLocations.find(
+                          (loc) => loc.id === selectedLocationId,
                         );
                         if (selectedLocation?.coordinates) {
                           setLatitude(
