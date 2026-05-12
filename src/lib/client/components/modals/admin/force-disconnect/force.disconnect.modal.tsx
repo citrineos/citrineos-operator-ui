@@ -32,7 +32,7 @@ export const ForceDisconnectModal = ({
 
   const onOkay = async () => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/ocpprouter/connection?stationId=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
+      url: `/ocpprouter/connection?ocppConnectionName=${parsedStation.ocppConnectionName}&tenantId=${parsedStation.tenantId}`,
       data: undefined,
       setLoading,
       ocppVersion: null,
@@ -52,7 +52,7 @@ export const ForceDisconnectModal = ({
         <div className="mt-2">
           <p className="text-sm text-gray-500">
             {translate('ChargingStations.forceDisconnectMessage')}{' '}
-            <span className="font-medium">{parsedStation.id}</span>?
+            <span className="font-medium">{parsedStation.ocppConnectionName}</span>?
           </p>
           <p className="text-sm text-gray-500 mt-1">
             {translate('ChargingStations.forceDisconnectCaution')}

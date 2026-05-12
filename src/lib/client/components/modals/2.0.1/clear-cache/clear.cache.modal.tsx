@@ -30,7 +30,7 @@ export const ClearCacheModal = ({ station }: ClearCacheModalProps) => {
   ) as ChargingStationDto;
 
   const handleSubmit = async () => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Clear Cache request because station ID is missing.',
       );
@@ -38,7 +38,7 @@ export const ClearCacheModal = ({ station }: ClearCacheModalProps) => {
     }
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/clearCache?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/evdriver/clearCache?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data: {},
       setLoading,
       ocppVersion: parsedStation.protocol,

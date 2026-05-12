@@ -32,7 +32,7 @@ export const getChargingStationsColumns = (
 ): ColumnConfiguration[] => {
   return [
     {
-      key: ChargingStationProps.id,
+      key: ChargingStationProps.ocppConnectionName,
       header: 'ID',
       visible: true,
       sortable: true,
@@ -41,27 +41,27 @@ export const getChargingStationsColumns = (
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
         <TableCellLink
-          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.pkId}`}
-          value={row.original.id}
+          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.id}`}
+          value={row.original.ocppConnectionName}
         />
       ),
     },
     ...(includeLocation
       ? [
-          {
-            key: ChargingStationDetailsProps.location,
-            header: 'Location',
-            visible: true,
-            cellRender: ({
-              row,
-            }: CellContext<ChargingStationDetailsDto, unknown>) => (
-              <TableCellLink
-                path={`/${MenuSection.LOCATIONS}/${row.original.location?.id}`}
-                value={row.original.location?.name}
-              />
-            ),
-          },
-        ]
+        {
+          key: ChargingStationDetailsProps.location,
+          header: 'Location',
+          visible: true,
+          cellRender: ({
+            row,
+          }: CellContext<ChargingStationDetailsDto, unknown>) => (
+            <TableCellLink
+              path={`/${MenuSection.LOCATIONS}/${row.original.location?.id}`}
+              value={row.original.location?.name}
+            />
+          ),
+        },
+      ]
       : []),
     {
       key: ChargingStationDetailsProps.statusNotifications,
@@ -239,7 +239,7 @@ export const getChargingStationsFilters = (value: string): CrudFilter[] => {
       operator: 'or',
       value: [
         {
-          field: ChargingStationProps.id,
+          field: ChargingStationProps.ocppConnectionName,
           operator: 'contains',
           value,
         },

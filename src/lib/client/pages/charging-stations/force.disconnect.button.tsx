@@ -11,14 +11,16 @@ import { CanAccess, useTranslate } from '@refinedev/core';
  * Intended to trigger the "Force Disconnect" modal; used by charging stations views.
  */
 export const ForceDisconnectButton = ({
-  stationId,
+  id,
   onClickAction,
   disabled = false,
 }: {
-  stationId: string;
+  id: number | undefined;
   onClickAction: () => void;
   disabled?: boolean;
 }) => {
+  if (id === undefined) return null;
+
   const translate = useTranslate();
 
   return (
@@ -26,7 +28,7 @@ export const ForceDisconnectButton = ({
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.COMMAND}
       params={{
-        id: stationId,
+        id,
         commandType: CommandType.FORCE_DISCONNECT,
       }}
     >

@@ -71,7 +71,7 @@ export const LocationMap: React.FC<MapProps> = ({
 
           return {
             position,
-            identifier: station.id,
+            identifier: station.ocppConnectionName,
             type: 'station' as const,
             locationId: location.id!.toString(),
             status: station.isOnline ? 'online' : ('offline' as const),
@@ -158,169 +158,169 @@ const MapWithClustering: React.FC<{
   selectedMarkerId,
   clusterByLocation = true,
 }) => {
-  // Track if map is fully initialized and ready for markers
-  const [mapFullyInitialized, setMapFullyInitialized] = useState(false);
-  const status = useApiLoadingStatus();
-  const [visibleElements, setVisibleElements] = useState<
-    (ClusterInfo | MapMarkerData)[]
-  >([]);
-  const [zoom, setZoom] = useState(initialZoom);
-  const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
-  const map = useMap();
+    // Track if map is fully initialized and ready for markers
+    const [mapFullyInitialized, setMapFullyInitialized] = useState(false);
+    const status = useApiLoadingStatus();
+    const [visibleElements, setVisibleElements] = useState<
+      (ClusterInfo | MapMarkerData)[]
+    >([]);
+    const [zoom, setZoom] = useState(initialZoom);
+    const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
+    const map = useMap();
 
-  // Wait until the map API is fully loaded
-  useEffect(() => {
-    if (status === APILoadingStatus.LOADED) {
-      setMapFullyInitialized(true);
-    } else {
-      setMapFullyInitialized(false);
-    }
-  }, [status]);
+    // Wait until the map API is fully loaded
+    useEffect(() => {
+      if (status === APILoadingStatus.LOADED) {
+        setMapFullyInitialized(true);
+      } else {
+        setMapFullyInitialized(false);
+      }
+    }, [status]);
 
-  // Update visible elements when map bounds change or markers change
-  useEffect(() => {
-    if (!map || !bounds || !markers) return;
+    // Update visible elements when map bounds change or markers change
+    useEffect(() => {
+      if (!map || !bounds || !markers) return;
 
-    // Filter markers to those in the current view
-    const visibleMarkers = markers.filter((marker) =>
-      bounds.contains(marker.position),
-    );
-
-    // Set up clustering based on zoom level and location grouping preference
-    if (zoom <= zoomMax && clusterByLocation) {
-      // High-level clustering - create clusters of locations
-      const clusters = createLocationClusters(
-        visibleMarkers,
-        locations,
-        bounds,
+      // Filter markers to those in the current view
+      const visibleMarkers = markers.filter((marker) =>
+        bounds.contains(marker.position),
       );
-      setVisibleElements(clusters);
-      // } else if (zoom <= 14 && clusterByLocation) {
-      //   // Mid-level clustering - show individual locations and cluster stations
-      //   const elements = createLocationBasedElements(visibleMarkers, locations);
-      //   setVisibleElements(elements);
-    } else {
-      // Low-level - show individual stations
-      setVisibleElements(visibleMarkers);
-    }
-  }, [map, bounds, zoom, markers, locations, clusterByLocation]);
 
-  // Set up event listeners for map changes
-  useEffect(() => {
-    if (!map) return;
+      // Set up clustering based on zoom level and location grouping preference
+      if (zoom <= zoomMax && clusterByLocation) {
+        // High-level clustering - create clusters of locations
+        const clusters = createLocationClusters(
+          visibleMarkers,
+          locations,
+          bounds,
+        );
+        setVisibleElements(clusters);
+        // } else if (zoom <= 14 && clusterByLocation) {
+        //   // Mid-level clustering - show individual locations and cluster stations
+        //   const elements = createLocationBasedElements(visibleMarkers, locations);
+        //   setVisibleElements(elements);
+      } else {
+        // Low-level - show individual stations
+        setVisibleElements(visibleMarkers);
+      }
+    }, [map, bounds, zoom, markers, locations, clusterByLocation]);
 
-    const updateZoom = () => {
-      const newZoom = map.getZoom();
-      if (newZoom) setZoom(newZoom);
-    };
-    updateZoom();
-    const zoomListener = map.addListener('zoom_changed', updateZoom);
+    // Set up event listeners for map changes
+    useEffect(() => {
+      if (!map) return;
 
-    const updateBounds = () => {
-      const newBounds = map.getBounds();
-      if (newBounds) setBounds(newBounds);
-    };
-    updateBounds();
-    const boundsListener = map.addListener('bounds_changed', updateBounds);
+      const updateZoom = () => {
+        const newZoom = map.getZoom();
+        if (newZoom) setZoom(newZoom);
+      };
+      updateZoom();
+      const zoomListener = map.addListener('zoom_changed', updateZoom);
 
-    return () => {
-      google.maps.event.removeListener(zoomListener);
-      google.maps.event.removeListener(boundsListener);
-    };
-  }, [map]);
+      const updateBounds = () => {
+        const newBounds = map.getBounds();
+        if (newBounds) setBounds(newBounds);
+      };
+      updateBounds();
+      const boundsListener = map.addListener('bounds_changed', updateBounds);
 
-  // Set map bounds to include all markers when map is initialized or markers change
-  useEffect(() => {
-    if (map && markers.length > 0) {
-      const newBounds = new google.maps.LatLngBounds();
+      return () => {
+        google.maps.event.removeListener(zoomListener);
+        google.maps.event.removeListener(boundsListener);
+      };
+    }, [map]);
 
-      markers.forEach((marker) => {
-        newBounds.extend(marker.position);
-      });
+    // Set map bounds to include all markers when map is initialized or markers change
+    useEffect(() => {
+      if (map && markers.length > 0) {
+        const newBounds = new google.maps.LatLngBounds();
 
-      map.fitBounds(newBounds);
-    }
-  }, [map, markers]);
+        markers.forEach((marker) => {
+          newBounds.extend(marker.position);
+        });
 
-  // Ensure selected marker is in view
-  useEffect(() => {
-    if (map && selectedMarkerId) {
-      const selectedMarker = markers.find(
-        (marker) => marker.identifier === selectedMarkerId,
-      );
-      if (selectedMarker) {
-        map.panTo(selectedMarker.position);
+        map.fitBounds(newBounds);
+      }
+    }, [map, markers]);
 
-        // Zoom in a bit if we're zoomed out too far
-        if (zoom < zoomMax) {
-          map.setZoom(zoomMax);
+    // Ensure selected marker is in view
+    useEffect(() => {
+      if (map && selectedMarkerId) {
+        const selectedMarker = markers.find(
+          (marker) => marker.identifier === selectedMarkerId,
+        );
+        if (selectedMarker) {
+          map.panTo(selectedMarker.position);
+
+          // Zoom in a bit if we're zoomed out too far
+          if (zoom < zoomMax) {
+            map.setZoom(zoomMax);
+          }
         }
       }
-    }
-  }, [selectedMarkerId, map, markers, zoom]);
+    }, [selectedMarkerId, map, markers, zoom]);
 
-  // Render the map and markers/clusters
-  return (
-    <GoogleMap
-      mapId={config.googleMapsOverviewMapId}
-      defaultCenter={defaultCenter}
-      defaultZoom={initialZoom}
-      gestureHandling="cooperative"
-      disableDefaultUI={false}
-      zoomControl={true}
-      fullscreenControl={false}
-    >
-      {mapFullyInitialized &&
-        visibleElements.map((element, index) => {
-          // Handle cluster elements
-          if ('count' in element) {
+    // Render the map and markers/clusters
+    return (
+      <GoogleMap
+        mapId={config.googleMapsOverviewMapId}
+        defaultCenter={defaultCenter}
+        defaultZoom={initialZoom}
+        gestureHandling="cooperative"
+        disableDefaultUI={false}
+        zoomControl={true}
+        fullscreenControl={false}
+      >
+        {mapFullyInitialized &&
+          visibleElements.map((element, index) => {
+            // Handle cluster elements
+            if ('count' in element) {
+              return (
+                <AdvancedMarker
+                  key={`cluster-${index}`}
+                  position={element.position}
+                  onClick={() => {
+                    // Zoom in when cluster is clicked
+                    if (map) {
+                      const bounds = new google.maps.LatLngBounds();
+                      element.markers.forEach((marker) => {
+                        bounds.extend(marker.position);
+                      });
+                      map.fitBounds(bounds);
+                    }
+                  }}
+                >
+                  <ClusterIcon
+                    count={element.count}
+                    type={element.type}
+                    color={'var(--grayscale-color-1)'}
+                  />
+                </AdvancedMarker>
+              );
+            }
+            // if ('markers' in element && element.markers) {
+            // }
+            // Handle regular marker elements
             return (
-              <AdvancedMarker
-                key={`cluster-${index}`}
+              <MapMarkerComponent
+                key={element.identifier}
                 position={element.position}
-                onClick={() => {
-                  // Zoom in when cluster is clicked
-                  if (map) {
-                    const bounds = new google.maps.LatLngBounds();
-                    element.markers.forEach((marker) => {
-                      bounds.extend(marker.position);
-                    });
-                    map.fitBounds(bounds);
-                  }
-                }}
-              >
-                <ClusterIcon
-                  count={element.count}
-                  type={element.type}
-                  color={'var(--grayscale-color-1)'}
-                />
-              </AdvancedMarker>
+                identifier={element.identifier}
+                reactContent={element.reactContent}
+                onClick={
+                  onMarkerClick
+                    ? () => onMarkerClick(element.identifier, element.type)
+                    : undefined
+                }
+                isSelected={element.identifier === selectedMarkerId}
+                color={element.color || 'var(--secondary-color-2)'}
+                type={element.type}
+                status={element.status}
+              />
             );
-          }
-          // if ('markers' in element && element.markers) {
-          // }
-          // Handle regular marker elements
-          return (
-            <MapMarkerComponent
-              key={element.identifier}
-              position={element.position}
-              identifier={element.identifier}
-              reactContent={element.reactContent}
-              onClick={
-                onMarkerClick
-                  ? () => onMarkerClick(element.identifier, element.type)
-                  : undefined
-              }
-              isSelected={element.identifier === selectedMarkerId}
-              color={element.color || 'var(--secondary-color-2)'}
-              type={element.type}
-              status={element.status}
-            />
-          );
-        })}
-    </GoogleMap>
-  );
-};
+          })}
+      </GoogleMap>
+    );
+  };
 
 // Helper function to create location-based clusters
 function createLocationClusters(
@@ -542,9 +542,9 @@ function calculateDistance(
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }

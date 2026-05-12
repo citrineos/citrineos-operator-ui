@@ -47,7 +47,7 @@ import { useSelector } from 'react-redux';
 import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
 
 export interface OCPPMessagesProps {
-  stationId: string;
+  stationId: number;
   initialStartDate?: Date | null;
   initialEndDate?: Date | null;
 }
@@ -111,7 +111,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
     ],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationPkId: Number(stationId) },
+      gqlVariables: { stationId },
     },
     filters,
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
@@ -245,7 +245,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
             },
             meta: {
               gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-              gqlVariables: { stationPkId: Number(stationId) },
+              gqlVariables: { stationId },
             },
             queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
           }}
@@ -355,7 +355,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
       <OCPPMessagesExportDialog
         open={exportDialogOpen}
         onOpenChangeAction={setExportDialogOpen}
-        stationId={stationId}
+        id={id}
         filters={filters}
       />
     </>

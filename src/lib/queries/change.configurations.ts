@@ -17,7 +17,7 @@ export const CHANGE_CONFIGURATION_LIST_QUERY = gql`
       order_by: $order_by
       where: $where
     ) {
-      stationId
+      ocppConnectionName
       key
       value
       readonly
@@ -31,16 +31,16 @@ export const CHANGE_CONFIGURATION_LIST_QUERY = gql`
 `;
 
 export const CHANGE_CONFIGURATION_DOWNLOAD_QUERY = gql`
-  query DownloadChangeConfigurations($stationId: String!) {
+  query DownloadChangeConfigurations($ocppConnectionName: String!) {
     ChangeConfigurations(
-      where: { stationId: { _eq: $stationId } }
+      where: { ocppConnectionName: { _eq: $ocppConnectionName } }
       order_by: { key: asc }
     ) {
-      stationId
+      ocppConnectionName
       key
       value
     }
-    ChangeConfigurations_aggregate(where: { stationId: { _eq: $stationId } }) {
+    ChangeConfigurations_aggregate(where: { ocppConnectionName: { _eq: $ocppConnectionName } }) {
       aggregate {
         count
       }
