@@ -228,9 +228,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
         }
       }
     }
-    Transactions_aggregate(
-      where: { id: { _eq: $id }, _and: $where }
-    ) {
+    Transactions_aggregate(where: { id: { _eq: $id }, _and: $where }) {
       aggregate {
         count
       }

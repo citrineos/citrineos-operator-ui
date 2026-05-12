@@ -45,8 +45,6 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
     );
   }
 
-
-
   return (
     <CanAccess
       resource={ResourceType.CHARGING_STATIONS}

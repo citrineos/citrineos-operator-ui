@@ -137,7 +137,13 @@ export const ChargingStationConfiguration: React.FC<
   );
 
   const configFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'ocppConnectionName', operator: 'eq', value: station?.ocppConnectionName ?? '' }],
+    () => [
+      {
+        field: 'ocppConnectionName',
+        operator: 'eq',
+        value: station?.ocppConnectionName ?? '',
+      },
+    ],
     [station?.ocppConnectionName],
   );
 
@@ -226,12 +232,15 @@ export const ChargingStationConfiguration: React.FC<
           key: attribute.id,
           type: attribute.type,
           value: attribute.value,
-          component: `${attribute.Component?.name ?? '-'}:${attribute.Component?.instance ?? '-'
-            }`,
-          variable: `${attribute.Variable?.name ?? '-'}:${attribute.Variable?.instance ?? '-'
-            }`,
-          evse: `${attribute.Evse?.id ?? '-'}:${attribute.Evse?.connectorId ?? '-'
-            }`,
+          component: `${attribute.Component?.name ?? '-'}:${
+            attribute.Component?.instance ?? '-'
+          }`,
+          variable: `${attribute.Variable?.name ?? '-'}:${
+            attribute.Variable?.instance ?? '-'
+          }`,
+          evse: `${attribute.Evse?.id ?? '-'}:${
+            attribute.Evse?.connectorId ?? '-'
+          }`,
         })),
       );
     } else if (version === '1.6' && changeConfigurationsResult?.data) {

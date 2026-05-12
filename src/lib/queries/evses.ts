@@ -67,9 +67,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
         updatedAt
       }
     }
-    Evses_aggregate(
-      where: { stationId: { _eq: $stationId }, _and: [$where] }
-    ) {
+    Evses_aggregate(where: { stationId: { _eq: $stationId }, _and: [$where] }) {
       aggregate {
         count
       }

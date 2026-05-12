@@ -79,7 +79,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
       tenantId,
     }));
     return [...events, ...messageRows];
-  }, [eventsData?.data, messagesData?.data, transactionDatabaseId]);
+  }, [eventsData?.data, messagesData?.data, transactionDatabaseId, tenantId]);
 
   const columns = [
     ...getTransactionEventColumns(),

@@ -150,7 +150,8 @@ export const ConnectorsUpsert: React.FC<ConnectorUpsertProps> = ({
     newItem.stationId =
       (connector as any)?.stationId ?? selectedChargingStation?.id;
     newItem.ocppConnectionName =
-      (connector as any)?.ocppConnectionName ?? selectedChargingStation?.ocppConnectionName;
+      (connector as any)?.ocppConnectionName ??
+      selectedChargingStation?.ocppConnectionName;
 
     form.refineCore.onFinish(newItem).then(() => reset());
   };

@@ -44,11 +44,7 @@ enum ChargingStationDetailTabType {
   aggregated = 'aggregated',
 }
 
-export const ChargingStationDetailTabsCard = ({
-  id,
-}: {
-  id: number;
-}) => {
+export const ChargingStationDetailTabsCard = ({ id }: { id: number }) => {
   const translate = useTranslate();
 
   const { renderedVisibleColumns } = useColumnPreferences(
