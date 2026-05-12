@@ -126,7 +126,10 @@ export const SelectedChargingStations = ({
                     key={station.fieldArrayId}
                     className="flex items-center justify-between gap-4 p-4 w-full border-b last:border-b-0"
                   >
-                    <KeyValueDisplay keyLabel="Station ID" value={station.ocppConnectionName} />
+                    <KeyValueDisplay
+                      keyLabel="Station ID"
+                      value={station.ocppConnectionName}
+                    />
                     <KeyValueDisplay
                       keyLabel="Status"
                       value={station.isOnline}

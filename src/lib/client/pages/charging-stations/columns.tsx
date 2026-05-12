@@ -47,20 +47,20 @@ export const getChargingStationsColumns = (
     },
     ...(includeLocation
       ? [
-        {
-          key: ChargingStationDetailsProps.location,
-          header: 'Location',
-          visible: true,
-          cellRender: ({
-            row,
-          }: CellContext<ChargingStationDetailsDto, unknown>) => (
-            <TableCellLink
-              path={`/${MenuSection.LOCATIONS}/${row.original.location?.id}`}
-              value={row.original.location?.name}
-            />
-          ),
-        },
-      ]
+          {
+            key: ChargingStationDetailsProps.location,
+            header: 'Location',
+            visible: true,
+            cellRender: ({
+              row,
+            }: CellContext<ChargingStationDetailsDto, unknown>) => (
+              <TableCellLink
+                path={`/${MenuSection.LOCATIONS}/${row.original.location?.id}`}
+                value={row.original.location?.name}
+              />
+            ),
+          },
+        ]
       : []),
     {
       key: ChargingStationDetailsProps.statusNotifications,

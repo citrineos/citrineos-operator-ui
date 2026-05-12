@@ -89,9 +89,7 @@ export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
         updatedAt
       }
     }
-    VariableAttributes_aggregate(
-      where: { id: { _eq: $id } }
-    ) {
+    VariableAttributes_aggregate(where: { id: { _eq: $id } }) {
       aggregate {
         count
       }

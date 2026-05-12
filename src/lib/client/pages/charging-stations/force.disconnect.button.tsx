@@ -19,9 +19,8 @@ export const ForceDisconnectButton = ({
   onClickAction: () => void;
   disabled?: boolean;
 }) => {
-  if (id === undefined) return null;
-
   const translate = useTranslate();
+  if (id === undefined) return null;
 
   return (
     <CanAccess

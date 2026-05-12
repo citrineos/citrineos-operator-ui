@@ -135,8 +135,9 @@ export const TransactionDetailCard = ({
           />
           <KeyValueDisplay
             keyLabel="Total kWh"
-            value={`${transaction.totalKwh ? transaction.totalKwh.toFixed(2) : 0
-              } kWh`}
+            value={`${
+              transaction.totalKwh ? transaction.totalKwh.toFixed(2) : 0
+            } kWh`}
           />
           <KeyValueDisplay
             keyLabel="Charging State"

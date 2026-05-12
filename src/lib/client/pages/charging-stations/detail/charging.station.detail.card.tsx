@@ -424,9 +424,9 @@ export const ChargingStationDetailCard = ({
                   isEmpty(station.connectors)
                     ? NOT_APPLICABLE
                     : station
-                      .connectors!.map((c) => c.type)
-                      .filter(Boolean)
-                      .join(', ')
+                        .connectors!.map((c) => c.type)
+                        .filter(Boolean)
+                        .join(', ')
                 }
               />
 

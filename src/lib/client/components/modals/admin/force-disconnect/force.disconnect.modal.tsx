@@ -52,7 +52,10 @@ export const ForceDisconnectModal = ({
         <div className="mt-2">
           <p className="text-sm text-gray-500">
             {translate('ChargingStations.forceDisconnectMessage')}{' '}
-            <span className="font-medium">{parsedStation.ocppConnectionName}</span>?
+            <span className="font-medium">
+              {parsedStation.ocppConnectionName}
+            </span>
+            ?
           </p>
           <p className="text-sm text-gray-500 mt-1">
             {translate('ChargingStations.forceDisconnectCaution')}

@@ -55,9 +55,7 @@ const filterByDate = (
   });
 };
 
-export const AggregatedMeterValuesData: FC<{ id: number }> = ({
-  id,
-}) => {
+export const AggregatedMeterValuesData: FC<{ id: number }> = ({ id }) => {
   const {
     query: { data: txData, isLoading: txLoading },
   } = useList<TransactionDto>({
