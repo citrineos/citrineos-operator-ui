@@ -73,6 +73,7 @@ export const TRANSACTION_LIST_QUERY = gql`
       }
       chargingStation: ChargingStation {
         id
+        ocppConnectionName
         isOnline
         protocol
         locationId
