@@ -69,14 +69,14 @@ interface VariableAttribute {
 }
 
 interface ChangeConfiguration {
-  stationId: string;
+  ocppConnectionName: string;
   key: string;
   value?: string | null;
   readonly?: boolean | null;
 }
 
 interface ChargingStationConfigurationProps {
-  stationId: string;
+  id: number;
 }
 
 const CONFIG_1_6_COLUMNS = [
@@ -98,7 +98,7 @@ const CONFIG_2_0_1_COLUMNS = [
 
 export const ChargingStationConfiguration: React.FC<
   ChargingStationConfigurationProps
-> = ({ stationId }) => {
+> = ({ id }) => {
   const translate = useTranslate();
   const [version, setVersion] = useState<'1.6' | '2.0.1'>('1.6');
   const [searchTerm, setSearchTerm] = useState('');
@@ -122,7 +122,7 @@ export const ChargingStationConfiguration: React.FC<
     query: { data },
   } = useOne<ChargingStationClass>({
     resource: ResourceType.CHARGING_STATIONS,
-    id: stationId,
+    id,
     meta: {
       gqlQuery: CHARGING_STATION_ONLINE_STATUS_QUERY,
     },
@@ -132,13 +132,13 @@ export const ChargingStationConfiguration: React.FC<
   const isConnected = !!station?.isOnline;
 
   const attributeFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'stationPkId', operator: 'eq', value: Number(stationId) }],
-    [stationId],
+    () => [{ field: 'id', operator: 'eq', value: id }],
+    [id],
   );
 
   const configFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'stationId', operator: 'eq', value: station?.id ?? '' }],
-    [station?.id],
+    () => [{ field: 'ocppConnectionName', operator: 'eq', value: station?.ocppConnectionName ?? '' }],
+    [station?.ocppConnectionName],
   );
 
   const {
@@ -184,7 +184,7 @@ export const ChargingStationConfiguration: React.FC<
     resource: 'VariableAttributes',
     meta: {
       gqlQuery: VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY,
-      gqlVariables: { stationPkId: Number(stationId) },
+      gqlVariables: { id },
     },
     pagination: {
       mode: 'off',
@@ -200,7 +200,7 @@ export const ChargingStationConfiguration: React.FC<
     resource: 'ChangeConfigurations',
     meta: {
       gqlQuery: CHANGE_CONFIGURATION_DOWNLOAD_QUERY,
-      gqlVariables: { stationId: station?.id ?? '' },
+      gqlVariables: { ocppConnectionName: station?.ocppConnectionName ?? '' },
     },
     pagination: {
       mode: 'off',
@@ -226,15 +226,12 @@ export const ChargingStationConfiguration: React.FC<
           key: attribute.id,
           type: attribute.type,
           value: attribute.value,
-          component: `${attribute.Component?.name ?? '-'}:${
-            attribute.Component?.instance ?? '-'
-          }`,
-          variable: `${attribute.Variable?.name ?? '-'}:${
-            attribute.Variable?.instance ?? '-'
-          }`,
-          evse: `${attribute.Evse?.id ?? '-'}:${
-            attribute.Evse?.connectorId ?? '-'
-          }`,
+          component: `${attribute.Component?.name ?? '-'}:${attribute.Component?.instance ?? '-'
+            }`,
+          variable: `${attribute.Variable?.name ?? '-'}:${attribute.Variable?.instance ?? '-'
+            }`,
+          evse: `${attribute.Evse?.id ?? '-'}:${attribute.Evse?.connectorId ?? '-'
+            }`,
         })),
       );
     } else if (version === '1.6' && changeConfigurationsResult?.data) {
@@ -281,10 +278,10 @@ export const ChargingStationConfiguration: React.FC<
         return;
       }
       downloadCSV(
-        `configurations_${stationId}_${version}_${new Date().toISOString()}`,
+        `configurations_${station?.ocppConnectionName}_${version}_${new Date().toISOString()}`,
         ['Station Id', ...CONFIG_1_6_COLUMNS.map((col) => col.header)],
         changeConfigurationsForDownload.data,
-        (item) => [item.stationId, item.key, item.value ?? ''],
+        (item) => [item.ocppConnectionName, item.key, item.value ?? ''],
       );
     } else {
       if (!variableAttributesForDownload?.data) {
@@ -292,11 +289,11 @@ export const ChargingStationConfiguration: React.FC<
         return;
       }
       downloadCSV(
-        `configurations_${stationId}_${version}_${new Date().toISOString()}`,
+        `configurations_${station?.ocppConnectionName}_${version}_${new Date().toISOString()}`,
         ['Station Id', ...CONFIG_2_0_1_COLUMNS.map((col) => col.header)],
         variableAttributesForDownload.data,
         (item) => [
-          stationId,
+          String(id),
           item.type,
           item.value,
           `${item.Component?.name ?? '-'}:${item.Component?.instance ?? '-'}`,

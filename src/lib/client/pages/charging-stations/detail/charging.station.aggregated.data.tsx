@@ -55,8 +55,8 @@ const filterByDate = (
   });
 };
 
-export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
-  stationId,
+export const AggregatedMeterValuesData: FC<{ id: number }> = ({
+  id,
 }) => {
   const {
     query: { data: txData, isLoading: txLoading },
@@ -65,7 +65,7 @@ export const AggregatedMeterValuesData: FC<{ stationId: string }> = ({
     meta: {
       gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
       gqlVariables: {
-        stationPkId: Number(stationId),
+        id,
         limit: 10000,
         offset: 0,
         order_by: { createdAt: 'asc' },

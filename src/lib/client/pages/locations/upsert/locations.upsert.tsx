@@ -147,7 +147,7 @@ export const LocationsUpsert = ({
 
   const { open } = useNotification();
 
-  const originalStationIdsRef = useRef<string[] | undefined>(undefined);
+  const originalStationIdsRef = useRef<number[]>([]);
   const [geoPoint, setGeoPoint] = useState<GeoPoint | undefined>(
     new GeoPoint(defaultLatitude, defaultLongitude),
   );
@@ -213,7 +213,7 @@ export const LocationsUpsert = ({
   useEffect(() => {
     if (!originalStationIdsRef.current && currentChargingPool !== undefined) {
       originalStationIdsRef.current = currentChargingPool
-        ? currentChargingPool.map((charger) => charger.id)
+        ? currentChargingPool.map((charger) => charger.id!)
         : [];
     }
   }, [currentChargingPool]);
@@ -231,7 +231,7 @@ export const LocationsUpsert = ({
   const processChargingPoolChanges = (locationId: string) => {
     const prevStationIds = new Set(originalStationIdsRef.current);
     const currentStationIds = new Set(
-      (currentChargingPool || []).map((charger) => charger.id),
+      (currentChargingPool || []).map((charger) => charger.id!),
     );
 
     const addedIds = [...currentStationIds].filter(

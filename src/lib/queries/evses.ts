@@ -32,20 +32,20 @@ export const EVSE_LIST_QUERY = gql`
 
 export const GET_EVSE_LIST_FOR_STATION = gql`
   query GetPaginatedEvseListForStation(
-    $stationPkId: Int!
+    $stationId: Int!
     $where: Evses_bool_exp = {}
     $order_by: [Evses_order_by!] = {}
     $offset: Int
     $limit: Int
   ) {
     Evses(
-      where: { stationPkId: { _eq: $stationPkId }, _and: [$where] }
+      where: { stationId: { _eq: $stationId }, _and: [$where] }
       order_by: $order_by
       offset: $offset
       limit: $limit
     ) {
       id
-      stationId
+      ocppConnectionName
       evseTypeId
       evseId
       physicalReference
@@ -68,7 +68,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
       }
     }
     Evses_aggregate(
-      where: { stationPkId: { _eq: $stationPkId }, _and: [$where] }
+      where: { stationId: { _eq: $stationId }, _and: [$where] }
     ) {
       aggregate {
         count
@@ -78,10 +78,10 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
 `;
 
 export const GET_EVSES_FOR_STATION = gql`
-  query GetEvseListForStation($stationPkId: Int!) {
-    Evses(where: { stationPkId: { _eq: $stationPkId } }) {
+  query GetEvseListForStation($stationId: Int!) {
+    Evses(where: { stationId: { _eq: $stationId } }) {
       id
-      stationId
+      ocppConnectionName
       evseTypeId
       evseId
       physicalReference

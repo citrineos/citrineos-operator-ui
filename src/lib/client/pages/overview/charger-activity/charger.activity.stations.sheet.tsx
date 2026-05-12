@@ -40,7 +40,7 @@ export const ChargerActivityStationsSheet = ({
             {chargers.length > 0 ? (
               chargers.map((item, index) => (
                 <ChargerRow
-                  key={`${item.station.id}-${item.evse.connectors?.[0]?.id}`}
+                  key={`${item.station.ocppConnectionName}-${item.evse.connectors?.[0]?.id}`}
                   chargingStation={item.station}
                   evse={item.evse}
                   lastStatus={item.lastStatus}

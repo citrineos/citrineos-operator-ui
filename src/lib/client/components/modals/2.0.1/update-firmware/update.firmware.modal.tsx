@@ -65,7 +65,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
     meta: {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
-      gqlVariables: { stationPkId: station.pkId, type: 'updateFirmware' },
+      gqlVariables: { stationId: station.id, type: 'updateFirmware' },
     },
   });
 
@@ -93,7 +93,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
   }, [requestIdResponse, form]);
 
   const handleSubmit = (values: UpdateFirmwareFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Update Firmware request because station ID is missing.',
       );
@@ -128,7 +128,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/updateFirmware?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

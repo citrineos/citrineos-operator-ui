@@ -53,7 +53,7 @@ export const UpdateAuthPasswordModal = ({
   });
 
   const handleSubmit = (values: UpdateAuthPasswordFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Update Auth Password request because station ID is missing.',
       );
@@ -63,7 +63,7 @@ export const UpdateAuthPasswordModal = ({
     const data = {
       password: values.password,
       setOnCharger: values.setOnCharger,
-      stationId: parsedStation.id,
+      ocppConnectionName: parsedStation.ocppConnectionName,
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation>({

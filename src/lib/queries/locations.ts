@@ -31,8 +31,8 @@ export const LOCATIONS_LIST_QUERY = gql`
       timeZone
       parkingType
       chargingPool: ChargingStations(where: $chargingStationsWhere) {
-        pkId
         id
+        ocppConnectionName
         isOnline
         protocol
         createdAt
@@ -46,7 +46,7 @@ export const LOCATIONS_LIST_QUERY = gql`
         }
         LatestStatusNotifications {
           id
-          stationId
+          ocppConnectionName
           statusNotificationId
           updatedAt
           createdAt
@@ -55,7 +55,7 @@ export const LOCATIONS_LIST_QUERY = gql`
             connectorStatus
             createdAt
             evseId
-            stationId
+            ocppConnectionName
             id
             timestamp
             updatedAt
@@ -66,7 +66,7 @@ export const LOCATIONS_LIST_QUERY = gql`
           timeSpentCharging
           isActive
           chargingState
-          stationId
+          ocppConnectionName
           stoppedReason
           transactionId
           evseId
@@ -129,7 +129,7 @@ export const LOCATIONS_GET_QUERY = gql`
         }
         LatestStatusNotifications {
           id
-          stationId
+          ocppConnectionName
           statusNotificationId
           updatedAt
           createdAt
@@ -138,7 +138,7 @@ export const LOCATIONS_GET_QUERY = gql`
             connectorStatus
             createdAt
             evseId
-            stationId
+            ocppConnectionName
             id
             timestamp
             updatedAt
@@ -149,7 +149,7 @@ export const LOCATIONS_GET_QUERY = gql`
           timeSpentCharging
           isActive
           chargingState
-          stationId
+          ocppConnectionName
           stoppedReason
           transactionId
           evseId

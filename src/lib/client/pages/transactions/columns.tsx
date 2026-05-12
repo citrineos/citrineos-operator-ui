@@ -23,7 +23,7 @@ import type { ColumnConfiguration } from '@lib/utils/column.configuration';
 import { TransactionClass } from '@lib/cls/transaction.dto';
 import { EMPTY_VALUE } from '@lib/utils/consts';
 
-export const transactionStationIdField = 'stationId';
+export const transactionStationIdField = 'ocppConnectionName';
 export const transactionChargingStationLocationNameField =
   'ChargingStation.Location.name';
 export const transactionAuthorizationIdTokenField = 'authorization.idToken';
@@ -186,7 +186,7 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: TransactionProps.stationId,
+          field: TransactionProps.ocppConnectionName,
           operator: 'contains',
           value,
         },

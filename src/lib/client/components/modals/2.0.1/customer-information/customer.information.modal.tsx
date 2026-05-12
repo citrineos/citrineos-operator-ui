@@ -88,7 +88,7 @@ export const CustomerInformationModal = ({
   });
 
   const onFinish = (values: CustomerInformationFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Customer Information request because station ID is missing.',
       );
@@ -113,7 +113,7 @@ export const CustomerInformationModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/customerInformation?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/reporting/customerInformation?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data: payload,
       setLoading,
       ocppVersion: parsedStation.protocol,

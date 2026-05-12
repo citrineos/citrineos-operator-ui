@@ -119,7 +119,7 @@ export const GET_TRANSACTIONS_FOR_TARIFF = gql`
       timeSpentCharging
       isActive
       chargingState
-      stationId
+      ocppConnectionName
       stoppedReason
       transactionId
       evseId

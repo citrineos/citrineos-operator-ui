@@ -70,9 +70,9 @@ export const DeleteCertificateModal = ({
     },
     filters: [
       {
-        field: InstalledCertificateProps.stationId,
+        field: InstalledCertificateProps.ocppConnectionName,
         operator: 'eq',
-        value: parsedStation.id,
+        value: parsedStation.ocppConnectionName,
       },
     ],
     pagination: { mode: 'off' },
@@ -81,7 +81,7 @@ export const DeleteCertificateModal = ({
   const selectedCertificate = form.watch('certificate');
 
   const onFinish = async (values: DeleteCertificateFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Delete Certificate request because station ID is missing.',
       );
@@ -95,7 +95,7 @@ export const DeleteCertificateModal = ({
 
     const certificate = JSON.parse(values.certificate);
 
-    if (parsedStation.id !== certificate.stationId) {
+    if (parsedStation.ocppConnectionName !== certificate.ocppConnectionName) {
       toast.error('This certificate does not belong to this station');
       return;
     }
@@ -110,7 +110,7 @@ export const DeleteCertificateModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/deleteCertificate?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/certificates/deleteCertificate?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,
