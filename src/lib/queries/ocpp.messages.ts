@@ -6,14 +6,14 @@ import { gql } from 'graphql-tag';
 
 export const GET_OCPP_MESSAGES_LIST_FOR_STATION = gql`
   query GetOCPPMessagesListForStation(
-    $id: Int
+    $stationId: Int
     $where: [OCPPMessages_bool_exp!] = []
     $order_by: [OCPPMessages_order_by!] = {}
     $offset: Int
     $limit: Int
   ) {
     OCPPMessages(
-      where: { id: { _eq: $id }, _and: $where }
+      where: { stationId: { _eq: $stationId }, _and: $where }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -30,7 +30,7 @@ export const GET_OCPP_MESSAGES_LIST_FOR_STATION = gql`
       updatedAt
     }
     OCPPMessages_aggregate(
-      where: { id: { _eq: $id }, _and: $where }
+      where: { stationId: { _eq: $stationId }, _and: $where }
     ) {
       aggregate {
         count
