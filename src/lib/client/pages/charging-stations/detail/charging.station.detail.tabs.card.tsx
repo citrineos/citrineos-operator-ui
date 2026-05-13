@@ -4,19 +4,10 @@
 'use client';
 
 import { Card, CardContent } from '@lib/client/components/ui/card';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@lib/client/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from '@lib/client/components/ui/tabs';
 import { CanAccess, useTranslate } from '@refinedev/core';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import {
-  ActionType,
-  ChargingStationAccessType,
-  ResourceType,
-} from '@lib/utils/access.types';
+import { ActionType, ChargingStationAccessType, ResourceType, } from '@lib/utils/access.types';
 import { EVSESList } from '@lib/client/pages/charging-stations/detail/evses/evses.list';
 import { OCPPMessages } from '@lib/client/pages/charging-stations/detail/ocpp.messages';
 import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
@@ -165,7 +156,7 @@ export const ChargingStationDetailTabsCard = ({ id }: { id: number }) => {
                   sorters: DEFAULT_SORTERS,
                   meta: {
                     gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
-                    gqlVariables: { id },
+                    gqlVariables: { stationId: id },
                   },
                   queryOptions: getPlainToInstanceOptions(TransactionClass),
                 }}
