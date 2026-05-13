@@ -33,7 +33,7 @@ export const getChargingStationsColumns = (
   return [
     {
       key: ChargingStationProps.id,
-      header: 'ID',
+      header: 'Name',
       visible: true,
       sortable: true,
       cellRender: ({
@@ -41,21 +41,8 @@ export const getChargingStationsColumns = (
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
         <TableCellLink
           path={`/${MenuSection.CHARGING_STATIONS}/${row.original.id}`}
-          value={row.original[ChargingStationDetailsProps.id]}
+          value={row.original[ChargingStationDetailsProps.ocppConnectionName]}
         />
-      ),
-    },
-    {
-      key: ChargingStationProps.ocppConnectionName,
-      header: 'Name',
-      visible: true,
-      sortable: true,
-      cellRender: ({
-        row,
-      }: CellContext<ChargingStationDetailsDto, unknown>) => (
-        <span>
-          {row.original[ChargingStationDetailsProps.ocppConnectionName]}
-        </span>
       ),
     },
     ...(includeLocation
