@@ -115,6 +115,7 @@ export const LOCATIONS_GET_QUERY = gql`
       openingHours
       chargingPool: ChargingStations {
         id
+        ocppConnectionName
         isOnline
         protocol
         createdAt
