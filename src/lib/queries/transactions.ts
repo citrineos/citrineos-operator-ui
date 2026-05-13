@@ -131,6 +131,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       updatedAt
       chargingStation: ChargingStation {
         id
+        ocppConnectionName
         isOnline
         protocol
         locationId
