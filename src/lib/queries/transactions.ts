@@ -263,6 +263,7 @@ export const TRANSACTION_GET_QUERY = gql`
       isActive
       chargingState
       stationId
+      locationId
       ocppConnectionName
       stoppedReason
       transactionId
