@@ -24,8 +24,7 @@ import {
 } from '@lib/client/components/modals/1.6/trigger-message/trigger.message.modal';
 import {
   UpdateFirmwareModal as UpdateFirmwareModal16
-} from '@lib/client/components/modals/1.6/update-firmware/update.firmware.modal';
-// OCPP 2.0.1 Modals
+} from '@lib/client/components/modals/1.6/update-firmware/update.firmware.modal'; // OCPP 2.0.1 Modals
 import {
   CertificateSignedModal
 } from '@lib/client/components/modals/2.0.1/certificate-signed/certificate.signed.modal';
