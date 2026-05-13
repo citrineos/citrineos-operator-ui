@@ -5,8 +5,8 @@
 
 import {
   type MeterValueDto,
-  type TransactionDto,
   OCPP2_0_1,
+  type TransactionDto,
 } from '@citrineos/base';
 import { RangePicker } from '@lib/client/components/range-picker';
 import { LoadingIcon } from '@lib/client/components/ui/loading';
@@ -63,7 +63,7 @@ export const AggregatedMeterValuesData: FC<{ id: number }> = ({ id }) => {
     meta: {
       gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
       gqlVariables: {
-        id,
+        stationId: id,
         limit: 10000,
         offset: 0,
         order_by: { createdAt: 'asc' },
