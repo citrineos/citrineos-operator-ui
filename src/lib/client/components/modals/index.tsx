@@ -6,47 +6,76 @@ import { OtherCommandsModal } from '@lib/client/components/modals/other-commands
 import { RemoteStartTransactionModal } from '@lib/client/components/modals/remote-start/remote.start.modal';
 import { RemoteStopTransactionModal } from '@lib/client/components/modals/remote-stop/remote.stop.modal';
 import { ResetModal } from '@lib/client/components/modals/reset/reset.modal';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@lib/client/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from '@lib/client/components/ui/dialog';
 import { closeModal, selectModal } from '@lib/utils/store/modal.slice';
 import { useDispatch, useSelector } from 'react-redux';
 // Shared Modals (same for both OCPP versions)
 import { DataTransferModal } from '@lib/client/components/modals/data-transfer/data.transfer.modal';
 // OCPP 1.6 Modals
-import { ChangeAvailabilityModal as ChangeAvailabilityModal16 } from '@lib/client/components/modals/1.6/change-availability/change.availability.modal';
-import { ChangeConfigurationModal } from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
+import {
+  ChangeAvailabilityModal as ChangeAvailabilityModal16
+} from '@lib/client/components/modals/1.6/change-availability/change.availability.modal';
+import {
+  ChangeConfigurationModal
+} from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
 import { GetConfigurationModal } from '@lib/client/components/modals/1.6/get-configuration/get.configuration.modal';
-import { TriggerMessageModal as TriggerMessageModal16 } from '@lib/client/components/modals/1.6/trigger-message/trigger.message.modal';
-import { UpdateFirmwareModal as UpdateFirmwareModal16 } from '@lib/client/components/modals/1.6/update-firmware/update.firmware.modal';
+import {
+  TriggerMessageModal as TriggerMessageModal16
+} from '@lib/client/components/modals/1.6/trigger-message/trigger.message.modal';
+import {
+  UpdateFirmwareModal as UpdateFirmwareModal16
+} from '@lib/client/components/modals/1.6/update-firmware/update.firmware.modal';
 // OCPP 2.0.1 Modals
-import { CertificateSignedModal } from '@lib/client/components/modals/2.0.1/certificate-signed/certificate.signed.modal';
-import { ChangeAvailabilityModal as ChangeAvailabilityModal201 } from '@lib/client/components/modals/2.0.1/change-availability/change.availability.modal';
+import {
+  CertificateSignedModal
+} from '@lib/client/components/modals/2.0.1/certificate-signed/certificate.signed.modal';
+import {
+  ChangeAvailabilityModal as ChangeAvailabilityModal201
+} from '@lib/client/components/modals/2.0.1/change-availability/change.availability.modal';
 import { ClearCacheModal } from '@lib/client/components/modals/2.0.1/clear-cache/clear.cache.modal';
-import { CustomerInformationModal } from '@lib/client/components/modals/2.0.1/customer-information/customer.information.modal';
-import { DeleteCertificateModal } from '@lib/client/components/modals/2.0.1/delete-certificate/delete.certificate.modal';
-import { DeleteStationNetworkProfilesModal } from '@lib/client/components/modals/2.0.1/delete-station-network-profiles/delete.station.network.profiles.modal';
+import {
+  CustomerInformationModal
+} from '@lib/client/components/modals/2.0.1/customer-information/customer.information.modal';
+import {
+  DeleteCertificateModal
+} from '@lib/client/components/modals/2.0.1/delete-certificate/delete.certificate.modal';
+import {
+  DeleteStationNetworkProfilesModal
+} from '@lib/client/components/modals/2.0.1/delete-station-network-profiles/delete.station.network.profiles.modal';
 import { GetBaseReportModal } from '@lib/client/components/modals/2.0.1/get-base-report/get.base.report.modal';
-import { GetInstalledCertificateIdsModal } from '@lib/client/components/modals/2.0.1/get-installed-certificate-ids/get.installed.certificate.ids.modal';
+import {
+  GetInstalledCertificateIdsModal
+} from '@lib/client/components/modals/2.0.1/get-installed-certificate-ids/get.installed.certificate.ids.modal';
 import { GetLogsModal } from '@lib/client/components/modals/2.0.1/get-logs/get.logs.modal';
-import { GetTransactionStatusModal } from '@lib/client/components/modals/2.0.1/get-transaction-status/get.transaction.status.modal';
+import {
+  GetTransactionStatusModal
+} from '@lib/client/components/modals/2.0.1/get-transaction-status/get.transaction.status.modal';
 import { GetVariablesModal } from '@lib/client/components/modals/2.0.1/get-variables/get.variables.modal';
-import { InstallCertificateModal } from '@lib/client/components/modals/2.0.1/install-certificate/install.certificate.modal';
-import { SetNetworkProfileModal } from '@lib/client/components/modals/2.0.1/set-network-profile/set.network.profile.modal';
+import {
+  InstallCertificateModal
+} from '@lib/client/components/modals/2.0.1/install-certificate/install.certificate.modal';
+import {
+  SetNetworkProfileModal
+} from '@lib/client/components/modals/2.0.1/set-network-profile/set.network.profile.modal';
 import { SetVariablesModal } from '@lib/client/components/modals/2.0.1/set-variables/set.variables.modal';
-import { TriggerMessageModal as TriggerMessageModal201 } from '@lib/client/components/modals/2.0.1/trigger-message/trigger.message.modal';
+import {
+  TriggerMessageModal as TriggerMessageModal201
+} from '@lib/client/components/modals/2.0.1/trigger-message/trigger.message.modal';
 import { UnlockConnectorModal } from '@lib/client/components/modals/2.0.1/unlock-connector/unlock.connector.modal';
-import { UpdateAuthPasswordModal } from '@lib/client/components/modals/2.0.1/update-auth-password/update.auth.password.modal';
-import { UpdateFirmwareModal as UpdateFirmwareModal201 } from '@lib/client/components/modals/2.0.1/update-firmware/update.firmware.modal';
+import {
+  UpdateAuthPasswordModal
+} from '@lib/client/components/modals/2.0.1/update-auth-password/update.auth.password.modal';
+import {
+  UpdateFirmwareModal as UpdateFirmwareModal201
+} from '@lib/client/components/modals/2.0.1/update-firmware/update.firmware.modal';
 import { ToggleStationOnlineModal } from '@lib/client/components/modals/toggle-status/toggle.station.online.modal';
-import { ToggleTransactionActiveModal } from '@lib/client/components/modals/toggle-status/toggle.transaction.active.modal';
+import {
+  ToggleTransactionActiveModal
+} from '@lib/client/components/modals/toggle-status/toggle.transaction.active.modal';
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
 import { GetDiagnosticsModal } from './1.6/get-diagnostics/get.diagnostics.modal';
+import { isNullOrUndefined } from '@lib/utils/assertion';
 
 const MODAL_COMPONENTS: Partial<{
   [key in ModalComponentType]: React.FC<any>;
@@ -105,7 +134,7 @@ const AppModal = () => {
   const { isOpen, title, modalComponentType, modalComponentProps } =
     useSelector(selectModal);
 
-  const ModalComponent = modalComponentType
+  const ModalComponent = !isNullOrUndefined(modalComponentType)
     ? MODAL_COMPONENTS[modalComponentType]
     : null;
 
