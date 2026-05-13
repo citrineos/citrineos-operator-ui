@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-22.04 # todo: to prevent needing to run npm i we can have our own image where everything is installed
+    runs-on: ubuntu-24.04 # todo: to prevent needing to run npm i we can have our own image where everything is installed
     strategy:
       matrix:
         node-version: [24]
