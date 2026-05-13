@@ -33,10 +33,10 @@ import { ResourceType } from '@lib/utils/access.types';
 import { downloadCSV } from '@lib/utils/download';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import {
+  type CrudFilter,
   useList,
   useOne,
   useTranslate,
-  type CrudFilter,
 } from '@refinedev/core';
 import {
   ChevronLeft,
@@ -132,7 +132,7 @@ export const ChargingStationConfiguration: React.FC<
   const isConnected = !!station?.isOnline;
 
   const attributeFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'id', operator: 'eq', value: id }],
+    () => [{ field: 'stationId', operator: 'eq', value: id }],
     [id],
   );
 
