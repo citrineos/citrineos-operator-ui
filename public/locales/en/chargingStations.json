@@ -17,8 +17,8 @@
     "forceDisconnectMessage": "Are you sure you want to force disconnect this charging station",
     "forceDisconnectCaution": "This will immediately close the connection to the station.",
     "exportMessagesToCsvHeader": "Export OCPP Messages to CSV",
-    "downloadAllMessagesToCsv": "You will download all OCPP messages for charger {stationId}.",
-    "downloadMessagesToCsvWithFilters": "You will download OCPP messages for charger {stationId} with the following filters",
+    "downloadAllMessagesToCsv": "You will download all OCPP messages for this charger.",
+    "downloadMessagesToCsvWithFilters": "You will download OCPP messages for this charger with the following filters:",
     "noDataFound": "No charging station found with id {id}.",
     "connectionModal": {
       "welcomeTitle": "Welcome to CitrineOS Operator UI",

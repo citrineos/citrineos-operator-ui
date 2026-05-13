@@ -4,13 +4,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@lib/client/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, } from '@lib/client/components/ui/dialog';
 import { Button } from '@lib/client/components/ui/button';
 import { type LogicalFilter, useExport, useTranslate } from '@refinedev/core';
 import { type OCPPMessageDto, OCPPMessageProps } from '@citrineos/base';
@@ -66,16 +60,11 @@ export const OCPPMessagesExportDialog = ({
 
   const getMessageBasedOnFilters = () => {
     if (filters.length === 0) {
-      return translate('ChargingStations.downloadAllMessagesToCsv', {
-        id,
-      });
+      return translate('ChargingStations.downloadAllMessagesToCsv');
     }
 
     const messagePrefix = translate(
       'ChargingStations.downloadMessagesToCsvWithFilters',
-      {
-        id,
-      },
     );
     const messageItems = [];
 
