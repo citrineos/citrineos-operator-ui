@@ -66,6 +66,7 @@ type ChargingStationUpsertProps = {
 
 const ChargingStationCreateSchema = ChargingStationSchema.pick({
   [ChargingStationProps.id]: true,
+  [ChargingStationProps.ocppConnectionName]: true,
   [ChargingStationProps.locationId]: true,
   [ChargingStationProps.floorLevel]: true,
   [ChargingStationProps.parkingRestrictions]: true,
@@ -74,8 +75,8 @@ const ChargingStationCreateSchema = ChargingStationSchema.pick({
 });
 
 const defaultChargingStation = {
-  [ChargingStationProps.id]: 0,
-  [ChargingStationProps.isOnline]: false,
+  [ChargingStationProps.id]: undefined,
+  [ChargingStationProps.ocppConnectionName]: '',
   [ChargingStationProps.locationId]: undefined,
   [ChargingStationProps.floorLevel]: '',
   [ChargingStationProps.parkingRestrictions]: [],
@@ -293,8 +294,8 @@ export const ChargingStationUpsert = ({
             <div className={cardGridStyle}>
               <FormField
                 control={form.control}
-                label="ID"
-                name={ChargingStationProps.id}
+                label="Name"
+                name={ChargingStationProps.ocppConnectionName}
                 required
               >
                 <Input />
