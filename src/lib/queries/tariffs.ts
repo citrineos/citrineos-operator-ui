@@ -70,6 +70,7 @@ export const GET_CHARGING_STATIONS_FOR_TARIFF = gql`
       where: { Connectors: { tariffId: { _eq: $tariffId } }, _and: $where }
     ) {
       id
+      ocppConnectionName
       isOnline
       protocol
       locationId
@@ -119,7 +120,6 @@ export const GET_TRANSACTIONS_FOR_TARIFF = gql`
       timeSpentCharging
       isActive
       chargingState
-      ocppConnectionName
       stoppedReason
       transactionId
       evseId
@@ -131,6 +131,7 @@ export const GET_TRANSACTIONS_FOR_TARIFF = gql`
       updatedAt
       chargingStation: ChargingStation {
         id
+        ocppConnectionName
         isOnline
         protocol
         locationId
@@ -148,6 +149,11 @@ export const GET_TRANSACTIONS_FOR_TARIFF = gql`
           createdAt
           updatedAt
         }
+      }
+      authorization: Authorization {
+        id
+        idToken
+        idTokenType
       }
     }
     Transactions_aggregate(
