@@ -67,7 +67,11 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.statusNotifications,
       header: 'Status',
       visible: true,
-      filterConfig: { type: 'yesno', field: 'isOnline', label: 'Online status' },
+      filterConfig: {
+        type: 'yesno',
+        field: 'isOnline',
+        label: 'Online status',
+      },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
@@ -105,7 +109,11 @@ export const getChargingStationsColumns = (
       key: 'vendorModel',
       header: 'Vendor / Model',
       visible: false,
-      filterConfig: { type: 'text', field: 'chargePointVendor', label: 'Vendor' },
+      filterConfig: {
+        type: 'text',
+        field: 'chargePointVendor',
+        label: 'Vendor',
+      },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
