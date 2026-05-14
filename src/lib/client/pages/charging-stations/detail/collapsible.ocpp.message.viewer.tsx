@@ -15,6 +15,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from '@lib/client/components/ui/sheet';
 import { ScrollArea } from '@ferdiunal/refine-shadcn/ui';
 import { copy } from '@lib/utils/copy';
@@ -66,7 +67,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
   const isExpandable = lines.length > threshold;
 
   return (
-    <>
+    <Sheet open={open} onOpenChange={setOpen}>
       <div className="relative">
         <SyntaxHighlighter
           language="json"
@@ -90,6 +91,7 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
         </SyntaxHighlighter>
 
         <Button
+          type="button"
           variant="secondary"
           size="xs"
           onClick={async (e) => {
@@ -102,76 +104,76 @@ export const CollapsibleOCPPMessageViewer: React.FC<{
         </Button>
 
         {isExpandable && (
-          <Button
-            size="xs"
-            onClick={() => setOpen(!open)}
-            className="absolute top-1 right-1 p-1"
-          >
-            <Plus className={buttonIconSize} />
-          </Button>
+          <SheetTrigger asChild>
+            <Button
+              type="button"
+              size="xs"
+              className="absolute top-1 right-1 p-1"
+            >
+              <Plus className={buttonIconSize} />
+            </Button>
+          </SheetTrigger>
         )}
       </div>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="min-w-1/3 pb-30" showCloseButton={false}>
-          {correlationId && (
-            <SheetHeader>
-              <SheetTitle className="text-lg font-bold">
-                <div className="flex items-center gap-1">
-                  {correlationId}{' '}
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      await copy(correlationId);
-                    }}
-                  >
-                    <Copy className={buttonIconSize} />
-                  </Button>
-                </div>
-              </SheetTitle>
-              <SheetDescription className="text-base">
-                <span className="font-semibold">
-                  {action} - {origin}
-                </span>{' '}
-                @ {formatDate(timestamp, 'yyyy-MM-dd HH:mm:ss.SSS')}
-              </SheetDescription>
-            </SheetHeader>
-          )}
-          <ScrollArea className="px-4 size-full relative">
-            <SyntaxHighlighter
-              language="json"
-              style={okaidia}
-              codeTagProps={{
-                style: {
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                },
-              }}
-              customStyle={{
-                fontSize: '0.8rem',
-                padding: '0.5rem',
-                borderRadius: '4px',
-                maxWidth: '100%',
-              }}
-              wrapLongLines
-            >
-              {formattedJson}
-            </SyntaxHighlighter>
-            <Button
-              variant="secondary"
-              size="xs"
-              onClick={async (e) => {
-                e.stopPropagation();
-                await copy(JSON.stringify(ocppMessage, null, 2), false);
-              }}
-              className="absolute top-4 right-6 p-1"
-            >
-              <Copy className={buttonIconSize} />
-            </Button>
-          </ScrollArea>
-        </SheetContent>
-      </Sheet>
-    </>
+      <SheetContent className="min-w-1/3 pb-30" showCloseButton={false}>
+        {correlationId && (
+          <SheetHeader>
+            <SheetTitle className="text-lg font-bold">
+              <div className="flex items-center gap-1">
+                {correlationId}{' '}
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await copy(correlationId);
+                  }}
+                >
+                  <Copy className={buttonIconSize} />
+                </Button>
+              </div>
+            </SheetTitle>
+            <SheetDescription className="text-base">
+              <span className="font-semibold">
+                {action} - {origin}
+              </span>{' '}
+              @ {formatDate(timestamp, 'yyyy-MM-dd HH:mm:ss.SSS')}
+            </SheetDescription>
+          </SheetHeader>
+        )}
+        <ScrollArea className="px-4 size-full relative">
+          <SyntaxHighlighter
+            language="json"
+            style={okaidia}
+            codeTagProps={{
+              style: {
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-all',
+              },
+            }}
+            customStyle={{
+              fontSize: '0.8rem',
+              padding: '0.5rem',
+              borderRadius: '4px',
+              maxWidth: '100%',
+            }}
+            wrapLongLines
+          >
+            {formattedJson}
+          </SyntaxHighlighter>
+          <Button
+            variant="secondary"
+            size="xs"
+            onClick={async (e) => {
+              e.stopPropagation();
+              await copy(JSON.stringify(ocppMessage, null, 2), false);
+            }}
+            className="absolute top-4 right-6 p-1"
+          >
+            <Copy className={buttonIconSize} />
+          </Button>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
   );
 };

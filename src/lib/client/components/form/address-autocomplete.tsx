@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '../ui/input';
 import debounce from 'lodash.debounce';
 import { autocompleteAddress } from '@lib/server/actions/map/autocompleteAddress';
@@ -38,7 +38,7 @@ export const AddressAutocomplete: React.FC<Props> = ({
   onChangeAction,
   onSelectPlaceAction,
   countryCode,
-  placeholder = 'Enter address',
+  placeholder = 'Start typing an address...',
   sessionToken,
 }) => {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -53,9 +53,7 @@ export const AddressAutocomplete: React.FC<Props> = ({
     }
     setLoading(true);
 
-    const searchCountryCode = countryCode?.toUpperCase() || 'US';
-
-    autocompleteAddress(input, searchCountryCode, sessionToken)
+    autocompleteAddress(input, countryCode?.toUpperCase(), sessionToken)
       .then((result) => {
         if (result.success) {
           return setPredictions(result.data);
@@ -73,7 +71,6 @@ export const AddressAutocomplete: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  // Handle clicks outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -117,7 +114,7 @@ export const AddressAutocomplete: React.FC<Props> = ({
           '';
 
         const fullDetails: PlaceDetails = {
-          address: streetAddress,
+          address: streetAddress || details.formattedAddress,
           city:
             getComponent('locality') ||
             getComponent('sublocality') ||
@@ -155,17 +152,26 @@ export const AddressAutocomplete: React.FC<Props> = ({
           }
         }}
         placeholder={placeholder}
+        autoComplete="off"
+        data-1p-ignore
+        data-lpignore="true"
+        data-bwignore="true"
       />
       {showDropdown && (predictions.length > 0 || loading) && (
-        <ul className="absolute z-10 w-full bg-white border rounded shadow max-h-60 overflow-auto">
+        <ul className="absolute z-50 w-full mt-1 bg-popover text-popover-foreground border border-border rounded-md shadow-md max-h-60 overflow-auto">
           {loading && predictions.length === 0 && (
-            <li className="p-2 text-gray-500">Loading...</li>
+            <li className="px-3 py-2 text-sm text-muted-foreground">
+              Loading...
+            </li>
           )}
           {predictions.map((p) => (
             <li
               key={p.place_id}
-              className="p-2 cursor-pointer hover:bg-gray-100"
-              onClick={() => handleSelect(p)}
+              className="px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleSelect(p);
+              }}
             >
               {p.description}
             </li>
