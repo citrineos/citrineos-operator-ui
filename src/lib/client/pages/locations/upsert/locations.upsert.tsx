@@ -58,10 +58,7 @@ import { toast } from 'sonner';
 import { useNotification } from '@refinedev/core';
 import { S3_BUCKET_FOLDER_IMAGES_LOCATIONS } from '@lib/utils/consts';
 import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileViaPresignedUrl';
-import {
-  getCountryList,
-  type CountryCode,
-} from '@lib/utils/country.config';
+import { getCountryList, type CountryCode } from '@lib/utils/country.config';
 import { OpeningHoursForm } from '@lib/client/components/opening-hours';
 import { isValid, parseISO } from 'date-fns';
 import { useTenantId } from '@lib/client/hooks/useTenantId';
@@ -93,9 +90,7 @@ const LocationCreateSchema = LocationSchema.pick({
     )
     .nullable()
     .optional(),
-  [LocationProps.address]: z
-    .string()
-    .min(1, 'Street address is required'),
+  [LocationProps.address]: z.string().min(1, 'Street address is required'),
   [LocationProps.city]: z.string().optional().default(''),
   [LocationProps.state]: z.string().optional().default(''),
   [LocationProps.postalCode]: z.string().optional().default(''),
@@ -420,10 +415,7 @@ export const LocationsUpsert = ({
                         }
                         onSelectPlaceAction={(_placeId, details) => {
                           form.setValue(LocationProps.address, details.address);
-                          form.setValue(
-                            LocationProps.city,
-                            details.city ?? '',
-                          );
+                          form.setValue(LocationProps.city, details.city ?? '');
                           form.setValue(
                             LocationProps.state,
                             details.state ?? '',
