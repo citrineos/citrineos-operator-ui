@@ -92,7 +92,7 @@ const LocationCreateSchema = LocationSchema.pick({
     .optional(),
   [LocationProps.address]: z.string().min(1, 'Street address is required'),
   [LocationProps.city]: z.string().optional().default(''),
-  [LocationProps.state]: z.string().optional().default(''),
+  [LocationProps.state]: z.string().nullable().optional().default(''),
   [LocationProps.postalCode]: z.string().optional().default(''),
   [LocationProps.country]: z.string().optional().default(''),
 });
