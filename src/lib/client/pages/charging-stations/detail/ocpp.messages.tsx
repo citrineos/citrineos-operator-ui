@@ -48,6 +48,8 @@ import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice'
 
 export interface OCPPMessagesProps {
   stationId: string;
+  initialStartDate?: Date | null;
+  initialEndDate?: Date | null;
 }
 
 const actionOptions = [
@@ -69,9 +71,13 @@ const originOptions = [
   })),
 ];
 
-export const OCPPMessages: React.FC<OCPPMessagesProps> = ({ stationId }) => {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
+  stationId,
+  initialStartDate = null,
+  initialEndDate = null,
+}) => {
+  const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
+  const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
   const [searchCid, setSearchCid] = useState<string>('');
   const [selectedActions, setSelectedActions] = useState<string[]>([]);
   const [selectedOrigin, setSelectedOrigin] = useState<string>(allOption);
