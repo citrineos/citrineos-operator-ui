@@ -40,8 +40,7 @@ export function getFilterLabel(
   const col = columns.find(
     (c) => (c.filterConfig?.field ?? c.key) === filter.field,
   );
-  const fieldLabel =
-    col?.filterConfig?.label ?? col?.header ?? filter.field;
+  const fieldLabel = col?.filterConfig?.label ?? col?.header ?? filter.field;
   const unit = col?.filterConfig?.unit ?? '';
 
   const val = filter.value;
@@ -69,9 +68,7 @@ export function getFilterLabel(
     case 'in':
       return {
         field: fieldLabel,
-        value: Array.isArray(val)
-          ? (val as string[]).join(', ')
-          : String(val),
+        value: Array.isArray(val) ? (val as string[]).join(', ') : String(val),
       };
     case 'contains':
       return { field: fieldLabel, value: `"${val}"` };
@@ -185,7 +182,7 @@ function ValueInput({
   if (cfg.type === 'enum') {
     return (
       <div className="flex flex-col gap-0.5">
-        {(cfg.enumOptions ?? []).map((opt) => (
+        {(cfg.enumOptions ?? []).map((opt: any) => (
           <label
             key={opt.value}
             className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
@@ -419,9 +416,7 @@ export function FilterPopover({
               selectedEnumValues={selectedEnumValues}
               onEnumToggle={(v) =>
                 setSelectedEnumValues((prev) =>
-                  prev.includes(v)
-                    ? prev.filter((x) => x !== v)
-                    : [...prev, v],
+                  prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v],
                 )
               }
               yesNoValue={yesNoValue}
