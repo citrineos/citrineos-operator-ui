@@ -48,7 +48,7 @@ enum TransactionDetailTabType {
   ocppMessages = 'ocppMessages',
 }
 
-const twoMinutesInMs = twoMinutesInMs;
+const twoMinutesInMs = 2 * 60 * 1000;
 
 export const TransactionDetailTabsCard = ({
   transaction,
