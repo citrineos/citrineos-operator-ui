@@ -30,12 +30,12 @@ const createFilterListItem = (label: string, value: string) => (
 export const OCPPMessagesExportDialog = ({
   open,
   onOpenChangeAction,
-  id,
+  stationId,
   filters,
 }: {
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
-  id: number;
+  stationId: number;
   filters: LogicalFilter[];
 }) => {
   const translate = useTranslate();
@@ -45,11 +45,11 @@ export const OCPPMessagesExportDialog = ({
     sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationId: id },
+      gqlVariables: { stationId },
     },
     filters,
     download: true,
-    filename: `ocpp-messages-${id}-${Date.now()}`,
+    filename: `ocpp-messages-${stationId}-${Date.now()}`,
     pageSize: 100,
     mapData: (ocppMessage) => {
       return {

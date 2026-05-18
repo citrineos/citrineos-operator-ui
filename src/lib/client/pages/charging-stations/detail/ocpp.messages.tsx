@@ -355,7 +355,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
       <OCPPMessagesExportDialog
         open={exportDialogOpen}
         onOpenChangeAction={setExportDialogOpen}
-        id={id}
+        stationId={stationId}
         filters={filters}
       />
     </>
