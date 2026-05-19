@@ -36,11 +36,6 @@ next-env.d.ts
 # ide
 .idea
 
-# local env files
-.env.local
-.env.test
-.env.test.local
-
 # playwright
 /playwright/.auth/
 /playwright-report/
