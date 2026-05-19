@@ -222,17 +222,17 @@ export const TransactionDetailTabsCard = ({
                 initialStartDate={
                   transaction.startTime
                     ? new Date(
-                      new Date(transaction.startTime).getTime() -
-                      twoMinutesInMs,
-                    )
+                        new Date(transaction.startTime).getTime() -
+                          twoMinutesInMs,
+                      )
                     : null
                 }
                 initialEndDate={
                   transaction.endTime
                     ? new Date(
-                      new Date(transaction.endTime).getTime() +
-                      twoMinutesInMs,
-                    )
+                        new Date(transaction.endTime).getTime() +
+                          twoMinutesInMs,
+                      )
                     : new Date()
                 }
               />
