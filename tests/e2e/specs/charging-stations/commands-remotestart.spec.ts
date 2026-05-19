@@ -51,9 +51,9 @@ test.describe('charging-stations › RemoteStart command', () => {
     const modal = new ModalHarness(page, /(remote start|start transaction)/i);
     await modal.expectOpen();
 
-    // Submit with no fields filled — modal may stay open (validation), close
-    // (defaults accepted), or surface an error toast. All are acceptable.
     await modal.submitButton.click();
-    await page.waitForLoadState('domcontentloaded');
+    // The id token textbox is required; client-side validation rejects the
+    // empty submit before the command reaches the OCPP backend.
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 });

@@ -5,36 +5,19 @@ import { TransactionsListPage } from '../../pages/transactions/list.page';
 
 test.use({ storageState: 'playwright/.auth/admin.json' });
 
-// E2E-060 — Flagship onboarding journey @everest
-//
-// The EVerest manager image is hard-pinned to station id `cp001`, which
-// it auto-registers via BootNotification on every container start. An
-// operator-creates-cp001-via-UI step would conflict with the existing
-// row, and re-creating the OCPP-talking station with a different id
-// would orphan the EVerest connection. This flagship covers the day-N
-// operator surface for cp001:
-//
-//   1. Operator opens /charging-stations and finds cp001 in the list.
-//   2. Operator opens the detail page; the command bar is rendered.
-//   3. Operator confirms the EVSE tab lists EVSE-1 (seeded by the
-//      everestStation fixture).
-//   4. Operator confirms the OCPP Messages tab is reachable.
-//   5. Operator confirms the station shows Online status.
-//   6. Operator clicks RemoteStart and the modal opens with form fields.
-//   7. Operator clicks RemoteStop gating: with no active transaction,
-//      the StopTransaction button is gated (StartTransaction shown
-//      instead); the modal-close confirms the gating contract.
-//   8. Operator opens /transactions; the list renders.
-//
-// Form-create paths for Location/Station/Authorization are exercised in
-// the dedicated CRUD specs (E2E-021, E2E-046, E2E-101) so this flagship
-// concentrates on the multi-resource navigation surface plus the OCPP
-// command modals — the parts the CRUD specs do not stitch together.
+// E2E-060 walks cp001's day-N navigation surface and the OCPP command
+// modals' mount + gating contract. It does NOT submit a RemoteStart,
+// observe a live transaction, or submit a RemoteStop — the EVerest manager
+// image does not auto-stage the Authorization handshake a real charging
+// session needs. Form-create paths for Location/Station/Authorization live
+// in E2E-021/E2E-046/E2E-101; cp001 is hard-pinned in the EVerest manager
+// so re-creating the OCPP-talking station with a different id would orphan
+// the EVerest connection.
 
-test.describe('charging-stations › onboarding flagship @everest', () => {
+test.describe('charging-stations › cp001 navigation surface @everest', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('E2E-060: Day-N operator manages cp001 via UI end-to-end @everest', async ({
+  test('E2E-060: cp001 day-N navigation surface + RemoteStart/Stop gating @everest', async ({
     page,
     everestStation,
   }) => {

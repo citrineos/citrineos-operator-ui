@@ -46,13 +46,10 @@ test.describe('charging-stations › Reset validation + offline', () => {
     const modal = new ModalHarness(page, /reset/i);
     await modal.expectOpen();
 
-    // Click submit without explicitly selecting a type. The modal may stay
-    // open (inline validation), close (default selection accepted), or
-    // surface a destructive toast. All are acceptable observable behaviours
-    // for "no type chosen"; the test's contract is that the click does not
-    // throw and the page does not crash.
     await modal.submitButton.click();
-    await page.waitForLoadState('domcontentloaded');
+    // Reset type is required; the form blocks dispatch and keeps the modal
+    // mounted so the operator can pick a value.
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 
   test('E2E-073: Reset against an offline (unseeded-EVerest) station fails gracefully', async ({

@@ -39,6 +39,8 @@ test.describe('charging-stations › GetVariables command', () => {
     const modal = new ModalHarness(page, /get variables/i);
     await modal.expectOpen();
     await modal.submitButton.click();
-    await page.waitForLoadState('domcontentloaded');
+    // Component + Variable in the field-array row are required; the form
+    // blocks dispatch and keeps the modal mounted.
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 });

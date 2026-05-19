@@ -16,12 +16,11 @@ test.describe('charging-stations › offline command rejection', () => {
     const modal = new ModalHarness(page, /reset/i);
     await modal.expectOpen();
     await modal.select(/reset type/i, /^onidle$/i);
-    await modal.submitButton.click();
-
-    // The OCPP backend returns the failure async; the modal may stay open,
-    // close, or surface an error toast. The contract this spec verifies is
-    // that submitting against an offline (unseeded-EVerest) station does
-    // not crash the page or hang the UI.
-    await page.waitForLoadState('domcontentloaded');
+    // The seeded station has no live OCPP session — submitting a command
+    // surfaces a destructive toast via the async OCPP ack pipeline.
+    await modal.submitExpectingError(
+      /failed|error|invalid|denied|timeout|offline|disconnected|unreachable|rejected/i,
+      60_000,
+    );
   });
 });

@@ -47,9 +47,8 @@ test.describe('charging-stations › Change Availability + Configuration', () =>
       const modal = new ModalHarness(page, /change configuration/i);
       await modal.expectOpen();
       await modal.submitButton.click();
-      // Modal may stay open on validation, close on accept, or surface an
-      // error toast on backend rejection; all are acceptable.
-      await page.waitForLoadState('domcontentloaded');
+      // Required Key field is empty — validation keeps the modal mounted.
+      await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
     } finally {
       await deleteStation(apiClient, station.pkId).catch(() => undefined);
       await deleteLocation(apiClient, location.id).catch(() => undefined);
@@ -76,7 +75,10 @@ test.describe('charging-stations › Change Availability + Configuration', () =>
         await select.press('Escape');
       }
     }
-    await modal.submitButton.click();
-    await page.waitForLoadState('domcontentloaded');
+    // Offline station — the OCPP backend surfaces a destructive toast.
+    await modal.submitExpectingError(
+      /failed|error|invalid|denied|timeout|offline|disconnected|unreachable|rejected/i,
+      60_000,
+    );
   });
 });

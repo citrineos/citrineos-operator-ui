@@ -69,21 +69,17 @@ test.describe('locations › CRUD', () => {
     page,
     seededLocation,
   }) => {
-    // Submit-through-UI on edit is exercised indirectly by E2E-021 (create
-    // path uses the same form). The load + pre-fill contract is what's
-    // distinct for the edit route — verify the form mounts with the
-    // seeded record's values.
+    // Edit-then-save on the locations form is exercised indirectly by
+    // E2E-021 (same form component, full create roundtrip). E2E-047
+    // (charging-stations) and E2E-102 (authorizations) cover the
+    // edit-and-save contract on simpler forms. The locations form's
+    // Country/State/ZIP cascade makes a name-only edit on a fixture-seeded
+    // row unreliable without re-driving the country picker, so the depth
+    // assertion here stays on the pre-fill contract.
     const form = new LocationFormPage(page);
     await form.gotoEdit(seededLocation.id);
     await expect(form.heading).toContainText(/edit location/i);
     await expect(form.nameInput).toHaveValue(seededLocation.name);
-  });
-
-  test('E2E-023: Delete location removes it from the list', async () => {
-    test.skip(
-      true,
-      'Locations has no UI delete: detail page exposes no Delete button and the list/columns have no row-level delete action. Confirmed by inspection of src/lib/client/pages/locations/{detail,list,columns}*.tsx.',
-    );
   });
 
   test('E2E-024: Create location with empty required fields surfaces validation', async ({

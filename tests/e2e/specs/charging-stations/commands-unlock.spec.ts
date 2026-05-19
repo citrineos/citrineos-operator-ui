@@ -1,4 +1,4 @@
-import { test } from '../../fixtures';
+import { test, expect } from '../../fixtures';
 import { ChargingStationDetailPage } from '../../pages/charging-stations/detail.page';
 import { ModalHarness } from '../../pages/components/modal.po';
 
@@ -22,7 +22,7 @@ test.describe('charging-stations › UnlockConnector command', () => {
     await modal.submitAndWaitForToast();
   });
 
-  test('E2E-086b: UnlockConnector against an offline station fails gracefully', async ({
+  test('E2E-086b: UnlockConnector form blocks dispatch when the station has no connectors', async ({
     page,
     seededStation,
   }) => {
@@ -33,19 +33,11 @@ test.describe('charging-stations › UnlockConnector command', () => {
     const modal = new ModalHarness(page, /unlock connector/i);
     await modal.expectOpen();
 
-    const select = modal.dialog.getByRole('combobox').first();
-    if (await select.isVisible().catch(() => false)) {
-      await select.click();
-      const firstOption = page.getByRole('option').first();
-      if (await firstOption.isVisible().catch(() => false)) {
-        await firstOption.click();
-      } else {
-        await select.press('Escape');
-      }
-    }
-    await modal.submitButton.click();
-    // Validation error / offline-failure toast / modal auto-close are all
-    // acceptable observable outcomes.
-    await page.waitForLoadState('domcontentloaded');
+    // The seeded station is created without EVSEs/Connectors. The Connector
+    // combobox has no options, so the form cannot be completed and the modal
+    // stays mounted instead of dispatching to the OCPP backend.
+    const connectorCombobox = modal.dialog.getByRole('combobox').first();
+    await expect(connectorCombobox).toBeVisible();
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 });

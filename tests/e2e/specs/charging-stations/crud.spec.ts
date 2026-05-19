@@ -41,7 +41,7 @@ test.describe('charging-stations › CRUD', () => {
     }
   });
 
-  test('E2E-047: Edit form pre-fills with the existing charging station data', async ({
+  test('E2E-047: Edit form pre-fills, persists a floor-level change, and reloads with the new value', async ({
     page,
     seededStation,
   }) => {
@@ -49,12 +49,58 @@ test.describe('charging-stations › CRUD', () => {
     await form.gotoEdit(seededStation.pkId);
     await expect(form.heading).toContainText(/edit charging\s*station/i);
     await expect(form.idInput).toHaveValue(seededStation.id);
+
+    // floorLevel is optional and the seed leaves it empty; the ID column is
+    // immutable on edit, so floorLevel is the safe mutable target.
+    const newFloor = 'e2e-floor-3';
+    await form.floorLevelInput.fill(newFloor);
+    await form.submit();
+
+    await form.gotoEdit(seededStation.pkId);
+    await expect(form.floorLevelInput).toHaveValue(newFloor, {
+      timeout: 30_000,
+    });
   });
 
-  test('E2E-048: Delete charging station has no UI surface (read-only via API)', async () => {
-    test.skip(
-      true,
-      'Charging Stations has no UI delete on detail/list at this time. The detail card shows status + commands but no delete button; the list table has no row-level delete action. Confirmed by inspection of src/lib/client/pages/charging-stations/{detail,list,columns}*.tsx.',
+  test('E2E-048: Delete charging station via UI redirects to list and removes the row', async ({
+    page,
+    seededLocation,
+    apiClient,
+  }) => {
+    // Inline-seed so the UI delete owns the lifecycle (no fixture-teardown
+    // race against the form-driven mutation).
+    const id = `e2e-${shortId()}-cp`;
+    const { insert_ChargingStations_one: created } = await apiClient.gql<{
+      insert_ChargingStations_one: { pkId: number };
+    }>(
+      `mutation SeedForUiDelete($obj: ChargingStations_insert_input!) {
+         insert_ChargingStations_one(object: $obj) { pkId }
+       }`,
+      {
+        obj: {
+          id,
+          locationId: seededLocation.id,
+          isOnline: false,
+          protocol: 'ocpp2.0.1',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      },
     );
+
+    try {
+      await page.goto(`/charging-stations/${created.pkId}`);
+      const deleteButton = page.getByRole('button', { name: /^delete/i });
+      await expect(deleteButton).toBeEnabled({ timeout: 30_000 });
+      await deleteButton.click();
+
+      await page.waitForURL(/\/charging-stations$/, { timeout: 30_000 });
+      const list = new ChargingStationsListPage(page);
+      await expect(list.heading).toBeVisible();
+      await expect(list.rowById(id)).toHaveCount(0);
+    } finally {
+      // Safety net if the UI delete didn't fire.
+      await deleteStation(apiClient, created.pkId).catch(() => undefined);
+    }
   });
 });

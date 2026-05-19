@@ -1,4 +1,4 @@
-import { test } from '../../fixtures';
+import { test, expect } from '../../fixtures';
 import { ChargingStationDetailPage } from '../../pages/charging-stations/detail.page';
 import { ModalHarness } from '../../pages/components/modal.po';
 
@@ -33,6 +33,8 @@ test.describe('charging-stations › DataTransfer command', () => {
     const modal = new ModalHarness(page, /data transfer/i);
     await modal.expectOpen();
     await modal.submitButton.click();
-    await page.waitForLoadState('domcontentloaded');
+    // Vendor Id is required; client-side validation keeps the modal mounted
+    // until the operator fills it in.
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 });

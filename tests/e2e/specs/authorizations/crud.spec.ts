@@ -48,24 +48,65 @@ test.describe('authorizations › CRUD', () => {
     }
   });
 
-  test('E2E-102: Edit form pre-fills with existing authorization data', async ({
+  test('E2E-102: Edit form pre-fills, persists a status change, and reloads with the new value', async ({
     page,
     seededAuthorization,
   }) => {
     const form = new AuthorizationFormPage(page);
     await form.gotoEdit(seededAuthorization.id);
-    // Detail/edit headings vary in render path; anchor on the ID Token
-    // input with the seeded value as the deterministic load signal.
+    // Anchor on the ID Token input with the seeded value as the
+    // deterministic load signal — edit headings vary by render path.
     await expect(form.idTokenInput).toHaveValue(seededAuthorization.idToken, {
+      timeout: 30_000,
+    });
+
+    // Seeded status is Accepted; flip to Blocked and verify it persists.
+    await form.selectStatus('Blocked');
+    await form.submit();
+
+    await form.gotoEdit(seededAuthorization.id);
+    await expect(form.statusCombobox).toContainText(/blocked/i, {
       timeout: 30_000,
     });
   });
 
-  test('E2E-103: Delete authorization has no UI surface (read-only via API)', async () => {
-    test.skip(
-      true,
-      'Authorizations has no UI delete on detail/list at this time. Confirmed by inspection of src/lib/client/pages/authorizations/.',
+  test('E2E-103: Delete authorization via UI detail redirects to list and removes the row', async ({
+    page,
+    apiClient,
+  }) => {
+    // Inline-seed so the UI delete owns the lifecycle.
+    const idToken = `${shortId().toUpperCase()}-DEL`;
+    const now = new Date().toISOString();
+    const { insert_Authorizations_one: created } = await apiClient.gql<{
+      insert_Authorizations_one: { id: number };
+    }>(
+      `mutation SeedForUiDelete($obj: Authorizations_insert_input!) {
+         insert_Authorizations_one(object: $obj) { id }
+       }`,
+      {
+        obj: {
+          idToken,
+          idTokenType: 'ISO14443',
+          status: 'Accepted',
+          createdAt: now,
+          updatedAt: now,
+        },
+      },
     );
+
+    try {
+      await page.goto(`/authorizations/${created.id}`);
+      const deleteButton = page.getByRole('button', { name: /^delete/i });
+      await expect(deleteButton).toBeVisible({ timeout: 30_000 });
+      await deleteButton.click();
+
+      await page.waitForURL(/\/authorizations$/, { timeout: 30_000 });
+      const list = new AuthorizationsListPage(page);
+      await expect(list.heading).toBeVisible();
+      await expect(list.rowByIdToken(idToken)).toHaveCount(0);
+    } finally {
+      await deleteAuthorization(apiClient, created.id).catch(() => undefined);
+    }
   });
 
   test('E2E-104: Create authorization with empty required fields stays on form', async ({

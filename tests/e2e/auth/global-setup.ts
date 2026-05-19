@@ -6,6 +6,7 @@ import { makeApiClient } from '../fixtures/api-client';
 import { purgeAllE2eRows } from '../fixtures/seeded-data';
 import { LoginPage } from '../pages/login.page';
 import { readEnv, assertRequiredEnv } from '../utils/env';
+import { ensureManagedServer } from '../utils/managed-server';
 import {
   captureHasuraIntrospection,
   formatDriftMessage,
@@ -35,6 +36,13 @@ export default async function globalSetup(): Promise<void> {
     hasuraUrl,
     citrineUrl,
   });
+
+  // If nothing is listening on baseUrl yet, build a production bundle and
+  // spawn `next start`. Reusing an already-up server is preferred (covers
+  // local-dev iteration); production server is the fallback for CI and
+  // for full suite runs where `next dev` would OOM under sustained route
+  // compilation.
+  await ensureManagedServer(baseUrl);
 
   const request = await playwrightRequest.newContext();
   try {

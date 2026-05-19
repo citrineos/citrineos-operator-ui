@@ -37,10 +37,51 @@ test.describe('tariffs › CRUD', () => {
       .catch(() => undefined);
   });
 
-  test('E2E-114: Tariffs detail (read-only show) is not implemented in src', async () => {
-    test.skip(
-      true,
-      'Tariffs detail route absent in src/app/(authenticated)/tariffs/ — only the upsert (new + edit) routes exist.',
+  test('E2E-113: Delete tariff via UI detail redirects to list and removes the row', async ({
+    page,
+    apiClient,
+  }) => {
+    const distinctivePrice = Number(
+      `0.${Date.now().toString().slice(-6)}`,
     );
+    const now = new Date().toISOString();
+    const { insert_Tariffs_one: created } = await apiClient.gql<{
+      insert_Tariffs_one: { id: number };
+    }>(
+      `mutation SeedForUiDelete($obj: Tariffs_insert_input!) {
+         insert_Tariffs_one(object: $obj) { id }
+       }`,
+      {
+        obj: {
+          currency: 'USD',
+          pricePerKwh: distinctivePrice,
+          createdAt: now,
+          updatedAt: now,
+        },
+      },
+    );
+
+    try {
+      await page.goto(`/tariffs/${created.id}`);
+      const deleteButton = page.getByRole('button', { name: /^delete/i });
+      await expect(deleteButton).toBeVisible({ timeout: 30_000 });
+      await deleteButton.click();
+
+      await page.waitForURL(/\/tariffs$/, { timeout: 30_000 });
+      const list = new TariffsListPage(page);
+      await expect(list.heading).toBeVisible();
+      await expect(
+        page.getByRole('row').filter({ hasText: String(created.id) }),
+      ).toHaveCount(0);
+    } finally {
+      await apiClient
+        .gql(
+          `mutation Cleanup($id: bigint!) {
+             delete_Tariffs_by_pk(id: $id) { id }
+           }`,
+          { id: created.id },
+        )
+        .catch(() => undefined);
+    }
   });
 });

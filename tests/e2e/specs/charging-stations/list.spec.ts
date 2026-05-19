@@ -32,9 +32,10 @@ test.describe('charging-stations › list', () => {
     const list = new ChargingStationsListPage(page);
     await list.goto();
     await list.searchInput.fill('e2e-nonexistent-cp-XXXXXXXX');
-    // The list should render the no-results indicator OR an empty body —
-    // both are acceptable observable outcomes.
-    await page.waitForLoadState('domcontentloaded');
+    await expect(list.noResultsMessage).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('row').filter({ hasText: 'e2e-' })).toHaveCount(
+      0,
+    );
   });
 
   test('E2E-045: Online indicator visible on @everest cp001 row @everest', async ({

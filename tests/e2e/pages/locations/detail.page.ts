@@ -1,8 +1,10 @@
 import { type Locator, type Page, expect } from '@playwright/test';
 
-// LocationDetailPage — read-only detail card with edit/delete buttons
-// gated by CanAccess. The map renders Leaflet markers via
-// `.leaflet-marker-icon` — exposed for E2E-029/030 (map.spec.ts).
+// LocationDetailPage — read-only detail card with an edit button gated by
+// CanAccess. There is no delete control on the locations detail surface
+// (see src/lib/client/pages/locations/detail/location.detail.card.tsx).
+// The map renders Leaflet markers via `.leaflet-marker-icon` — exposed for
+// E2E-029/030 (map.spec.ts).
 
 export class LocationDetailPage {
   static path(id: number | string): string {
@@ -12,13 +14,11 @@ export class LocationDetailPage {
 
   readonly heading: Locator;
   readonly editButton: Locator;
-  readonly deleteButton: Locator;
   readonly mapMarkers: Locator;
 
   constructor(private readonly page: Page) {
     this.heading = page.getByRole('heading').first();
     this.editButton = page.getByRole('button', { name: /^edit/i });
-    this.deleteButton = page.getByRole('button', { name: /^delete/i });
     this.mapMarkers = page.locator('.leaflet-marker-icon');
   }
 

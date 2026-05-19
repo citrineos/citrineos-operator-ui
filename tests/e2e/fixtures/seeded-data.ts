@@ -19,6 +19,7 @@ export interface SeededStation {
 export interface SeededTransaction {
   readonly transactionId: string;
   readonly stationId: string;
+  readonly pkId: number;
 }
 
 // Minimal authorization for OCPP RemoteStart command flows.
@@ -125,7 +126,7 @@ export async function seedTransaction(
 ): Promise<SeededTransaction> {
   const transactionId = overrides.transactionId ?? `${shortId()}-tx`;
   const now = nowIso();
-  await api.gql<{
+  const data = await api.gql<{
     insert_Transactions_one: { id: number; transactionId: string };
   }>(
     `mutation SeedTransaction($obj: Transactions_insert_input!) {
@@ -142,7 +143,74 @@ export async function seedTransaction(
       },
     },
   );
-  return { transactionId, stationId };
+  return {
+    transactionId,
+    stationId,
+    pkId: data.insert_Transactions_one.id,
+  };
+}
+
+// Seeds a sequence of MeterValues rows under an existing transaction so
+// the transaction detail page's Recharts surfaces (Energy / Power /
+// Current / State of Charge) have data points to render. Each row carries
+// a `sampledValue` JSON array with one entry per measurand. The chart
+// component requires a `context` of Transaction.Begin / Sample.Periodic /
+// Transaction.End for a row to be plotted.
+export async function seedMeterValues(
+  api: ApiClient,
+  transactionDatabaseId: number,
+  count = 6,
+): Promise<void> {
+  const baseTime = Date.now();
+  const rows = Array.from({ length: count }, (_, i) => {
+    const ts = new Date(baseTime + i * 60_000).toISOString();
+    const energyKwh = i * 0.5; // 0, 0.5, 1.0, 1.5, ...
+    const powerKw = 7.2;
+    const context =
+      i === 0
+        ? 'Transaction.Begin'
+        : i === count - 1
+          ? 'Transaction.End'
+          : 'Sample.Periodic';
+    return {
+      transactionDatabaseId,
+      timestamp: ts,
+      sampledValue: [
+        {
+          value: energyKwh,
+          context,
+          measurand: 'Energy.Active.Import.Register',
+          unitOfMeasure: { unit: 'kWh' },
+        },
+        {
+          value: powerKw,
+          context,
+          measurand: 'Power.Active.Import',
+          unitOfMeasure: { unit: 'kW' },
+        },
+      ],
+      createdAt: ts,
+      updatedAt: ts,
+    };
+  });
+  await api.gql(
+    `mutation SeedMeterValues($rows: [MeterValues_insert_input!]!) {
+       insert_MeterValues(objects: $rows) { affected_rows }
+     }`,
+    { rows },
+  );
+}
+
+export async function deleteMeterValuesForTransaction(
+  api: ApiClient,
+  transactionDatabaseId: number,
+): Promise<void> {
+  await api.gql(
+    `mutation DeleteMeterValues($id: Int!) {
+       delete_MeterValues(where: { transactionDatabaseId: { _eq: $id } }) { affected_rows }
+     }`,
+    { id: transactionDatabaseId },
+  );
 }
 
 export async function deleteTransaction(

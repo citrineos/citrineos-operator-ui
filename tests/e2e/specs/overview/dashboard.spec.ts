@@ -58,13 +58,6 @@ test.describe('overview › dashboard', () => {
     ).toBeVisible({ timeout: 30_000 });
   });
 
-  test('E2E-013: Faulted chargers card surfaces a station with Faulted status', () => {
-    test.skip(
-      true,
-      'FaultedChargersCard renders only when the FAULTED_CHARGING_STATIONS_LIST_QUERY returns rows; reliably seeding that path requires additional joins (LatestStatusNotifications) that vary by Hasura permission set.',
-    );
-  });
-
   test('E2E-014: KPI headings render even with no fixture-seeded data', async ({
     page,
   }) => {

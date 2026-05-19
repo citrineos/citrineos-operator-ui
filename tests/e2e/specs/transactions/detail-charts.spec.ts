@@ -1,4 +1,8 @@
 import { test, expect } from '../../fixtures';
+import {
+  seedMeterValues,
+  deleteMeterValuesForTransaction,
+} from '../../fixtures/seeded-data';
 
 test.use({ storageState: 'playwright/.auth/admin.json' });
 
@@ -6,23 +10,8 @@ test.describe('transactions › detail charts', () => {
   test('E2E-093: Detail page renders for an existing transaction', async ({
     page,
     seededTransaction,
-    apiClient,
   }) => {
-    // Refine's data provider uses Int idType, so /transactions/:id takes
-    // the row's numeric primary key, not the OCPP transactionId string.
-    // Look up the pk before navigating.
-    const { Transactions } = await apiClient.gql<{
-      Transactions: { id: number }[];
-    }>(
-      `query LookupTx($transactionId: String!) {
-         Transactions(where: { transactionId: { _eq: $transactionId } }) { id }
-       }`,
-      { transactionId: seededTransaction.transactionId },
-    );
-    const pkId = Transactions[0]?.id;
-    expect(pkId).toBeDefined();
-
-    await page.goto(`/transactions/${pkId}`, {
+    await page.goto(`/transactions/${seededTransaction.pkId}`, {
       waitUntil: 'domcontentloaded',
     });
     await expect(page.getByRole('heading').first()).toBeVisible({
@@ -30,17 +19,55 @@ test.describe('transactions › detail charts', () => {
     });
   });
 
-  test('E2E-094: Recharts SVG mounts when data is present', async () => {
-    test.skip(
-      true,
-      'Recharts surface is conditionally rendered based on the transaction having MeterValues rows. The seedTransaction fixture inserts only the row, not MeterValues, so charts collapse to empty state.',
-    );
+  test('E2E-094: Recharts SVG mounts and plots a non-empty path when MeterValues are present', async ({
+    page,
+    seededTransaction,
+    apiClient,
+  }) => {
+    // Charts render an empty-state when measurand-filtered data is empty.
+    // The `tab=meterValues` query param selects the chart tab directly.
+    await seedMeterValues(apiClient, seededTransaction.pkId, 6);
+    try {
+      await page.goto(
+        `/transactions/${seededTransaction.pkId}?tab=meterValues`,
+        { waitUntil: 'domcontentloaded' },
+      );
+      const surface = page.locator('svg.recharts-surface').first();
+      await expect(surface).toBeVisible({ timeout: 30_000 });
+
+      // An empty chart mounts the surface but skips the line path; asserting
+      // the path's `d` attribute proves data points actually plotted.
+      const dataPath = surface
+        .locator('path.recharts-curve, path.recharts-line-curve')
+        .first();
+      await expect(dataPath).toHaveAttribute('d', /M.+/, { timeout: 15_000 });
+    } finally {
+      await deleteMeterValuesForTransaction(
+        apiClient,
+        seededTransaction.pkId,
+      ).catch(() => undefined);
+    }
   });
 
-  test('E2E-095: Detail page exposes at least one chart card heading', async () => {
-    test.skip(
-      true,
-      'Chart card headings are conditional on having data. See E2E-094; same root cause.',
-    );
+  test('E2E-095: Detail page exposes the Energy Over Time chart heading', async ({
+    page,
+    seededTransaction,
+    apiClient,
+  }) => {
+    await seedMeterValues(apiClient, seededTransaction.pkId, 6);
+    try {
+      await page.goto(
+        `/transactions/${seededTransaction.pkId}?tab=meterValues`,
+        { waitUntil: 'domcontentloaded' },
+      );
+      await expect(
+        page.getByRole('heading', { name: /energy over time/i }).first(),
+      ).toBeVisible({ timeout: 30_000 });
+    } finally {
+      await deleteMeterValuesForTransaction(
+        apiClient,
+        seededTransaction.pkId,
+      ).catch(() => undefined);
+    }
   });
 });

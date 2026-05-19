@@ -17,7 +17,11 @@ export class LoginPage {
 
   async goto(): Promise<void> {
     await this.page.goto(LoginPage.path);
-    await expect(this.submitButton).toBeVisible();
+    // The first visit to /login on a dev server pays the cold-compile cost
+    // (20–40s). Production builds are pre-compiled, so this budget is unused
+    // on `next start`. Keep it for the dev-mode path that most contributors
+    // run locally.
+    await expect(this.submitButton).toBeVisible({ timeout: 60_000 });
   }
 
   async login(email: string, password: string): Promise<void> {

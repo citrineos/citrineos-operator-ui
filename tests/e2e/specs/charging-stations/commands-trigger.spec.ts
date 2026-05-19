@@ -34,8 +34,8 @@ test.describe('charging-stations › TriggerMessage command', () => {
     const modal = new ModalHarness(page, /trigger message/i);
     await modal.expectOpen();
     await modal.submitButton.click();
-    // Modal may stay open (validation), close (default accepted), or surface
-    // an error toast (OCPP rejection); all are acceptable observable outcomes.
-    await page.waitForLoadState('domcontentloaded');
+    // Requested-Message is required; the form blocks dispatch and keeps the
+    // modal mounted until a value is picked.
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 });

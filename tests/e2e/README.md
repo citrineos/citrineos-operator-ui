@@ -1,31 +1,6 @@
 # Playwright E2E
 
-End-to-end tests for `citrineos-operator-ui` against the real Hasura + CitrineOS Core stack.
-
-This directory is governed by:
-
-- [`TEST_PLAN.md`](../../TEST_PLAN.md) — QA Manager's master plan.
-- [`PLAYWRIGHT_AUTOMATION_PLAN.md`](../../PLAYWRIGHT_AUTOMATION_PLAN.md) — scenario catalog (E2E-001 … E2E-210).
-- [`.qa-plan-workspace/phase-1-plan.md`](../../.qa-plan-workspace/phase-1-plan.md) — Phase 1 implementation plan.
-
-## What's covered today
-
-**Phase 0** — admin login happy path:
-
-| Spec | Scenarios |
-|---|---|
-| `specs/auth/login.spec.ts` | E2E-001 |
-
-**Phase 1** — auth lifecycle, overview KPIs, welcome modal, theme:
-
-| Spec | Scenarios |
-|---|---|
-| `specs/auth/login.spec.ts` (extended) | E2E-002, E2E-003 |
-| `specs/auth/logout.spec.ts` | E2E-004, E2E-005 (Keycloak-skipped on generic) |
-| `specs/auth/session-expiry.spec.ts` | E2E-006, E2E-007 |
-| `specs/overview/dashboard.spec.ts` | E2E-010, E2E-011 (Maps-key-gated), E2E-012, E2E-013, E2E-014 |
-| `specs/overview/welcome-modal.spec.ts` | E2E-015, E2E-016 |
-| `specs/overview/theme.spec.ts` | E2E-017 |
+End-to-end tests for `citrineos-operator-ui` against a real Hasura + CitrineOS Core stack.
 
 ## Prerequisites
 
@@ -34,22 +9,25 @@ This directory is governed by:
    docker compose up -d
    ```
    Healthchecks: Hasura `:8090/healthz`, Citrine `:8080/health`, UI `:3000/login`.
-2. UI dev server running. From this repo:
+2. UI server running. From this repo:
    ```bash
    npm run dev
    ```
+   If nothing is listening on `:3000`, `globalSetup` will build a production
+   bundle and start `next start` for the lifetime of the suite (see
+   `tests/e2e/utils/managed-server.ts`).
 3. `.env.test` exists. Copy from `.env.test.example` and fill in admin credentials.
 
 ## Run
 
 ```bash
-# Run the full E2E suite
+# Full suite
 npm run test:e2e
 
-# Run a single spec
+# A single spec
 npx playwright test specs/auth/login.spec.ts
 
-# Watch mode UI
+# UI mode
 npm run test:e2e:ui
 
 # Step through with the inspector
@@ -59,33 +37,55 @@ npm run test:e2e:debug
 npm run test:e2e:report
 ```
 
+## What's covered
+
+| Area | Specs |
+|---|---|
+| Auth | `specs/auth/login.spec.ts`, `specs/auth/logout.spec.ts` |
+| Overview | `specs/overview/dashboard.spec.ts`, `welcome-modal.spec.ts`, `theme.spec.ts` |
+| Locations | `specs/locations/crud.spec.ts`, `map.spec.ts`, `form-conditional.spec.ts` |
+| Charging stations | `specs/charging-stations/list.spec.ts`, `crud.spec.ts`, `detail-tabs.spec.ts`, `realtime.spec.ts`, `onboarding.spec.ts`, `admin-toggles.spec.ts`, `commands-*.spec.ts` |
+| Transactions | `specs/transactions/list.spec.ts`, `detail-charts.spec.ts` |
+| Authorizations | `specs/authorizations/crud.spec.ts` |
+| Tariffs | `specs/tariffs/crud.spec.ts` |
+| Partners | `specs/partners/register.spec.ts` |
+| Schema guard | `specs/schema/schema-drift.spec.ts` |
+
+The schema-drift guard also runs as part of `globalSetup` — any spec run fails
+fast if the live Hasura schema has drifted from
+`tests/e2e/data/schema-snapshot.json`. When an upstream schema change is
+intentional (renamed operation, dropped column, new tracked table), regenerate
+the baseline with:
+
+```bash
+npx tsx tests/e2e/scripts/capture-schema.ts
+```
+
+Review the diff before committing — the script overwrites the JSON in place.
+
+`@everest` tagged tests need the EVerest manager image
+(`citrineos-core/Server/everest`) and run on the `everest-serial` project.
+They are skipped automatically when the image is not running.
+
 ## Folder layout
 
 ```
 tests/e2e/
 ├── auth/           global-setup, global-teardown, admin.setup
 ├── pages/          Page Object Models
-├── fixtures/       apiClient, seeded-data, index (test.extend barrel)
+├── fixtures/       apiClient, seeded-data, everest, index (test.extend barrel)
 ├── specs/          Test specs mirroring the app routes
-├── utils/          env, wait, random, route-overrides, storage
-├── TESTIDS.md      data-testid registry (deferred for now per source-edit constraint)
+├── utils/          env, wait, random, route-overrides, storage, schema-drift, managed-server
+├── data/           schema-snapshot.json
+├── TESTIDS.md      data-testid registry (reserved for future src-side additions)
 └── README.md       this file
 ```
 
 ## Coding principles
 
-Every file in this directory honors the binding principles in
-[`C:\Users\ahmed.aboelezz\.claude\plans\no-need-to-re-imperative-locket.md`](file:///C:/Users/ahmed.aboelezz/.claude/plans/no-need-to-re-imperative-locket.md)
-(Phase 0 plan). Highlights:
-
 - TypeScript strict, no `any`.
-- Selector hierarchy: `getByRole` > `getByLabel` > `getByText` > `getByPlaceholder` > `getByTestId`. Phase 1 uses no `data-testid` at all (per project constraint).
+- Selector hierarchy: `getByRole` > `getByLabel` > `getByText` > `getByPlaceholder` > `getByTestId`. The suite currently uses no `data-testid` at all (project constraint: no `src/` modifications).
 - No `waitForTimeout`. Use `expect.poll`, `expect(locator).toBeVisible()`, or `locator.waitFor`.
 - POMs hold locators and small actions. Specs hold assertions.
 - Storage state is generated by `auth/admin.setup.ts`, never hand-written.
-- Seeding mutations always have typed responses. Fixture teardown deletes seeded rows.
-
-## What's coming next
-
-Phase 2 adds: schema-drift guard, OCPP modal coverage (parametric harness + 4 bespoke), the first OCPP command specs. See
-[`PLAYWRIGHT_AUTOMATION_PLAN.md` §5 Phase 2](../../PLAYWRIGHT_AUTOMATION_PLAN.md).
+- Seeding mutations always have typed responses. Fixture teardown deletes seeded rows; `globalTeardown` performs a best-effort sweep.

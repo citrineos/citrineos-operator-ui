@@ -38,6 +38,8 @@ test.describe('charging-stations › SetVariables command', () => {
     const modal = new ModalHarness(page, /set variables/i);
     await modal.expectOpen();
     await modal.submitButton.click();
-    await page.waitForLoadState('domcontentloaded');
+    // Component + Variable + AttributeValue in the field-array row are
+    // required; the form blocks dispatch and keeps the modal mounted.
+    await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
   });
 });
