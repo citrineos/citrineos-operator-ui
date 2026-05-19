@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import { resolve } from 'node:path';

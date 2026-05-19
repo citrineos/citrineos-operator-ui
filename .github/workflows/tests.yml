@@ -53,7 +53,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Bring up CitrineOS Core stack
-        working-directory: citrineos-core/Server
+        working-directory: citrineos-core/apps/Server
         run: docker compose up -d
 
       - name: Wait for backend healthy
