@@ -153,7 +153,7 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
   });
 
   const onFinish = async (values: GetVariablesFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Get Variables request because station ID is missing.',
       );
@@ -191,7 +191,7 @@ export const GetVariablesModal = ({ station }: GetVariablesModalProps) => {
     });
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/monitoring/getVariables?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/monitoring/getVariables?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data: { getVariableData },
       setLoading,
       ocppVersion: parsedStation.protocol,

@@ -13,7 +13,7 @@ export default async function EditChargingStationPage({ params }: PageProps) {
   const { id } = await params;
   return (
     <ChargingStationUpsert
-      params={{ id }}
+      params={{ id: Number(id) }}
       allowImageUpload={config.allowImageUpload}
     />
   );

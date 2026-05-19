@@ -56,7 +56,7 @@ export const DataTransferModal = ({ station }: DataTransferModalProps) => {
   });
 
   const handleSubmit = (values: DataTransferFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Data Transfer request because station ID is missing.',
       );
@@ -76,7 +76,7 @@ export const DataTransferModal = ({ station }: DataTransferModalProps) => {
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/dataTransfer?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/dataTransfer?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion,

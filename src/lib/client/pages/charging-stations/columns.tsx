@@ -33,15 +33,16 @@ export const getChargingStationsColumns = (
   return [
     {
       key: ChargingStationProps.id,
-      header: 'ID',
+      header: 'Name',
       visible: true,
       sortable: true,
+      filterConfig: { type: 'text', label: 'Station ID' },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
         <TableCellLink
-          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.pkId}`}
-          value={row.original.id}
+          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.id}`}
+          value={row.original[ChargingStationDetailsProps.ocppConnectionName]}
         />
       ),
     },
@@ -66,6 +67,11 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.statusNotifications,
       header: 'Status',
       visible: true,
+      filterConfig: {
+        type: 'yesno',
+        field: 'isOnline',
+        label: 'Online status',
+      },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
@@ -82,6 +88,15 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.protocol,
       header: 'Protocol',
       visible: true,
+      filterConfig: {
+        type: 'enum',
+        label: 'Protocol',
+        enumOptions: [
+          { label: 'OCPP 1.6', value: 'ocpp1.6' },
+          { label: 'OCPP 2.0.1', value: 'ocpp2.0.1' },
+          { label: 'OCPP 2.1', value: 'ocpp2.1' },
+        ],
+      },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
@@ -94,6 +109,11 @@ export const getChargingStationsColumns = (
       key: 'vendorModel',
       header: 'Vendor / Model',
       visible: false,
+      filterConfig: {
+        type: 'text',
+        field: 'chargePointVendor',
+        label: 'Vendor',
+      },
       cellRender: ({
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
@@ -104,6 +124,7 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.floorLevel,
       header: 'Floor Level',
       visible: false,
+      filterConfig: { type: 'text', label: 'Floor Level' },
     },
     {
       key: ChargingStationDetailsProps.parkingRestrictions,
@@ -149,12 +170,14 @@ export const getChargingStationsColumns = (
       key: ChargingStationDetailsProps.firmwareVersion,
       header: 'Firmware Version',
       visible: false,
+      filterConfig: { type: 'text', label: 'Firmware Version' },
     },
     {
       key: ChargingStationDetailsProps.createdAt,
       header: 'Created At',
       visible: false,
       sortable: true,
+      filterConfig: { type: 'date', label: 'Created At' },
       cellRender: ({ row }: CellContext<ChargingStationDetailsDto, unknown>) =>
         row.original.createdAt ? (
           <TimestampDisplay isoTimestamp={row.original.createdAt} />
@@ -167,6 +190,7 @@ export const getChargingStationsColumns = (
       header: 'Updated At',
       visible: false,
       sortable: true,
+      filterConfig: { type: 'date', label: 'Updated At' },
       cellRender: ({ row }: CellContext<ChargingStationDetailsDto, unknown>) =>
         row.original.updatedAt ? (
           <TimestampDisplay isoTimestamp={row.original.updatedAt} />
@@ -215,7 +239,7 @@ export const getChargingStationsFilters = (value: string): CrudFilter[] => {
       operator: 'or',
       value: [
         {
-          field: ChargingStationProps.id,
+          field: ChargingStationProps.ocppConnectionName,
           operator: 'contains',
           value,
         },

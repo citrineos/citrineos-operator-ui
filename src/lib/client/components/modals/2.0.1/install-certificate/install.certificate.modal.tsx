@@ -66,7 +66,7 @@ export const InstallCertificateModal = ({
   });
 
   const handleSubmit = (values: InstallCertificateFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Install Certificate request because station ID is missing.',
       );
@@ -85,7 +85,7 @@ export const InstallCertificateModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/installCertificate?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/certificates/installCertificate?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

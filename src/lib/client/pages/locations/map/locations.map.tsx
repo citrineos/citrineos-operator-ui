@@ -56,7 +56,7 @@ export const LocationsMap: React.FC<LocationsMapProps> = ({
     const filtered = allLocations.filter(
       (value) =>
         value.chargingPool?.some((station) =>
-          station.id.includes(lowerCaseQuery),
+          station.ocppConnectionName.includes(lowerCaseQuery),
         ) ||
         value.address?.toLowerCase().includes(lowerCaseQuery) ||
         value.name?.toLowerCase().includes(lowerCaseQuery),

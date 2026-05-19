@@ -75,7 +75,7 @@ export const TriggerMessageModal = ({ station }: TriggerMessageModalProps) => {
       gqlVariables: {
         offset: 0,
         limit: 10,
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
       },
     },
     sorters: [{ field: ConnectorProps.connectorId, order: 'asc' }],
@@ -104,7 +104,7 @@ export const TriggerMessageModal = ({ station }: TriggerMessageModalProps) => {
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/triggerMessage?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/triggerMessage?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,
