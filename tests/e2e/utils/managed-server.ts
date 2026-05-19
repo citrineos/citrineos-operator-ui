@@ -1,10 +1,5 @@
 import { spawn } from 'node:child_process';
-import {
-  existsSync,
-  readFileSync,
-  unlinkSync,
-  writeFileSync,
-} from 'node:fs';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 // Builds + starts `next start` for the suite when nothing is responding on
@@ -64,7 +59,8 @@ function runNpmScriptToCompletion(scriptName: string): Promise<void> {
         ...process.env,
         // Match the dev script's heap budget so the build doesn't OOM on
         // first-pass codegen.
-        NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --max-old-space-size=4096`.trim(),
+        NODE_OPTIONS:
+          `${process.env.NODE_OPTIONS ?? ''} --max-old-space-size=4096`.trim(),
       },
     });
     proc.on('error', rej);
@@ -100,10 +96,7 @@ function spawnDetachedServer(): number {
 // teardown can stop it.
 export async function ensureManagedServer(baseUrl: string): Promise<void> {
   if (await isServerResponding(baseUrl)) {
-    console.info(
-      '[e2e:managed-server] reusing existing server at',
-      baseUrl,
-    );
+    console.info('[e2e:managed-server] reusing existing server at', baseUrl);
     return;
   }
   console.info(

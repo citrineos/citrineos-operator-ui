@@ -69,9 +69,9 @@ test.describe('transactions › list', () => {
       await expect(
         list.rowByTransactionId(seededTransaction.transactionId),
       ).toBeVisible({ timeout: 15_000 });
-      await expect(
-        list.rowByTransactionId(decoyTxn.transactionId),
-      ).toHaveCount(0);
+      await expect(list.rowByTransactionId(decoyTxn.transactionId)).toHaveCount(
+        0,
+      );
     } finally {
       await deleteTransaction(apiClient, decoyTxn.transactionId).catch(
         () => undefined,

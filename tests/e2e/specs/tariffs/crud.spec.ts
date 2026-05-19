@@ -41,9 +41,7 @@ test.describe('tariffs › CRUD', () => {
     page,
     apiClient,
   }) => {
-    const distinctivePrice = Number(
-      `0.${Date.now().toString().slice(-6)}`,
-    );
+    const distinctivePrice = Number(`0.${Date.now().toString().slice(-6)}`);
     const now = new Date().toISOString();
     const { insert_Tariffs_one: created } = await apiClient.gql<{
       insert_Tariffs_one: { id: number };
