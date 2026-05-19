@@ -10,7 +10,7 @@ import type {
 
 export class EvseClass implements Partial<EvseDto> {
   id?: number;
-  stationId!: string;
+  ocppConnectionName!: string;
   evseTypeId?: number;
   evseId!: string;
   physicalReference?: string | null;

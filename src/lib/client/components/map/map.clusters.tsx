@@ -6,7 +6,7 @@
 import type { LocationDto } from '@citrineos/base';
 import { InfoWindow, useMap } from '@vis.gl/react-google-maps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { MarkerClusterer, type Marker } from '@googlemaps/markerclusterer';
+import { type Marker, MarkerClusterer } from '@googlemaps/markerclusterer';
 import { MapMarkerV2 } from '@lib/client/components/map/map.clusters.marker';
 import { ChargingStationStatusTag } from '@lib/client/pages/charging-stations/charging.station.status.tag';
 import { MenuSection } from '@lib/client/components/main-menu/main.menu';
@@ -116,7 +116,7 @@ export const ClusteredLocationMarkers = ({
                         )
                       }
                     >
-                      {charger.id}
+                      {charger.ocppConnectionName}
                     </span>
                     <span
                       className={`${charger.isOnline ? 'text-success' : 'text-destructive'} text-xs`}

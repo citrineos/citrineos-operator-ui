@@ -58,7 +58,7 @@ export const GetInstalledCertificateIdsModal = ({
   });
 
   const onFinish = async (values: GetInstalledCertificateIdsFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Get Installed Certificate IDs request because station ID is missing.',
       );
@@ -73,7 +73,7 @@ export const GetInstalledCertificateIdsModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/certificates/getInstalledCertificateIds?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/certificates/getInstalledCertificateIds?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

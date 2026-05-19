@@ -33,7 +33,7 @@ export const getChargingStationsColumns = (
   return [
     {
       key: ChargingStationProps.id,
-      header: 'ID',
+      header: 'Name',
       visible: true,
       sortable: true,
       filterConfig: { type: 'text', label: 'Station ID' },
@@ -41,8 +41,8 @@ export const getChargingStationsColumns = (
         row,
       }: CellContext<ChargingStationDetailsDto, unknown>) => (
         <TableCellLink
-          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.pkId}`}
-          value={row.original.id}
+          path={`/${MenuSection.CHARGING_STATIONS}/${row.original.id}`}
+          value={row.original[ChargingStationDetailsProps.ocppConnectionName]}
         />
       ),
     },
@@ -239,7 +239,7 @@ export const getChargingStationsFilters = (value: string): CrudFilter[] => {
       operator: 'or',
       value: [
         {
-          field: ChargingStationProps.id,
+          field: ChargingStationProps.ocppConnectionName,
           operator: 'contains',
           value,
         },

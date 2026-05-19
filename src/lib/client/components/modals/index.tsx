@@ -22,8 +22,7 @@ import { ChangeAvailabilityModal as ChangeAvailabilityModal16 } from '@lib/clien
 import { ChangeConfigurationModal } from '@lib/client/components/modals/1.6/change-configuration/change.configuration.modal';
 import { GetConfigurationModal } from '@lib/client/components/modals/1.6/get-configuration/get.configuration.modal';
 import { TriggerMessageModal as TriggerMessageModal16 } from '@lib/client/components/modals/1.6/trigger-message/trigger.message.modal';
-import { UpdateFirmwareModal as UpdateFirmwareModal16 } from '@lib/client/components/modals/1.6/update-firmware/update.firmware.modal';
-// OCPP 2.0.1 Modals
+import { UpdateFirmwareModal as UpdateFirmwareModal16 } from '@lib/client/components/modals/1.6/update-firmware/update.firmware.modal'; // OCPP 2.0.1 Modals
 import { CertificateSignedModal } from '@lib/client/components/modals/2.0.1/certificate-signed/certificate.signed.modal';
 import { ChangeAvailabilityModal as ChangeAvailabilityModal201 } from '@lib/client/components/modals/2.0.1/change-availability/change.availability.modal';
 import { ClearCacheModal } from '@lib/client/components/modals/2.0.1/clear-cache/clear.cache.modal';
@@ -47,6 +46,7 @@ import { ToggleTransactionActiveModal } from '@lib/client/components/modals/togg
 import { ModalComponentType } from '@lib/client/components/modals/modal.types';
 import { ForceDisconnectModal } from './admin/force-disconnect/force.disconnect.modal';
 import { GetDiagnosticsModal } from './1.6/get-diagnostics/get.diagnostics.modal';
+import { isNullOrUndefined } from '@lib/utils/assertion';
 
 const MODAL_COMPONENTS: Partial<{
   [key in ModalComponentType]: React.FC<any>;
@@ -105,7 +105,7 @@ const AppModal = () => {
   const { isOpen, title, modalComponentType, modalComponentProps } =
     useSelector(selectModal);
 
-  const ModalComponent = modalComponentType
+  const ModalComponent = !isNullOrUndefined(modalComponentType)
     ? MODAL_COMPONENTS[modalComponentType]
     : null;
 

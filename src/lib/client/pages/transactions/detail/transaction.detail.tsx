@@ -8,7 +8,6 @@ import { TransactionDetailCard } from '@lib/client/pages/transactions/detail/tra
 import { TransactionClass } from '@lib/cls/transaction.dto';
 import { TRANSACTION_GET_QUERY } from '@lib/queries/transactions';
 import { ActionType, ResourceType } from '@lib/utils/access.types';
-import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { CanAccess, useOne, useTranslate } from '@refinedev/core';
 import { pageFlex, pageMargin } from '@lib/client/styles/page';

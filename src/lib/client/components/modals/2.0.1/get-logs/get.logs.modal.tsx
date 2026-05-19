@@ -67,7 +67,7 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
   });
 
   const onFinish = async (values: GetLogsFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Get Logs request because station ID is missing.',
       );
@@ -93,7 +93,7 @@ export const GetLogsModal = ({ station }: GetLogsModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/getLog?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/reporting/getLog?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,
