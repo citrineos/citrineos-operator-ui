@@ -139,12 +139,12 @@ export const ChargingStationConfiguration: React.FC<
   const configFilters = useMemo<CrudFilter[]>(
     () => [
       {
-        field: 'ocppConnectionName',
+        field: 'id',
         operator: 'eq',
-        value: station?.ocppConnectionName ?? '',
+        value: station?.id ?? -1,
       },
     ],
-    [station?.ocppConnectionName],
+    [station?.id],
   );
 
   const {
