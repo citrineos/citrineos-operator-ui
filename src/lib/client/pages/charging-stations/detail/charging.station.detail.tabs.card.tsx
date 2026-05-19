@@ -125,7 +125,7 @@ export const ChargingStationDetailTabsCard = ({ id }: { id: number }) => {
                 </p>
               }
             >
-              <OCPPMessages id={id} />
+              <OCPPMessages stationId={id} />
             </CanAccess>
           </TabsContent>
 

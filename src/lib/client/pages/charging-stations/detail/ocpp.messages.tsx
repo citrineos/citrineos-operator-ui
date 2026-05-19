@@ -47,7 +47,7 @@ import { useSelector } from 'react-redux';
 import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
 
 export interface OCPPMessagesProps {
-  id: number;
+  stationId: number;
   initialStartDate?: Date | null;
   initialEndDate?: Date | null;
 }
@@ -72,12 +72,12 @@ const originOptions = [
 ];
 
 export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
-  id,
+  stationId,
   initialStartDate = null,
   initialEndDate = null,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
+  const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
   const [searchCid, setSearchCid] = useState<string>('');
   const [selectedActions, setSelectedActions] = useState<string[]>([]);
   const [selectedOrigin, setSelectedOrigin] = useState<string>(allOption);
@@ -111,7 +111,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
     ],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationId: id },
+      gqlVariables: { stationId: stationId },
     },
     filters,
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
@@ -245,7 +245,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
             },
             meta: {
               gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-              gqlVariables: { stationId: id },
+              gqlVariables: { stationId: stationId },
             },
             queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
           }}
@@ -355,7 +355,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
       <OCPPMessagesExportDialog
         open={exportDialogOpen}
         onOpenChangeAction={setExportDialogOpen}
-        id={id}
+        stationId={stationId}
         filters={filters}
       />
     </>
