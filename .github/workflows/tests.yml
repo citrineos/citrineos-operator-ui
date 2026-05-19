@@ -1,0 +1,97 @@
+# Phase 0 ships only the e2e job. Phase 1+ adds test-unit and test-int jobs.
+# See TEST_PLAN.md §15 and PLAYWRIGHT_AUTOMATION_PLAN.md §10.
+
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: e2e (chromium-desktop)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+      E2E_BASE_URL: http://localhost:3000
+      HASURA_URL: http://localhost:8090/v1/graphql
+      CITRINE_CORE_URL: http://localhost:8080
+      E2E_TENANT_ID: '1'
+      E2E_AUTH_PROVIDER: generic
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+    steps:
+      - name: Checkout operator-ui
+        uses: actions/checkout@v4
+
+      - name: Checkout citrineos-core (sibling repo)
+        uses: actions/checkout@v4
+        with:
+          repository: citrineos/citrineos-core
+          path: citrineos-core
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Bring up CitrineOS Core stack
+        working-directory: citrineos-core/Server
+        run: docker compose up -d
+
+      - name: Wait for backend healthy
+        run: |
+          for i in {1..60}; do
+            curl -fsS http://localhost:8090/healthz \
+              && curl -fsS http://localhost:8080/health \
+              && break || sleep 2
+          done
+
+      - name: Build operator-ui
+        run: npm run build
+
+      - name: Start operator-ui (production)
+        run: npm run start &
+        env:
+          PORT: '3000'
+
+      - name: Wait for UI ready
+        run: |
+          for i in {1..60}; do
+            curl -fsS http://localhost:3000/login && break || sleep 2
+          done
+
+      - name: Run Playwright E2E
+        run: npx playwright test --project=chromium-desktop
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload junit + traces + videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: |
+            reports/junit.xml
+            test-results/
+          retention-days: 14
