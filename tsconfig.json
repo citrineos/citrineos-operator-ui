@@ -37,5 +37,5 @@
     ".next/types/**/*.ts",
     "tests/e2e/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "citrineos-core"]
 }
