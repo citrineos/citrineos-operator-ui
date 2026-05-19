@@ -21,7 +21,7 @@ export const TRANSACTION_LIST_QUERY = gql`
       timeSpentCharging
       isActive
       chargingState
-      stationId
+      ocppConnectionName
       stoppedReason
       transactionId
       evseId
@@ -73,6 +73,7 @@ export const TRANSACTION_LIST_QUERY = gql`
       }
       chargingStation: ChargingStation {
         id
+        ocppConnectionName
         isOnline
         protocol
         locationId
@@ -118,7 +119,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       timeSpentCharging
       isActive
       chargingState
-      stationId
+      ocppConnectionName
       stoppedReason
       transactionId
       evseId
@@ -130,6 +131,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       updatedAt
       chargingStation: ChargingStation {
         id
+        ocppConnectionName
         isOnline
         protocol
         locationId
@@ -169,14 +171,14 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
 
 export const GET_TRANSACTION_LIST_FOR_STATION = gql`
   query GetTransactionListForStation(
-    $stationPkId: Int!
+    $stationId: Int!
     $where: [Transactions_bool_exp!] = []
     $order_by: [Transactions_order_by!] = {}
     $offset: Int
     $limit: Int
   ) {
     Transactions(
-      where: { stationPkId: { _eq: $stationPkId }, _and: $where }
+      where: { stationId: { _eq: $stationId }, _and: $where }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -185,6 +187,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       timeSpentCharging
       isActive
       chargingState
+      ocppConnectionName
       stationId
       stoppedReason
       transactionId
@@ -228,7 +231,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       }
     }
     Transactions_aggregate(
-      where: { stationPkId: { _eq: $stationPkId }, _and: $where }
+      where: { stationId: { _eq: $stationId }, _and: $where }
     ) {
       aggregate {
         count
@@ -261,6 +264,8 @@ export const TRANSACTION_GET_QUERY = gql`
       isActive
       chargingState
       stationId
+      locationId
+      ocppConnectionName
       stoppedReason
       transactionId
       evseId

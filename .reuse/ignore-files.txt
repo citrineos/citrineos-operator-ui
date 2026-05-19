@@ -63,6 +63,7 @@ src/lib/utils/cn.ts
 src/lib/utils/types.ts
 tsconfig.json
 .env.local
+.env.test.example
 .nvmrc
 .prettierrc
 Dockerfile

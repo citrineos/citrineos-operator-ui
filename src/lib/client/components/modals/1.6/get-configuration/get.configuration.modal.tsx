@@ -68,7 +68,7 @@ export const GetConfigurationModal = ({
   });
 
   const handleSubmit = (values: GetConfigurationFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Get Configuration request because station ID is missing.',
       );
@@ -87,7 +87,7 @@ export const GetConfigurationModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/getConfiguration?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/getConfiguration?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

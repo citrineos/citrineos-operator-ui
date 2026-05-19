@@ -45,14 +45,12 @@ export default tseslint.config(
       'no-restricted-syntax': [
         'error',
         {
-          selector:
-            "CallExpression[callee.property.name='waitForTimeout']",
+          selector: "CallExpression[callee.property.name='waitForTimeout']",
           message:
             'Use expect.poll, expect(locator).toBeVisible(), or locator.waitFor instead of waitForTimeout (Phase 0 plan §11).',
         },
         {
-          selector:
-            "CallExpression[callee.object.name='setTimeout']",
+          selector: "CallExpression[callee.object.name='setTimeout']",
           message:
             'Sleep-based waits are forbidden. Use expect.poll or locator.waitFor.',
         },

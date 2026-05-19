@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Contributors to the CitrineOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
 # Phase 0 ships only the e2e job. Phase 1+ adds test-unit and test-int jobs.
 # See TEST_PLAN.md §15 and PLAYWRIGHT_AUTOMATION_PLAN.md §10.
 
@@ -18,11 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      CI: 'true'
+      CI: "true"
       E2E_BASE_URL: http://localhost:3000
       HASURA_URL: http://localhost:8090/v1/graphql
       CITRINE_CORE_URL: http://localhost:8080
-      E2E_TENANT_ID: '1'
+      E2E_TENANT_ID: "1"
       E2E_AUTH_PROVIDER: generic
       E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
       E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
@@ -67,7 +70,7 @@ jobs:
       - name: Start operator-ui (production)
         run: npm run start &
         env:
-          PORT: '3000'
+          PORT: "3000"
 
       - name: Wait for UI ready
         run: |

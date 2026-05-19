@@ -20,7 +20,7 @@ export const TRANSACTION_EVENT_LIST_QUERY = gql`
       id
       offline
       eventType
-      stationId
+      ocppConnectionName
       triggerReason
       evseId
       numberOfPhasesUsed
@@ -70,7 +70,7 @@ export const GET_TRANSACTION_EVENTS_FOR_TRANSACTION_LIST_QUERY = gql`
       id
       offline
       eventType
-      stationId
+      ocppConnectionName
       triggerReason
       evseId
       numberOfPhasesUsed

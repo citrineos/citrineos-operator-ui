@@ -11,6 +11,7 @@ import {
   TabsTrigger,
 } from '@lib/client/components/ui/tabs';
 import { CanAccess, useTranslate } from '@refinedev/core';
+import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import {
   ActionType,
   ChargingStationAccessType,
@@ -22,7 +23,6 @@ import { AccessDeniedFallback } from '@lib/utils/AccessDeniedFallback';
 import { Table } from '@lib/client/components/table';
 import { DEFAULT_SORTERS, DETAIL_TAB_STATE } from '@lib/utils/consts';
 import { GET_TRANSACTION_LIST_FOR_STATION } from '@lib/queries/transactions';
-import { getPlainToInstanceOptions } from '@lib/utils/tables';
 import { TransactionClass } from '@lib/cls/transaction.dto';
 import { AggregatedMeterValuesData } from '@lib/client/pages/charging-stations/detail/charging.station.aggregated.data';
 import React from 'react';
@@ -44,11 +44,7 @@ enum ChargingStationDetailTabType {
   aggregated = 'aggregated',
 }
 
-export const ChargingStationDetailTabsCard = ({
-  stationId,
-}: {
-  stationId: string;
-}) => {
+export const ChargingStationDetailTabsCard = ({ id }: { id: number }) => {
   const translate = useTranslate();
 
   const { renderedVisibleColumns } = useColumnPreferences(
@@ -99,7 +95,7 @@ export const ChargingStationDetailTabsCard = ({
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}
               params={{
-                id: stationId,
+                id,
                 accessType: ChargingStationAccessType.TOPOLOGY,
               }}
               fallback={
@@ -108,7 +104,7 @@ export const ChargingStationDetailTabsCard = ({
                 </p>
               }
             >
-              <EVSESList stationId={stationId} />
+              <EVSESList id={id} />
             </CanAccess>
           </TabsContent>
 
@@ -120,7 +116,7 @@ export const ChargingStationDetailTabsCard = ({
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}
               params={{
-                id: stationId,
+                id,
                 accessType: ChargingStationAccessType.OCPP_MESSAGES,
               }}
               fallback={
@@ -129,7 +125,7 @@ export const ChargingStationDetailTabsCard = ({
                 </p>
               }
             >
-              <OCPPMessages stationId={stationId} />
+              <OCPPMessages stationId={id} />
             </CanAccess>
           </TabsContent>
 
@@ -141,7 +137,7 @@ export const ChargingStationDetailTabsCard = ({
               resource={ResourceType.CHARGING_STATIONS}
               action={ActionType.ACCESS}
               params={{
-                id: stationId,
+                id,
                 accessType: ChargingStationAccessType.CONFIGURATION,
               }}
               fallback={
@@ -150,7 +146,7 @@ export const ChargingStationDetailTabsCard = ({
                 </p>
               }
             >
-              <ChargingStationConfiguration stationId={stationId} />
+              <ChargingStationConfiguration id={id} />
             </CanAccess>
           </TabsContent>
 
@@ -169,7 +165,7 @@ export const ChargingStationDetailTabsCard = ({
                   sorters: DEFAULT_SORTERS,
                   meta: {
                     gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
-                    gqlVariables: { stationPkId: Number(stationId) },
+                    gqlVariables: { stationId: id },
                   },
                   queryOptions: getPlainToInstanceOptions(TransactionClass),
                 }}
@@ -187,7 +183,7 @@ export const ChargingStationDetailTabsCard = ({
             value={ChargingStationDetailTabType.aggregated}
             className={cardTabsStyle}
           >
-            <AggregatedMeterValuesData stationId={stationId} />
+            <AggregatedMeterValuesData id={id} />
           </TabsContent>
         </Tabs>
       </CardContent>

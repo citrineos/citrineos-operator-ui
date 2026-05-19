@@ -49,7 +49,7 @@ export const OCPP1_6_Reset = ({ station }: OCPP1_6_ResetProps) => {
     const data = { type: values.type };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/reset?identifier=${station.id}&tenantId=${tenantId}`,
+      url: `/configuration/reset?identifier=${station.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

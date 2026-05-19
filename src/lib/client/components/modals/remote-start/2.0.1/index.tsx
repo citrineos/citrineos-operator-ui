@@ -75,7 +75,7 @@ export const OCPP2_0_1_RemoteStart = ({
     meta: {
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       gqlVariables: {
-        stationPkId: station.pkId,
+        stationId: station.id,
         type: ChargingStationSequenceTypeEnum.remoteStartId,
       },
     },
@@ -159,7 +159,7 @@ export const OCPP2_0_1_RemoteStart = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/evdriver/requestStartTransaction?identifier=${station.id}&tenantId=${tenantId}`,
+      url: `/evdriver/requestStartTransaction?identifier=${station.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: station.protocol,
