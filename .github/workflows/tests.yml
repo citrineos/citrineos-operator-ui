@@ -22,13 +22,9 @@ jobs:
     timeout-minutes: 30
     env:
       CI: "true"
-      E2E_BASE_URL: http://localhost:3000
-      HASURA_URL: http://localhost:8090/v1/graphql
-      CITRINE_CORE_URL: http://localhost:8080
-      E2E_TENANT_ID: "1"
-      E2E_AUTH_PROVIDER: generic
-      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
-      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      # All E2E config (URLs, tenant id, auth provider, admin creds) is read
+      # from the committed .env.test by playwright.config.ts. Don't set those
+      # here — empty values from undefined secrets would shadow the file.
     steps:
       - name: Checkout operator-ui
         uses: actions/checkout@v4
