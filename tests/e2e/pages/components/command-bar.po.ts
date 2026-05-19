@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { type Locator, type Page } from '@playwright/test';
 
 // CommandBar — composition POM for the charging-station detail page's

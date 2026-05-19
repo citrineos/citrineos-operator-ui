@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 // Single source of truth for all 44 OCPP modal entries. Consumed by the
 // parametric harness in tests/e2e/specs/charging-stations/commands.parametric.spec.ts;
 // a count of 44 is asserted at beforeAll.

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { test } from '../../fixtures';
 import { ChargingStationDetailPage } from '../../pages/charging-stations/detail.page';
 import { ModalHarness } from '../../pages/components/modal.po';

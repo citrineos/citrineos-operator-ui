@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { test, expect } from '../../fixtures';
 import { LocationFormPage } from '../../pages/locations/form.page';
 import { blockGoogleMaps } from '../../utils/route-overrides';

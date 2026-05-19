@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Playwright E2E
 
 End-to-end tests for `citrineos-operator-ui` against a real Hasura + CitrineOS Core stack.

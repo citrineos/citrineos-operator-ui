@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { test as setup, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 import { LoginPage } from '../pages/login.page';
