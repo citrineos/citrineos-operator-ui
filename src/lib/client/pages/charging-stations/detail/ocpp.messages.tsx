@@ -29,7 +29,12 @@ import { OCPPMessageClass } from '@lib/cls/ocpp.message.dto';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { type LogicalFilter, useInvalidate, useList, useTranslate } from '@refinedev/core';
+import {
+  type LogicalFilter,
+  useInvalidate,
+  useList,
+  useTranslate,
+} from '@refinedev/core';
 import { Copy, Download, Link, RefreshCw } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
@@ -104,7 +109,11 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
     if (!sinceTimestamp) return filters;
     return [
       ...filters,
-      { field: OCPPMessageProps.timestamp, operator: 'gt', value: sinceTimestamp },
+      {
+        field: OCPPMessageProps.timestamp,
+        operator: 'gt',
+        value: sinceTimestamp,
+      },
     ];
   }, [filters, sinceTimestamp]);
 
@@ -248,7 +257,10 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
                 variant="ghost"
                 size="icon"
                 onClick={handleRefresh}
-                title={translate('ChargingStations.refreshMessages', 'Refresh Messages')}
+                title={translate(
+                  'ChargingStations.refreshMessages',
+                  'Refresh Messages',
+                )}
               >
                 <RefreshCw className={buttonIconSize} />
               </Button>
