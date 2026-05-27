@@ -10,6 +10,8 @@ import {
   OCPPMessageProps,
 } from '@citrineos/base';
 import { Button } from '@lib/client/components/ui/button';
+import { Label } from '@lib/client/components/ui/label';
+import { Switch } from '@lib/client/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -27,9 +29,8 @@ import { OCPPMessageClass } from '@lib/cls/ocpp.message.dto';
 import { GET_OCPP_MESSAGES_LIST_FOR_STATION } from '@lib/queries/ocpp.messages';
 import { ResourceType } from '@lib/utils/access.types';
 import { getPlainToInstanceOptions } from '@lib/utils/tables';
-import { type LogicalFilter, useTranslate } from '@refinedev/core';
-import { useList } from '@refinedev/core';
-import { Copy, Download, Link } from 'lucide-react';
+import { type LogicalFilter, useInvalidate, useList, useTranslate } from '@refinedev/core';
+import { Copy, Download, Link, RefreshCw } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CollapsibleOCPPMessageViewer } from './collapsible.ocpp.message.viewer';
 import { buttonIconSize } from '@lib/client/styles/icon';
@@ -83,8 +84,12 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
   const [selectedOrigin, setSelectedOrigin] = useState<string>(allOption);
   const [filters, setFilters] = useState<LogicalFilter[]>([]);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [liveLogEnabled, setLiveLogEnabled] = useState(false);
+  const [sinceTimestamp, setSinceTimestamp] = useState<string | null>(null);
 
   const translate = useTranslate();
+  const liveMode = liveLogEnabled ? 'auto' : 'off';
+  const invalidate = useInvalidate();
 
   const [tableQueryState, _] = useQueryState(
     ResourceType.OCPP_MESSAGES,
@@ -95,10 +100,19 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
     getPageSizePreference(state, ResourceType.OCPP_MESSAGES),
   );
 
+  const effectiveFilters = useMemo<LogicalFilter[]>(() => {
+    if (!sinceTimestamp) return filters;
+    return [
+      ...filters,
+      { field: OCPPMessageProps.timestamp, operator: 'gt', value: sinceTimestamp },
+    ];
+  }, [filters, sinceTimestamp]);
+
   const {
     query: { data },
   } = useList<OCPPMessageDto>({
     resource: ResourceType.OCPP_MESSAGES,
+    liveMode: 'off',
     pagination: {
       currentPage: tableQueryState?.page ?? 1,
       pageSize: tableQueryState?.size ?? pageSizePreference,
@@ -113,11 +127,45 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
       gqlVariables: { stationId: stationId },
     },
-    filters,
+    filters: effectiveFilters,
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
   });
 
   const messages = useMemo(() => data?.data ?? [], [data?.data]);
+
+  const handleRefresh = () => {
+    const latest = messages[0]?.timestamp;
+    if (latest) {
+      setSinceTimestamp(latest);
+    } else {
+      invalidate({
+        resource: ResourceType.OCPP_MESSAGES,
+        invalidates: ['list'],
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!liveLogEnabled) return;
+
+    let timer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => setLiveLogEnabled(false), 10 * 60 * 1000);
+    };
+
+    const events = ['mousedown', 'keydown', 'touchstart'] as const;
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+    window.addEventListener('scroll', resetTimer, true);
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+      window.removeEventListener('scroll', resetTimer, true);
+    };
+  }, [liveLogEnabled]);
 
   useEffect(() => {
     const newFilters: LogicalFilter[] = [];
@@ -158,6 +206,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
     }
 
     setFilters(newFilters);
+    setSinceTimestamp(null);
   }, [startDate, endDate, searchCid, selectedActions, selectedOrigin]);
 
   const findRelatedMessages = useCallback(
@@ -188,11 +237,30 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
   return (
     <>
       <div className="flex flex-col gap-4 w-full">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <Button variant="secondary" onClick={() => setExportDialogOpen(true)}>
             <Download className={buttonIconSize} />
             {translate('buttons.exportToCsv')}
           </Button>
+          <div className="flex items-center gap-3">
+            {!liveLogEnabled && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleRefresh}
+                title={translate('ChargingStations.refreshMessages', 'Refresh Messages')}
+              >
+                <RefreshCw className={buttonIconSize} />
+              </Button>
+            )}
+            <Switch
+              checked={liveLogEnabled}
+              onCheckedChange={setLiveLogEnabled}
+            />
+            <Label className="font-medium">
+              {translate('ChargingStations.liveLog')}
+            </Label>
+          </div>
         </div>
         <div className="grid grid-cols-5 gap-2 w-full">
           <DebounceSearch
@@ -235,13 +303,15 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
         </div>
 
         <Table<OCPPMessageDto>
+          key={liveLogEnabled ? 'ocpp-messages-live' : 'ocpp-messages-static'}
           refineCoreProps={{
             resource: ResourceType.OCPP_MESSAGES,
+            liveMode,
             sorters: {
               initial: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
             },
             filters: {
-              permanent: filters,
+              permanent: effectiveFilters,
             },
             meta: {
               gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,

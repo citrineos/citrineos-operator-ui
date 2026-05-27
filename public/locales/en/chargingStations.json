@@ -19,6 +19,8 @@
     "exportMessagesToCsvHeader": "Export OCPP Messages to CSV",
     "downloadAllMessagesToCsv": "You will download all OCPP messages for this charger.",
     "downloadMessagesToCsvWithFilters": "You will download OCPP messages for this charger with the following filters:",
+    "liveLog": "Live log",
+    "refreshMessages": "Refresh Messages",
     "noDataFound": "No charging station found with id {id}.",
     "connectionModal": {
       "welcomeTitle": "Welcome to CitrineOS Operator UI",
