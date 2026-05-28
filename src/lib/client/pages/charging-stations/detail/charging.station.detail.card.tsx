@@ -116,6 +116,7 @@ export const ChargingStationDetailCard = ({
       pageSize: 1,
       currentPage: 1,
     },
+    liveMode: 'off',
     queryOptions: getPlainToInstanceOptions(OCPPMessageClass),
   });
 
