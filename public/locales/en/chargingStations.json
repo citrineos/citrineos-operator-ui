@@ -20,6 +20,7 @@
     "downloadAllMessagesToCsv": "You will download all OCPP messages for this charger.",
     "downloadMessagesToCsvWithFilters": "You will download OCPP messages for this charger with the following filters:",
     "liveLog": "Live log",
+    "liveLogDisabledInactivity": "Live log disabled due to inactivity",
     "refreshMessages": "Refresh Messages",
     "noDataFound": "No charging station found with id {id}.",
     "connectionModal": {

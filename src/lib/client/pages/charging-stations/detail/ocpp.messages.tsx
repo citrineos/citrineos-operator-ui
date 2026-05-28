@@ -51,6 +51,7 @@ import { parseAsJson, useQueryState } from 'nuqs';
 import { TableQueryStateSchema } from '@lib/client/components/table/fields/table-query-state';
 import { useSelector } from 'react-redux';
 import { getPageSizePreference } from '@lib/utils/store/table.preferences.slice';
+import { toast } from 'sonner';
 
 export interface OCPPMessagesProps {
   stationId: number;
@@ -161,7 +162,19 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
 
     const resetTimer = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => setLiveLogEnabled(false), 10 * 60 * 1000);
+      timer = setTimeout(
+        () => {
+          setLiveLogEnabled(false);
+          toast.info(
+            translate(
+              'ChargingStations.liveLogDisabledInactivity',
+              'Live log disabled due to inactivity',
+            ),
+            { duration: Infinity, position: 'top-right' },
+          );
+        },
+        10 * 60 * 1000,
+      );
     };
 
     const events = ['mousedown', 'keydown', 'touchstart'] as const;
@@ -174,7 +187,7 @@ export const OCPPMessages: React.FC<OCPPMessagesProps> = ({
       events.forEach((e) => window.removeEventListener(e, resetTimer));
       window.removeEventListener('scroll', resetTimer, true);
     };
-  }, [liveLogEnabled]);
+  }, [liveLogEnabled, translate]);
 
   useEffect(() => {
     const newFilters: LogicalFilter[] = [];
