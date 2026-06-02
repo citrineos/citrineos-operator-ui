@@ -13,7 +13,10 @@ import {
   seedStation,
   seedTransaction,
 } from '../../fixtures/seeded-data';
-import { OCPP_MODAL_SPECS, OCPP_MODAL_COUNT } from '../../utils/ocpp-modal-specs';
+import {
+  OCPP_MODAL_SPECS,
+  OCPP_MODAL_COUNT,
+} from '../../utils/ocpp-modal-specs';
 
 // Parametric harness: one open-and-close smoke test per dispatchable OCPP
 // modal. Bespoke command specs cover the deeper happy / sad / offline paths;
@@ -94,7 +97,12 @@ test.describe('charging-stations › parametric modal harness (smoke)', () => {
         const primary = page.getByRole('button', {
           name: spec.openButtonNamePattern,
         });
-        if (await primary.first().isVisible().catch(() => false)) {
+        if (
+          await primary
+            .first()
+            .isVisible()
+            .catch(() => false)
+        ) {
           await primary.first().click();
         }
         let opened = await modal.title
@@ -142,7 +150,9 @@ test.describe('charging-stations › parametric modal harness (smoke)', () => {
         await expect(modal.title).toBeHidden({ timeout: 10_000 });
       } finally {
         if (seededTxnId) {
-          await deleteTransaction(apiClient, seededTxnId).catch(() => undefined);
+          await deleteTransaction(apiClient, seededTxnId).catch(
+            () => undefined,
+          );
         }
         await deleteStation(apiClient, station.id).catch(() => undefined);
         await deleteLocation(apiClient, location.id).catch(() => undefined);

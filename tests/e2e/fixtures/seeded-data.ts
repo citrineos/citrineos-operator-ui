@@ -104,8 +104,7 @@ export async function seedStation(
     protocol: string;
   }> = {},
 ): Promise<SeededStation> {
-  const ocppConnectionName =
-    overrides.ocppConnectionName ?? `${shortId()}-cp`;
+  const ocppConnectionName = overrides.ocppConnectionName ?? `${shortId()}-cp`;
   const now = nowIso();
   const data = await api.gql<{
     insert_ChargingStations_one: { id: number; ocppConnectionName: string };
@@ -131,10 +130,7 @@ export async function seedStation(
   };
 }
 
-export async function deleteStation(
-  api: ApiClient,
-  id: number,
-): Promise<void> {
+export async function deleteStation(api: ApiClient, id: number): Promise<void> {
   await api.gql(
     `mutation DeleteStation($id: Int!) {
        delete_ChargingStations_by_pk(id: $id) { id }

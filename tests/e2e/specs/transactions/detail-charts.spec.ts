@@ -32,10 +32,9 @@ test.describe('transactions › detail charts', () => {
     // The `tab=meterValues` query param selects the chart tab directly.
     await seedMeterValues(apiClient, seededTransaction.id, 6);
     try {
-      await page.goto(
-        `/transactions/${seededTransaction.id}?tab=meterValues`,
-        { waitUntil: 'domcontentloaded' },
-      );
+      await page.goto(`/transactions/${seededTransaction.id}?tab=meterValues`, {
+        waitUntil: 'domcontentloaded',
+      });
       const surface = page.locator('svg.recharts-surface').first();
       await expect(surface).toBeVisible({ timeout: 30_000 });
 
@@ -60,10 +59,9 @@ test.describe('transactions › detail charts', () => {
   }) => {
     await seedMeterValues(apiClient, seededTransaction.id, 6);
     try {
-      await page.goto(
-        `/transactions/${seededTransaction.id}?tab=meterValues`,
-        { waitUntil: 'domcontentloaded' },
-      );
+      await page.goto(`/transactions/${seededTransaction.id}?tab=meterValues`, {
+        waitUntil: 'domcontentloaded',
+      });
       await expect(
         page.getByRole('heading', { name: /energy over time/i }).first(),
       ).toBeVisible({ timeout: 30_000 });

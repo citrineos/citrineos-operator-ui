@@ -16,9 +16,9 @@ import { ModalHarness } from '../../pages/components/modal.po';
 
 test.use({ storageState: 'playwright/.auth/admin.json' });
 
-async function deviceModelComponentCount(
-  apiClient: { gql: <T>(q: string) => Promise<T> },
-): Promise<number> {
+async function deviceModelComponentCount(apiClient: {
+  gql: <T>(q: string) => Promise<T>;
+}): Promise<number> {
   const data = await apiClient.gql<{
     Components_aggregate: { aggregate: { count: number } };
   }>(
@@ -47,13 +47,22 @@ test.describe('charging-stations › device model sequence @everest', () => {
     await baseReport.submitAndWaitForToast();
 
     // Wait for the device model to be populated (already persistent from prior
-    // NotifyReports in a warm stack; gives a fresh stack time to ingest).
-    const deadline = Date.now() + 90_000;
+    // NotifyReports in a warm stack; gives a fresh stack time to ingest). A
+    // timeout here is acceptable — test.skip below documents it as an EVerest
+    // limitation rather than a test failure.
     let components = 0;
-    while (Date.now() < deadline) {
-      components = await deviceModelComponentCount(apiClient);
-      if (components > 0) break;
-      await page.waitForTimeout(3_000);
+    try {
+      await expect
+        .poll(
+          async () => {
+            components = await deviceModelComponentCount(apiClient);
+            return components;
+          },
+          { timeout: 90_000, intervals: [3_000] },
+        )
+        .toBeGreaterThan(0);
+    } catch {
+      // components remains 0 and test.skip below fires.
     }
     test.skip(
       components === 0,

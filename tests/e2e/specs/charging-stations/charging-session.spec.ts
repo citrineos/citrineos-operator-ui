@@ -64,7 +64,10 @@ async function pollActiveTransaction(
 
 // Live sessions create MeterValues + TransactionEvents that FK the transaction
 // by its DB id; delete them before the Transaction row. Best-effort cleanup.
-async function purgeTransaction(apiClient: ApiClient, id: number): Promise<void> {
+async function purgeTransaction(
+  apiClient: ApiClient,
+  id: number,
+): Promise<void> {
   await apiClient
     .gql(
       `mutation PurgeLiveTxn($id: Int!) {
