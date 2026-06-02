@@ -16,30 +16,30 @@ test.describe('charging-stations › CRUD', () => {
     seededLocation,
     apiClient,
   }) => {
-    const id = `e2e-${shortId()}-cp`;
+    const name = `e2e-${shortId()}-cp`;
     const form = new ChargingStationFormPage(page);
     await form.gotoNew();
     await form.fill({
-      id,
+      name,
       locationName: seededLocation.name,
     });
     await form.submit();
 
     const list = new ChargingStationsListPage(page);
     await list.goto();
-    await expect(list.rowById(id)).toBeVisible({ timeout: 30_000 });
+    await expect(list.rowById(name)).toBeVisible({ timeout: 30_000 });
 
     // Cleanup via apiClient (no UI delete on charging-stations list).
     const { ChargingStations } = await apiClient.gql<{
-      ChargingStations: { pkId: number }[];
+      ChargingStations: { id: number }[];
     }>(
-      `query LookupCS($id: String!) {
-         ChargingStations(where: { id: { _eq: $id } }) { pkId }
+      `query LookupCS($name: String!) {
+         ChargingStations(where: { ocppConnectionName: { _eq: $name } }) { id }
        }`,
-      { id },
+      { name },
     );
     if (ChargingStations[0]) {
-      await deleteStation(apiClient, ChargingStations[0].pkId).catch(
+      await deleteStation(apiClient, ChargingStations[0].id).catch(
         () => undefined,
       );
     }
@@ -50,17 +50,17 @@ test.describe('charging-stations › CRUD', () => {
     seededStation,
   }) => {
     const form = new ChargingStationFormPage(page);
-    await form.gotoEdit(seededStation.pkId);
+    await form.gotoEdit(seededStation.id);
     await expect(form.heading).toContainText(/edit charging\s*station/i);
-    await expect(form.idInput).toHaveValue(seededStation.id);
+    await expect(form.nameInput).toHaveValue(seededStation.ocppConnectionName);
 
-    // floorLevel is optional and the seed leaves it empty; the ID column is
+    // floorLevel is optional and the seed leaves it empty; the Name column is
     // immutable on edit, so floorLevel is the safe mutable target.
     const newFloor = 'e2e-floor-3';
     await form.floorLevelInput.fill(newFloor);
     await form.submit();
 
-    await form.gotoEdit(seededStation.pkId);
+    await form.gotoEdit(seededStation.id);
     await expect(form.floorLevelInput).toHaveValue(newFloor, {
       timeout: 30_000,
     });
@@ -73,16 +73,16 @@ test.describe('charging-stations › CRUD', () => {
   }) => {
     // Inline-seed so the UI delete owns the lifecycle (no fixture-teardown
     // race against the form-driven mutation).
-    const id = `e2e-${shortId()}-cp`;
+    const name = `e2e-${shortId()}-cp`;
     const { insert_ChargingStations_one: created } = await apiClient.gql<{
-      insert_ChargingStations_one: { pkId: number };
+      insert_ChargingStations_one: { id: number };
     }>(
       `mutation SeedForUiDelete($obj: ChargingStations_insert_input!) {
-         insert_ChargingStations_one(object: $obj) { pkId }
+         insert_ChargingStations_one(object: $obj) { id }
        }`,
       {
         obj: {
-          id,
+          ocppConnectionName: name,
           locationId: seededLocation.id,
           isOnline: false,
           protocol: 'ocpp2.0.1',
@@ -93,7 +93,7 @@ test.describe('charging-stations › CRUD', () => {
     );
 
     try {
-      await page.goto(`/charging-stations/${created.pkId}`);
+      await page.goto(`/charging-stations/${created.id}`);
       const deleteButton = page.getByRole('button', { name: /^delete/i });
       await expect(deleteButton).toBeEnabled({ timeout: 30_000 });
       await deleteButton.click();
@@ -101,10 +101,10 @@ test.describe('charging-stations › CRUD', () => {
       await page.waitForURL(/\/charging-stations$/, { timeout: 30_000 });
       const list = new ChargingStationsListPage(page);
       await expect(list.heading).toBeVisible();
-      await expect(list.rowById(id)).toHaveCount(0);
+      await expect(list.rowById(name)).toHaveCount(0);
     } finally {
       // Safety net if the UI delete didn't fire.
-      await deleteStation(apiClient, created.pkId).catch(() => undefined);
+      await deleteStation(apiClient, created.id).catch(() => undefined);
     }
   });
 });

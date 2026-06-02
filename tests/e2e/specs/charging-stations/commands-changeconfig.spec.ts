@@ -20,7 +20,7 @@ test.describe('charging-stations › Change Availability + Configuration', () =>
     everestStation,
   }) => {
     const detail = new ChargingStationDetailPage(page);
-    await detail.goto(everestStation.pkId);
+    await detail.goto(everestStation.id);
 
     await detail.commandBar.openViaOtherCommands(/change availability/i);
     const modal = new ModalHarness(page, /change availability/i);
@@ -45,7 +45,7 @@ test.describe('charging-stations › Change Availability + Configuration', () =>
 
     try {
       const detail = new ChargingStationDetailPage(page);
-      await detail.goto(station.pkId);
+      await detail.goto(station.id);
 
       await detail.commandBar.openViaOtherCommands(/change configuration/i);
       const modal = new ModalHarness(page, /change configuration/i);
@@ -54,7 +54,7 @@ test.describe('charging-stations › Change Availability + Configuration', () =>
       // Required Key field is empty — validation keeps the modal mounted.
       await expect(modal.dialog).toBeVisible({ timeout: 5_000 });
     } finally {
-      await deleteStation(apiClient, station.pkId).catch(() => undefined);
+      await deleteStation(apiClient, station.id).catch(() => undefined);
       await deleteLocation(apiClient, location.id).catch(() => undefined);
     }
   });
@@ -64,7 +64,7 @@ test.describe('charging-stations › Change Availability + Configuration', () =>
     seededStation,
   }) => {
     const detail = new ChargingStationDetailPage(page);
-    await detail.goto(seededStation.pkId);
+    await detail.goto(seededStation.id);
 
     await detail.commandBar.openViaOtherCommands(/change availability/i);
     const modal = new ModalHarness(page, /change availability/i);

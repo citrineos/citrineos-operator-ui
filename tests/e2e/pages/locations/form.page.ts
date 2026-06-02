@@ -80,10 +80,10 @@ export class LocationFormPage {
   }
 
   stateField(): Locator {
-    // Administrative-area combobox label varies by country: "State" for US,
-    // "Province" for CA. Try US first; CA case is handled separately by
-    // E2E-031. Anchored exact-string to avoid matching "United States".
-    return this.fieldGroup('State');
+    // The administrative-area field uses a single global label
+    // "State / Province / Region" and renders as a plain text Input — fill
+    // the value directly via fill() rather than click + option.
+    return this.fieldGroup('State / Province / Region');
   }
 
   async gotoNew(): Promise<void> {
@@ -140,17 +140,11 @@ export class LocationFormPage {
   }
 
   async selectState(stateName: string): Promise<void> {
-    // The state combobox waits on getAdministrativeAreas() to populate; on
-    // initial mount it briefly shows "Loading..." and is disabled. Wait for
-    // it to be enabled (no `aria-disabled="true"`) before clicking.
-    const trigger = this.stateField().getByRole('combobox').first();
-    await expect(trigger).toBeEnabled({ timeout: 15_000 });
-    await trigger.click();
-    const option = this.page
-      .getByRole('option', { name: new RegExp(`^${stateName}$`, 'i') })
-      .first();
-    await option.waitFor({ state: 'visible', timeout: 15_000 });
-    await option.click();
+    // The administrative-area field is a plain text Input under the
+    // "State / Province / Region" label; fill the value directly.
+    const input = this.stateField().getByRole('textbox').first();
+    await expect(input).toBeVisible({ timeout: 15_000 });
+    await input.fill(stateName);
   }
 
   // Never return while Refine is in-flight. We wait for either the

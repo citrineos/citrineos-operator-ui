@@ -15,7 +15,7 @@ test.describe('transactions › detail charts', () => {
     page,
     seededTransaction,
   }) => {
-    await page.goto(`/transactions/${seededTransaction.pkId}`, {
+    await page.goto(`/transactions/${seededTransaction.id}`, {
       waitUntil: 'domcontentloaded',
     });
     await expect(page.getByRole('heading').first()).toBeVisible({
@@ -30,10 +30,10 @@ test.describe('transactions › detail charts', () => {
   }) => {
     // Charts render an empty-state when measurand-filtered data is empty.
     // The `tab=meterValues` query param selects the chart tab directly.
-    await seedMeterValues(apiClient, seededTransaction.pkId, 6);
+    await seedMeterValues(apiClient, seededTransaction.id, 6);
     try {
       await page.goto(
-        `/transactions/${seededTransaction.pkId}?tab=meterValues`,
+        `/transactions/${seededTransaction.id}?tab=meterValues`,
         { waitUntil: 'domcontentloaded' },
       );
       const surface = page.locator('svg.recharts-surface').first();
@@ -48,7 +48,7 @@ test.describe('transactions › detail charts', () => {
     } finally {
       await deleteMeterValuesForTransaction(
         apiClient,
-        seededTransaction.pkId,
+        seededTransaction.id,
       ).catch(() => undefined);
     }
   });
@@ -58,10 +58,10 @@ test.describe('transactions › detail charts', () => {
     seededTransaction,
     apiClient,
   }) => {
-    await seedMeterValues(apiClient, seededTransaction.pkId, 6);
+    await seedMeterValues(apiClient, seededTransaction.id, 6);
     try {
       await page.goto(
-        `/transactions/${seededTransaction.pkId}?tab=meterValues`,
+        `/transactions/${seededTransaction.id}?tab=meterValues`,
         { waitUntil: 'domcontentloaded' },
       );
       await expect(
@@ -70,7 +70,7 @@ test.describe('transactions › detail charts', () => {
     } finally {
       await deleteMeterValuesForTransaction(
         apiClient,
-        seededTransaction.pkId,
+        seededTransaction.id,
       ).catch(() => undefined);
     }
   });

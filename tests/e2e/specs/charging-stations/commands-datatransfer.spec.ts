@@ -14,7 +14,7 @@ test.describe('charging-stations › DataTransfer command', () => {
     everestStation,
   }) => {
     const detail = new ChargingStationDetailPage(page);
-    await detail.goto(everestStation.pkId);
+    await detail.goto(everestStation.id);
 
     await detail.commandBar.openViaOtherCommands(/data transfer/i);
     const modal = new ModalHarness(page, /data transfer/i);
@@ -31,7 +31,7 @@ test.describe('charging-stations › DataTransfer command', () => {
     seededStation,
   }) => {
     const detail = new ChargingStationDetailPage(page);
-    await detail.goto(seededStation.pkId);
+    await detail.goto(seededStation.id);
 
     await detail.commandBar.openViaOtherCommands(/data transfer/i);
     const modal = new ModalHarness(page, /data transfer/i);

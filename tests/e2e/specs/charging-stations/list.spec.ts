@@ -24,8 +24,8 @@ test.describe('charging-stations › list', () => {
   }) => {
     const list = new ChargingStationsListPage(page);
     await list.goto();
-    await list.searchInput.fill(seededStation.id);
-    await expect(list.rowById(seededStation.id)).toBeVisible({
+    await list.searchInput.fill(seededStation.ocppConnectionName);
+    await expect(list.rowById(seededStation.ocppConnectionName)).toBeVisible({
       timeout: 15_000,
     });
   });
@@ -48,7 +48,7 @@ test.describe('charging-stations › list', () => {
   }) => {
     const list = new ChargingStationsListPage(page);
     await list.goto();
-    const row = list.rowById(everestStation.stationId);
+    const row = list.rowById(everestStation.ocppConnectionName);
     await expect(row).toBeVisible({ timeout: 30_000 });
     // The row contains a status indicator (text or color); we accept
     // either as evidence the indicator rendered.

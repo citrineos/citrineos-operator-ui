@@ -49,8 +49,8 @@ test.describe('locations › CRUD', () => {
     await form.submit();
 
     // Redirected to /locations/:id detail; the heading should reflect the
-    // newly-created record. We look up the row in the list to capture pkId
-    // for cleanup.
+    // newly-created record. We look up the row in the list to capture the
+    // numeric id for cleanup.
     const list = new LocationsListPage(page);
     await list.goto();
     await expect(list.rowByName(name)).toBeVisible({ timeout: 30_000 });

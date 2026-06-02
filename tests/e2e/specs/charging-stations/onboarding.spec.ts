@@ -33,13 +33,13 @@ test.describe('charging-stations › cp001 navigation surface @everest', () => {
 
     await test.step('1. Operator finds cp001 in /charging-stations list', async () => {
       await list.goto();
-      await expect(list.rowById(everestStation.stationId)).toBeVisible({
+      await expect(list.rowById(everestStation.ocppConnectionName)).toBeVisible({
         timeout: 30_000,
       });
     });
 
     await test.step('2. Operator opens cp001 detail page', async () => {
-      await detail.goto(everestStation.pkId);
+      await detail.goto(everestStation.id);
       await expect(detail.commandBar.resetButton).toBeVisible();
     });
 

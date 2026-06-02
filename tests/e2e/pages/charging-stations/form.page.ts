@@ -6,12 +6,15 @@ import { type Locator, type Page, expect } from '@playwright/test';
 
 // ChargingStationFormPage — the CS upsert form lives on
 // /charging-stations/new and /charging-stations/:id/edit. submit() awaits a
-// Refine success toast before returning. ID and Location are required;
-// everything else is optional. The Location combobox is disabled in
-// edit-from-location-context paths.
+// Refine success toast before returning. Name (the OCPP connection name) and
+// Location are required; everything else is optional. The Location combobox
+// is disabled in edit-from-location-context paths.
+//
+// The OCPP identifier column is `ocppConnectionName` and the form binds it
+// to a field labelled "Name". The numeric route param is `id`.
 
 export interface ChargingStationFormPayload {
-  readonly id?: string;
+  readonly name?: string; // ocppConnectionName
   readonly locationName?: string; // Location combobox option label
   readonly floorLevel?: string;
 }
@@ -23,7 +26,7 @@ export class ChargingStationFormPage {
   }
 
   readonly heading: Locator;
-  readonly idInput: Locator;
+  readonly nameInput: Locator;
   readonly locationCombobox: Locator;
   readonly floorLevelInput: Locator;
   readonly submitButton: Locator;
@@ -32,7 +35,7 @@ export class ChargingStationFormPage {
     this.heading = page.getByRole('heading', {
       name: /(create|edit) charging\s*station/i,
     });
-    this.idInput = this.fieldGroup('ID').getByRole('textbox').first();
+    this.nameInput = this.fieldGroup('Name').getByRole('textbox').first();
     this.locationCombobox = this.fieldGroup('Location')
       .getByRole('combobox')
       .first();
@@ -60,12 +63,12 @@ export class ChargingStationFormPage {
 
   async expectLoaded(): Promise<void> {
     await expect(this.heading).toBeVisible({ timeout: 30_000 });
-    await expect(this.idInput).toBeVisible({ timeout: 30_000 });
+    await expect(this.nameInput).toBeVisible({ timeout: 30_000 });
   }
 
   async fill(payload: ChargingStationFormPayload): Promise<void> {
-    if (payload.id !== undefined) {
-      await this.idInput.fill(payload.id);
+    if (payload.name !== undefined) {
+      await this.nameInput.fill(payload.name);
     }
     if (payload.locationName !== undefined) {
       await this.selectLocation(payload.locationName);
