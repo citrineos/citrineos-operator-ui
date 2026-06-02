@@ -1,0 +1,109 @@
+# SPDX-FileCopyrightText: 2026 Contributors to the CitrineOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: e2e (chromium-desktop)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: "true"
+      # All E2E config (URLs, tenant id, auth provider, admin creds) is read
+      # from the committed .env.test by playwright.config.ts. Don't set those
+      # here — empty values from undefined secrets would shadow the file.
+    steps:
+      - name: Checkout operator-ui
+        uses: actions/checkout@v4
+
+      - name: Checkout citrineos-core (sibling repo)
+        uses: actions/checkout@v4
+        with:
+          repository: citrineos/citrineos-core
+          path: citrineos-core
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Bring up CitrineOS Core stack
+        working-directory: citrineos-core/apps/Server
+        run: docker compose up -d --build
+
+      - name: Wait for backend healthy
+        # Hasura cli-migrations-v3 boots in two phases (temporary server +
+        # metadata apply) which on a cold DB takes a few minutes; citrine
+        # similarly waits on ocpp-db. Poll for up to 10 minutes and fail
+        # explicitly on timeout so the workflow doesn't proceed to Playwright
+        # with the backend missing.
+        run: |
+          for i in $(seq 1 120); do
+            if curl -fsS http://localhost:8090/healthz > /dev/null \
+              && curl -fsS http://localhost:8080/health > /dev/null; then
+              echo "Backend healthy after ${i} polls (${i}x5s)"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Backend failed to become healthy within 10 minutes." >&2
+          echo "=== docker ps ==="; docker ps -a
+          for c in server-ocpp-db-1 server-citrine-1 server-graphql-engine-1; do
+            echo "=== $c logs (tail) ==="
+            docker logs --tail 40 "$c" 2>&1 || true
+          done
+          exit 1
+
+      - name: Build operator-ui
+        run: npm run build
+
+      - name: Start operator-ui (production)
+        run: npm run start &
+        env:
+          PORT: "3000"
+
+      - name: Wait for UI ready
+        run: |
+          for i in {1..60}; do
+            curl -fsS http://localhost:3000/login && break || sleep 2
+          done
+
+      - name: Run Playwright E2E
+        run: npx playwright test --project=chromium-desktop
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload junit + traces + videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: |
+            reports/junit.xml
+            test-results/
+          retention-days: 14

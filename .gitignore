@@ -36,5 +36,9 @@ next-env.d.ts
 # ide
 .idea
 
-# local env files
-.env.local
+# playwright
+/playwright/.auth/
+/playwright-report/
+/test-results/
+/reports/
+/tests/e2e/.cache/

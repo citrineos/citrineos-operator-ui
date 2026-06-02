@@ -1,0 +1,89 @@
+// SPDX-FileCopyrightText: 2025 Contributors to the CitrineOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+
+import { test, expect } from '../../fixtures';
+import { TariffsListPage } from '../../pages/tariffs/list.page';
+import { TariffFormPage } from '../../pages/tariffs/form.page';
+
+test.use({ storageState: 'playwright/.auth/admin.json' });
+
+test.describe('tariffs › CRUD', () => {
+  test('E2E-110: Tariffs list renders', async ({ page }) => {
+    const list = new TariffsListPage(page);
+    await list.goto();
+    await expect(list.heading).toBeVisible();
+    await expect(list.addButton).toBeVisible();
+  });
+
+  test('E2E-111: Create tariff via UI surfaces success toast', async ({
+    page,
+    apiClient,
+  }) => {
+    const form = new TariffFormPage(page);
+    await form.gotoNew();
+    await form.fill({
+      currency: 'USD',
+      pricePerKwh: 0.35,
+    });
+    await form.submit();
+
+    // Cleanup: delete the tariff we just created (best-effort match by
+    // recently-added USD tariff with the per-kWh price we set).
+    await apiClient
+      .gql(
+        `mutation Cleanup {
+           delete_Tariffs(where: { currency: { _eq: "USD" }, pricePerKwh: { _eq: 0.35 } }) {
+             affected_rows
+           }
+         }`,
+      )
+      .catch(() => undefined);
+  });
+
+  test('E2E-113: Delete tariff via UI detail redirects to list and removes the row', async ({
+    page,
+    apiClient,
+  }) => {
+    const distinctivePrice = Number(`0.${Date.now().toString().slice(-6)}`);
+    const now = new Date().toISOString();
+    const { insert_Tariffs_one: created } = await apiClient.gql<{
+      insert_Tariffs_one: { id: number };
+    }>(
+      `mutation SeedForUiDelete($obj: Tariffs_insert_input!) {
+         insert_Tariffs_one(object: $obj) { id }
+       }`,
+      {
+        obj: {
+          currency: 'USD',
+          pricePerKwh: distinctivePrice,
+          createdAt: now,
+          updatedAt: now,
+        },
+      },
+    );
+
+    try {
+      await page.goto(`/tariffs/${created.id}`);
+      const deleteButton = page.getByRole('button', { name: /^delete/i });
+      await expect(deleteButton).toBeVisible({ timeout: 30_000 });
+      await deleteButton.click();
+
+      await page.waitForURL(/\/tariffs$/, { timeout: 30_000 });
+      const list = new TariffsListPage(page);
+      await expect(list.heading).toBeVisible();
+      await expect(
+        page.getByRole('row').filter({ hasText: String(created.id) }),
+      ).toHaveCount(0);
+    } finally {
+      await apiClient
+        .gql(
+          `mutation Cleanup($id: bigint!) {
+             delete_Tariffs_by_pk(id: $id) { id }
+           }`,
+          { id: created.id },
+        )
+        .catch(() => undefined);
+    }
+  });
+});

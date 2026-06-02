@@ -19,7 +19,13 @@
     "prettier": "prettier --write .",
     "lint": "npx eslint ./",
     "lint-fix": "npm run prettier && npx eslint --fix ./",
-    "refine": "refine"
+    "refine": "refine",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:codegen": "playwright codegen http://localhost:3000",
+    "test:e2e:report": "playwright show-report",
+    "playwright:install": "playwright install chromium"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.930.0",
@@ -90,6 +96,9 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.49.0",
+    "dotenv": "^16.4.5",
     "@tailwindcss/postcss": "4",
     "@types/geojson": "7946.0.16",
     "@types/js-cookie": "3.0.6",
