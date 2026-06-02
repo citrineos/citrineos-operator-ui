@@ -59,7 +59,7 @@ export class LocationFormPage {
     this.cityInput = this.fieldGroup('City').getByRole('textbox').first();
     // ZIP Code label is US-specific; CA uses "Postal Code". Test specs
     // pass the country-specific label via fieldGroup directly when needed.
-    this.postalCodeInput = this.fieldGroup('ZIP Code')
+    this.postalCodeInput = this.fieldGroup('Postal Code')
       .getByRole('textbox')
       .first();
     this.latitudeInput = page.locator('input#latitude');
