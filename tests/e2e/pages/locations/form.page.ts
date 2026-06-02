@@ -53,7 +53,9 @@ export class LocationFormPage {
     this.countryCombobox = this.fieldGroup('Country')
       .getByRole('combobox')
       .first();
-    this.addressInput = this.fieldGroup('Address').getByRole('textbox').first();
+    this.addressInput = this.fieldGroup('Street Address')
+      .getByRole('textbox')
+      .first();
     this.cityInput = this.fieldGroup('City').getByRole('textbox').first();
     // ZIP Code label is US-specific; CA uses "Postal Code". Test specs
     // pass the country-specific label via fieldGroup directly when needed.
