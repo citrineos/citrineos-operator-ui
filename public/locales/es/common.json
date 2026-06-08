@@ -1,0 +1,188 @@
+{
+  "pages": {
+    "login": {
+      "title": "Inicie sesión en su cuenta",
+      "signin": "Iniciar sesión",
+      "signup": "Registrarse",
+      "divider": "o",
+      "fields": {
+        "email": "Correo electrónico",
+        "password": "Contraseña"
+      },
+      "errors": {
+        "validEmail": "Dirección de correo electrónico no válida",
+        "requiredEmail": "El correo electrónico es obligatorio",
+        "requiredPassword": "La contraseña es obligatoria"
+      },
+      "buttons": {
+        "submit": "Entrar",
+        "forgotPassword": "¿Olvidó su contraseña?",
+        "noAccount": "¿No tiene una cuenta?",
+        "rememberMe": "Recordarme"
+      }
+    },
+    "forgotPassword": {
+      "title": "¿Olvidó su contraseña?",
+      "fields": {
+        "email": "Correo electrónico"
+      },
+      "errors": {
+        "validEmail": "Dirección de correo electrónico no válida",
+        "requiredEmail": "El correo electrónico es obligatorio"
+      },
+      "buttons": {
+        "submit": "Enviar instrucciones de restablecimiento"
+      }
+    },
+    "register": {
+      "title": "Regístrese para obtener su cuenta",
+      "fields": {
+        "email": "Correo electrónico",
+        "password": "Contraseña"
+      },
+      "errors": {
+        "validEmail": "Dirección de correo electrónico no válida",
+        "requiredEmail": "El correo electrónico es obligatorio",
+        "requiredPassword": "La contraseña es obligatoria"
+      },
+      "buttons": {
+        "submit": "Registrarse",
+        "haveAccount": "¿Ya tiene una cuenta?"
+      }
+    },
+    "updatePassword": {
+      "title": "Actualizar contraseña",
+      "fields": {
+        "password": "Nueva contraseña",
+        "confirmPassword": "Confirmar nueva contraseña"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Las contraseñas no coinciden",
+        "requiredPassword": "La contraseña es obligatoria",
+        "requiredConfirmPassword": "Confirmar contraseña es obligatorio"
+      },
+      "buttons": {
+        "submit": "Actualizar"
+      }
+    },
+    "error": {
+      "info": "Es posible que haya olvidado agregar el componente {action} al recurso {resource}.",
+      "404": "Lo sentimos, la página que visitó no existe.",
+      "resource404": "¿Está seguro de que ha creado el recurso {resource}?",
+      "backHome": "Volver al inicio"
+    },
+    "redirectingToLogin": "Redirigiendo al inicio de sesión...",
+    "checkingAuth": "Comprobando autenticación..."
+  },
+  "actions": {
+    "create": "Crear",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "list": "Lista",
+    "show": "Mostrar"
+  },
+  "buttons": {
+    "add": "Agregar",
+    "cancel": "Cancelar",
+    "clear": "Limpiar",
+    "clone": "Clonar",
+    "columns": "Columnas",
+    "confirm": "¿Está seguro?",
+    "confirmText": "Confirmar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "edit": "Editar",
+    "exportToCsv": "Exportar a CSV",
+    "filter": "Filtrar",
+    "import": "Importar",
+    "logout": "Cerrar sesión",
+    "notAccessTitle": "No tiene permiso para acceder a este recurso.",
+    "ok": "Aceptar",
+    "refresh": "Actualizar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "show": "Mostrar",
+    "submit": "Enviar",
+    "undo": "Deshacer",
+    "upload": "Subir"
+  },
+  "warnWhenUnsavedChanges": "¿Está seguro de que quiere salir? Tiene cambios sin guardar.",
+  "notifications": {
+    "success": "Éxito",
+    "error": "Error (código de estado: {statusCode})",
+    "undoable": "Tiene {seconds} segundos para deshacer",
+    "createSuccess": "{resource} creado con éxito",
+    "createError": "Hubo un error al crear {resource} (código de estado: {statusCode})",
+    "deleteSuccess": "{resource} eliminado con éxito",
+    "deleteError": "Error al eliminar {resource} (código de estado: {statusCode})",
+    "editSuccess": "{resource} editado con éxito",
+    "editError": "Error al editar {resource} (código de estado: {statusCode})",
+    "importProgress": "Importando: {processed}/{total}"
+  },
+  "accessDenied": "Acceso denegado",
+  "imageUploadFailed": "Error al subir la imagen.",
+  "loading": "Cargando",
+  "noDataFound": "No se encontraron datos",
+  "somethingWentWrong": "Algo salió mal.",
+  "loggedOut": "¡Sesión cerrada! Redirigiendo al inicio de sesión...",
+  "tags": {
+    "clone": "Clonar"
+  },
+  "table": {
+    "actions": "Acciones",
+    "bulkActions": "Acciones en lote",
+    "clearFilters": "Limpiar filtros",
+    "noResultsFound": "No se encontraron resultados",
+    "selectAll": "Seleccionar todo",
+    "selected": "seleccionado",
+    "toggleColumns": "Alternar columnas",
+    "resetColumns": "Restablecer columnas"
+  },
+  "dialogs": {
+    "areYouSure": "¿Está seguro?",
+    "thisActionCannotBeUndone": "Esta acción no se puede deshacer."
+  },
+  "placeholders": {
+    "search": "Buscar",
+    "select": "Seleccionar"
+  },
+  "pagination": {
+    "buttons": {
+      "goToFirstPage": "Ir a la primera página",
+      "goToNextPage": "Ir a la página siguiente",
+      "goToPreviousPage": "Ir a la página anterior",
+      "goToLastPage": "Ir a la última página"
+    },
+    "rowsPerPage": "Filas por página"
+  },
+  "menu": {
+    "overview": "Resumen",
+    "help": "Ayuda",
+    "themes": {
+      "changeTo": "Cambiar a",
+      "dark": "Oscuro",
+      "light": "Claro",
+      "mode": "Modo"
+    }
+  },
+  "telemetryConsentModal": {
+    "title": "Consentimiento de métricas anónimas",
+    "description": "CitrineOS recopila métricas de uso anónimas para ayudarnos a mejorar el producto. ¿Le gustaría enviar estas métricas?",
+    "reject": "Rechazar",
+    "accept": "Aceptar"
+  },
+  "overview": {
+    "activeTransactions": "Transacciones activas",
+    "chargerActivity": "Actividad del cargador",
+    "chargerOnlineStatus": "Estado de conexión del cargador",
+    "chargers": "Cargadores",
+    "errorLoadingData": "Error al cargar los datos",
+    "plugInSuccessRate": "Tasa de éxito de conexión",
+    "noActiveTransactions": "No hay transacciones activas.",
+    "noChargersStatus": "Ningún cargador tiene actualmente el estado {status}.",
+    "viewAllChargers": "Ver todos los cargadores",
+    "viewAllLocations": "Ver todas las ubicaciones",
+    "viewAllTransactions": "Ver todas las transacciones"
+  }
+}

@@ -53,6 +53,11 @@ jobs:
           echo "NEXT_PUBLIC_API_URL=https://hasura.redevolta.com/v1/graphql" >> .env.local
           echo "NEXT_PUBLIC_WS_URL=wss://hasura.redevolta.com/v1/graphql" >> .env.local
           
+          # Branding and Locale Overrides
+          echo "NEXT_PUBLIC_LOGO_URL=/logo-collapsed.svg" >> .env.local
+          echo "NEXT_PUBLIC_DEFAULT_LOCALE=es" >> .env.local
+          echo "NEXT_LOCALE=es" >> .env.local
+          
           # Fix: Set your actual desired login credentials here
           echo "NEXT_PUBLIC_ADMIN_EMAIL=admin@redevolta.com" >> .env.local
           echo "ADMIN_PASSWORD=3s4fwU59qt52" >> .env.local
