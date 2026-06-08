@@ -59,7 +59,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
   });
 
   const handleSubmit = (values: UpdateFirmwareFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Update Firmware request because station ID is missing.',
       );
@@ -76,7 +76,7 @@ export const UpdateFirmwareModal = ({ station }: UpdateFirmwareModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/updateFirmware?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/updateFirmware?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

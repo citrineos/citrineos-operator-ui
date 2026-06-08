@@ -147,7 +147,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
   });
 
   const onFinish = async (values: SetVariablesFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Set Variables request because station ID is missing.',
       );
@@ -177,7 +177,7 @@ export const SetVariablesModal = ({ station }: SetVariablesModalProps) => {
     });
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/monitoring/setVariables?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/monitoring/setVariables?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data: { setVariableData },
       setLoading,
       ocppVersion: parsedStation.protocol,

@@ -15,7 +15,7 @@ import { AccessDeniedFallbackCard } from '@lib/client/components/access-denied-f
 import { Skeleton } from '@lib/client/components/ui/skeleton';
 
 type ChargingStationDetailProps = {
-  params: { id: string };
+  params: { id: number };
 };
 
 export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
@@ -57,8 +57,8 @@ export const ChargingStationDetail: React.FC<ChargingStationDetailProps> = ({
       }
     >
       <div className={`${pageMargin} ${pageFlex}`}>
-        <ChargingStationDetailCard stationId={id} imageUrl={imageUrl} />
-        <ChargingStationDetailTabsCard stationId={id} />
+        <ChargingStationDetailCard id={id} imageUrl={imageUrl} />
+        <ChargingStationDetailTabsCard id={id} />
       </div>
     </CanAccess>
   );

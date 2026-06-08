@@ -47,6 +47,8 @@ export const TransactionDetailCard = ({
     );
   }, [dispatch, transaction, translate]);
 
+  console.log(transaction);
+
   return (
     <Card>
       <CardHeader>
@@ -112,9 +114,9 @@ export const TransactionDetailCard = ({
               <Link
                 to={`/${MenuSection.CHARGING_STATIONS}/${transaction.stationId}`}
                 className={clickableLinkStyle}
-                title={transaction.stationId}
+                title={transaction.ocppConnectionName}
               >
-                {transaction.stationId}
+                {transaction.ocppConnectionName}
               </Link>
             )}
           />

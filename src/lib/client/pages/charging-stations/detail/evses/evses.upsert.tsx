@@ -22,15 +22,15 @@ import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 interface EvseUpsertProps {
   onSubmit: () => void;
-  stationId: string;
-  stationStringId?: string;
+  stationId: number;
+  ocppConnectionName?: string;
   evse: EvseDto | null;
 }
 
 export const EvseUpsert: React.FC<EvseUpsertProps> = ({
   onSubmit,
   stationId,
-  stationStringId,
+  ocppConnectionName,
   evse,
 }) => {
   const tenantId = useTenantId();
@@ -77,8 +77,8 @@ export const EvseUpsert: React.FC<EvseUpsertProps> = ({
     }
 
     newItem.updatedAt = now;
-    newItem.stationPkId = Number(stationId);
-    newItem.stationId = stationStringId ?? evse?.stationId;
+    newItem.stationId = stationId;
+    newItem.ocppConnectionName = ocppConnectionName ?? evse?.ocppConnectionName;
 
     form.refineCore.onFinish(newItem).then(() => reset());
   };

@@ -30,12 +30,12 @@ const createFilterListItem = (label: string, value: string) => (
 export const OCPPMessagesExportDialog = ({
   open,
   onOpenChangeAction,
-  stationId,
+  id,
   filters,
 }: {
   open: boolean;
   onOpenChangeAction: (open: boolean) => void;
-  stationId: string;
+  id: number;
   filters: LogicalFilter[];
 }) => {
   const translate = useTranslate();
@@ -45,15 +45,15 @@ export const OCPPMessagesExportDialog = ({
     sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
     meta: {
       gqlQuery: GET_OCPP_MESSAGES_LIST_FOR_STATION,
-      gqlVariables: { stationPkId: Number(stationId) },
+      gqlVariables: { stationId: id },
     },
     filters,
     download: true,
-    filename: `ocpp-messages-${stationId}-${Date.now()}`,
+    filename: `ocpp-messages-${id}-${Date.now()}`,
     pageSize: 100,
     mapData: (ocppMessage) => {
       return {
-        stationId: ocppMessage.stationId,
+        ocppConnectionName: ocppMessage.ocppConnectionName,
         correlationId: ocppMessage.correlationId,
         timestamp: ocppMessage.timestamp,
         origin: ocppMessage.origin,
@@ -66,16 +66,11 @@ export const OCPPMessagesExportDialog = ({
 
   const getMessageBasedOnFilters = () => {
     if (filters.length === 0) {
-      return translate('ChargingStations.downloadAllMessagesToCsv', {
-        stationId,
-      });
+      return translate('ChargingStations.downloadAllMessagesToCsv');
     }
 
     const messagePrefix = translate(
       'ChargingStations.downloadMessagesToCsvWithFilters',
-      {
-        stationId,
-      },
     );
     const messageItems = [];
 

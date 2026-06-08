@@ -55,7 +55,7 @@ export const EvseSelector = ({
       gqlVariables: {
         offset: 0,
         limit: 10,
-        stationPkId: station.pkId,
+        stationId: station.id,
       },
     },
     sorters: [{ field: EvseProps.evseTypeId, order: 'asc' }],

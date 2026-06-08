@@ -19,7 +19,8 @@ import type {
 export class TransactionClass implements Partial<TransactionDto> {
   id?: number;
   transactionId!: string;
-  stationId!: string;
+  ocppConnectionName!: string;
+  stationId!: number;
   transactionEvents?: TransactionEventDto[];
   chargingStation?: ChargingStationDto;
   evse?: EvseDto | null;

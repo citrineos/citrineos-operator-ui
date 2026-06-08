@@ -59,7 +59,7 @@ export const ChangeConfigurationModal = ({
   });
 
   const handleSubmit = (values: ChangeConfigurationFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Change Configuration request because station ID is missing.',
       );
@@ -72,7 +72,7 @@ export const ChangeConfigurationModal = ({
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/changeConfiguration?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/changeConfiguration?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

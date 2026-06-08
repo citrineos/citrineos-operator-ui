@@ -18,7 +18,7 @@ export const INSTALLED_CERTIFICATE_LIST_QUERY = gql`
       where: $where
     ) {
       id
-      stationId
+      ocppConnectionName
       hashAlgorithm
       issuerNameHash
       issuerKeyHash
@@ -37,7 +37,7 @@ export const INSTALLED_CERTIFICATE_GET_QUERY = gql`
   query GetInstalledCertificateById($id: Int!) {
     InstalledCertificates_by_pk(id: $id) {
       id
-      stationId
+      ocppConnectionName
       hashAlgorithm
       issuerNameHash
       issuerKeyHash

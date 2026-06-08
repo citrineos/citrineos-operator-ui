@@ -79,7 +79,7 @@ export const ChangeAvailabilityModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/changeAvailability?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/changeAvailability?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

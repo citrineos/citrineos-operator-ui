@@ -53,7 +53,6 @@ export const TariffsList = () => {
             <Button
               onClick={() => push(`/${MenuSection.TARIFFS}/new`)}
               variant="success"
-              size="sm"
             >
               <Plus className={buttonIconSize} />
               {translate('actions.create')} {translate('Tariffs.tariff')}

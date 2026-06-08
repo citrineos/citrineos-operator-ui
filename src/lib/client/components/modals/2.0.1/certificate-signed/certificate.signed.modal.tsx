@@ -80,7 +80,7 @@ export const CertificateSignedModal = ({
   const fileRef = form.register('certificate');
 
   const onFinish = (values: CertificateSignedFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Certificate Signed request because station ID is missing.',
       );
@@ -96,7 +96,7 @@ export const CertificateSignedModal = ({
         };
 
         triggerMessageAndHandleResponse<MessageConfirmation[]>({
-          url: `/certificates/certificateSigned?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+          url: `/certificates/certificateSigned?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
           data,
           setLoading,
           ocppVersion: parsedStation.protocol,

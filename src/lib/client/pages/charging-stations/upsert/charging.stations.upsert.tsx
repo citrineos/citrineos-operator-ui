@@ -60,12 +60,13 @@ import { uploadFileViaPresignedUrl } from '@lib/server/actions/file/uploadFileVi
 import { useTenantId } from '@lib/client/hooks/useTenantId';
 
 type ChargingStationUpsertProps = {
-  params?: { id?: string };
+  params?: { id?: number };
   allowImageUpload?: boolean;
 };
 
 const ChargingStationCreateSchema = ChargingStationSchema.pick({
   [ChargingStationProps.id]: true,
+  [ChargingStationProps.ocppConnectionName]: true,
   [ChargingStationProps.locationId]: true,
   [ChargingStationProps.floorLevel]: true,
   [ChargingStationProps.parkingRestrictions]: true,
@@ -74,8 +75,8 @@ const ChargingStationCreateSchema = ChargingStationSchema.pick({
 });
 
 const defaultChargingStation = {
-  [ChargingStationProps.id]: '',
-  [ChargingStationProps.isOnline]: false,
+  [ChargingStationProps.id]: undefined,
+  [ChargingStationProps.ocppConnectionName]: '',
   [ChargingStationProps.locationId]: undefined,
   [ChargingStationProps.floorLevel]: '',
   [ChargingStationProps.parkingRestrictions]: [],
@@ -100,7 +101,7 @@ export const ChargingStationUpsert = ({
   params,
   allowImageUpload = false,
 }: ChargingStationUpsertProps) => {
-  const { id: stationId } = params || {};
+  const { id } = params || {};
   const searchParams = useSearchParams();
   const locationId = searchParams?.get('locationId');
 
@@ -121,10 +122,10 @@ export const ChargingStationUpsert = ({
       resource: ResourceType.CHARGING_STATIONS,
       redirect: false,
       mutationMode: 'pessimistic',
-      action: stationId ? 'edit' : 'create',
+      action: id ? 'edit' : 'create',
       meta: {
         gqlQuery: CHARGING_STATIONS_GET_QUERY,
-        gqlMutation: stationId
+        gqlMutation: id
           ? CHARGING_STATIONS_EDIT_MUTATION
           : CHARGING_STATIONS_CREATE_MUTATION,
       },
@@ -188,7 +189,7 @@ export const ChargingStationUpsert = ({
   // Initialize coordinates from station data when editing
   useEffect(() => {
     const station = form.refineCore.query?.data?.data;
-    if (station && stationId) {
+    if (station && id) {
       const coords = (station as any).coordinates;
       if (coords) {
         setLatitude(coords.coordinates[1]);
@@ -198,7 +199,7 @@ export const ChargingStationUpsert = ({
         setUseLocationCoordinates(true);
       }
     }
-  }, [form.refineCore.query?.data?.data, stationId]);
+  }, [form.refineCore.query?.data?.data, id]);
 
   // Update coordinates when location changes and useLocationCoordinates is true
   useEffect(() => {
@@ -234,7 +235,7 @@ export const ChargingStationUpsert = ({
       };
     }
 
-    if (!stationId) {
+    if (!id) {
       newItem.tenantId = tenantId;
       newItem.createdAt = now;
     }
@@ -242,7 +243,7 @@ export const ChargingStationUpsert = ({
 
     form.refineCore.onFinish(newItem).then((result) => {
       if (result) {
-        const finalStationId = stationId || (result as any).data?.pkId;
+        const finalStationId = id || (result as any).data?.id;
 
         // Upload image to S3
         if (uploadedFile && finalStationId) {
@@ -265,7 +266,7 @@ export const ChargingStationUpsert = ({
             });
         }
         replace(`/${MenuSection.CHARGING_STATIONS}/${finalStationId}`);
-      } else if (stationId) {
+      } else if (id) {
         back();
       }
     });
@@ -276,14 +277,14 @@ export const ChargingStationUpsert = ({
       resource={ResourceType.CHARGING_STATIONS}
       action={ActionType.EDIT}
       fallback={<AccessDeniedFallback />}
-      params={{ id: stationId }}
+      params={{ id }}
     >
       <Card className={pageMargin}>
         <CardHeader>
           <div className={cardHeaderFlex}>
             <ChevronLeft onClick={() => back()} className="cursor-pointer" />
             <h2 className={heading2Style}>
-              {translate(`actions.${stationId ? 'edit' : 'create'}`)}{' '}
+              {translate(`actions.${id ? 'edit' : 'create'}`)}{' '}
               {translate('ChargingStations.chargingStation')}
             </h2>
           </div>
@@ -293,8 +294,8 @@ export const ChargingStationUpsert = ({
             <div className={cardGridStyle}>
               <FormField
                 control={form.control}
-                label="ID"
-                name={ChargingStationProps.id}
+                label="Name"
+                name={ChargingStationProps.ocppConnectionName}
                 required
               >
                 <Input />

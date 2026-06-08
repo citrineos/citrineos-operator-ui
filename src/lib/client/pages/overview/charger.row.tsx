@@ -29,8 +29,8 @@ export const ChargerRow: React.FC<ChargerRowProps> = ({
 }) => {
   const { push } = useRouter();
   const label = evse
-    ? `${chargingStation.id}:EVSE ${evse.id}`
-    : chargingStation.id;
+    ? `${chargingStation.ocppConnectionName}:EVSE ${evse.id}`
+    : chargingStation.ocppConnectionName;
 
   return (
     <div className="flex flex-col gap-4 w-full">

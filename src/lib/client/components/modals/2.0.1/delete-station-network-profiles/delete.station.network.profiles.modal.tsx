@@ -67,7 +67,7 @@ export const DeleteStationNetworkProfilesModal = ({
   });
 
   const onFinish = async (values: DeleteStationNetworkProfilesFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Delete Station Network Profiles request because station ID is missing.',
       );
@@ -78,7 +78,7 @@ export const DeleteStationNetworkProfilesModal = ({
       ...new Set(values.configurationSlots.map((cs) => cs.slot)),
     ];
 
-    let url = `/configuration/serverNetworkProfile?stationId=${parsedStation.id}`;
+    let url = `/configuration/serverNetworkProfile?ocppConnectionName=${parsedStation.ocppConnectionName}`;
     for (const configurationSlot of uniqueSlots) {
       url += `&configurationSlot=${configurationSlot}`;
     }

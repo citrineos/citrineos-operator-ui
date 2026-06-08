@@ -74,7 +74,7 @@ export const ChangeAvailabilityModal = ({
       gqlVariables: {
         offset: 0,
         limit: 10,
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
       },
     },
     sorters: [{ field: ConnectorProps.connectorId, order: 'asc' }],
@@ -100,7 +100,7 @@ export const ChangeAvailabilityModal = ({
     };
 
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/changeAvailability?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/changeAvailability?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: OCPPVersion.OCPP1_6,

@@ -75,7 +75,7 @@ export const TriggerMessageModal = ({ station }: TriggerMessageModalProps) => {
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/configuration/triggerMessage?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/configuration/triggerMessage?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

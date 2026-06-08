@@ -64,7 +64,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
 
     const messageRows: TransactionEventDto[] = messages.map((m: any) => ({
       id: -m.id,
-      stationId: String(m.stationId ?? ''),
+      ocppConnectionName: String(m.ocppConnectionName ?? ''),
       evseId: m.message?.connectorId ?? null,
       transactionDatabaseId: transactionDatabaseId,
       eventType: 'OCPPMessage' as TransactionEventDto['eventType'],
@@ -79,7 +79,7 @@ export const TransactionEventsList = ({ transactionDatabaseId }: any) => {
       tenantId,
     }));
     return [...events, ...messageRows];
-  }, [eventsData?.data, messagesData?.data, transactionDatabaseId]);
+  }, [eventsData?.data, messagesData?.data, transactionDatabaseId, tenantId]);
 
   const columns = [
     ...getTransactionEventColumns(),

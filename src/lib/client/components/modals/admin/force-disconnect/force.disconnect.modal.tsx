@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client';
 
-import { HttpMethod, type ChargingStationDto } from '@citrineos/base';
+import { type ChargingStationDto, HttpMethod } from '@citrineos/base';
 import { ChargingStationClass } from '@lib/cls/charging.station.dto';
 import type { MessageConfirmation } from '@lib/utils/MessageConfirmation';
 import { triggerMessageAndHandleResponse } from '@lib/utils/messages.utils';
@@ -32,7 +32,7 @@ export const ForceDisconnectModal = ({
 
   const onOkay = async () => {
     await triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/ocpprouter/connection?stationId=${parsedStation.id}&tenantId=${parsedStation.tenantId}`,
+      url: `/ocpprouter/connection?ocppConnectionName=${parsedStation.ocppConnectionName}&tenantId=${parsedStation.tenantId}`,
       data: undefined,
       setLoading,
       ocppVersion: null,
@@ -49,18 +49,19 @@ export const ForceDisconnectModal = ({
   return (
     <div className="space-y-6">
       <div>
-        <div className="mt-2">
-          <p className="text-sm text-gray-500">
-            {translate('ChargingStations.forceDisconnectMessage')}{' '}
-            <span className="font-medium">{parsedStation.id}</span>?
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            {translate('ChargingStations.forceDisconnectCaution')}
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          {translate('ChargingStations.forceDisconnectMessage')}{' '}
+          <span className="font-medium">
+            {parsedStation.ocppConnectionName}
+          </span>
+          ?
+        </p>
+        <p className="text-sm text-muted-foreground mt-1">
+          {translate('ChargingStations.forceDisconnectCaution')}
+        </p>
       </div>
 
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={onCancel} disabled={loading}>
           {translate('buttons.cancel')}
         </Button>

@@ -164,7 +164,7 @@ export const SetNetworkProfileModal = ({
   });
 
   const onFinish = (values: SetNetworkProfileFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Set Network Profile request because station ID is missing.',
       );
@@ -194,7 +194,7 @@ export const SetNetworkProfileModal = ({
       connectionData,
     };
 
-    let url = `/configuration/setNetworkProfile?identifier=${parsedStation.id}&tenantId=${tenantId}`;
+    let url = `/configuration/setNetworkProfile?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`;
     if (values.websocketServerConfigId) {
       url = `${url}&websocketServerConfigId=${values.websocketServerConfigId}`;
     }

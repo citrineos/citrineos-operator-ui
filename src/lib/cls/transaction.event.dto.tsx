@@ -10,7 +10,7 @@ import {
 
 export class TransactionEventClass implements Partial<TransactionEventDto> {
   id?: number;
-  stationId!: string;
+  ocppConnectionName!: string;
   evseId?: number | null;
   transactionDatabaseId?: number;
   eventType!: any;

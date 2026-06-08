@@ -144,8 +144,9 @@ export const ActiveTransactionsCard = () => {
                           {transaction.transactionId}
                         </span>
                       </div>
-                      <div>Station ID: {transaction.stationId}</div>
-                      <div>Total kWh: {transaction.totalKwh}</div>
+
+                      <div>Station: {transaction.ocppConnectionName}</div>
+                      <div>Total kWh: {transaction.totalKwh?.toFixed(2)}</div>
                       <div>Total Time: {transaction.timeSpentCharging}</div>
                       <div>Status: {transaction.chargingState}</div>
                     </div>

@@ -69,13 +69,13 @@ import { isEmpty } from '@lib/utils/assertion';
 const UNKNOWN_TEXT = 'Unknown';
 
 export interface ChargingStationDetailCardContentProps {
-  stationId: string;
+  id: number;
   transaction?: TransactionClass;
   imageUrl?: string | null;
 }
 
 export const ChargingStationDetailCard = ({
-  stationId,
+  id,
   imageUrl,
 }: ChargingStationDetailCardContentProps) => {
   const { mutate } = useDelete();
@@ -88,7 +88,7 @@ export const ChargingStationDetailCard = ({
     query: { data, isLoading },
   } = useOne<ChargingStationDetailsDto>({
     resource: ResourceType.CHARGING_STATIONS,
-    id: stationId,
+    id,
     meta: {
       gqlQuery: CHARGING_STATIONS_GET_QUERY,
     },
@@ -107,9 +107,9 @@ export const ChargingStationDetailCard = ({
     sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
     filters: [
       {
-        field: OCPPMessageProps.stationId,
+        field: OCPPMessageProps.ocppConnectionName,
         operator: 'eq',
-        value: station?.id,
+        value: station?.ocppConnectionName,
       },
     ],
     pagination: {
@@ -126,7 +126,7 @@ export const ChargingStationDetailCard = ({
 
     mutate(
       {
-        id: station.pkId!,
+        id: station.id!,
         resource: ResourceType.CHARGING_STATIONS,
         meta: {
           gqlMutation: CHARGING_STATIONS_DELETE_MUTATION,
@@ -173,7 +173,7 @@ export const ChargingStationDetailCard = ({
         title: translate('ChargingStations.toggleOnlineStatus'),
         modalComponentType: ModalComponentType.toggleStationOnlineStatus,
         modalComponentProps: {
-          stationPkId: station.pkId,
+          id: station.id,
           currentStatus: station.isOnline,
         },
       }),
@@ -185,7 +185,7 @@ export const ChargingStationDetailCard = ({
   } else if (!station) {
     return (
       <NoDataFoundCard
-        message={translate('ChargingStations.noDataFound', { id: stationId })}
+        message={translate('ChargingStations.noDataFound', { id })}
       />
     );
   }
@@ -212,7 +212,7 @@ export const ChargingStationDetailCard = ({
             }}
             className="cursor-pointer"
           />
-          <h2 className={heading2Style}>{station.id}</h2>
+          <h2 className={heading2Style}>{station.ocppConnectionName}</h2>
           <span
             className={station.isOnline ? 'text-success' : 'text-destructive'}
           >
@@ -244,7 +244,7 @@ export const ChargingStationDetailCard = ({
               variant="secondary"
               size="sm"
               onClick={() =>
-                push(`/${MenuSection.CHARGING_STATIONS}/${station.pkId}/edit`)
+                push(`/${MenuSection.CHARGING_STATIONS}/${station.id}/edit`)
               }
             >
               <Edit className={buttonIconSize} />
@@ -444,7 +444,7 @@ export const ChargingStationDetailCard = ({
                 src={imageUrl}
                 unoptimized={isGcp}
                 fill={isGcp}
-                alt={`${station.id} image`}
+                alt={`${station.ocppConnectionName} image`}
                 className="w-full h-full object-contain rounded-md bg-gray-100"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
@@ -465,7 +465,7 @@ export const ChargingStationDetailCard = ({
               {!station.isOnline && <CommandsUnavailableText />}
               <div className="flex gap-4 flex-wrap">
                 <ForceDisconnectButton
-                  stationId={station.id}
+                  id={station.id}
                   onClickAction={() => showForceDisconnectModal(station)}
                 />
                 {!hasActiveTransactions && (

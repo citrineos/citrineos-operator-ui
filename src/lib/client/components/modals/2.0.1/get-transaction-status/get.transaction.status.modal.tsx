@@ -65,14 +65,14 @@ export const GetTransactionStatusModal = ({
     meta: {
       gqlQuery: GET_TRANSACTION_LIST_FOR_STATION,
       gqlVariables: {
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
       },
     },
     pagination: { mode: 'off' },
   });
 
   const onFinish = async (values: GetTransactionStatusFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Get Transaction Status request because station ID is missing.',
       );
@@ -86,7 +86,7 @@ export const GetTransactionStatusModal = ({
     }
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/transactions/getTransactionStatus?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/transactions/getTransactionStatus?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

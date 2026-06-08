@@ -66,7 +66,7 @@ export const GetBaseReportModal = ({ station }: GetBaseReportModalProps) => {
       operation: 'ChargingStationSequencesGet',
       gqlQuery: CHARGING_STATION_SEQUENCES_GET_QUERY,
       gqlVariables: {
-        stationPkId: parsedStation.pkId,
+        stationId: parsedStation.id,
         type: 'getBaseReport',
       },
     },
@@ -90,7 +90,7 @@ export const GetBaseReportModal = ({ station }: GetBaseReportModalProps) => {
   }, [requestIdResponse, form]);
 
   const onFinish = (values: GetBaseReportFormData) => {
-    if (!parsedStation?.id) {
+    if (!parsedStation?.ocppConnectionName) {
       console.error(
         'Error: Cannot submit Get Base Report request because station ID is missing.',
       );
@@ -103,7 +103,7 @@ export const GetBaseReportModal = ({ station }: GetBaseReportModalProps) => {
     };
 
     triggerMessageAndHandleResponse<MessageConfirmation[]>({
-      url: `/reporting/getBaseReport?identifier=${parsedStation.id}&tenantId=${tenantId}`,
+      url: `/reporting/getBaseReport?identifier=${parsedStation.ocppConnectionName}&tenantId=${tenantId}`,
       data,
       setLoading,
       ocppVersion: parsedStation.protocol,

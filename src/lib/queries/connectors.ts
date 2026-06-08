@@ -6,7 +6,7 @@ import { gql } from 'graphql-tag';
 
 export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
   query GetPaginatedConnectorListForStation(
-    $stationPkId: Int!
+    $stationId: Int!
     $offset: Int!
     $limit: Int!
     $order_by: [Connectors_order_by!]
@@ -16,14 +16,14 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: { stationPkId: { _eq: $stationPkId } }
+      where: { stationId: { _eq: $stationId } }
     ) {
       connectorId
       createdAt
       errorCode
       id
       info
-      stationId
+      ocppConnectionName
       status
       timestamp
       updatedAt
@@ -39,14 +39,14 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
 `;
 
 export const CONNECTORS_FOR_STATION_QUERY = gql`
-  query GetConnectorListForStation($stationPkId: Int!) {
-    Connectors(where: { stationPkId: { _eq: $stationPkId } }) {
+  query GetConnectorListForStation($stationId: Int!) {
+    Connectors(where: { stationId: { _eq: $stationId } }) {
       connectorId
       createdAt
       errorCode
       id
       info
-      stationId
+      ocppConnectionName
       status
       timestamp
       updatedAt
@@ -58,20 +58,20 @@ export const CONNECTORS_FOR_STATION_QUERY = gql`
 
 export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
   query GetConnectorListForStationEvse(
-    $stationPkId: Int!
+    $stationId: Int!
     $where: Connectors_bool_exp = {}
     $order_by: [Connectors_order_by!] = {}
     $offset: Int
     $limit: Int
   ) {
     Connectors(
-      where: { stationPkId: { _eq: $stationPkId }, _and: [$where] }
+      where: { stationId: { _eq: $stationId }, _and: [$where] }
       order_by: $order_by
       offset: $offset
       limit: $limit
     ) {
       id
-      stationId
+      ocppConnectionName
       evseId
       connectorId
       evseTypeConnectorId
@@ -88,7 +88,7 @@ export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
       updatedAt
     }
     Connectors_aggregate(
-      where: { stationPkId: { _eq: $stationPkId }, _and: [$where] }
+      where: { stationId: { _eq: $stationId }, _and: [$where] }
     ) {
       aggregate {
         count
@@ -101,7 +101,7 @@ export const CONNECTOR_CREATE_MUTATION = gql`
   mutation ConnectorCreate($object: Connectors_insert_input!) {
     insert_Connectors_one(object: $object) {
       id
-      stationId
+      ocppConnectionName
       evseId
       evseTypeConnectorId
       connectorId
@@ -129,7 +129,7 @@ export const CONNECTOR_EDIT_MUTATION = gql`
   mutation ConnectorEdit($id: Int!, $object: Connectors_set_input!) {
     update_Connectors_by_pk(pk_columns: { id: $id }, _set: $object) {
       id
-      stationId
+      ocppConnectionName
       evseId
       evseTypeConnectorId
       connectorId
