@@ -1,10 +1,10 @@
 {
   "Transactions": {
-    "Transactions": "Transactions",
-    "transaction": "Transaction",
-    "toggleActiveStatus": "Toggle Active Status",
-    "toggleActiveWarning": "You are about to mark this transaction as ",
-    "toggleActiveCaution": "Warning: This action may cause the UI to be out of sync with the actual transaction status. Only proceed if you are certain.",
-    "noDataFound": "No transaction found with id {id}."
+    "Transactions": "Transacciones",
+    "transaction": "Transacción",
+    "toggleActiveStatus": "Alternar estado activo",
+    "toggleActiveWarning": "Está a punto de marcar esta transacción como ",
+    "toggleActiveCaution": "Advertencia: Esta acción puede causar que la interfaz de usuario no esté sincronizada con el estado real de la transacción. Solo proceda si está seguro.",
+    "noDataFound": "No se encontró ninguna transacción con id {id}."
   }
 }

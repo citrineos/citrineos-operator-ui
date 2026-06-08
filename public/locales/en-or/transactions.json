@@ -1,0 +1,10 @@
+{
+  "Transactions": {
+    "Transactions": "Transactions",
+    "transaction": "Transaction",
+    "toggleActiveStatus": "Toggle Active Status",
+    "toggleActiveWarning": "You are about to mark this transaction as ",
+    "toggleActiveCaution": "Warning: This action may cause the UI to be out of sync with the actual transaction status. Only proceed if you are certain.",
+    "noDataFound": "No transaction found with id {id}."
+  }
+}

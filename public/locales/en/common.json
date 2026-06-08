@@ -1,188 +1,188 @@
 {
   "pages": {
     "login": {
-      "title": "Sign in to your account",
-      "signin": "Sign in",
-      "signup": "Sign up",
-      "divider": "or",
+      "title": "Inicie sesión en su cuenta",
+      "signin": "Iniciar sesión",
+      "signup": "Registrarse",
+      "divider": "o",
       "fields": {
-        "email": "Email",
-        "password": "Password"
+        "email": "Correo electrónico",
+        "password": "Contraseña"
       },
       "errors": {
-        "validEmail": "Invalid email address",
-        "requiredEmail": "Email is required",
-        "requiredPassword": "Password is required"
+        "validEmail": "Dirección de correo electrónico no válida",
+        "requiredEmail": "El correo electrónico es obligatorio",
+        "requiredPassword": "La contraseña es obligatoria"
       },
       "buttons": {
-        "submit": "Login",
-        "forgotPassword": "Forgot password?",
-        "noAccount": "Don’t have an account?",
-        "rememberMe": "Remember me"
+        "submit": "Entrar",
+        "forgotPassword": "¿Olvidó su contraseña?",
+        "noAccount": "¿No tiene una cuenta?",
+        "rememberMe": "Recordarme"
       }
     },
     "forgotPassword": {
-      "title": "Forgot your password?",
+      "title": "¿Olvidó su contraseña?",
       "fields": {
-        "email": "Email"
+        "email": "Correo electrónico"
       },
       "errors": {
-        "validEmail": "Invalid email address",
-        "requiredEmail": "Email is required"
+        "validEmail": "Dirección de correo electrónico no válida",
+        "requiredEmail": "El correo electrónico es obligatorio"
       },
       "buttons": {
-        "submit": "Send reset instructions"
+        "submit": "Enviar instrucciones de restablecimiento"
       }
     },
     "register": {
-      "title": "Sign up for your account",
+      "title": "Regístrese para obtener su cuenta",
       "fields": {
-        "email": "Email",
-        "password": "Password"
+        "email": "Correo electrónico",
+        "password": "Contraseña"
       },
       "errors": {
-        "validEmail": "Invalid email address",
-        "requiredEmail": "Email is required",
-        "requiredPassword": "Password is required"
+        "validEmail": "Dirección de correo electrónico no válida",
+        "requiredEmail": "El correo electrónico es obligatorio",
+        "requiredPassword": "La contraseña es obligatoria"
       },
       "buttons": {
-        "submit": "Register",
-        "haveAccount": "Have an account?"
+        "submit": "Registrarse",
+        "haveAccount": "¿Ya tiene una cuenta?"
       }
     },
     "updatePassword": {
-      "title": "Update password",
+      "title": "Actualizar contraseña",
       "fields": {
-        "password": "New Password",
-        "confirmPassword": "Confirm new password"
+        "password": "Nueva contraseña",
+        "confirmPassword": "Confirmar nueva contraseña"
       },
       "errors": {
-        "confirmPasswordNotMatch": "Passwords do not match",
-        "requiredPassword": "Password required",
-        "requiredConfirmPassword": "Confirm password is required"
+        "confirmPasswordNotMatch": "Las contraseñas no coinciden",
+        "requiredPassword": "La contraseña es obligatoria",
+        "requiredConfirmPassword": "Confirmar contraseña es obligatorio"
       },
       "buttons": {
-        "submit": "Update"
+        "submit": "Actualizar"
       }
     },
     "error": {
-      "info": "You may have forgotten to add the {action} component to {resource} resource.",
-      "404": "Sorry, the page you visited does not exist.",
-      "resource404": "Are you sure you have created the {resource} resource.",
-      "backHome": "Back Home"
+      "info": "Es posible que haya olvidado agregar el componente {action} al recurso {resource}.",
+      "404": "Lo sentimos, la página que visitó no existe.",
+      "resource404": "¿Está seguro de que ha creado el recurso {resource}?",
+      "backHome": "Volver al inicio"
     },
-    "redirectingToLogin": "Redirecting to login...",
-    "checkingAuth": "Checking authentication..."
+    "redirectingToLogin": "Redirigiendo al inicio de sesión...",
+    "checkingAuth": "Comprobando autenticación..."
   },
   "actions": {
-    "create": "Create",
-    "delete": "Delete",
-    "edit": "Edit",
-    "list": "List",
-    "show": "Show"
+    "create": "Crear",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "list": "Lista",
+    "show": "Mostrar"
   },
   "buttons": {
-    "add": "Add",
-    "cancel": "Cancel",
-    "clear": "Clear",
-    "clone": "Clone",
-    "columns": "Columns",
-    "confirm": "Are you sure?",
-    "confirmText": "Confirm",
-    "create": "Create",
-    "delete": "Delete",
-    "download": "Download",
-    "edit": "Edit",
-    "exportToCsv": "Export to CSV",
-    "filter": "Filter",
-    "import": "Import",
-    "logout": "Logout",
-    "notAccessTitle": "You don't have permission to access this resource.",
-    "ok": "OK",
-    "refresh": "Refresh",
-    "save": "Save",
-    "saving": "Saving...",
-    "show": "Show",
-    "submit": "Submit",
-    "undo": "Undo",
-    "upload": "Upload"
+    "add": "Agregar",
+    "cancel": "Cancelar",
+    "clear": "Limpiar",
+    "clone": "Clonar",
+    "columns": "Columnas",
+    "confirm": "¿Está seguro?",
+    "confirmText": "Confirmar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "download": "Descargar",
+    "edit": "Editar",
+    "exportToCsv": "Exportar a CSV",
+    "filter": "Filtrar",
+    "import": "Importar",
+    "logout": "Cerrar sesión",
+    "notAccessTitle": "No tiene permiso para acceder a este recurso.",
+    "ok": "Aceptar",
+    "refresh": "Actualizar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "show": "Mostrar",
+    "submit": "Enviar",
+    "undo": "Deshacer",
+    "upload": "Subir"
   },
-  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
+  "warnWhenUnsavedChanges": "¿Está seguro de que quiere salir? Tiene cambios sin guardar.",
   "notifications": {
-    "success": "Successful",
-    "error": "Error (status code: {statusCode})",
-    "undoable": "You have {seconds} seconds to undo",
-    "createSuccess": "Successfully created {resource}",
-    "createError": "There was an error creating {resource} (status code: {statusCode})",
-    "deleteSuccess": "Successfully deleted {resource}",
-    "deleteError": "Error when deleting {resource} (status code: {statusCode})",
-    "editSuccess": "Successfully edited {resource}",
-    "editError": "Error when editing {resource} (status code: {statusCode})",
-    "importProgress": "Importing: {processed}/{total}"
+    "success": "Éxito",
+    "error": "Error (código de estado: {statusCode})",
+    "undoable": "Tiene {seconds} segundos para deshacer",
+    "createSuccess": "{resource} creado con éxito",
+    "createError": "Hubo un error al crear {resource} (código de estado: {statusCode})",
+    "deleteSuccess": "{resource} eliminado con éxito",
+    "deleteError": "Error al eliminar {resource} (código de estado: {statusCode})",
+    "editSuccess": "{resource} editado con éxito",
+    "editError": "Error al editar {resource} (código de estado: {statusCode})",
+    "importProgress": "Importando: {processed}/{total}"
   },
-  "accessDenied": "Access Denied",
-  "imageUploadFailed": "Image upload failed.",
-  "loading": "Loading",
-  "noDataFound": "No Data Found",
-  "somethingWentWrong": "Something went wrong.",
-  "loggedOut": "Logged out! Redirecting to login...",
+  "accessDenied": "Acceso denegado",
+  "imageUploadFailed": "Error al subir la imagen.",
+  "loading": "Cargando",
+  "noDataFound": "No se encontraron datos",
+  "somethingWentWrong": "Algo salió mal.",
+  "loggedOut": "¡Sesión cerrada! Redirigiendo al inicio de sesión...",
   "tags": {
-    "clone": "Clone"
+    "clone": "Clonar"
   },
   "table": {
-    "actions": "Actions",
-    "bulkActions": "Bulk Actions",
-    "clearFilters": "Clear filters",
-    "noResultsFound": "No results found",
-    "selectAll": "Select all",
-    "selected": "selected",
-    "toggleColumns": "Toggle columns",
-    "resetColumns": "Reset Columns"
+    "actions": "Acciones",
+    "bulkActions": "Acciones en lote",
+    "clearFilters": "Limpiar filtros",
+    "noResultsFound": "No se encontraron resultados",
+    "selectAll": "Seleccionar todo",
+    "selected": "seleccionado",
+    "toggleColumns": "Alternar columnas",
+    "resetColumns": "Restablecer columnas"
   },
   "dialogs": {
-    "areYouSure": "Are you sure?",
-    "thisActionCannotBeUndone": "This action cannot be undone."
+    "areYouSure": "¿Está seguro?",
+    "thisActionCannotBeUndone": "Esta acción no se puede deshacer."
   },
   "placeholders": {
-    "search": "Search",
-    "select": "Select"
+    "search": "Buscar",
+    "select": "Seleccionar"
   },
   "pagination": {
     "buttons": {
-      "goToFirstPage": "Go to first page",
-      "goToNextPage": "Go to next page",
-      "goToPreviousPage": "Go to previous page",
-      "goToLastPage": "Go to last page"
+      "goToFirstPage": "Ir a la primera página",
+      "goToNextPage": "Ir a la página siguiente",
+      "goToPreviousPage": "Ir a la página anterior",
+      "goToLastPage": "Ir a la última página"
     },
-    "rowsPerPage": "Rows per page"
+    "rowsPerPage": "Filas por página"
   },
   "menu": {
-    "overview": "Overview",
-    "help": "Help",
+    "overview": "Resumen",
+    "help": "Ayuda",
     "themes": {
-      "changeTo": "Change to",
-      "dark": "Dark",
-      "light": "Light",
-      "mode": "Mode"
+      "changeTo": "Cambiar a",
+      "dark": "Oscuro",
+      "light": "Claro",
+      "mode": "Modo"
     }
   },
   "telemetryConsentModal": {
-    "title": "Anonymous Metrics Consent",
-    "description": "CitrineOS collects anonymous usage metrics to help us improve the product. Would you like to send these metrics?",
-    "reject": "Reject",
-    "accept": "Accept"
+    "title": "Consentimiento de métricas anónimas",
+    "description": "CitrineOS recopila métricas de uso anónimas para ayudarnos a mejorar el producto. ¿Le gustaría enviar estas métricas?",
+    "reject": "Rechazar",
+    "accept": "Aceptar"
   },
   "overview": {
-    "activeTransactions": "Active Transactions",
-    "chargerActivity": "Charger Activity",
-    "chargerOnlineStatus": "Charger Online Status",
-    "chargers": "Chargers",
-    "errorLoadingData": "Error loading data",
-    "plugInSuccessRate": "Plug-In Success Rate",
-    "noActiveTransactions": "No active transactions.",
-    "noChargersStatus": "No chargers currently have {status} status.",
-    "viewAllChargers": "View all chargers",
-    "viewAllLocations": "View all locations",
-    "viewAllTransactions": "View all transactions"
+    "activeTransactions": "Transacciones activas",
+    "chargerActivity": "Actividad del cargador",
+    "chargerOnlineStatus": "Estado de conexión del cargador",
+    "chargers": "Cargadores",
+    "errorLoadingData": "Error al cargar los datos",
+    "plugInSuccessRate": "Tasa de éxito de conexión",
+    "noActiveTransactions": "No hay transacciones activas.",
+    "noChargersStatus": "Ningún cargador tiene actualmente el estado {status}.",
+    "viewAllChargers": "Ver todos los cargadores",
+    "viewAllLocations": "Ver todas las ubicaciones",
+    "viewAllTransactions": "Ver todas las transacciones"
   }
 }

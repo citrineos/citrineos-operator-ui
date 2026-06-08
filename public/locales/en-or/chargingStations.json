@@ -1,0 +1,63 @@
+{
+  "ChargingStations": {
+    "ChargingStations": "Charging Stations",
+    "chargingStation": "Charging Station",
+    "use16StatusNotification0": "Use OCPP 1.6 Status Notifications with Connector Id 0",
+    "toggleOnlineStatus": "Toggle Online Status",
+    "toggleOnlineWarning": "You are about to mark this charging station as ",
+    "toggleOnlineCaution": "Warning: This action may cause the UI to be out of sync with the actual station status. Only proceed if you are certain.",
+    "commandsUnavailable": "Station offline - commands unavailable",
+    "forceDisconnect": "Force Disconnect",
+    "otherCommands": "Other Commands",
+    "remoteStart": "Remote Start",
+    "remoteStop": "Remote Stop",
+    "reset": "Reset",
+    "startTransaction": "Start Transaction",
+    "stopTransaction": "Stop Transaction",
+    "forceDisconnectMessage": "Are you sure you want to force disconnect this charging station",
+    "forceDisconnectCaution": "This will immediately close the connection to the station.",
+    "exportMessagesToCsvHeader": "Export OCPP Messages to CSV",
+    "downloadAllMessagesToCsv": "You will download all OCPP messages for charger {stationId}.",
+    "downloadMessagesToCsvWithFilters": "You will download OCPP messages for charger {stationId} with the following filters",
+    "noDataFound": "No charging station found with id {id}.",
+    "connectionModal": {
+      "welcomeTitle": "Welcome to CitrineOS Operator UI",
+      "connectionTitle": "Charging Station Connection",
+      "welcomeDescription": "Watch this quick introduction video to learn how to connect charging stations. You can access this information anytime by clicking the Help button.",
+      "connectionDescription": "Use the following tenant-specific websocket URLs to connect to the server. The connection can be upgraded from No Authentication to Security Profile 3 one by one.",
+      "showConnectionInfo": "Show Connection Info",
+      "showHelpVideo": "Show Help Video",
+      "gettingStartedVideo": "Getting Started Video",
+      "videoNotSupported": "Your browser does not support the video tag.",
+      "noVideoAvailable": "No video available",
+      "videoDescription": "This video demonstrates how to connect charging stations to the CitrineOS platform.",
+      "quickSteps": "Quick Steps",
+      "step1": "Configure your charging station with the appropriate websocket URL",
+      "step2": "Choose the security profile that matches your setup",
+      "step3": "Copy the connection URL from the connection info section",
+      "step4": "Test the connection from your charging station",
+      "rememberLabel": "Remember:",
+      "rememberText": "You can always access this help content by clicking the Help button in the sidebar.",
+      "copied": "Copied!",
+      "noWebsocketServers": "No websocket servers available.",
+      "securityProfiles": {
+        "0": {
+          "label": "No Authentication",
+          "description": "The charging station connects without credentials. Set up the username/password using this connection"
+        },
+        "1": {
+          "label": "Security Profile 1: Unsecured Transport with Basic Authentication",
+          "description": "Charging Station authentication is done through a username and password. Install CA certificate in the charging station using this connection"
+        },
+        "2": {
+          "label": "Security Profile 2: TLS with Basic Authentication",
+          "description": "The CSMS authenticates itself using a TLS server certificate. The Charging Stations authenticate themselves using HTTP Basic Authentication. Sign charging station certificate using this connection"
+        },
+        "3": {
+          "label": "Security Profile 3: TLS with Client Side Certificates",
+          "description": "Both the Charging Station and CSMS authenticate themselves using certificates."
+        }
+      }
+    }
+  }
+}

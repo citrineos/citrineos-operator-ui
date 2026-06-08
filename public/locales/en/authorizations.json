@@ -1,7 +1,7 @@
 {
   "Authorizations": {
-    "Authorizations": "Authorizations",
-    "authorization": "Authorization",
-    "noDataFound": "No authorization found with id {id}."
+    "Authorizations": "Autorizaciones",
+    "authorization": "Autorización",
+    "noDataFound": "No se encontró ninguna autorización con id {id}."
   }
 }

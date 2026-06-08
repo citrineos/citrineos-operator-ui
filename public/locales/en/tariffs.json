@@ -1,7 +1,7 @@
 {
   "Tariffs": {
-    "Tariffs": "Tariffs",
-    "tariff": "Tariff",
-    "noDataFound": "No tariff found with id {id}."
+    "Tariffs": "Tarifas",
+    "tariff": "Tarifa",
+    "noDataFound": "No se encontró ninguna tarifa con id {id}."
   }
 }
