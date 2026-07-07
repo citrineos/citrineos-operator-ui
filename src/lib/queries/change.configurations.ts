@@ -40,7 +40,9 @@ export const CHANGE_CONFIGURATION_DOWNLOAD_QUERY = gql`
       key
       value
     }
-    ChangeConfigurations_aggregate(where: { ocppConnectionName: { _eq: $stationId } }) {
+    ChangeConfigurations_aggregate(
+      where: { ocppConnectionName: { _eq: $stationId } }
+    ) {
       aggregate {
         count
       }

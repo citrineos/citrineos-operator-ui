@@ -89,7 +89,9 @@ export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
         updatedAt
       }
     }
-    VariableAttributes_aggregate(where: { ocppConnectionName: { _eq: $stationId } }) {
+    VariableAttributes_aggregate(
+      where: { ocppConnectionName: { _eq: $stationId } }
+    ) {
       aggregate {
         count
       }
