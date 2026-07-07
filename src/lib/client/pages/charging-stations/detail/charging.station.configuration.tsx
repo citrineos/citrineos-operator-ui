@@ -119,12 +119,12 @@ export const ChargingStationConfiguration: React.FC<
   const versionInitialized = useRef(false);
 
   const attributeFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    () => [{ field: 'ocppConnectionName', operator: 'eq', value: stationId }],
     [stationId],
   );
 
   const configFilters = useMemo<CrudFilter[]>(
-    () => [{ field: 'stationId', operator: 'eq', value: stationId }],
+    () => [{ field: 'ocppConnectionName', operator: 'eq', value: stationId }],
     [stationId],
   );
 

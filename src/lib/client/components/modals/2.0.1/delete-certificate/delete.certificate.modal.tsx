@@ -70,7 +70,9 @@ export const DeleteCertificateModal = ({
     },
     filters: [
       {
-        field: InstalledCertificateProps.stationId,
+        // Bridge: InstalledCertificates.stationId is numeric; filter by the
+        // string ocppConnectionName (which station.id carries).
+        field: 'ocppConnectionName',
         operator: 'eq',
         value: parsedStation.id,
       },

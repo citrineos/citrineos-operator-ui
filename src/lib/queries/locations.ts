@@ -31,7 +31,7 @@ export const LOCATIONS_LIST_QUERY = gql`
       timeZone
       parkingType
       chargingPool: ChargingStations(where: $chargingStationsWhere) {
-        id
+        id: ocppConnectionName
         isOnline
         protocol
         createdAt
@@ -113,7 +113,7 @@ export const LOCATIONS_GET_QUERY = gql`
       updatedAt
       openingHours
       chargingPool: ChargingStations {
-        id
+        id: ocppConnectionName
         isOnline
         protocol
         createdAt

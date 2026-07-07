@@ -57,7 +57,7 @@ export const VARIABLE_ATTRIBUTE_LIST_QUERY = gql`
 export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
   query DownloadVariableAttributes($stationId: String!) {
     VariableAttributes(
-      where: { stationId: { _eq: $stationId } }
+      where: { ocppConnectionName: { _eq: $stationId } }
       order_by: { createdAt: desc }
     ) {
       id
@@ -89,7 +89,9 @@ export const VARIABLE_ATTRIBUTE_DOWNLOAD_QUERY = gql`
         updatedAt
       }
     }
-    VariableAttributes_aggregate(where: { stationId: { _eq: $stationId } }) {
+    VariableAttributes_aggregate(
+      where: { ocppConnectionName: { _eq: $stationId } }
+    ) {
       aggregate {
         count
       }

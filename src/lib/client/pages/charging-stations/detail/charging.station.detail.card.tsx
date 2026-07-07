@@ -107,7 +107,9 @@ export const ChargingStationDetailCard = ({
     sorters: [{ field: OCPPMessageProps.timestamp, order: 'desc' }],
     filters: [
       {
-        field: OCPPMessageProps.stationId,
+        // Bridge: OCPPMessages.stationId is now numeric; filter by the string
+        // ocppConnectionName (which station.id carries).
+        field: 'ocppConnectionName',
         operator: 'eq',
         value: station?.id,
       },

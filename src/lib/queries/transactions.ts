@@ -72,7 +72,7 @@ export const TRANSACTION_LIST_QUERY = gql`
         updatedAt
       }
       chargingStation: ChargingStation {
-        id
+        id: ocppConnectionName
         isOnline
         protocol
         locationId
@@ -129,7 +129,7 @@ export const GET_TRANSACTIONS_FOR_AUTHORIZATION = gql`
       createdAt
       updatedAt
       chargingStation: ChargingStation {
-        id
+        id: ocppConnectionName
         isOnline
         protocol
         locationId
@@ -176,7 +176,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
     $limit: Int
   ) {
     Transactions(
-      where: { stationId: { _eq: $stationId }, _and: $where }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: $where }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -208,7 +208,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
         idToken
       }
       chargingStation: ChargingStation {
-        id
+        id: ocppConnectionName
         isOnline
         locationId
         createdAt
@@ -228,7 +228,7 @@ export const GET_TRANSACTION_LIST_FOR_STATION = gql`
       }
     }
     Transactions_aggregate(
-      where: { stationId: { _eq: $stationId }, _and: $where }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: $where }
     ) {
       aggregate {
         count

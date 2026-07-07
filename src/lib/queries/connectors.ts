@@ -16,7 +16,7 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
       offset: $offset
       limit: $limit
       order_by: $order_by
-      where: { stationId: { _eq: $stationId } }
+      where: { ocppConnectionName: { _eq: $stationId } }
     ) {
       connectorId
       createdAt
@@ -40,7 +40,7 @@ export const CONNECTOR_LIST_FOR_STATION_QUERY = gql`
 
 export const CONNECTORS_FOR_STATION_QUERY = gql`
   query GetConnectorListForStation($stationId: String!) {
-    Connectors(where: { stationId: { _eq: $stationId } }) {
+    Connectors(where: { ocppConnectionName: { _eq: $stationId } }) {
       connectorId
       createdAt
       errorCode
@@ -65,7 +65,7 @@ export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
     $limit: Int
   ) {
     Connectors(
-      where: { stationId: { _eq: $stationId }, _and: [$where] }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: [$where] }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -88,7 +88,7 @@ export const GET_CONNECTOR_LIST_FOR_STATION_EVSE = gql`
       updatedAt
     }
     Connectors_aggregate(
-      where: { stationId: { _eq: $stationId }, _and: [$where] }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: [$where] }
     ) {
       aggregate {
         count
