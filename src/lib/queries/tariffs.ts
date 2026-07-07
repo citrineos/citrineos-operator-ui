@@ -69,7 +69,7 @@ export const GET_CHARGING_STATIONS_FOR_TARIFF = gql`
       order_by: $order_by
       where: { Connectors: { tariffId: { _eq: $tariffId } }, _and: $where }
     ) {
-      id
+      id: ocppConnectionName
       isOnline
       protocol
       locationId
@@ -130,7 +130,7 @@ export const GET_TRANSACTIONS_FOR_TARIFF = gql`
       createdAt
       updatedAt
       chargingStation: ChargingStation {
-        id
+        id: ocppConnectionName
         isOnline
         protocol
         locationId

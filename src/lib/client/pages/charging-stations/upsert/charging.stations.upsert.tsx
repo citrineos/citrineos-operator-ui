@@ -229,6 +229,15 @@ export const ChargingStationUpsert = ({
       ChargingStationClass,
     );
 
+    // Bridge: the UI's `id` carries the station's string identifier
+    // (ocppConnectionName). The DB primary key is a numeric auto-increment, so
+    // route the identifier into ocppConnectionName and never send the numeric
+    // `id` (omit it on create so it auto-generates; it's immutable on edit).
+    if (newItem.id !== undefined && newItem.id !== null) {
+      newItem.ocppConnectionName = newItem.id;
+    }
+    delete newItem.id;
+
     // Handle coordinates
     if (useLocationCoordinates) {
       newItem.coordinates = null;

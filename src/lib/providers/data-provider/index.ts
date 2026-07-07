@@ -59,10 +59,63 @@ const hasuraProviderOptions = {
   namingConvention: 'hasura-default',
 };
 
-const dataProvider = dataProviderHasura(
+const baseDataProvider = dataProviderHasura(
   client,
   hasuraProviderOptions as HasuraDataProviderOptions,
 );
+
+// Bridge: ChargingStations are identified in the UI by `ocppConnectionName`
+// (the stable OCPP string id, e.g. "cp001"), not by the numeric primary key.
+// Hasura's `_by_pk` is bound to the numeric PK, so single-record reads/writes
+// for this resource are translated to `where: { ocppConnectionName: { _eq } }`
+// filters. This keeps the app working regardless of whether the underlying id
+// is a string or a number. The corresponding queries/mutations return the
+// resource keyed by `id: ocppConnectionName`, so `id` carries the string.
+const isChargingStations = (resource?: string) =>
+  resource === ResourceType.CHARGING_STATIONS;
+
+const dataProvider: typeof baseDataProvider = {
+  ...baseDataProvider,
+  getOne: async (params) => {
+    if (isChargingStations(params.resource) && params.meta?.gqlQuery) {
+      const variables = { id: params.id, ...(params.meta.gqlVariables ?? {}) };
+      const response: any = await client.request(
+        params.meta.gqlQuery,
+        variables,
+      );
+      const rows = response?.ChargingStations ?? [];
+      return { data: rows[0] ?? null };
+    }
+    return baseDataProvider.getOne(params);
+  },
+  update: async (params) => {
+    const mutation = params.meta?.gqlMutation ?? params.meta?.gqlQuery;
+    if (isChargingStations(params.resource) && mutation) {
+      const variables = {
+        id: params.id,
+        object: params.variables ?? {},
+        ...(params.meta?.gqlVariables ?? {}),
+      };
+      const response: any = await client.request(mutation, variables);
+      const returning = response?.update_ChargingStations?.returning ?? [];
+      return { data: returning[0] ?? null };
+    }
+    return baseDataProvider.update(params);
+  },
+  deleteOne: async (params) => {
+    const mutation = params.meta?.gqlMutation ?? params.meta?.gqlQuery;
+    if (isChargingStations(params.resource) && mutation) {
+      const variables = {
+        id: params.id,
+        ...(params.meta?.gqlVariables ?? {}),
+      };
+      const response: any = await client.request(mutation, variables);
+      const returning = response?.delete_ChargingStations?.returning ?? [];
+      return { data: returning[0] ?? null };
+    }
+    return baseDataProvider.deleteOne(params);
+  },
+};
 
 dataProvider.getApiUrl = () => {
   return API_URL;

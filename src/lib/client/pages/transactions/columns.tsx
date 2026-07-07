@@ -186,7 +186,9 @@ export const getTransactionsFilters = (value: string): CrudFilters => {
           value,
         },
         {
-          field: TransactionProps.stationId,
+          // Bridge: Transactions.stationId is numeric; search the string
+          // ocppConnectionName instead.
+          field: 'ocppConnectionName',
           operator: 'contains',
           value,
         },

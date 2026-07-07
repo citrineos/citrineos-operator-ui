@@ -39,7 +39,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
     $limit: Int
   ) {
     Evses(
-      where: { stationId: { _eq: $stationId }, _and: [$where] }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: [$where] }
       order_by: $order_by
       offset: $offset
       limit: $limit
@@ -67,7 +67,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
         updatedAt
       }
     }
-    Evses_aggregate(where: { stationId: { _eq: $stationId }, _and: [$where] }) {
+    Evses_aggregate(where: { ocppConnectionName: { _eq: $stationId }, _and: [$where] }) {
       aggregate {
         count
       }
@@ -77,7 +77,7 @@ export const GET_EVSE_LIST_FOR_STATION = gql`
 
 export const GET_EVSES_FOR_STATION = gql`
   query GetEvseListForStation($stationId: String!) {
-    Evses(where: { stationId: { _eq: $stationId } }) {
+    Evses(where: { ocppConnectionName: { _eq: $stationId } }) {
       id
       stationId
       evseTypeId

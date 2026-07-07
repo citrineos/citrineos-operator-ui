@@ -17,7 +17,7 @@ export const CHARGING_STATIONS_LIST_QUERY = gql`
       order_by: $order_by
       where: $where
     ) {
-      id
+      id: ocppConnectionName
       isOnline
       protocol
       locationId
@@ -120,7 +120,7 @@ export const FAULTED_CHARGING_STATIONS_LIST_QUERY = gql`
         ]
       }
     ) {
-      id
+      id: ocppConnectionName
       isOnline
       protocol
       locationId
@@ -196,9 +196,9 @@ export const CHARGING_STATIONS_STATUS_COUNT_QUERY = gql`
 
 export const CHARGING_STATIONS_GET_QUERY = gql`
   query GetChargingStationById($id: String!) {
-    ChargingStations_by_pk(id: $id) {
+    ChargingStations(where: { ocppConnectionName: { _eq: $id } }, limit: 1) {
       tenantId
-      id
+      id: ocppConnectionName
       isOnline
       protocol
       locationId
@@ -316,7 +316,7 @@ export const CHARGING_STATIONS_GET_QUERY = gql`
 export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS_AND_TRANSACTIONS = gql`
   query GetChargingStationsWithLocationAndLatestStatusNotificationsAndTransactions {
     ChargingStations {
-      id
+      id: ocppConnectionName
       isOnline
       protocol
       locationId
@@ -372,8 +372,8 @@ export const GET_CHARGING_STATIONS_WITH_LOCATION_AND_LATEST_STATUS_NOTIFICATIONS
 
 export const CHARGING_STATION_ONLINE_STATUS_QUERY = gql`
   query ChargingStationOnlineStatus($id: String!) {
-    ChargingStations_by_pk(id: $id) {
-      id
+    ChargingStations(where: { ocppConnectionName: { _eq: $id } }, limit: 1) {
+      id: ocppConnectionName
       isOnline
       protocol
     }
@@ -383,7 +383,7 @@ export const CHARGING_STATION_ONLINE_STATUS_QUERY = gql`
 export const CHARGING_STATIONS_CREATE_MUTATION = gql`
   mutation ChargingStationsCreate($object: ChargingStations_insert_input!) {
     insert_ChargingStations_one(object: $object) {
-      id
+      id: ocppConnectionName
       isOnline
       protocol
       locationId
@@ -401,26 +401,33 @@ export const CHARGING_STATIONS_EDIT_MUTATION = gql`
     $id: String!
     $object: ChargingStations_set_input!
   ) {
-    update_ChargingStations_by_pk(pk_columns: { id: $id }, _set: $object) {
-      id
-      isOnline
-      protocol
-      locationId
-      createdAt
-      updatedAt
+    update_ChargingStations(
+      where: { ocppConnectionName: { _eq: $id } }
+      _set: $object
+    ) {
+      returning {
+        id: ocppConnectionName
+        isOnline
+        protocol
+        locationId
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
 
 export const CHARGING_STATIONS_DELETE_MUTATION = gql`
   mutation ChargingStationsDelete($id: String!) {
-    delete_ChargingStations_by_pk(id: $id) {
-      id
-      isOnline
-      protocol
-      locationId
-      createdAt
-      updatedAt
+    delete_ChargingStations(where: { ocppConnectionName: { _eq: $id } }) {
+      returning {
+        id: ocppConnectionName
+        isOnline
+        protocol
+        locationId
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

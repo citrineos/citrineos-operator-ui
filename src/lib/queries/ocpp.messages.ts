@@ -13,13 +13,13 @@ export const GET_OCPP_MESSAGES_LIST_FOR_STATION = gql`
     $limit: Int
   ) {
     OCPPMessages(
-      where: { stationId: { _eq: $stationId }, _and: $where }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: $where }
       order_by: $order_by
       offset: $offset
       limit: $limit
     ) {
       id
-      stationId
+      stationId: ocppConnectionName
       correlationId
       origin
       protocol
@@ -30,7 +30,7 @@ export const GET_OCPP_MESSAGES_LIST_FOR_STATION = gql`
       updatedAt
     }
     OCPPMessages_aggregate(
-      where: { stationId: { _eq: $stationId }, _and: $where }
+      where: { ocppConnectionName: { _eq: $stationId }, _and: $where }
     ) {
       aggregate {
         count
